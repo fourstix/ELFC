@@ -81,15 +81,15 @@ Library Compiler Option
 
 * The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS library procedure.
 
-* The source file should contian a public function with same name as the file name of the C file. If no public function in the matches the file name, an error will be generated.
+* The source file should contian a public function with same name as the file name of the C file. If no public function in the file matches the file name, an error will be generated.
 
-* The procedure name will be the file name with the C prefix and serve as the pubic entry point for the procedure function.
+* The procedure name will be the file name with the C prefix and serve as the public entry point for the procedure function.
 
-* If needed, the compiler will emit an immediate jump to the public function with the same name as the procedure.
+* If needed, the compiler will emit an immediate jump to the public entry point function with the same name as the procedure.
 
-* The entry point function's public name will be suppressed to prevent duplication of the procedure name when linking.
+* The entry point function's public name will be suppressed to prevent duplication of the procedure name when assembling.
 
-* The prg can then be incorporated into an Elf/OS library.
+* The prg produced by the assembler can then be incorporated into an Elf/OS library.
 
 * The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
 
