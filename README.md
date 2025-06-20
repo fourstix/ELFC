@@ -29,9 +29,9 @@ This release supports some basic code optimization as described in the book [Pra
 
 The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
 
-The C runtime module crt0 now holds the start-up code for the program.  The start up code now pushes the expected command line arguments onto the stack (`int argc` and `char **argv`) and then calls the main function.
+The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
 
-An additional compiler option (-L) will compile and assemble Elf/OS library modules from C files.  
+An additional compiler option `-L` will compile and assemble Elf/OS library modules from C files.  
 
 Overview
 --------
@@ -46,13 +46,13 @@ Overview
 
 * The peep-hole code optimizations are all implemented except for the 386 assembly code Type optimizations which have no equivalents in 1802 assembly code.  In addition, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
 
-* The #pragma preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
+* The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
 
 * The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
 
 * The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
 
-* Skeleton libraries for stdio and stdlib were created in Version 2 as a proof of concept.
+* Skeleton libraries for `stdio.lib` and `stdlib.lib` were created in Version 2 as a proof of concept.
 
 * The ElfC compiler now accepts inline comments (`// comments`) as well as traditional C commments (`/* comments */`).
 
@@ -64,9 +64,9 @@ Overview
 * The `auto`, `register`, and `volatile` keywords are recognized
    (as no-ops). 
 
-* enums may now be local.
+* `enum`'s may now be local.
 
-* extern identifiers may now be declared locally.
+* `extern` identifiers may now be declared locally.
 
 * Prototypes may have the `static` storage class.
 
@@ -77,26 +77,26 @@ Overview
 Library Compiler Option 
 ------------------------
 
-* The new `-L` ElfC option will compile and assemble a C source file into a prg file compatible with an Elf/OS library procedure.
+* The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS library procedure.
 
-* There should be a public function with same name as the file name of the C file. If no public function matches, an error will be generated.
+* The source file should contian a public function with same name as the file name of the C file. If no public function in the matches the file name, an error will be generated.
 
-* The procedure name will be the file name with the C prefix and serve as the pubic 
-entry point to the procedure.
+* The procedure name will be the file name with the C prefix and serve as the pubic entry point for the procedure function.
 
-* If needed, the compiler will emit an immediate jump to the public method of the same name.
+* If needed, the compiler will emit an immediate jump to the public function with the same name as the procedure.
 
 * The entry point function's public name will be suppressed to prevent duplication of the procedure name when linking.
 
 * The prg can then be incorporated into an Elf/OS library.
 
-* Other public functions and public labels in the procedure will be available in the library, along with the procedure function name.
+* The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
 
+* An Elf/OS library is created by concatenating multiple procdure prg files.
 
 Example:
 
-The C file:
-```abs.c
+The C file `abs.c`:
+```
 int abs(int n) {
   return (n < 0) ? -n : n;
   }
@@ -105,7 +105,11 @@ Compiled with:
 ```
 ..\elfc -L abs.c
 ```
-Will produce the file abs.prg that can be included in an Elf/OS library, such as stdlib.lib.
+This will produce the file abs.prg that can be concatenated into an Elf/OS library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs()` function.  
+```
+type abort.prg abs.prg exit.prg > stdlib.lib 
+```
+
 
 Next Release
 -------------
@@ -114,11 +118,11 @@ Next Release
 
 * The C libraries should be created from C files using the ElfC (`-L`) library compile option.
 
-* The header files should use #pragma statements so the libraries link properly.
+* The header files should use `#pragma` statements so the libraries link properly.
 
 * Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
-* Implement the atexit() mechanism
+* Implement the `atexit()` mechanism
 
 * Implement time functions compatible with Elf/OS (Mini-DOS) kernel and BIOS API.
 
@@ -133,8 +137,8 @@ Future Goals
 * Create a native Elf/OS version of ElfC that uses the native Asm/02 and Link/02 programs in Elf/OS.  
 
 
-Difference SubC and Full C89
------------------------------
+Differences Between SubC and Full C89
+-------------------------------------
 
 *  The following keywords are not recognized:
    `const`, `double`, `float`, `goto`, `long`, `short`,
@@ -206,7 +210,6 @@ Difference SubC and Full C89
 *  There is no `assert()` due to the lack of parameterized macros.
    
 *  The SubC compiler accepts `//` comments in addition to `/* */`.
-
 
 License Information
 -------------------
