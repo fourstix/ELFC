@@ -44,7 +44,9 @@ Overview
 
 * This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).  
 
-* The peep-hole code optimizations are all implemented except for the 386 assembly code Type optimizations which have no equivalents in 1802 assembly code.  In addition, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
+* The peep-hole code optimizations are all implemented except for the 386 assembly code Type Synthesis optimizations which have no equivalents available in 1802 assembly code.  In the discussion *RISC vs CISC* on page 362 of [Practical Compiler Construction](https://www.t3x.org/reload/index.html), Nils M Holm covers this topic in more detail. 
+
+* In addition to these optimizations, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
 
 * The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
 
@@ -91,21 +93,21 @@ Library Compiler Option
 
 * The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
 
-* An Elf/OS library is created by concatenating multiple procdure prg files.
+* An Elf/OS library is created by concatenating multiple procedure prg files.
 
 Example:
 
-The C file `abs.c`:
+The C file `abs.c` containing the function:
 ```
 int abs(int n) {
   return (n < 0) ? -n : n;
   }
 ```
-Compiled with:
+When compiled with:
 ```
 ..\elfc -L abs.c
 ```
-This will produce the file abs.prg that can be concatenated into an Elf/OS library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs()` function.  
+Will produce the file abs.prg that can be concatenated into an Elf/OS library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs()` function.  
 ```
 type abort.prg abs.prg exit.prg > stdlib.lib 
 ```
