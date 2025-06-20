@@ -3,8 +3,8 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Design Goals
 -------------
-* Use the Elf/OS Asm/02 assembler and Link/02 linker to produce CDP1802 code.
-* Create a library based on Mike Riley's Library/02 standard library.
+* Use the Elf/OS [Asm/02](https://github.com/fourstix/Asm-02) assembler and [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
+* Create a library based on Mike Riley's [Library/02](https://github.com/rileym65/Library-02) standard library.
 * Target both Elf/OS and Mini/DOS as a platform.
 * Target Windows as the development platform (cross-compiler)
 * Use an expression stack similar to the one implemented in Mike Riley's Fortran/02 program.
@@ -21,33 +21,191 @@ I strongly recommend reading Nils's book.  Practical Compiler Construction is a 
 In Release 1 the code generation functions for Elf/OS have all been implemented.  The arithmetic and logical operators have all been implemented and tested.
 
 
+Release 2
+----------
+This release migrates the code base to the current [Experimental SubC](https://www.t3x.org/subc/index.html) version so that the code generator can include structures, unions and typedefs.
+
+This release supports some basic code optimization as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms
+
+The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
+
+The C runtime module crt0 now holds the start-up code for the program.  The start up code now pushes the expected command line arguments onto the stack (`int argc` and `char **argv`) and then calls the main function.
+
+An additional compiler option (-L) will compile and assemble Elf/OS library modules from C files.  
+
 Overview
 --------
-* Implement the code generation functions required to compile a C file and generate a CDP1802 assembly code file for the Elf/OS (or Mini/DOS) operating system.  
 
-* Create a library of arithmetic and variable functions based on the Elf/OS 16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
+* Version 2 implements the code generation functions required to compile a C file and assemble the resulting CDP1802 assembly and link code files into a binary program for the Elf/OS (or Mini/DOS) operating system.  
 
-* Implement the minimal changes to the book compiler code required to assemble and link the code to create an Elf/OS program file.
+* The assembler [Asm/02]((https://github.com/fourstix/Asm-02)) and linker [Link/02](https://github.com/fourstix/Link-02) are now invoked with the same path as the compiler.  The C library files and header files are located in the same manner, so that the preprocessor commands `#include <header.h>` and `#include "header.h"` work as expected.
 
-* Implement the asm() statement in C to directly insert assembly code into the generated assembly file.
+* Version 2 extends the library of arithmetic and variable functions based on the Elf/OS 16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
+
+* This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).  
+
+* The peep-hole code optimizations are all implemented except for the 386 assembly code Type optimizations which have no equivalents in 1802 assembly code.  In addition, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
+
+* The #pragma preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
+
+* The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
+
+* The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
+
+* Skeleton libraries for stdio and stdlib were created in Version 2 as a proof of concept.
+
+* The ElfC compiler now accepts inline comments (`// comments`) as well as traditional C commments (`/* comments */`).
+
+* `struct`, `union` and `typedef` are now supported.
+
+* `&array` is now valid syntax (you no longer have to write
+   `&array[0]`).
+
+* The `auto`, `register`, and `volatile` keywords are recognized
+   (as no-ops). 
+
+* enums may now be local.
+
+* extern identifiers may now be declared locally.
+
+* Prototypes may have the `static` storage class.
+
+* The `#error`, `#line`, and `#pragma` commands have been added.
+
+* A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
+
+Library Compiler Option 
+------------------------
+
+* The new `-L` ElfC option will compile and assemble a C source file into a prg file compatible with an Elf/OS library procedure.
+
+* There should be a public function with same name as the file name of the C file. If no public function matches, an error will be generated.
+
+* The procedure name will be the file name with the C prefix and serve as the pubic 
+entry point to the procedure.
+
+* If needed, the compiler will emit an immediate jump to the public method of the same name.
+
+* The entry point function's public name will be suppressed to prevent duplication of the procedure name when linking.
+
+* The prg can then be incorporated into an Elf/OS library.
+
+* Other public functions and public labels in the procedure will be available in the library, along with the procedure function name.
+
+
+Example:
+
+The C file:
+```abs.c
+int abs(int n) {
+  return (n < 0) ? -n : n;
+  }
+```
+Compiled with:
+```
+..\elfc -L abs.c
+```
+Will produce the file abs.prg that can be included in an Elf/OS library, such as stdlib.lib.
 
 Next Release
 -------------
 
-* Migrate the code base to the current [Experimental SubC](https://www.t3x.org/subc/index.html) version so that the code generator can include structures, unions and typedefs.
+* Implement the basic set of C libraries and header files as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
-* Merge all changes made to Release 1 into Experimental SubC version.
+* The C libraries should be created from C files using the ElfC (`-L`) library compile option.
+
+* The header files should use #pragma statements so the libraries link properly.
+
+* Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
+
+* Implement the atexit() mechanism
+
+* Implement time functions compatible with Elf/OS (Mini-DOS) kernel and BIOS API.
 
 Future Goals
 -------------
 
-* Implement standard library and standard I/O C functions.
 * Convert library to 32-bit library and implement long and float data types. 
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.
 * Implement signed and unsigned data types.
 * Create a native Elf/OS version of ElfC that uses the native Asm/02 and Link/02 programs in Elf/OS.  
+
+
+Difference SubC and Full C89
+-----------------------------
+
+*  The following keywords are not recognized:
+   `const`, `double`, `float`, `goto`, `long`, `short`,
+   `signed`, `unsigned`.
+
+*  There are only two primitive data types: the signed `int` and
+   the unsigned `char`; there are also void pointers, and there
+   is limited support for `int(*)()` (pointers to functions
+   of type int).
+
+*  No more than two levels of indirection are supported, and
+   arrays are limited to one dimension, i.e. valid declarators
+   are limited to `x`, `x[]`, `*x`, `*x[]`, `**x` (and `(*x)()`).
+
+*  K&R-style function declarations (with parameter declarations
+   between the parameter list and function body) are not
+   accepted.
+
+*  There are no `const` variables.
+
+*  There are no unsigned integers, long integers, or signed
+   chars.
+
+*  Struct/union declarations must be separate from the
+   declarations of struct/union objects, i.e.
+   `struct p { int x, y; } q;` will not work.
+
+*  Struct/union declarations must be global (struct and union
+   objects may be declared locally, though).
+
+*  There is no support for bit fields.
+
+*  Only ints, chars, and arrays of int and char can be
+   initialized in their declarations; pointers can be
+   initialized with 0 or NULL.
+
+*  Local arrays cannot have initializers.
+
+*  Local declarations are limited to the beginnings of function
+   bodies (they do not work in other compound statements).
+
+*  Arguments of prototypes must be named.
+
+*  There is no `goto`.
+
+*  There are no parameterized macros.
+
+*  The `#if` and `#elif` preprocessor commands are not recognized.
+
+*  The preprocessor does not accept multi-line commands.
+
+*  The preprocessor does not accept comments in (some) commands.
+
+*  The preprocessor does not recognize the `#` and `##` operators.
+
+*  There may not be any blanks between the `#` that introduces
+   a preprocessor command and the subsequent command (e.g.:
+   `# define` would not be recognized as a valid command).
+
+*  The `sizeof` operator requires parentheses.
+
+*  Subscripting an integer with a pointer (e.g. `1["foo"]`) is
+   not supported.
+
+*  Function pointers are limited to one single type, `int(*)()`,
+   and they have no argument types. Note that this declaration
+   will in fact generate a pointer to `int(*)(void)`.
+
+*  There is no `assert()` due to the lack of parameterized macros.
+   
+*  The SubC compiler accepts `//` comments in addition to `/* */`.
 
 
 License Information
