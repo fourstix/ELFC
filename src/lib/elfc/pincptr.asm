@@ -6,17 +6,25 @@
 ; registers used:
 ;   RA - pointer value pointing to another pointer 
 ;   R8 - temp value   
+;   RC - size of pointer
 ; usage:   CALL pincptr
+;            dw  size
 ; note: leaves the expression stack and ESP unchanged
 ;---------------------------------------------------------
                 proc pincptr
+              sex     r2      ; make sure X = SP 
+              
+              lda     r6      ; set up pointer size
+              phi     rc
+              lda     r6
+              plo     rc      ; rc has pointer size
+
               lda     ra      ; get pointer LSB referenced by pointer
               plo     r8      ; save in temp register
               ldn     ra      ; get the pointer MSB referenced by pointer
               phi     r8      ; save in temp register
               
-              inc     r8      ; increment temp pointer value twice
-              inc     r8      ; because all pointers have 2 bytes
+              add16   r8, rc  ; increment temp pointer by size
               
               ghi     r8      ; get MSB from incremented value
               str     ra      ; save in referenced pointer MSB
@@ -24,7 +32,6 @@
               glo     r8      ; get LSB from incremented value              
               str     ra      ; save in referenced pointer LSB
               
-              sex     r2      ; make sure X = SP 
               rtn             ; return to caller
                 endp 
           

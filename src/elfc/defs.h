@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012,2022
+ *	NMH's Simple C Compiler, 2011--2021
  *	Definitions
  */
 
@@ -7,29 +7,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "cg.h"
+#include "sys.h"
 
-/* define this on 64-bit systems */
-/* #define W64 */
-
-/* define when linking against host's LIBC */
-/* #define HOSTLIB */
-
-
-#define PREFIX		'C'
-#define LPREFIX		'L'
+#define VERSION		"2021-08-15"
 
 #ifndef SCCDIR
  #define SCCDIR		"."
 #endif
 
-#define ASCMD		"asm02 -L %s"
+#ifndef AOUTNAME
+ #define AOUTNAME	"a.out"
+#endif
 
-#define LDCMD		"link02 -e -s %s"
-#define SYSLIBC	" -l lib\\elfc.lib"
 
-#define SCCLIBC	" -l lib\\stdlib5.lib"
+#define SCCLIBC		""
 
-#define INTSIZE		2
+#define PREFIX		'C'
+#define LPREFIX		'L'
+
+#define INTSIZE		BPW
 #define PTRSIZE		INTSIZE
 #define CHARSIZE	1
 
@@ -43,62 +40,163 @@
 #define MAXCASE		256
 #define MAXBREAK	16
 #define MAXLOCINIT	32
-#define MAXFNARGS	32
+//grw - decreased number of formal function args
+//#define MAXFNARGS	32
+#define MAXFNARGS	 8
 
-#define NSYMBOLS	256
-#define POOLSIZE	2048
+
+/* assert(NSYMBOLS < PSTRUCT) */
+#define NSYMBOLS	1024
+#define POOLSIZE	16384
+#define NODEPOOLSZ	4096	/* ints */
 
 /* types */
-#define TVARIABLE	1
-#define TARRAY		2
-#define TFUNCTION	3
-#define TCONSTANT	4
-#define TMACRO		5
+enum {
+	TVARIABLE = 1,
+	TARRAY,
+	TFUNCTION,
+	TCONSTANT,
+	TMACRO,
+	TSTRUCT
+};
 
 /* primitive types */
-#define PCHAR	1
-#define PINT	2
-#define CHARPTR	3
-#define INTPTR	4
-#define CHARPP	5
-#define INTPP	6
-#define PVOID	7
-#define VOIDPTR	8
-#define VOIDPP	9
-#define FUNPTR	10
+enum {
+	PCHAR = 1,
+	PINT,
+	CHARPTR,
+	INTPTR,
+	CHARPP,
+	INTPP,
+	PVOID,
+	VOIDPTR,
+	VOIDPP,
+	FUNPTR,
+	PSTRUCT = 0x2000,
+	PUNION  = 0x4000,
+	STCPTR  = 0x6000,
+	STCPP   = 0x8000,
+	UNIPTR  = 0xA000,
+	UNIPP   = 0xC000,
+	STCMASK = 0xE000
+};
 
 /* storage classes */
-#define CPUBLIC	1
-#define CEXTERN	2
-#define CSTATIC	3
-#define CLSTATC	4
-#define CAUTO	5
+enum {
+	CPUBLIC = 1,
+	CEXTERN,
+	CSTATIC,
+	CLSTATC,
+	CAUTO,
+	CSPROTO,
+	CMEMBER,
+	CSTCDEF,
+	CTYPE
+};
 
 /* lvalue structure */
-#define LVSYM	0
-#define LVPRIM	1
-#define LV	2
+enum {
+	LVSYM,
+	LVPRIM,
+	LVADDR,
+	LV
+};
 
 /* debug options */
-#define D_LSYM	1
-#define D_GSYM	2
-#define D_STAT	4
-
 enum {
-	/* !!! The order of the following symbols must match
-	   !!! the order of corresponding symbols in prec.h */
+	D_LSYM = 1,
+	D_GSYM = 2,
+	D_STAT = 4
+};
+
+/* addressing modes */
+//grw - remove queue logic for address modes
+/*
+enum {
+	empty,
+	addr_auto,
+	addr_static,
+	addr_globl,
+	addr_label,
+	literal,
+	auto_byte,
+	auto_word,
+	static_byte,
+	static_word,
+	globl_byte,
+	globl_word
+};
+*/
+//grw - added logic to eliminate jump to an adjacent label
+/* jump instructions */
+enum {
+	jnone,
+	jump
+};
+
+//grw - added logic to eliminate push followed by immediate pop
+/* push instructions */
+enum {
+	pnone,
+	push
+};
+
+/* compare instructions */
+enum {
+	cnone,
+	equal,
+	not_equal,
+	less,
+	greater,
+	less_equal,
+	greater_equal,
+	below,
+	above,
+	below_equal,
+	above_equal
+};
+
+/* boolean instructions */
+enum {
+	bnone,
+	lognot,
+	normalize
+};
+
+/* AST node */
+struct node_stc {
+	int		op;
+	struct node_stc	*left, *right;
+	int		args[1];
+};
+
+#define node	struct node_stc
+
+/* tokens */
+enum {
 	SLASH, STAR, MOD, PLUS, MINUS, LSHIFT, RSHIFT,
 	GREATER, GTEQ, LESS, LTEQ, EQUAL, NOTEQ, AMPER,
 	CARET, PIPE, LOGAND, LOGOR,
 
-	__ARGC, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR,   //grw = added ASM keyword
-	ASPLUS, ASRSHIFT, ASDIV, ASMUL, ASSIGN, BREAK, CASE,
-	CHAR, COLON, COMMA, CONTINUE, DECR, DEFAULT, DO, ELLIPSIS,
-	ELSE, ENUM, EXTERN, FOR, IDENT, IF, INCR, INT, INTLIT,
-	LBRACE, LBRACK, LPAREN, NOT, QMARK, RBRACE, RBRACK,
-	RETURN, RPAREN, SEMI, SIZEOF, STATIC, STRLIT, SWITCH,
-	TILDE, VOID, WHILE, XEOF, XMARK,
+	ARROW, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR, ASPLUS,
+	ASRSHIFT, ASDIV, ASMUL, ASSIGN, AUTO, BREAK, CASE, CHAR, COLON,
+	COMMA, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
+	EXTERN, FOR, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
+	LPAREN, NOT, QMARK, RBRACE, RBRACK, REGISTER, RETURN, RPAREN,
+	SEMI, SIZEOF, STATIC, STRLIT, STRUCT, SWITCH, TILDE, TYPEDEF,
+	UNION, VOID, VOLATILE, WHILE, XEOF, XMARK,
 
-	P_INCLUDE, P_DEFINE, P_ENDIF, P_ELSE, P_ELSENOT, P_IFDEF,
-	P_IFNDEF, P_UNDEF
+	P_DEFINE, P_ELSE, P_ELSENOT, P_ENDIF, P_ERROR, P_IFDEF,
+	P_IFNDEF, P_INCLUDE, P_LINE, P_PRAGMA, P_UNDEF
+};
+
+/* AST operators */
+enum {
+	OP_GLUE, OP_ADD, OP_ADDR, OP_ASSIGN, OP_BINAND, OP_BINIOR,
+	OP_BINXOR, OP_BOOL, OP_BRFALSE, OP_BRTRUE, OP_CALL, OP_CALR,
+	OP_COMMA, OP_DEC, OP_DIV, OP_EQUAL, OP_GREATER, OP_GTEQ,
+	OP_IDENT, OP_IFELSE, OP_LAB, OP_LDLAB, OP_LESS, OP_LIT,
+	OP_LOGNOT, OP_LSHIFT, OP_LTEQ, OP_MOD, OP_MUL, OP_NEG,
+	OP_NOT, OP_NOTEQ, OP_PLUS, OP_PREDEC, OP_PREINC, OP_POSTDEC,
+	OP_POSTINC, OP_RSHIFT, OP_RVAL, OP_SCALE, OP_SCALEBY, OP_SUB
 };

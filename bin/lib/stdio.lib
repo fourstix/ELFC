@@ -1,0 +1,71 @@
+.big
+{Cgets
+/esmove 000a 00
+\esmove 000b
+?auto_err 000f
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff fe c3 00
+/lpush16 0012 00
+\lpush16 0013
+/lstor16 0017 00
+\lstor16 0018
+/dpop16 001c 00
+\dpop16 001d
+/epush16 001f 00
+:0010 00 d4 00 00 00 00 d4 00 00 ff fe d4 00 00 d4 00
+\epush16 0020
+/lpush16 0024 00
+\lpush16 0025
+/ne16 0029 00
+\ne16 002a
+/dpop16 002c 00
+\dpop16 002d
+:0020 00 00 00 d4 00 00 ff fe d4 00 00 d4 00 00 9a 52
+/lget16 0039 00
+\lget16 003a
+:0030 8a f1 ca 00 38 c0 00 44 d4 00 00 ff fe 8a af 9a
+/lpush16 0045 00
+\lpush16 0046
+/dpop16 004a 00
+\dpop16 004b
+/esmove 004d 00
+\esmove 004e
+:0040 bf d4 03 39 d4 00 00 ff fe d4 00 00 d4 00 00 00
+?auto_err 0052
+/escheck 0056 00
+\escheck 0057
+:0050 02 c3 00 00 e2 d4 00 00 60 72 ab f0 bb d5
++0033
++0036
+}
+.big
+{Cputs
+/epush16 000a 00
+\epush16 000b
+/lpush16 000f 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 00 d4 00
+\lpush16 0010
+/eq16 0014 00
+\eq16 0015
+/dpop16 0017 00
+\dpop16 0018
+:0010 00 00 00 d4 00 00 d4 00 00 9a 52 8a f1 ca 00 23
+/epush16 0024 00
+\epush16 0025
+/dpop16 0029 00
+\dpop16 002a
+/lget16 002f 00
+:0020 c0 00 2e d4 00 00 ff ff d4 00 00 c0 00 47 d4 00
+\lget16 0030
+:0030 00 00 00 8a af 9a bf d4 03 33 d4 03 4b 0a 00 d4
+/epush16 0040 00
+\epush16 0041
+/dpop16 0045 00
+\dpop16 0046
+/escheck 0049 00
+\escheck 004a
+:0040 00 00 00 01 d4 00 00 e2 d4 00 00 60 72 ab f0 bb
+:0050 d5
++001e
++0021
++002c
+}

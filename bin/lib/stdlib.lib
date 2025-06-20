@@ -1,0 +1,46 @@
+.big
+{Cabs
+/lpush16 000a 00
+\lpush16 000b
+/epush16 000f 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 00 d4 00
+\epush16 0010
+/lt16 0014 00
+\lt16 0015
+/dpop16 0017 00
+\dpop16 0018
+:0010 00 00 00 d4 00 00 d4 00 00 9a 52 8a f1 ca 00 23
+/lpush16 0024 00
+\lpush16 0025
+/neg16 0029 00
+\neg16 002a
+/lpush16 002f 00
+:0020 c0 00 2e d4 00 00 00 00 d4 00 00 c0 00 33 d4 00
+\lpush16 0030
+/dpop16 0034 00
+\dpop16 0035
+/escheck 0038 00
+\escheck 0039
+:0030 00 00 00 d4 00 00 e2 d4 00 00 60 72 ab f0 bb d5
++001e
++0021
++002c
+}
+.big
+{Cabort
+:0000 e2 9b 73 8b 73 87 ab 97 bb f8 ff aa f8 ff ba ff
+?Elfexit 0012
+/escheck 0016 00
+\escheck 0017
+:0010 00 c0 00 00 e2 d4 00 00 60 72 ab f0 bb d5
+}
+.big
+{Cexit
+/lget16 000a 00
+\lget16 000b
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff fe fc 00
+?Elfexit 0011
+/escheck 0015 00
+\escheck 0016
+:0010 c0 00 00 e2 d4 00 00 60 72 ab f0 bb d5
+}

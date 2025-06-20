@@ -6,8 +6,7 @@
 ;   R7 - pointer to expression stack    
 ;   R9 - local variable pointer
 ;   RB - base pointer to local data in expression stack
-; usage:  load r9, loffset 
-;         call lpush16
+; usage:  call lpush16
 ;           dw loffset  ; index to local variable (signed)
 ;---------------------------------------------------------
               proc lpush16

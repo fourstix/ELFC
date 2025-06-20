@@ -1,10 +1,10 @@
 CC=	cl
 
-FILES=	cexpr.c cgelf.c decl.c error.c expr.c gen.c main.c misc.c \
-	prep.c scan.c stmt.c sym.c
+FILES=	cgelf.c decl.c error.c expr.c gen.c main.c misc.c \
+	prep.c opt.c scan.c stmt.c sym.c tree.c
 
-OBJS=	cexpr.obj cgelf.obj decl.obj error.obj expr.obj gen.obj main.obj misc.obj \
-	prep.obj scan.obj stmt.ov sym.obj
+OBJS=	cgelf.obj decl.obj error.obj expr.obj gen.obj main.obj misc.obj \
+	prep.obj opt.obj scan.obj stmt.obj sym.obj tree.obj
 
 all:	elfc 
 

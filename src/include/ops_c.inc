@@ -10,3 +10,4 @@
 .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
 .op "RETURN","","D5"
 .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
+.op "BRKPT","","79 D1"

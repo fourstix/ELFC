@@ -1,14 +1,14 @@
 #include      ../macros.inc
 
 ;---------------------------------------------------------
-; scltos16 - scale a 16-bit pointer offset at the TOS 
+; scltos2 - scale a 16-bit pointer offset at the TOS 
 ; of the expression stack 
 ; R7 - expression stack pointer    
 ; R8 - operand pointer
-; usage:   CALL scale16
-; returns: TOS scaled by 2 on expression stack
+; usage:   CALL scltos2
+; returns: offset at TOS scaled by 2 on expression stack
 ;---------------------------------------------------------
-            proc    scltos16
+            proc    scltos2
           copy    r7, r8    ; set up operand pointer
           inc     r8        ; move to LSB of TOS
           lda     r8        ; retrieve LSB of previous TOS

@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012,2022
+ *	NMH's Simple C Compiler, 2011--2022
  *	Expression parser
  */
 
@@ -8,16 +8,26 @@
 #include "decl.h"
 #include "prec.h"
 
-int asgmnt(int *lv);
-int expr(int *lv);
-int cast(int *lv);
+static node *asgmnt(int *lv);
+static node *cast(int *lv);
+static node *exprlist(int *lv, int ckvoid);
+
+static node *rvalue(node *n, int *lv) {
+	if (lv[LVADDR]) {
+		lv[LVADDR] = 0;
+		return mkunop2(OP_RVAL, lv[LVPRIM], lv[LVSYM], n);
+	}
+	else {
+		return n;
+	}
+}
 
 /*
  * primary :=
  *	  IDENT
  *	| INTLIT
  *	| string
- *	| __ARGC
+ *	| ARGC
  *	| ( expr )
  *
  * string :=
@@ -25,15 +35,17 @@ int cast(int *lv);
  *	| STRLIT string
  */
 
-static int primary(int *lv) {
-	int	a, y, lab;
+static node *primary(int *lv) {
+	node	*n = NULL;
+	int	y, lab, k;
 	char	name[NAMELEN+1];
+	//grw - add logic for inlined string literals
+	int    lab2;
 
-	lv[LVSYM] = lv[LVPRIM] = 0;
+	lv[LVPRIM] = lv[LVSYM] = lv[LVADDR] = 0;
 	switch (Token) {
 	case IDENT:
-		y = findloc(Text);
-		if (!y) y = findglob(Text);
+		y = findsym(Text);
 		copyname(name, Text);
 		Token = scan();
 		if (!y) {
@@ -52,51 +64,63 @@ static int primary(int *lv) {
 		if (TFUNCTION == Types[y]) {
 			if (LPAREN != Token) {
 				lv[LVPRIM] = FUNPTR;
-				genaddr(y);
+				n = mkleaf(OP_ADDR, y);
 			}
-			return 0;
+			return n;
 		}
 		if (TCONSTANT == Types[y]) {
-			genlit(Vals[y]);
-			return 0;
+			return mkleaf(OP_LIT, Vals[y]);
 		}
 		if (TARRAY == Types[y]) {
-			genaddr(y);
+			n = mkleaf(OP_ADDR, y);
 			lv[LVPRIM] = pointerto(lv[LVPRIM]);
-			return 0;
+			return n;
 		}
-		return 1;
+		if (CTYPE == Stcls[y])
+			error("invalid use of typedef type", Text);
+		if (comptype(Prims[y])) {
+			n = mkleaf(OP_ADDR, y);
+			lv[LVSYM] = 0;
+			return n;
+		}
+		n = mkleaf(OP_IDENT, y);
+		lv[LVADDR] = 1;
+		return n;
 	case INTLIT:
-		genlit(Value);
+		n = mkleaf(OP_LIT, Value);
 		Token = scan();
 		lv[LVPRIM] = PINT;
-		return 0;
+		return n;
 	case STRLIT:
-		gendata();
+		//grw - removed gendata
+		//gendata();
+		//grw - add logic for jumping over inline strings
 		lab = label();
+		lab2 = label();
+		genjump(lab2);
 		genlab(lab);
+		k = 0;
 		while (STRLIT == Token) {
 			gendefs(Text, Value);
+			k += Value-2;
 			Token = scan();
 		}
 		gendefb(0);
-		genldlab(lab);
+		genlab(lab2);
+		//grw - removed genalign
+		//genalign(k+1);
+		n = mkleaf(OP_LDLAB, lab);
 		lv[LVPRIM] = CHARPTR;
-		return 0;
+		return n;
 	case LPAREN:
 		Token = scan();
-		a = expr(lv);
+		n = exprlist(lv, 0);
 		rparen();
-		return a;
-	case __ARGC:
-		Token = scan();
-		genargc();
-		lv[LVPRIM] = PINT;
-		return 0;
+		return n;
 	default:
 		error("syntax error at: %s", Text);
 		Token = synch(SEMI);
-		return 0;
+		return NULL;
 	}
 }
 
@@ -114,61 +138,89 @@ int typematch(int p1, int p2) {
  *	| asgmnt , fnargs
  */
 
-static int fnargs(int fn) {
+static node *fnargs(int fn, int *na) {
 	int	lv[LV];
-	int	na = 0;
-	char	*types;
+	int	*types;
 	char	msg[100];
-	char	sgn[MAXFNARGS+1];
+	int	sgn[MAXFNARGS+1];
+	node	*n = NULL, *n2;
 
-	types = fn? Mtext[fn]: NULL;
-	na = 0;
+	types = (int *) (fn? Mtext[fn]: NULL);
+	*na = 0;
 	while (RPAREN != Token) {
-		if (asgmnt(lv)) rvalue(lv);
+		n2 = asgmnt(lv);
+		n2 = rvalue(n2, lv);
+		n = mkbinop(OP_GLUE, n, n2);
+		if (comptype(lv[LVPRIM])) {
+			error("struct/union passed by value", NULL);
+			lv[LVPRIM] = pointerto(lv[LVPRIM]);
+		}
 		if (types && *types) {
 			if (!typematch(*types, lv[LVPRIM])) {
 				sprintf(msg, "wrong type in argument %d"
 					" of call to: %%s",
-					na+1);
+					*na+1);
 				error(msg, Names[fn]);
 			}
 			types++;
 		}
-		if (na < MAXFNARGS) sgn[na] = lv[LVPRIM], sgn[na+1] = 0;
-		na++;
-		if (COMMA == Token)
+		if (*na < MAXFNARGS) sgn[*na] = lv[LVPRIM], sgn[*na+1] = 0;
+		(*na)++;
+		if (COMMA == Token) {
 			Token = scan();
+			if (RPAREN == Token)
+				error("trailing ',' in function call", NULL);
+		}
 		else
 			break;
 	}
-	if (fn && TFUNCTION == Types[fn] && !Mtext[fn])
-		Mtext[fn] = globname(sgn);
+	if (fn && TFUNCTION == Types[fn] && !Mtext[fn]) {
+		Mtext[fn] = galloc((*na+1) * sizeof(int), 1);
+		memcpy(Mtext[fn], sgn, (*na+1) * sizeof(int));
+	}
 	rparen();
-	genpushlit(na);
-	return na;
+	return n;
 }
 
-static int indirection(int a, int *lv) {
-	if (a) rvalue(lv);
-	if (INTPP == lv[LVPRIM]) lv[LVPRIM] = INTPTR;
-	else if (CHARPP == lv[LVPRIM]) lv[LVPRIM] = CHARPTR;
-	else if (VOIDPP == lv[LVPRIM]) lv[LVPRIM] = VOIDPTR;
-	else if (INTPTR == lv[LVPRIM]) lv[LVPRIM] = PINT;
-	else if (CHARPTR == lv[LVPRIM]) lv[LVPRIM] = PCHAR;
-	else if (VOIDPTR == lv[LVPRIM]) {
-		error("dereferencing void pointer", NULL);
-		lv[LVPRIM] = PCHAR;
+int deref(int p) {
+	int	y;
+
+	switch (p) {
+	case INTPP:	return INTPTR;
+	case INTPTR:	return PINT;
+	case CHARPP:	return CHARPTR;
+	case CHARPTR:	return PCHAR;
+	case VOIDPP:	return VOIDPTR;
+	case VOIDPTR:	return PCHAR;
+	case FUNPTR:	return PCHAR;
 	}
-	else if (FUNPTR == lv[LVPRIM]) lv[LVPRIM] = PCHAR;
-	else {
+	y = p & ~STCMASK;
+	switch (p & STCMASK) {
+	case STCPP:	return STCPTR | y;
+	case STCPTR:	return PSTRUCT | y;
+	case UNIPP:	return UNIPTR | y;
+	case UNIPTR:	return PUNION | y;
+	}
+	return -1;
+}
+
+static node *indirection(node *n, int *lv) {
+	int	p;
+
+	n = rvalue(n, lv);
+	if (VOIDPTR == lv[LVPRIM])
+		error("dereferencing void pointer", NULL);
+	if ((p = deref(lv[LVPRIM])) < 0) {
 		if (lv[LVSYM])
 			error("indirection through non-pointer: %s",
 				Names[lv[LVSYM]]);
 		else
 			error("indirection through non-pointer", NULL);
+		p = lv[LVPRIM];
 	}
+	lv[LVPRIM] = p;
 	lv[LVSYM] = 0;
-	return lv[LVPRIM];
+	return n;
 }
 
 static void badcall(int *lv) {
@@ -180,7 +232,37 @@ static void badcall(int *lv) {
 }
 
 static int argsok(int na, int nf) {
-	return na == nf || nf < 0 && na >= -nf-1;
+	return na == nf || (nf < 0 && na >= -nf-1);
+}
+
+static node *stc_access(node *n, int *lv, int ptr) {
+	int	y, p;
+	node	*n2;
+
+	n2 = n;
+	p = lv[LVPRIM] & STCMASK;
+	lv[LVADDR] = 1;
+	if (IDENT != Token) {
+		Token = scan();
+		error("struct/union member name expected after '%s'",
+			ptr? "->": ".");
+		return NULL;
+	}
+	y = findmem(lv[LVPRIM] & ~STCMASK, Text);
+	if (0 == y)
+		error("struct/union has no such member: %s", Text);
+	if ((PSTRUCT == p || STCPTR == p) && Vals[y]) {
+		n2 = mkleaf(OP_LIT, Vals[y]);
+		n2 = mkbinop(OP_ADD, n, n2);
+	}
+	Token = scan();
+	p = Prims[y];
+	if (TARRAY == Types[y]) {
+		p = pointerto(p);
+		lv[LVADDR] = 0;
+	}
+	lv[LVPRIM] = p;
+	return n2;
 }
 
 /*
@@ -191,70 +273,147 @@ static int argsok(int na, int nf) {
  *	| postfix ( fnargs )
  *	| postfix ++
  *	| postfix --
+ *	| postfix . identifier
+ *	| postfix -> identifier
  */
 
-static int postfix(int *lv) {
-	int	a, lv2[LV], p, na;
+static node *postfix(int *lv) {
+	node	*n = NULL, *n2, *fn;
+	int	lv2[LV], p, na;
 
-	a = primary(lv);
+	n = primary(lv);
 	for (;;) {
 		switch (Token) {
 		case LBRACK:
 			while (LBRACK == Token) {
-				p = indirection(a, lv);
+				n = indirection(n, lv);
 				Token = scan();
-				if (expr(lv2))
-					rvalue(lv2);
+				n2 = exprlist(lv2, 1);
+				n2 = rvalue(n2, lv2);
+				p = lv[LVPRIM];
 				if (PINT != lv2[LVPRIM])
 					error("non-integer subscript", NULL);
 				if (    PINT == p || INTPTR == p ||
-					CHARPTR == p || VOIDPTR == p
-				)
-					genscale();
-				genadd(PINT, PINT, 1);
+					CHARPTR == p || VOIDPTR == p ||
+					STCPTR == (p & STCMASK) ||
+					UNIPTR == (p & STCMASK)
+				) {
+					n2 = mkunop(OP_SCALE, n2);
+				}
+				else if (comptype(p)) {
+					n2 = mkunop1(OP_SCALEBY,
+						objsize(p, TVARIABLE, 1), n2);
+				}
+				n = mkbinop(OP_ADD, n, n2);
 				rbrack();
 				lv[LVSYM] = 0;
-				a = 1;
+				lv[LVADDR] = 1;
 			}
 			break;
 		case LPAREN:
 			Token = scan();
-			na = fnargs(lv[LVSYM]);
+			fn = n;
+			n = fnargs(lv[LVSYM], &na);
 			if (lv[LVSYM] && TFUNCTION == Types[lv[LVSYM]]) {
 				if (!argsok(na, Sizes[lv[LVSYM]]))
 					error("wrong number of arguments: %s",
 						Names[lv[LVSYM]]);
-				gencall(lv[LVSYM]);
+				n = mkunop2(OP_CALL, lv[LVSYM], na, n);
 			}
 			else {
 				if (lv[LVPRIM] != FUNPTR) badcall(lv);
-				clear();
-				rvalue(lv);
-				gencalr();
+				n = mkbinop(OP_GLUE, n, fn);
+				n = mkunop2(OP_CALR, lv[LVSYM], na, n);
 				lv[LVPRIM] = PINT;
 			}
-			genstack((na + 1) * INTSIZE);
-			//grw -- put value back on expression stack
-			genpushd();
-			a = 0;
+			lv[LVADDR] = 0;
+			//grw - put value back on expression stack
+			// grw - moved to tree.c where call is generated
+			//genpushd();
 			break;
 		case INCR:
 		case DECR: 
-			if (a) {
+			if (lv[LVADDR]) {
 				if (INCR == Token)
-					geninc(lv, 1, 0);
+					n = mkunop2(OP_POSTINC, lv[LVPRIM],
+						lv[LVSYM], n);
 				else
-					geninc(lv, 0, 0);
+					n = mkunop2(OP_POSTDEC, lv[LVPRIM],
+						lv[LVSYM], n);
 			}
 			else
 				error("lvalue required before '%s'", Text);
 			Token = scan();
-			a = 0;
+			lv[LVADDR] = 0;
+			break;
+		case DOT:
+			Token = scan();
+			if (comptype(lv[LVPRIM]))
+				n = stc_access(n, lv, 0);
+			else
+				error("struct/union expected before '.'",
+					NULL);
+			break;
+		case ARROW:
+			Token = scan();
+			p = lv[LVPRIM] & STCMASK;
+			if (p == STCPTR || p == UNIPTR) {
+				n = rvalue(n, lv);
+				n = stc_access(n, lv, 1);
+			}
+			else
+				error(
+				 "struct/union pointer expected before '->'",
+				 NULL);
+			lv[LVSYM] = 0;
 			break;
 		default:
-			return a;
+			return n;
 		}
 	}
+}
+
+static node *prefix(int *lv);
+
+static node *comp_size(void) {
+	int	utype, k = 0, y, lv[LV];
+
+	utype = 0;
+	if (	CHAR == Token || INT == Token || VOID == Token ||
+		STRUCT == Token || UNION == Token ||
+                (IDENT == Token && (utype = usertype(Text)) != 0)
+	) {
+		if (utype) {
+			k = objsize(Prims[utype], Types[utype], Sizes[utype]);
+		}
+		else {
+			switch (Token) {
+			case CHAR:	k = CHARSIZE; break;
+			case INT:	k = INTSIZE; break;
+			case STRUCT:
+			case UNION:	k = primtype(Token, NULL);
+					k = objsize(k, TVARIABLE, 1);
+					break;
+			}
+		}
+		Token = scan();
+		if (STAR == Token) {
+			k = PTRSIZE;
+			Token = scan();
+			if (STAR == Token) Token = scan();
+		}
+		if (0 == k)
+			error("sizeof(void) is unknown", NULL);
+	}
+	else {
+		prefix(lv);
+		y = lv[LVSYM]? lv[LVSYM]: 0;
+		k = y? objsize(Prims[y], Types[y], Sizes[y]):
+			objsize(lv[LVPRIM], TVARIABLE, 1);
+		if (0 == k)
+			error("cannot compute sizeof object", NULL);
+	}
+	return mkleaf(OP_LIT, k);
 }
 
 /*
@@ -277,101 +436,96 @@ static int postfix(int *lv) {
  *	  INT
  *	| CHAR
  *	| VOID
+ *	| STRUCT IDENT
+ *	| UNION IDENT
  */
 
-static int prefix(int *lv) {
-	int	k, y, t, a;
+static node *prefix(int *lv) {
+	node	*n;
+	int	t;
 
 	switch (Token) {
 	case INCR:
 	case DECR:
 		t = Token;
 		Token = scan();
-		if (prefix(lv)) {
+		n = prefix(lv);
+		if (lv[LVADDR]) {
 			if (INCR == t)
-				geninc(lv, 1, 1);
+				n = mkunop2(OP_PREINC, lv[LVPRIM],
+					lv[LVSYM], n);
 			else
-				geninc(lv, 0, 1);
+				n = mkunop2(OP_PREDEC, lv[LVPRIM],
+					lv[LVSYM], n);
 		}
 		else {
 			error("lvalue expected after '%s'",
 				t == INCR? "++": "--");
 		}
-		return 0;
+		lv[LVADDR] = 0;
+		return n;
 	case STAR:
 		Token = scan();
-		a = cast(lv);
-		indirection(a, lv);
-		return 1;
+		n = cast(lv);
+		n = indirection(n, lv);
+		lv[LVADDR] = 1;
+		return n;
 	case PLUS:
 		Token = scan();
- 		if (cast(lv))
-			rvalue(lv);
+		n = cast(lv);
+		n = rvalue(n, lv); /* XXX really? */
 		if (!inttype(lv[LVPRIM]))
 			error("bad operand to unary '+'", NULL);
-		return 0;
+		lv[LVADDR] = 0;
+		return n;
 	case MINUS:
 		Token = scan();
-		if (cast(lv))
-			rvalue(lv);
+		n = cast(lv);
+		n = rvalue(n, lv);
 		if (!inttype(lv[LVPRIM]))
 			error("bad operand to unary '-'", NULL);
-		genneg();
-		return 0;
+		n = mkunop(OP_NEG, n);
+		lv[LVADDR] = 0;
+		return n;
 	case TILDE:
 		Token = scan();
-		if (cast(lv))
-			rvalue(lv);
+		n = cast(lv);
+		n = rvalue(n, lv);
 		if (!inttype(lv[LVPRIM]))
 			error("bad operand to '~'", NULL);
-		gennot();
-		return 0;
+		n = mkunop(OP_NOT, n);
+		lv[LVADDR] = 0;
+		return n;
 	case XMARK:
 		Token = scan();
-		if (cast(lv))
-			rvalue(lv);
-		genlognot();
+		n = cast(lv);
+		n = rvalue(n, lv);
+		n = mkunop(OP_LOGNOT, n);
 		lv[LVPRIM] = PINT;
-		return 0;
+		lv[LVADDR] = 0;
+		return n;
 	case AMPER:
 		Token = scan();
-		if (!cast(lv))
+		n = cast(lv);
+		if (lv[LVADDR]) {
+			if (lv[LVSYM]) n = mkunop1(OP_ADDR, lv[LVSYM], n);
+		}
+		else if ((0 == lv[LVSYM] || Types[lv[LVSYM]] != TARRAY) &&
+			 !comptype(lv[LVPRIM])
+		) {
 			error("lvalue expected after unary '&'", NULL);
-		if (lv[LVSYM]) genaddr(lv[LVSYM]);
+		}
 		lv[LVPRIM] = pointerto(lv[LVPRIM]);
-		return 0;
+		lv[LVADDR] = 0;
+		return n;
 	case SIZEOF:
 		Token = scan();
 		lparen();
-		if (CHAR == Token || INT == Token || VOID == Token) {
-			k = CHAR == Token? CHARSIZE:
-				INT == Token? INTSIZE: 0;
-			Token = scan();
-			if (STAR == Token) {
-				k = PTRSIZE;
-				Token = scan();
-				if (STAR == Token) Token = scan();
-			}
-			else if (0 == k) {
-				error("cannot take sizeof(void)", NULL);
-			}
-		}
-		else if (IDENT == Token) {
-			y = findloc(Text);
-			if (!y) y = findglob(Text);
-			if (!y || !(k = objsize(Prims[y], Types[y], Sizes[y])))
-				error("cannot take sizeof object: %s",
-					Text);
-			Token = scan();
-		}
-		else {
-			error("cannot take sizeof object: %s", Text);
-			Token = scan();
-		}
-		genlit(k);
+		n = comp_size();
 		rparen();
 		lv[LVPRIM] = PINT;
-		return 0;
+		lv[LVADDR] = 0;
+		return n;
 	default:
 		return postfix(lv);
 	}
@@ -386,21 +540,16 @@ static int prefix(int *lv) {
  *	| ( INT ( * ) ( ) ) prefix
  */
 
-int cast(int *lv) {
-	int	t, a;
+static node *cast(int *lv) {
+	int	t;
+	node	*n;
 
 	if (LPAREN == Token) {
 		Token = scan();
-		if (INT == Token) {
-			t = PINT;
-			Token = scan();
-		}
-		else if (CHAR == Token) {
-			t = PCHAR;
-			Token = scan();
-		}
-		else if (VOID == Token) {
-			t = PVOID;
+		if (	INT == Token || CHAR == Token || VOID == Token ||
+			STRUCT == Token || UNION == Token
+		) {
+			t = primtype(Token, NULL);
 			Token = scan();
 		}
 		else {
@@ -426,12 +575,49 @@ int cast(int *lv) {
 			}
 		}
 		rparen();
-		a = prefix(lv);
+		n = prefix(lv);
 		lv[LVPRIM] = t;
-		return a;
+		return n;
 	}
 	else {
 		return prefix(lv);
+	}
+}
+
+int binop(int tok) {
+	switch(tok) {
+	case AMPER:	return OP_BINAND;
+	case CARET:	return OP_BINXOR;
+	case EQUAL:	return OP_EQUAL;
+	case GREATER:	return OP_GREATER;
+	case GTEQ:	return OP_GTEQ;
+	case LESS:	return OP_LESS;
+	case LSHIFT:	return OP_LSHIFT;
+	case LTEQ:	return OP_LTEQ;
+	case MINUS:	return OP_SUB;
+	case MOD:	return OP_MOD;
+	case NOTEQ:	return OP_NOTEQ;
+	case PIPE:	return OP_BINIOR;
+	case PLUS:	return OP_PLUS;
+	case RSHIFT:	return OP_RSHIFT;
+	case SLASH:	return OP_DIV;
+	case STAR:	return OP_MUL;
+	default:	fatal("internal: unknown binop");
+			return 0; /* notreached */
+	}
+}
+
+node *mkop(int op, int p1, int p2, node *l, node *r) {
+	if (PLUS == op || MINUS == op) {
+		return mkbinop2(binop(op), p1, p2, l, r);
+	}
+	else if (EQUAL == op || NOTEQ == op || LESS == op ||
+		 GREATER == op || LTEQ == op || GTEQ == op)
+	{
+		return mkbinop1(binop(op), p1, l, r);
+	}
+	else {
+		return mkbinop(binop(op), l, r);
 	}
 }
 
@@ -480,12 +666,16 @@ int cast(int *lv) {
  *	  binor
  */
 
-static int binexpr(int *lv) {
-	int	ops[9], prs[10], sp = 0;
-	int	a, a2 = 0, lv2[LV];
+static node *binexpr(int *lv) {
+	int	ops[9];
+	int	prims[10];
+	int	sp = 0;
+	int	lv2[LV], a;
+	node	*tree[10];
 
-	a = cast(lv);
-	prs[0] = lv[LVPRIM];
+	tree[0] = cast(lv);
+	a = lv[LVADDR];
+	prims[0] = lv[LVPRIM];
 	while (SLASH == Token || STAR == Token || MOD == Token ||
 		PLUS == Token || MINUS == Token || LSHIFT == Token ||
 		RSHIFT == Token || GREATER == Token || GTEQ == Token ||
@@ -493,25 +683,30 @@ static int binexpr(int *lv) {
 		NOTEQ == Token || AMPER == Token || CARET == Token ||
 		PIPE == Token
 	) {
-		if (a) rvalue(lv);
-		if (a2) rvalue(lv2);
+		tree[0] = rvalue(tree[0], lv);
 		while (sp > 0 && Prec[Token] <= Prec[ops[sp-1]]) {
-			prs[sp-1] = genbinop(ops[sp-1], prs[sp-1], prs[sp]);
+			tree[sp-1] = mkop(ops[sp-1], prims[sp-1], prims[sp],
+					tree[sp-1], tree[sp]);
+			prims[sp-1] = binoptype(ops[sp-1], prims[sp-1],
+					prims[sp]);
 			sp--;
 		}
 		ops[sp++] = Token;
 		Token = scan();
-		a2 = cast(lv2);
-		prs[sp] = lv2[LVPRIM];
+		tree[sp] = cast(lv2);
+		tree[sp] = rvalue(tree[sp], lv2);
+		prims[sp] = lv2[LVPRIM];
 		a = 0;
 	}
-	if (a2) rvalue(lv2);
 	while (sp > 0) {
-		prs[sp-1] = genbinop(ops[sp-1], prs[sp-1], prs[sp]);
+		tree[sp-1] = mkop(ops[sp-1], prims[sp-1], prims[sp],
+				tree[sp-1], tree[sp]);
+		prims[sp-1] = binoptype(ops[sp-1], prims[sp-1], prims[sp]);
 		sp--;
 	}
-	lv[LVPRIM] = prs[0];
-	return a;
+	lv[LVPRIM] = prims[0];
+	lv[LVADDR] = a;
+	return tree[0];
 }
 
 /*
@@ -524,73 +719,90 @@ static int binexpr(int *lv) {
  *	| logor '||' logand
  */
 
-static int cond2(int *lv, int op) {
-	int	a, a2 = 0, lv2[LV];
+static node *cond2(int *lv, int op) {
+	int	lv2[LV];
 	int	lab = 0;
+	node	*n, *n2 = NULL;
+	int	tv = 1;
 
-	a = op == LOGOR? cond2(lv, LOGAND): binexpr(lv);
+	n = op == LOGOR? cond2(lv, LOGAND): binexpr(lv);
 	while (Token == op) {
 		if (!lab) lab = label();
-		if (a) rvalue(lv);
-		if (a2) rvalue(lv2);
-		if (op == LOGOR)
-			genbrtrue(lab);
-		else
-			genbrfalse(lab);
-		clear();
+		if (tv) notvoid(lv[LVPRIM]), tv = 0;
+		n = rvalue(n, lv);
 		Token = scan();
-		a2 = op == LOGOR? cond2(lv2, LOGAND): binexpr(lv2);
-		a = 0;
+		n2 = op == LOGOR? cond2(lv2, LOGAND): binexpr(lv2);
+		n2 = rvalue(n2, lv2);
+		if (op == LOGOR)
+			n = mkbinop1(OP_BRTRUE, lab, n, n2);
+		else
+			n = mkbinop1(OP_BRFALSE, lab, n, n2);
 	}
 	if (lab) {
-		if (a2) rvalue(lv2);
-		genlab(lab);
-		genbool();
-		load();
+		n = mkunop1(OP_LAB, lab, n);
+		n = mkunop(OP_BOOL, n);
+		lv[LVPRIM] = PINT;
+		lv[LVADDR] = 0;
 	}
-	return a;
+	return n;
 }
 
 /*
  * condexpr :=
  *	  logor
- *	| logor ? logor : condexpr
+ *	| logor ? expr : condexpr
  */
 
-static int cond3(int *lv) {
-	int	a, lv2[LV], p;
-	int	l1 = 0, l2 = 0;
+static node *cond3(int *lv) {
+	node	*n, *n2;
+	int	lv2[LV], p;
+	int	l1 = 0, l2 = 0, tv = 1;
 
-	a = cond2(lv, LOGOR);
+	n = cond2(lv, LOGOR);
 	p = 0;
 	while (QMARK == Token) {
+		n = rvalue(n, lv);
+		if (tv) notvoid(lv[LVPRIM]), tv = 0;
 		l1 = label();
 		if (!l2) l2 = label();
-		if (a) rvalue(lv);
-		a = 0;
-		genbrfalse(l1);
-		clear();
 		Token = scan();
-		if (expr(lv))
-			rvalue(lv);
-		if (!p) p = lv[LVPRIM];
-		if (!typematch(p, lv[LVPRIM]))
+		n2 = exprlist(lv2, 0);
+		n2 = rvalue(n2, lv2);
+		n = mkbinop1(OP_BRFALSE, l1, n, n2);
+		if (!p) p = lv2[LVPRIM];
+		if (!typematch(p, lv2[LVPRIM]))
 			error("incompatible types in '?:'", NULL);
-		genjump(l2);
-		genlab(l1);
-		clear();
 		colon();
-		if (cond2(lv2, LOGOR))
-			rvalue(lv2);
+		n2 = cond2(lv2, LOGOR);
+		n2 = rvalue(n2, lv2);
+		n = mkbinop(OP_GLUE, n, n2);
 		if (QMARK != Token)
 			if (!typematch(p, lv2[LVPRIM]))
 				error("incompatible types in '?:'", NULL);
 	}
 	if (l2) {
-		genlab(l2);
-		load();
+		n = mkunop1(OP_IFELSE, l2, n);
+		lv[LVPRIM] = p;
+		lv[LVADDR] = 0;
 	}
-	return a;
+	return n;
+}
+
+int arithop(int tok) {
+	switch(tok) {
+	case ASPLUS:	return PLUS;
+	case ASMINUS:	return MINUS;
+	case ASAND:	return AMPER;
+	case ASOR:	return PIPE;
+	case ASXOR:	return CARET;
+	case ASMUL:	return STAR;
+	case ASMOD:	return MOD;
+	case ASDIV:	return SLASH;
+	case ASLSHIFT:	return LSHIFT;
+	case ASRSHIFT:	return RSHIFT;
+	default:	fatal("internal: unknown assignment operator");
+			return 0; /* notreached */
+	}
 }
 
 /*
@@ -609,10 +821,11 @@ static int cond3(int *lv) {
  *	| condexpr |= asgmnt
  */
 
-int asgmnt(int *lv) {
-	int	a, lv2[LV], op;
+static node *asgmnt(int *lv) {
+	node	*n, *n2, *src;
+	int	lv2[LV], lvs[LV], op;
 
-	a = cond3(lv);
+	n = cond3(lv);
 	if (ASSIGN == Token || ASDIV == Token || ASMUL == Token ||
 		ASMOD == Token || ASPLUS == Token || ASMINUS == Token ||
 		ASLSHIFT == Token || ASRSHIFT == Token || ASAND == Token ||
@@ -620,22 +833,26 @@ int asgmnt(int *lv) {
 	) {
 		op = Token;
 		Token = scan();
-		if (ASSIGN != op && !lv[LVSYM]) {
-			genpush();
-			genind(lv[LVPRIM]);
-		}
-		if (asgmnt(lv2)) rvalue(lv2);
-		if (ASSIGN == op)
+		n2 = asgmnt(lv2);
+		n2 = rvalue(n2, lv2);
+		if (ASSIGN == op) {
 			if (!typematch(lv[LVPRIM], lv2[LVPRIM]))
 				error("assignment from incompatible type",
 					NULL);
-		if (a)
-			genstore(op, lv, lv2);
-		else
+			n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+		}
+		else {
+			memcpy(lvs, lv, sizeof(lvs));
+			src = rvalue(n, lvs);
+			n2 = mkop(arithop(op), lv[LVPRIM], lv2[LVPRIM],
+				src, n2);
+			n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+		}
+		if (!lv[LVADDR])
 			error("lvalue expected in assignment", Text);
-		a = 0;
+		lv[LVADDR] = 0;
 	}
-	return a;
+	return n;
 }
 
 /*
@@ -644,28 +861,59 @@ int asgmnt(int *lv) {
  *	| asgmnt , expr
  */
 
-int expr(int *lv) {
-	int	a, a2 = 0, lv2[LV];
+static node *exprlist(int *lv, int ckvoid) {
+	node	*n, *n2 = NULL;
+	int	p;
 
-	a = asgmnt(lv);
+	n = asgmnt(lv);
+	p = lv[LVPRIM];
+	if (COMMA == Token) n = rvalue(n, lv);
 	while (COMMA == Token) {
 		Token = scan();
-		clear();
-		a2 = asgmnt(lv2);
-		a = 0;
+		n2 = asgmnt(lv);
+		n2 = rvalue(n2, lv);
+		p = lv[LVPRIM];
+		n = mkbinop(OP_COMMA, n, n2);
 	}
-	if (a2) rvalue(lv2);
-	//grw DEBUG trace comment in asm file
-	//genraw(";----- end expr -----\n");
-	return a;
+	if (ckvoid) notvoid(p);
+	return n;
 }
 
-int rexpr(void) {
+void expr(int *lv, int ckvoid) {
+	node	*n;
+  //grw - debug
+	//gen(";----- begin expr -----");
+
+	Ndtop = 1;
+	n = exprlist(lv, ckvoid);
+	n = rvalue(n, lv);
+	emittree(n);
+	//grw - debug
+	//gen(";----- end expr -----");
+
+}
+
+void rexpr(void) {
+	int	lv[LV];
+	//grw - debug
+	//gen(";----- begin rexpr -----");
+
+	expr(lv, 1);
+	//grw - debug
+	//gen(";----- end rexpr -----");
+}
+
+int constexpr(void) {
+	node	*n;
 	int	lv[LV];
 
-	if (expr(lv))
-		rvalue(lv);
-	//grw DEBUG trace comment in asm file
-	//genraw(";----- end of rexpr -----\n");
-	return lv[LVPRIM];
+	Ndtop = 1;
+	n = binexpr(lv);
+	notvoid(lv[LVPRIM]);
+	n = fold_reduce(n);
+	if (NULL == n || OP_LIT != n->op) {
+		error("constant expression expected", NULL);
+		return 0;
+	}
+	return n->args[0];
 }

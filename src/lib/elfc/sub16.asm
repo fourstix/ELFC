@@ -3,7 +3,7 @@
 ; ***********************************************************
 ; ***** Subtract two 16-bit numbers on expression stack *****
 ; ***** R7 - pointer to expression  stack               *****
-; ***** Numbers on expressin stack are LSB first        *****
+; ***** Numbers on expression stack are LSB first       *****
 ; ***********************************************************
               proc    sub16
 
@@ -18,8 +18,7 @@
               sdb                      ; subtract from MSB of arg 2
               stxd                     ; store to MSB of arg2
               dec     r7               ; move R7 to just before arg2
-              sex     r2               ; restore X to stack
+              sex     r2               ; restore X to SP
               rtn                      ; and return to caller
 
               endp
-
