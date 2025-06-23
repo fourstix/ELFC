@@ -6,4 +6,5 @@
 #define OS		  "Elf/OS"
 #define ASCMD	  "%sasm02 -L %s"
 #define LDCMD	  "%slink02 -e -s -L %slib -I %slib crt0.prg %s"
-#define SYSLIBC	" -l elfc.lib"
+#define SYSLIBC	" -l elfc.lib -l stdlib.lib -l stdio.lib"
+#define ELFLIBC	" -l elfc.lib -l stdlib.lib"

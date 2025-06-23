@@ -196,7 +196,8 @@ static void link(char *fname, char *path) {
     
   if (strlen(O_outfile) + 6 + strlen(ofile) + strlen(LDCMD) + strlen(SYSLIBC) + strlen(binfile) + strlen(path) >= TEXTLEN)
 	 	cmderror("linker command too long", NULL);
-	sprintf(cmd, LDCMD, path, path, path, ofile);
+    
+  sprintf(cmd, LDCMD, path, path, path, ofile);
   
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -207,9 +208,12 @@ static void link(char *fname, char *path) {
     strcat(cmd, binfile);
     
   }
-  /* add library to command */
-  strcat(cmd, SYSLIBC);  
-    
+  
+  if (O_stdio)
+    strcat(cmd, SYSLIBC);  
+  else 
+     strcat(cmd, ELFLIBC);
+       
   //grw - simplified logic to not remove files 
 	//if (O_verbose > 2) printf("rm ");
 	//for (i=0; i<Nf; i++) {
@@ -235,7 +239,7 @@ static void longusage(void) {
 	printf("\n");
 	usage();
 	printf(	"\n"
-		"-c       compile only, do not link\n"
+		"-c       compile and assemble only, do not link\n"
 		"-d opt   activate debug option OPT, ? = list\n"
 		"-o file  write linker output to FILE\n"
 		"-t       test only, generate no code\n"
@@ -325,10 +329,10 @@ int main(int argc, char *argv[]) {
   }
   
   //grw - debugging
-  if (Fpath != NULL)
-    printf("Path = '%s'\n", Fpath);
-  else 
-    printf("No path\n");
+  //if (Fpath != NULL)
+  //  printf("Path = '%s'\n", Fpath);
+  //else 
+  //  printf("No path\n");
     
 	for (i=1; i<argc; i++) {
 		if (*argv[i] != '-') break;
@@ -362,10 +366,13 @@ int main(int argc, char *argv[]) {
 				if (def) cmderror("too many -D's", NULL);
 				def = nextarg(argc, argv, &i, &j);
 				break;
-        case 'L':
-  				O_library = 1;
-  				break;
+      case 'L':
+				O_library = 1;
+        //grw - debug 
+        //printf("Library mode.\n");
+				break;
 			case 'N':
+        //grw - don't link stdio
 				O_stdio = 0;
 				break;
 			case 'S':
@@ -387,6 +394,8 @@ int main(int argc, char *argv[]) {
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
+      //grw - debug
+      //printf("Compiling...\n");
 			compile(argv[i], def);
       //grw - set name for linker
       fname = argv[i]; 

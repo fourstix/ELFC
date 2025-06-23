@@ -237,7 +237,8 @@ static void return_stmt(void) {
 			error("missing value after 'return'", NULL);
 	}
 	//grw - get return result from expression stack
-	genpopd();
+	if (Prims[Thisfn] != PVOID)
+		genpopd();
 
 	genjump(Retlab);
 	semi();

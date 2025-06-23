@@ -86,6 +86,10 @@ void cgpostlude(void)	{ gen(";---- cgpostlude");
 	//grw - make sure entry point was generated in library 
 	if (O_library && entry) {
 		pname = procname(Basefile);
+		//grw - debug
+		if (pname == NULL)
+			error("Proc Name is Null.", NULL);
+
 		pname++;   //grw - skip over initial C in proc name
 		error("entry point function %s not found in libary file", pname);
 	}
@@ -833,16 +837,22 @@ void cgdefs(char *s, int len) {
 }	
 
 /* create a procedure name as the file name without extension */
-char *procname(char *file) {
-	int   len = strlen(file) + 1;
-	char *ofile = malloc(len);
+char *procname(char *bfile) {
+	int   len;
+	char *ofile;
 	char *p;
+	
+	if (bfile == NULL) return NULL;
+	
+	len = strlen(bfile) + 2;
+	ofile = malloc(len);
+
 	if (ofile == NULL) return NULL;
 	//grw - append "C" to the proc name for library 
 	if (O_library)
-		sprintf(ofile, "%c%s", PREFIX, file);
+		sprintf(ofile, "%c%s", PREFIX, bfile);
 	else 
-		strcpy(ofile, file);
+		strcpy(ofile, bfile);
 	/* truncate the file name string at last period */
 	p = strrchr(ofile, '.');
 	if (p != NULL) {
@@ -853,7 +863,9 @@ char *procname(char *file) {
 
 /* return entry point for library and clear */
 int cgentrypt(void) {
-	int val = entry;
+	int val;
+	
+	val = entry;
 	entry = 0;
 	return val;
 }

@@ -172,15 +172,23 @@ void genname(char *name) {
 	//grw - process name for library entry point and other lables
 	if (O_library) {
 	  pname = procname(Basefile);
+		//grw - debug
+		if (pname == NULL)
+		  error("Proc Name is Null.", NULL);
+			
 	  if (!strcmp(gsym(name), pname)) {
 		ngen(";---- library entry point %s", pname, 0);
 		genlab(cgentrypt());
 		return;
 		} else {
+		//grw - debug
+		//printf("Other name: %s\n", name);
 		//grw - commit any queued jump before generating label
 		commit();
 		}		
 	}		
+	//grw - debug 
+	//printf("Generate %s name\n", name);
 	genraw(gsym(name));
 	genraw(":");
 }
@@ -190,8 +198,15 @@ void genpublic(char *name) {
 	//grw - don't declare library entry point publics
 	if (O_library) {
 		pname = procname(Basefile);
-		if (!strcmp(gsym(name), pname)) 
-		return;
+		//grw - debug
+		if (pname == NULL)
+			error("Proc Name is Null.", NULL);
+
+		if (!strcmp(gsym(name), pname)) {
+			//grw - debug
+			//printf("Public label supressed\n");
+			return;
+		}
   }
 	cgpublic(gsym(name));
 }
@@ -399,8 +414,6 @@ int genadd(int p1, int p2, int swapped) {
 
 int gensub(int p1, int p2, int swapped) {
 	int	rp = PINT;
-	//grw - DEBUG
-	gen(";----- begin gensub");
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 logic
@@ -428,8 +441,6 @@ int gensub(int p1, int p2, int swapped) {
 		else
 			cgunscale();
 	}
-	//grw - debug
-	gen(";----- end gensub");
 	
 	return rp;
 }
