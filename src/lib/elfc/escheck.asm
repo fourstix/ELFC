@@ -1,6 +1,6 @@
 #include      ../macros.inc
-#include      ../bios.inc
-#include      ../kernel.inc
+#include      ../include/bios.inc
+#include      ../include/kernel.inc
 
 ;---------------------------------------------------------
 ; escheck - check the expression stack for a stack creep

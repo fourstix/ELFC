@@ -172,7 +172,7 @@ void genname(char *name) {
 	//grw - process name for library entry point and other lables
 	if (O_library) {
 	  pname = procname(Basefile);
-		//grw - debug
+		//grw - fail if proc name is missing
 		if (pname == NULL)
 		  error("Proc Name is Null.", NULL);
 			
@@ -198,7 +198,7 @@ void genpublic(char *name) {
 	//grw - don't declare library entry point publics
 	if (O_library) {
 		pname = procname(Basefile);
-		//grw - debug
+		//grw - fail if proc name is missing
 		if (pname == NULL)
 			error("Proc Name is Null.", NULL);
 
@@ -541,6 +541,7 @@ int binoptype(int op, int p1, int p2) {
 void commit_bool(void) {
 	//grw
 	gen(";----- commit_bool");
+	ngen(";----- commit_bool %s = %d", "Q_bool", Q_bool);
 	switch (Q_bool) {
     case lognot:	cglognot(); break;
     case normalize:	cgbool(); break;
@@ -551,6 +552,7 @@ void commit_bool(void) {
 void queue_bool(int op) {
   //grw  - debug
 	gen(";----- queue_bool");	
+	//ngen(";----- queue_bool %s = %d", "op", op);
 	commit();
 	Q_bool = op;
 }
@@ -653,17 +655,22 @@ void genbranch(int dest, int inv) {
 }
 
 void genlogbr(int dest, int inv) {
+	//grw - debug 
+	gen(";----- genlogbr");
+	//ngen(";----- genlogbr %s = %d", "inv", inv);
+	//ngen(";----- genlogbr %s = %d", "Q_bool", Q_bool);
+	
 	if (normalize == Q_bool) {
 		if (inv)
-			cgbrfalse(dest);
+			cgbrfalse(dest, 0);
 		else
-			cgbrtrue(dest);
+			cgbrtrue(dest, 0);
 	}
 	else if (lognot == Q_bool) {
 		if (inv)
-			cgbrtrue(dest);
+			cgbrtrue(dest, 0);
 		else
-			cgbrfalse(dest);
+			cgbrfalse(dest, 0);
 	}
 	Q_bool = bnone;
 }
@@ -672,6 +679,8 @@ void genlogbr(int dest, int inv) {
 void genbrfalse(int dest) {
 	//grw - removed gentext
 	//gentext();
+	//grw - debug 
+	gen(";----- genbrfalse");
 	if (Q_cmp != cnone) {
 		genbranch(dest, 0);
 		return;
@@ -681,12 +690,15 @@ void genbrfalse(int dest) {
 		return;
 	}
 	commit();
-	cgbrfalse(dest);
+	cgbrfalse(dest, 0);
 }
 
 void genbrtrue(int dest) {
 	//grw - removed gentext
 	//gentext();
+	//grw - debug 
+	gen(";----- genbrtrue");
+	//ngen(";----- %s dest = %d", "genbrtrue", dest);
 	if (Q_cmp != cnone) {
 		genbranch(dest, 1);
 		return;
@@ -696,7 +708,19 @@ void genbrtrue(int dest) {
 		return;
 	}
 	commit();
-	cgbrtrue(dest);
+	cgbrtrue(dest, 0);
+}
+
+void gensctrue(int dest) {
+	//grw - debug 
+	gen(";----- gensctrue");
+	cgbrtrue(dest, 1);
+}
+
+void genscfalse(int dest) {
+	//grw - debug 
+	gen(";----- gensctrue");
+	cgbrfalse(dest, 1);
 }
 
 void gencall(int y) {
@@ -883,7 +907,11 @@ static void genincptr(int *lv, int inc, int pre) {
 		else
 			cgdecpg(gsym(Names[y]), size);
 	}
-	if (pre) genrval(lv);
+	if (pre) {
+		genrval(lv);
+		//grw - commit pushd for rvalue
+		commit();
+	}
 }
 
 void geninc(int *lv, int inc, int pre) {
@@ -902,6 +930,7 @@ void geninc(int *lv, int inc, int pre) {
 	if (!y && !pre) cgldinc();
 	if (!pre) {
 		genrval(lv);
+		//grw - commit pushd for rvalue
 		commit();
 	}
 	if (!y) {
@@ -936,7 +965,11 @@ void geninc(int *lv, int inc, int pre) {
 			b? cgdecgb(gsym(Names[y])):
 			   cgdecgw(gsym(Names[y]));
 	}
-	if (pre) genrval(lv);
+	if (pre) {
+		genrval(lv);
+		//grw - commit pushd for rvalue
+		commit();
+	}
 }
 
 /* switch table generator */

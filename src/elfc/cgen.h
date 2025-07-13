@@ -9,13 +9,15 @@ void cgadd(void);
 void cgand(void);
 void cgbool(void);
 void cgbreq(int n);
-void cgbrfalse(int n);
+//grw - added short ciruit flag
+void cgbrfalse(int n, int sc);
 void cgbrge(int n);
 void cgbrgt(int n);
 void cgbrle(int n);
 void cgbrlt(int n);
 void cgbrne(int n);
-void cgbrtrue(int n);
+//grw - added short ciruit flag
+void cgbrtrue(int n, int sc);
 void cgbruge(int n);
 void cgbrugt(int n);
 void cgbrule(int n);

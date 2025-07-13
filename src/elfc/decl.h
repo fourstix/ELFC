@@ -48,6 +48,9 @@ void	genasop(int op, int *lv, int p2);
 void	genbool(void);
 void	genbrfalse(int dest);
 void	genbrtrue(int dest);
+//grw - added short-circuit code generators
+void	genscfalse(int dest);
+void	gensctrue(int dest);
 void	genbss(char *name, int len, int statc);
 void	gencall(int y);
 void	gencalr(void);

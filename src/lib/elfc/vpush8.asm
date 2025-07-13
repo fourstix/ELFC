@@ -16,10 +16,10 @@
             lda     r6
             plo     r8
             sex     r7        
-            lda     r8  ; get char value
-            stxd        ; save as LSB on stack
             ldi     0   ; promote to unsigned 16 bit value
             stxd        ; save padding byte in MSB
+            lda     r8  ; get char value
+            stxd        ; save as LSB on stack
             sex     r2
             rtn
               endp 

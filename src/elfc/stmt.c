@@ -175,6 +175,8 @@ static void if_stmt(void) {
 	lparen();
 	rexpr();
 	l1 = label();
+	//grw - debug
+	//ngen(";----- %s genbrfalse l1 = %d","if", l1);
 	genbrfalse(l1);
 	//grw - removed clear logic
 	//clear(1);
@@ -188,6 +190,9 @@ static void if_stmt(void) {
 		Token = scan();
 		stmt();
 	}
+	//grw - debug
+	//gen(";----- if genlab(l1)");
+	//ngen(";----- %s genlab  l1 = %d","if", l1);
 	genlab(l1);
 	//grw - debug
 	gen(";----- end if");
@@ -392,6 +397,8 @@ static void wrong_ctx(int t) {
 
 static void stmt(void) {
 	int	lv[LV];
+	//grw - debug
+	gen(";----- begin stmt ------");
 
 	switch (Token) {
 	//grw -- added asm statement
@@ -415,5 +422,5 @@ static void stmt(void) {
 	//grw - removed clear logic
 	//clear(1);
 	//grw - debug
-	genraw(";----- end of stmt ------\n");
+	gen(";----- end stmt ------");
 }

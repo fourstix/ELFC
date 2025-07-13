@@ -188,24 +188,38 @@ void dumptree(node *a) {
 #endif /* debug */
 
 void emitcond(node *a, int ex) {
+	//grw - debugging
+	//gen(";----- begin emitcond -----");
+
 	if (OP_GLUE == a->left->left->op)
 		emitcond(a->left->left, ex);
 	emittree1(a->left->left);
+  //grw - debugging
+	//ngen(";----- %s label = %d","emitcond", (a->left->args[0]));
 	genbrfalse(a->left->args[0]);
   //grw - removed clear logic
 	//clear(0);
 	emittree1(a->left->right);
 	genjump(ex);
 	commit();
+	//grw - debug
+	//gen(";----- emitcond genlab(a->left->args[0])");
 	genlab(a->left->args[0]);
 	//grw - removed clear logic
 	//clear(0);
 	emittree1(a->right);
+	//grw - debugging
+	//gen(";----- end emitcond -----");
+
 }
 
 void emitargs(node *a) {
 	if (NULL == a) return;
+	//grw - debugging
+	gen(";----- emitarg -----");
 	emittree1(a->right);
+	//grw - commit after each arg
+	commit();
 	emitargs(a->left);
 }
 
@@ -237,6 +251,8 @@ static void emittree1(node *a) {
 			break;
 	case OP_LAB:	emittree1(a->left);
 			commit();
+			//grw - debug
+			//gen(";----- emittreee1 OP_LAB genlab -----");
 			genlab(a->args[0]);
 			break;
 	case OP_LDLAB:	genldlab(a->args[0]); break;
@@ -244,6 +260,8 @@ static void emittree1(node *a) {
 			lv[LVPRIM] = a->args[0];
 			lv[LVSYM] = a->args[1];
 			genrval(lv);
+			//grw - commit pushd for rvalue
+			commit();
 			break;
 	case OP_BOOL:	emittree1(a->left);
 			genbool();
@@ -263,15 +281,23 @@ static void emittree1(node *a) {
 	case OP_BRFALSE:/* fallthru */
 	case OP_BRTRUE:	emittree1(a->left);
 			commit();
+			//grw - debugging
+			//gen(";----- OP_BRFALSE, OP_BTRUE");
+			//grw - changed to use short-circuit code generators
+			//a->op == OP_BRTRUE?
+			//genbrtrue(a->args[0]):
+			// genbrfalse(a->args[0]);
 			a->op == OP_BRTRUE?
-				genbrtrue(a->args[0]):
-				genbrfalse(a->args[0]);
+				gensctrue(a->args[0]):
+				genscfalse(a->args[0]);
 			//grw - removed clear logic
 			//clear(0);
 			emittree1(a->right);
 			break;
 	case OP_IFELSE:	emitcond(a->left, a->args[0]);
 			commit();
+			//grw - debug
+			//gen(";----- emittree1 genlab(a->args[0]) -----");
 			genlab(a->args[0]);
 			break;
 	case OP_COMMA:	emittree1(a->left);
@@ -347,6 +373,8 @@ static void emittree1(node *a) {
 			lv[LVPRIM] = FUNPTR;
 			lv[LVSYM] = a->args[0];
 			genrval(lv);
+			//grw - commit pushd for rvalue
+			commit();
 			gencalr();
 			genstack((a->args[1]) * BPW);
 			//grw - put the return value on the stack after call
@@ -373,7 +401,7 @@ static void emittree1(node *a) {
 }
 
 void emittree(node *a) {
-	/*dumptree(a);*/
+	/* dumptree(a); */
 	a = optimize(a);
 	emittree1(a);
 }

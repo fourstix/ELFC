@@ -48,6 +48,7 @@
           extrn   vstor16
           extrn   vstor8
           extrn   swap16
+          extrn   dget16
           extrn   lpush16
           extrn   lpush8
           extrn   deref16
@@ -87,3 +88,10 @@
           extrn   unscl4
           extrn   lget16
           extrn   lget8
+          extrn   lset16
+          extrn   lset8
+
+;-------------------------------------------------------------------------------
+; crt0 - Elf/OS c start-up library
+;-------------------------------------------------------------------------------
+          extrn   auto_err

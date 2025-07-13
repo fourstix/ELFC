@@ -36,48 +36,6 @@ void cgprelude()	{
 		queue_jmp(entry);	
 	}	
 		/* moved prelude code to crt0 module */
-	/*
-	genraw("          public es_min\n\n");	
-	
-	genraw("            org    2000h\n\n");
-	
-	genraw("ElfCpgm:  br     Elfstart\n");
-	genraw("          ever\n");
-	genraw("  					db 'ElfC',0\n");
-	genraw("Elfstart: push   r6            ; save original return address on stack\n");
-	genraw("          load   rf, ostack    ; save original SP\n");
-	genraw("          ghi    r2\n");
-	genraw("          str    rf\n");
-	genraw("          inc    rf\n");
-	genraw("          glo    r2\n");
-	genraw("          str    rf\n");
-	genraw("          load   r2, cstack   ; set SP to C Program Stack\n");
-	genraw("          load   r7, estack   ; set ESP (Expression Stack Pointer)\n");
-	genraw("          copy   r7, rb       ; set Stack Frame BP (Base Pointer)\n");
-	genraw("          load   r1, $F000    ; DEBUG set R1 for breakpoint\n");
-	
-	genraw(";----- TODO: set up main arguments and options\n");
-	genraw("          call  Cmain				  ; call the main procedure\n");
-	genraw("          clc                 ; clear DF for return to Elf/OS\n\n");
-	genraw(";----- set up registers for return to Elf/OS\n");
-	genraw("Elfexit:  load   rf, ostack   ; get original SP\n");
-  genraw("          lda    rf\n");
-  genraw("          phi    r2\n");
-  genraw("          ldn    rf\n");
-  genraw("          plo    r2\n");
-  genraw("          sex    2            ; make sure X = SP for return\n");
-  genraw("          pop    r6           ; restore original return\n");  
-	genraw("          glo    ra						; get byte value for return\n");
-  genraw("          return              ; return to Elf/OS\n");
-	genraw("\n;----- error handling for when expression stack exhausted\n");
-	genraw("auto_err: call o_inmsg        ; print error msg\n");
-	genraw("            db 'Out of Stack Space for Auto Variables',10,13,0\n");
-	genraw("          load   ra, -1       ; set error value for return\n");
-	genraw("          stc                 ; set DF for error return\n");
-	genraw("          lbr Elfexit         ; exit to Elf/OS\n");
-
-	genraw(";--------------------- End Prelude ----------------------------------\n");
-*/
 }
 
 void cgpostlude(void)	{ gen(";---- cgpostlude");
@@ -86,7 +44,7 @@ void cgpostlude(void)	{ gen(";---- cgpostlude");
 	//grw - make sure entry point was generated in library 
 	if (O_library && entry) {
 		pname = procname(Basefile);
-		//grw - debug
+		//grw - fail if proc name is missing
 		if (pname == NULL)
 			error("Proc Name is Null.", NULL);
 
@@ -96,137 +54,12 @@ void cgpostlude(void)	{ gen(";---- cgpostlude");
 }
 	
 /* moved postlude code to crt0 module */
-/*
-  genraw("; --------------------- Begin Postlude ------------------------------\n");
-  genraw("ostack: dw 0          	; original SP\n");
-	genraw(";------------------------ C Program Stack ---------------------------\n");
-	genraw("cstk:   ds 127\n");
-	genraw("cstack: db 0          	; progam stack\n");
-	genraw(";----------------------- Expression Stack ---------------------------\n");
-	genraw("estk:   ds 32           ; minimum stack for arithmetic operations\n");
-	genraw("es_min: ds 223					; auto variables and arithmetic operations\n");
-	genraw("estack: db 0            ; Top of expression stack\n");
-	genraw(";----------- TODO: load arguments for main function onto ES ---------\n");
-	//genraw(";----- argc count of arguments including command name\n"); 
-	//genraw("m_argc:   dw   1 					; argc value\n");
-	//genraw(";----- argv[] array of char pointers\n");								
-	//genraw("m_argvp:  dw m_cmd				; arg[0] is command\n");  
-	//genraw("m_ops: 	  ds   30					; array of char pointers for option strings\n"); 
-	genraw("m_cmd:    ds   20         ; command name that invoked program\n");
-	genraw("          db   0          ; guard byte for end of string\n");
-	genraw("; --------------------- End Postlude --------------------------------\n");
-	genraw("             end  ElfCpgm\n\n");
-}
-*/
 
 void cgpublic(char *s)	{ gen(";----- cgpublic");
 		sgen("              %s %s", "public", s); }
 
 //grw - cgsynth is not used
-/*
-void cgsynth(char *op) {
-  int	n;
-	char	*s;
-	
-	gen(";----- cgsynth");
-	n = Q_val;
-	s = gsym(Q_name);
-	switch (Q_type) {
-	case addr_auto:		ngen("%s\t%d(%%ebp),%%ecx", "leal", n);
-				sgen("%s\t%s,%%eax", op, "%ecx");
-				break;
-	case addr_static:	lgen("%s\t$%c%d,%%eax", op, n); break;
-	case addr_globl:	sgen("%s\t$%s,%%eax", op, s); break;
-	case addr_label:	lgen("%s\t$%c%d,%%eax", op, n); break;
-	case literal: 		ngen("%s\t$%d,%%eax", op, n); break;
-	case auto_word:		ngen("%s\t%d(%%ebp),%%eax", op, n); break;
-	case static_word:	lgen("%s\t%c%d,%%eax", op, n); break;
-	case globl_word:	sgen("%s\t%s,%%eax", op, s); break;
-	case auto_byte:
-	case static_byte:
-	case globl_byte:	cgload2();
-				ngen("%s\t%%ecx,%%eax", op, 0);
-				break;
-	case empty:		cgpop2();
-				sgen("%s\t%s,%%eax", op, "%ecx");
-				break;
-	default:		fatal("internal: bad type in cgsynth()");
-	}
-	Q_type = empty;
-}
-*/
 //grw - cgload2 is also not used 
-/*
-int cgload2(void) {
-	int	n, q;
-	char	*s, *op, *opb;
-
-	gen(";----- cgload2");
-	op = "movl";
-	opb = "movb";
-	n = Q_val;
-	s = gsym(Q_name);
-	switch (Q_type) {
-	case addr_auto:		ngen("%s\t%d(%%ebp),%%ecx", "leal", n);
-				break;
-	case addr_static:	lgen("%s\t$%c%d,%%ecx", op, n); break;
-	case addr_globl:	sgen("%s\t$%s,%%ecx", op, s); break;
-	case addr_label:	lgen("%s\t$%c%d,%%ecx", op, n); break;
-	case literal: 		ngen("%s\t$%d,%%ecx", op, n); break;
-	case auto_byte:		cgclear2();
-				ngen("%s\t%d(%%ebp),%%cl", opb, n);
-				break;
-	case auto_word:		ngen("%s\t%d(%%ebp),%%ecx", op, n); break;
-	case static_byte:	cgclear2();
-				lgen("%s\t%c%d,%%cl", opb, n); break;
-				break;
-	case static_word:	lgen("%s\t%c%d,%%ecx", op, n); break;
-	case globl_byte:	cgclear2();
-				sgen("%s\t%s,%%cl", opb, s); break;
-				break;
-	case globl_word:	sgen("%s\t%s,%%ecx", op, s); break;
-	case empty:		cgpop2();
-				break;
-	default:		fatal("internal: bad type in cgload2()");
-	}
-	q = Q_type;
-	Q_type = empty;
-	return empty == q;
-}
-*/
-//void cglit(int v)	{ ngen("%s\t$%d,%%eax", "movl", v); }
-//void cgclear(void)	{ gen("xorl\t%eax,%eax"); }
-//void cgclear2(void)	{ gen(";----- cgclear2");gen("xorl\t%ecx,%ecx"); }
-//void cgldgb(char *s)	{ sgen("%s\t%s,%%al", "movb", s); }
-//void cgldgw(char *s)	{ sgen("%s\t%s,%%eax", "movl", s); }
-//void cgldlb(int n)	{ ngen("%s\t%d(%%ebp),%%al", "movb", n); }
-//void cgldlw(int n)	{ ngen("%s\t%d(%%ebp),%%eax", "movl", n); }
-//void cgldsb(int n)	{ lgen("%s\t%c%d,%%al", "movb", n); }
-//void cgldsw(int n)	{ lgen("%s\t%c%d,%%eax", "movl", n); }
-//void cgldla(int n)	{ ngen("%s\t%d(%%ebp),%%eax", "leal", n); }
-//void cgldsa(int n)	{ lgen("%s\t$%c%d,%%eax", "movl", n); }
-//void cgldga(char *s)	{ sgen("%s\t$%s,%%eax", "movl", s); }
-//void cgindb(void)	{ gen("movl\t%eax,%edx");
-//			  cgclear();
-//			  gen("movb\t(%edx),%al"); }
-//void cgindw(void)	{ gen("movl\t(%eax),%eax"); }
-//void cgldlab(int id)	{ lgen("%s\t$%c%d,%%eax", "movl", id); }
-//void cgpush(void)	{ gen("pushl\t%eax"); }
-//void cgpushlit(int n)	{ ngen("%s\t$%d", "pushl", n); }
-//void cgpop2(void)	{ gen("popl\t%ecx"); }
-//void cgswap(void)	{ gen("xchgl\t%eax,%ecx"); }
-//void cgand(void)	{ cgsynth("andl"); }
-//void cgior(void)	{ cgsynth("orl"); }
-//void cgxor(void)	{ cgsynth("xorl"); }
-//void cgadd(void)	{ gen("addl\t%ecx,%eax"); }
-//void cgmul(void)	{ gen("imull\t%ecx,%eax"); }
-//void cgsub(void)	{ gen("subl\t%ecx,%eax"); }
-//void cgdiv(void)	{ gen("cdq");
-//			  gen("idivl\t%ecx"); }
-//void cgmod(void)	{ cgdiv();
-//			  gen("movl\t%edx,%eax"); }
-//void cgshl(void)	{ gen("shll\t%cl,%eax"); }
-//void cgshr(void)	{ gen("sarl\t%cl,%eax"); }
 
 void cglit(int v)	{ 	
 	gen(";----- cglit");
@@ -298,31 +131,6 @@ void cgshl(void)	{gen(";----- cgshl");
 void cgshr(void)	{gen(";----- cgshr"); 
 		gen("          call  shr16				 ; SOS shifted right by TOS on Expression Stack\n"); }
 
-//void cgcmp(char *inst)	{ int lab;
-//			  lab = label();
-//			  gen("xorl\t%edx,%edx");
-//			  if (empty == Q_type) {
-//				cgpop2();
-//				gen("cmpl\t%eax,%ecx");
-//			  }
-//			  else {
-//				cgsynth("cmpl");
-//			  }
-//			  lgen("%s\t%c%d", inst, lab);
-//			  gen("incl\t%edx");
-//			  genlab(lab);
-//			  gen("movl\t%edx,%eax"); }
-//void cgeq()		{ cgcmp("jne"); }
-//void cgne()		{ cgcmp("je"); }
-//void cglt()		{ cgcmp("jge"); }
-//void cggt()		{ cgcmp("jle"); }
-//void cgle()		{ cgcmp("jg"); }
-//void cgge()		{ cgcmp("jl"); }
-//void cgult()		{ cgcmp("jae"); }
-//void cgugt()		{ cgcmp("jbe"); }
-//void cgule()		{ cgcmp("ja"); }
-//void cguge()		{ cgcmp("jb"); }
-
 void cgcmp(char *inst)	{ gen(";----- cgcmp"); }
 void cgeq()		{gen(";----- cgeq"); 
 		gen("          call  eq16				   ; compare TOS == SOS on Expression Stack\n"); }
@@ -349,12 +157,7 @@ void cguge()	{gen(";----- cguge");
 void cgbrcond(char *i, int n)	{ int lab;
 					gen(";----- cgbrcond");
 				  lab = label();
-					//grw - remove cgsynthesis logic				
-				  //if (empty == Q_type) {
-					//cgpop2();
-					//grw - compare result on stack
-					//gen("cmpl\t%eax,%ecx");
-					
+					//grw - removed cgsynthesis logic									
 					//grw - consume queued cmp value before lable generation
 					Q_cmp = cnone;					
 					gen(" 				 call  dpop16        ; get result from expression stack");
@@ -362,10 +165,6 @@ void cgbrcond(char *i, int n)	{ int lab;
 					gen(" 				 str   r2            ; save in M(X)");
 					gen(" 				 glo   ra            ; get LSB from result");
 					gen(" 				 or                  ; D = MSB | LSB");			  
-				  //}
-				  //else {
-					//cgsynth("cmpl");
-				  //}
 				  lgen("%s\t%c%d", i, lab);
 					//grw - change jump to lbr instruction
 				  //lgen("%s\t%c%d", "jmp", n);
@@ -373,17 +172,6 @@ void cgbrcond(char *i, int n)	{ int lab;
 				  genlab(lab); }
 					
 //grw - redo branch instructions to call then branch if true
-//void cgbreq(int n)		{ cgbrcond("je", n); }
-//void cgbrne(int n)		{ cgbrcond("jne", n); }
-//void cgbrlt(int n)		{ cgbrcond("jl", n); }
-//void cgbrgt(int n)		{ cgbrcond("jg", n); }
-//void cgbrle(int n)		{ cgbrcond("jle", n); }
-//void cgbrge(int n)		{ cgbrcond("jge", n); }
-//void cgbrult(int n)		{ cgbrcond("jb", n); }
-//void cgbrugt(int n)		{ cgbrcond("ja", n); }
-//void cgbrule(int n)		{ cgbrcond("jbe", n); }
-//void cgbruge(int n)		{ cgbrcond("jae", n); }
-
 void cgbreq(int n)		{gen(";----- cgbreq"); cgeq();  cgbrcond("lbnz", n); }
 void cgbrne(int n)		{gen(";----- cgbrne"); cgne();  cgbrcond("lbnz", n); }
 void cgbrlt(int n)		{gen(";----- cgbrlt"); cglt();  cgbrcond("lbnz", n); }
@@ -395,35 +183,12 @@ void cgbrugt(int n)		{gen(";----- cgbrugt"); cgugt(); cgbrcond("lbnz", n); }
 void cgbrule(int n)		{gen(";----- cgbrule"); cgule(); cgbrcond("lbnz", n); }
 void cgbruge(int n)		{gen(";----- cgbruge"); cguge(); cgbrcond("lbnz", n); }
 
-//void cgneg(void)	{ gen("negl\t%eax"); }
-//void cgnot(void)	{ gen("notl\t%eax"); }
-//void cglognot(void)	{ gen("negl\t%eax");
-//			  gen("sbbl\t%eax,%eax");
-//			  gen("incl\t%eax"); }
-
 void cgneg(void)	{gen(";----- cgneg"); 
 		gen("          call  neg16				 ; negate TOS on Expression Stack\n"); }
 void cgnot(void)	{gen(";----- cgnot"); 
 		gen("          call  inv16				 ; bitwise invert TOS on Expression Stack\n"); }
 void cglognot(void)	{gen(";----- cglognot"); 
 		gen("          call  not16				 ; logical not TOS on Expression Stack\n"); }
-
-//void cgscale(void)	{ gen(";----- cgscale"); gen("shll\t$2,%eax"); }
-//void cgscale2(void)	{ gen(";----- cgscale2"); gen("shll\t$2,%ecx"); }
-//void cgunscale(void)	{ gen(";----- cgunscale"); gen("shrl\t$2,%eax"); }
-//void cgscaleby(int v)	{ gen(";----- cgscaleby"); ngen("%s\t$%d,%%ecx", "movl", v);
-//			  gen("mull\t%ecx"); }
-//void cgscale2by(int v)	{ gen(";----- cgscale2by"); gen("pushl\t%eax");
-//			  ngen("%s\t$%d,%%eax", "movl", v);
-//			  gen("mull\t%ecx");
-//			  gen("movl\t%eax,%ecx");
-//			  gen("popl\t%eax"); }
-//void cgunscaleby(int v)	{ gen(";----- cgunscaleby"); ngen("%s\t$%d,%%ecx", "movl", v);
-//			  gen("xorl\t%edx,%edx");
-//			  gen("divl\t%ecx"); }
-//void cgbool(void)	{ gen("negl\t%eax");
-//			  gen("sbbl\t%eax,%eax");
-//			  gen("negl\t%eax"); }
 
 void cgscale(void)	{gen(";----- cgscale"); 
 	gen(" 				call scltos2");}
@@ -481,42 +246,7 @@ void cgunscaleby(int v)	{
 void cgbool(void)	{gen(";----- cgbool");
 	gen(" 				  call bool16");}
 				
-
 //grw - increment functions
-/*
-void cgldinc(void)	{ gen("movl\t%eax,%edx"); }
-void cginc1pi(int v)	{ ngen("%s\t$%d,(%%eax)", "addl", v); }
-void cgdec1pi(int v)	{ ngen("%s\t$%d,(%%eax)", "subl", v); }
-void cginc2pi(int v)	{ ngen("%s\t$%d,(%%edx)", "addl", v); }
-void cgdec2pi(int v)	{ ngen("%s\t$%d,(%%edx)", "subl", v); }
-void cgincpl(int a, int v)	{ ngen2("%s\t$%d,%d(%%ebp)", "addl", v, a); }
-void cgdecpl(int a, int v)	{ ngen2("%s\t$%d,%d(%%ebp)", "subl", v, a); }
-void cgincps(int a, int v)	{ lgen2("addl\t$%d,%c%d", v, a); }
-void cgdecps(int a, int v)	{ lgen2("subl\t$%d,%c%d", v, a); }
-void cgincpg(char *s, int v)	{ sgen2("%s\t$%d,%s", "addl", v, s); }
-void cgdecpg(char *s, int v)	{ sgen2("%s\t$%d,%s", "subl", v, s); }
-void cginc1iw(void)	{ ngen("%s\t(%%eax)", "incl", 0); }
-void cgdec1iw(void)	{ ngen("%s\t(%%eax)", "decl", 0); }
-void cginc2iw(void)	{ ngen("%s\t(%%edx)", "incl", 0); }
-void cgdec2iw(void)	{ ngen("%s\t(%%edx)", "decl", 0); }
-void cginclw(int a)	{ ngen("%s\t%d(%%ebp)", "incl", a); }
-void cgdeclw(int a)	{ ngen("%s\t%d(%%ebp)", "decl", a); }
-void cgincsw(int a)	{ lgen("%s\t%c%d", "incl", a); }
-void cgdecsw(int a)	{ lgen("%s\t%c%d", "decl", a); }
-void cgincgw(char *s)	{ sgen("%s\t%s", "incl", s); }
-void cgdecgw(char *s)	{ sgen("%s\t%s", "decl", s); }
-void cginc1ib(void)	{ ngen("%s\t(%%eax)", "incb", 0); }
-void cgdec1ib(void)	{ ngen("%s\t(%%eax)", "decb", 0); }
-void cginc2ib(void)	{ ngen("%s\t(%%edx)", "incb", 0); }
-void cgdec2ib(void)	{ ngen("%s\t(%%edx)", "decb", 0); }
-void cginclb(int a)	{ ngen("%s\t%d(%%ebp)", "incb", a); }
-void cgdeclb(int a)	{ ngen("%s\t%d(%%ebp)", "decb", a); }
-void cgincsb(int a)	{ lgen("%s\t%c%d", "incb", a); }
-void cgdecsb(int a)	{ lgen("%s\t%c%d", "decb", a); }
-void cgincgb(char *s)	{ sgen("%s\t%s", "incb", s); }
-void cgdecgb(char *s)	{ sgen("%s\t%s", "decb", s); }
-*/
-
 void cgldinc(void)	{gen(";----- cgldinc");
 	gen(" 				 call  psave        ; save pointer to pointer from stack for postfix"); }
 	
@@ -644,27 +374,25 @@ void cgdecgb(char *s)	{gen(";----- cgdecgb");
 	gen(" 				 call  vdec8        ; decrement global variable");
 	sgen(" 				  %s %s", "dw", s); }
 
-//void cgbr(char *how, int n)	{ int lab;
-//				  lab = label();
-//				  gen("orl\t%eax,%eax");
-//				  lgen("%s\t%c%d", how, lab);
-//				  lgen("%s\t%c%d", "jmp", n);
-//				  genlab(lab); }
-//void cgbrtrue(int n)	{ cgbr("jz", n); }
-//void cgbrfalse(int n)	{ cgbr("jnz", n); }
-//void cgjump(int n)	{ lgen("%s\t%c%d", "jmp", n); }
+//grw - added short circuit flag to cgbrfalse and cgbrtrue
+void cgbr(char *how, int n, int sc) {
+			gen(";----- cgbr");
+			if (sc)
+				gen(" 				 call  dget16        ; test result on expression stack for short circuit");
+			else	
+		    gen(" 				 call  dpop16        ; get result from expression stack");
+			gen(" 				 ghi   ra            ; get MSB from result");
+ 			gen(" 				 str   r2            ; save in M(X)");
+ 			gen(" 				 glo   ra            ; get LSB from result");
+ 			gen(" 				 or                  ; D = MSB | LSB");			  
+			lgen(" 				 %s\t%c%d           ; check for branch", how, n); 
+			if (sc)
+			  gen(" 				 call  dpop16        ; remove short circuited value from expression stack");
+		 }
+		 
+void cgbrtrue(int n, int sc)	{gen(";----- cgbrtrue"); cgbr("lbnz", n, sc); }
+void cgbrfalse(int n, int sc)	{gen(";----- cgbrfalse"); cgbr("lbz", n, sc); }
 
-
-void cgbr(char *how, int n)
-			{gen(";----- cgbr");
-			 gen(" 				 call  dpop16        ; get result from expression stack");
-			 gen(" 				 ghi   ra            ; get MSB from result");
-			 gen(" 				 str   r2            ; save in M(X)");
-			 gen(" 				 glo   ra            ; get LSB from result");
-			 gen(" 				 or                  ; D = MSB | LSB");			  
-			lgen(" 				  %s\t%c%d", how, n); }
-void cgbrtrue(int n)	{gen(";----- cgbrtrue"); cgbr("lbnz", n); }
-void cgbrfalse(int n)	{gen(";----- cgbrfalse"); cgbr("lbz", n); }
 void cgjump(int n)	{gen(";----- cgjump"); lgen(" 				  %s\t%c%d", "lbr", n); }
 
 void cgldswtch(int n)	{gen(";----- cgldswtch"); }
@@ -675,28 +403,11 @@ void cgcase(int v, int l)
 			ngen("%s  ra, $%04x  ;----- look for match with case value", "match", v); 
 			lgen("%s  %c%d", "lbz", l); }
 
-
-//void cgldswtch(int n)	{ lgen("%s\t$%c%d,%%edx", "movl", n); }
-//void cgcalswtch(void)	{ gen("jmp\tswitch"); }
-//void cgcase(int v, int l)	{ lgen2(".long\t%d,%c%d", v, l); }
-
-//void cgpopptr(void)	{ gen("popl\t%edx"); }
-//void cgstorib(void)	{ ngen("%s\t%%al,(%%edx)", "movb", 0); }
-//void cgstoriw(void)	{ ngen("%s\t%%eax,(%%edx)", "movl", 0); }
-//void cgstorlb(int n)	{ ngen("%s\t%%al,%d(%%ebp)", "movb", n); }
-//void cgstorlw(int n)	{ ngen("%s\t%%eax,%d(%%ebp)", "movl", n); }
-//void cgstorsb(int n)	{ lgen("%s\t%%al,%c%d", "movb", n); }
-//void cgstorsw(int n)	{ lgen("%s\t%%eax,%c%d", "movl", n); }
-//void cgstorgb(char *s)	{ sgen("%s\t%%al,%s", "movb", s); }
-//void cgstorgw(char *s)	{ sgen("%s\t%%eax,%s", "movl", s); }
-//void cginitlw(int v, int a)	{ ngen2("%s\t$%d,%d(%%ebp)", "movl", v, a); }
-//void cgcall(char *s)	{ sgen("%s\t%s", "call", s); }
-//void cgcalr(void)	{ gen("call\t*%eax"); }
 void cgpopptr(void)	{gen(";----- cgpopptr"); 
 	gen("          call  swap16				 ; swap TOS and SOS on Expression Stack"); 
 	gen("          call  dpop16   		 ; get pointer from expression stack"); }
 void cgstorib(void)	{gen(";----- cgstorib"); 
-	gen("          call  pstor16       ; store value from ES in pointer variable"); }
+	gen("          call  pstor8       ; store value from ES in pointer variable"); }
 void cgstoriw(void)	{gen(";----- cgstoriw"); 
 	gen("          call  pstor16       ; store value from ES in pointer variable"); }
 void cgstorlb(int n)	{gen(";----- cgstorlb"); 
@@ -755,19 +466,6 @@ void cgcalr(int n)	{gen(";----- cgcalr");
  	gen("          pop   rb				 		 ; restore BP (base pointer)\n");
  	gen("          rtn	  			 	     ; return to caller"); }
 
-//void cgstack(int n)	{ ngen("%s\t$%d,%%esp", "addl", n); }
-//void cgentry(void)	{ gen("pushl\t%ebp");
-//			  gen("movl\t%esp,%ebp"); }
-//void cgexit(void)	{ gen("popl\t%ebp");
-//			  gen("ret"); }
-
-//void cgdefb(int v)	{ ngen("%s\t%d", ".byte", v); }
-//void cgdefw(int v)	{ ngen("%s\t%d", ".long", v); }
-//void cgdefp(int v)	{ ngen("%s\t%d", ".long", v); }
-//void cgdefl(int v)	{ lgen("%s\t%c%d", ".long", v); }
-//void cgdefc(int c)	{ ngen("%s\t'%c'", ".byte", c); }
-//void cggbss(char *s, int z)	{ ngen(".comm\t%s,%d", s, z); }
-//void cglbss(char *s, int z)	{ ngen(".lcomm\t%s,%d", s, z); }
 //grw - removed cgalign
 //void cgalign(void)	{ /* unused */ }
 

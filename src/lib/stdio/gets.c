@@ -1,4 +1,5 @@
-#include "_stdio.h"
+#define _ELFCLIB_
+#include <stdio.h>
 
 char* gets(char *s) {
   char* p;

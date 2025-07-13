@@ -60,6 +60,8 @@ static int scanch(void) {
 		switch (c = next()) {
 		case 'a': return '\a';
 		case 'b': return '\b';
+		//grw - added escape character escape sequence
+		case 'e': return '\033';
 		case 'f': return '\f';
 		case 'n': return '\n';
 		case 'r': return '\r';

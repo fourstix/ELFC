@@ -724,7 +724,9 @@ static node *cond2(int *lv, int op) {
 	int	lab = 0;
 	node	*n, *n2 = NULL;
 	int	tv = 1;
-
+	//grw - debug
+	//gen(";----- begin cond2");
+	
 	n = op == LOGOR? cond2(lv, LOGAND): binexpr(lv);
 	while (Token == op) {
 		if (!lab) lab = label();
@@ -744,6 +746,8 @@ static node *cond2(int *lv, int op) {
 		lv[LVPRIM] = PINT;
 		lv[LVADDR] = 0;
 	}
+	//grw - debug
+	//gen(";----- end cond2");
 	return n;
 }
 

@@ -4,7 +4,6 @@
           extrn   epush16
           extrn   epush8
           extrn   dpop16
-          extrn   dpop8
           extrn   abs16
           extrn   add16
           extrn   and16
@@ -38,7 +37,6 @@
           extrn   vpush16
           extrn   vpop16
           extrn   vpush8
-          extrn   vpop8
           extrn   dpush16
           extrn   dpush8
           extrn   esmove
@@ -48,6 +46,7 @@
           extrn   vstor16
           extrn   vstor8
           extrn   swap16
+          extrn   dget16
           extrn   lpush16
           extrn   lpush8
           extrn   deref16
@@ -87,6 +86,8 @@
           extrn   unscl4
           extrn   lget16
           extrn   lget8
+          extrn   lset16
+
 ;-------------------------------------------------------------------------------
 ; crt0 - Elf/OS c start-up library
 ;-------------------------------------------------------------------------------

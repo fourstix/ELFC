@@ -1,7 +1,9 @@
-#include "_stdio.h"
+#define _ELFCLIB_
+#include <stdio.h>
 
 int puts(char* s) {  
   if (s == NULL) return EOF;
+  
   asm("         call  lget16      ; put buffer pointer variable");
   asm("           dw  0           ; offset for arg 1 ");         
   asm("         copy  ra, rf      ; ra holds result of assigning pointer");

@@ -3,9 +3,9 @@
 ;	C runtime module for Elf/OS
 ;---------------------------------------------------------
 
-#include ../ops_c.inc
-#include ../bios.inc
-#include ../kernel.inc
+#include ../include/ops_c.inc
+#include ../include/bios.inc
+#include ../include/kernel.inc
 
 #define  KEYBUF  $0080
 
@@ -18,6 +18,7 @@
           public estack
           
           extrn  Cmain
+          extrn  C_init
 
             org    2000h
 
@@ -35,6 +36,8 @@ Elfstart: push   r6            ; save original return address on stack
           load   r7, estack   ; set ESP (Expression Stack Pointer)
           copy   r7, rb       ; set Stack Frame BP (Base Pointer)
           load   r1, $F000    ; DEBUG set R1 for breakpoint
+;------ Need to call the _init function in stdlib ---------
+          call   C_init
 ;------ load arguments for main function onto ES ---------
           call   argvload     ; initialize arg pointer array *argv[]
 ;-----  before calling main, push argc and **argv onto stack
