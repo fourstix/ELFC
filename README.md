@@ -126,7 +126,7 @@ type abort.prg abs.prg exit.prg > stdlib.lib
 
 Stdlib Library
 --------------
-The following functions are supported in the ElfC stdlib C library.
+# The following functions are supported in the ElfC stdlib C library.
 
 * void abort(void);
 * int abs(int n);
@@ -145,7 +145,7 @@ The following functions are supported in the ElfC stdlib C library.
 * int rand(void);
 * void srand(int n);
 
-The following unistd.h file functions are included in the ElfC stdlib C library.
+# The following unistd.h file functions are included in the ElfC stdlib C library.
 
 * int	 creat(char \*path, int mode);
 * int	 open(char \*path, int flags);
@@ -156,13 +156,13 @@ The following unistd.h file functions are included in the ElfC stdlib C library.
 * int	 rename(char \*old, char \*new);
 * int  lseek(int fd, int hi_off, int lo_off, int how);
 
-Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`
+*Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`*
 
 Stdio Library
 -------------
-The following functions are supported in the ElfC stdio C library.
+# The following functions are supported in the ElfC stdio C library.
 
-Unbuffered Elf/OS System IO functions:
+# Unbuffered Elf/OS System IO functions:
 
 * char \*gets(char \*buf);
 * int	 puts(char \*s);
@@ -170,9 +170,9 @@ Unbuffered Elf/OS System IO functions:
 * int getch(void);
 * int	putch(int ch);
 
-Note: putstr is similar to puts(), but it does not add a newline after the string.
+*Note: putstr is similar to puts(), but it does not add a newline after the string.*
 
-Buffered IO function:
+# Buffered IO function:
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
@@ -181,7 +181,7 @@ Buffered IO function:
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
 
-Buffered file functions:
+# Buffered file functions:
 
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
@@ -190,41 +190,67 @@ Buffered file functions:
 * int fwrite(void \*p, int size, int count, FILE \*f);
 * int fflush(FILE \*f);
 
-Print functions:
+# Print functions:
 
-* int fprintf(FILE /*f, char /*fmt, ...);
-* int printf(char /*fmt, ...);
-* int sprintf(char /*buf, char /*fmt, ...);
-* int kprintf(int fd, char /*fmt, ...);
-* int vfprintf(FILE /*f, char /*fmt, void /*/*args);
-* int vprintf(char /*fmt, void /*/*args);
-* int vsprintf(char /*buf, char /*fmt, void /*/*args);
+* int fprintf(FILE \*f, char \*fmt, ...);
+* int printf(char \*fmt, ...);
+* int sprintf(char \*buf, char \*fmt, ...);
+* int kprintf(int fd, char \*fmt, ...);
+* int vfprintf(FILE \*f, char \*fmt, void \*\*args);
+* int vprintf(char \*fmt, void \*\*args);
+* int vsprintf(char \*buf, char \*fmt, void \*\*args);
 
-Scan functions:
+# Scan functions:
 
-* int fscanf(FILE /*f, char /*fmt, ...);
-* int scanf(char /*fmt, ...);
-* int sscanf(char /*src, char /*fmt, ...);
+* int fscanf(FILE \*f, char \*fmt, ...);
+* int scanf(char \*fmt, ...);
+* int sscanf(char \*src, char \*fmt, ...);
 
-File functions:
-* int remove(char /*path);
-* int rename(char /*old, char /*new);
+# File functions:
+* int remove(char \*path);
+* int rename(char \*old, char \*new);
 
-File position functions:
+# File position functions:
 
-* int fgetpos(FILE /*f, pos_t /*pos);
-* int fsetpos(FILE /*f, pos_t /*pos);
-* int fseek(FILE /*f, int offset, int how);
-* int ftell(FILE /*f);
+* int fgetpos(FILE \*f, pos_t \*pos);
+* int fsetpos(FILE \*f, pos_t \*pos);
+* int fseek(FILE \*f, int offset, int how);
+* int ftell(FILE \*f);
 
-File error functions:
+# File error functions:
 
-* int ferror(FILE /*f);
-* int feof(FILE /*f);
-* void clrerror(FILE /*f);
+* int ferror(FILE \*f);
+* int feof(FILE \*f);
+* void clrerror(FILE \*f);
 
+String Library
+-------------
+# The following functions are supported in the ElfC string C library.
 
+* void \*memchr(void \*p, int c, int n);
+* int memcmp(void \*p1, void \*p2, int n);
+* void \*memcpy(void \*d, void \*s, int n);
+* void \*memmove(void \*d, void \*s, int n);
+* void \*memset(void \*p, int c, int n);
+* char \*strcat(char \*d, char \*a);
+* char \*strchr(char \*s, int c);
+* int strcmp(char \*s1, char \*s2);
+* char \*strcpy(char \*d, char \*s);
+* int strcspn(char \*s, char \*set);
+* char \*strdup(char \*s);
+* char \*strerror(int err);
+* int strlen(char \*s);
+* char \*strncat(char \*d, char \*a, int n);
+* int strncmp(char \*s1, char \*s2, int n);
+* char \*strncpy(char \*d, char \*s, int n);
+* char \*strlcpy(char \*d, char \*s, int n);
+* char \*strpbrk(char \*s, char \*set);
+* char \*strrchr(char \*s, int c);
+* int strspn(char \*s, char \*set);
+* char \*strstr(char \*s1, char \*s2);
+* char \*strtok(char \*s, char \*sep);
 
+*Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
 
 Planned for This Release
 -------------------------
