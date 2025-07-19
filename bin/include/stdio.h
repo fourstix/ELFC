@@ -28,6 +28,7 @@
 #pragma             extrn Cfputc
 #pragma             extrn Cfgets
 #pragma             extrn Cfputs
+#pragma             extrn Cungetc
 #pragma             extrn Cfread
 #pragma             extrn Cfwrite
 #pragma             extrn Cfflush
@@ -152,6 +153,7 @@ char *fgets(char *s, int len, FILE *f);
 int fputs(char *s, FILE *f);
 int putchar(int c);
 int getchar(void);
+int ungetc(int c, FILE *f);
 
 /* buffered file functions */
 FILE *fdopen(int fd, int iomode);

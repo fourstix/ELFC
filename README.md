@@ -31,7 +31,14 @@ The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Li
 
 The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
 
-An additional compiler option `-L` will compile and assemble Elf/OS library modules from C files.  
+An additional compiler option `-L` will compile and assemble Elf/OS library modules from C files.
+
+The stdlib, stdio, ctype, and string C libraries are supported as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
+
+* The C libraries are created from C files using the ElfC (`-L`) library compile option.
+
+* The header files use `#pragma` statements so the libraries link properly.
+
 
 Overview
 --------
@@ -42,7 +49,7 @@ Overview
 
 * Version 2 extends the library of arithmetic and variable functions based on the Elf/OS 16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
 
-* This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).  
+* This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).
 
 * The peep-hole code optimizations are all implemented except for the 386 assembly code Type Synthesis optimizations which have no equivalents available in 1802 assembly code.  In the discussion *RISC vs CISC* on page 362 of [Practical Compiler Construction](https://www.t3x.org/reload/index.html), Nils M Holm covers this topic in more detail. 
 
@@ -54,17 +61,19 @@ Overview
 
 * The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
 
-* Skeleton libraries for `stdio.lib` and `stdlib.lib` were created in Version 2 as a proof of concept.
+* The `stdlib`, `stdio`, `ctype`, and `string` are supported.
 
 * The ElfC compiler now accepts inline comments (`// comments`) as well as traditional C commments (`/* comments */`).
 
-* `struct`, `union` and `typedef` are now supported.
+* The ElfC compiler now accepts `\e` as an escape sequence for the ASCII escape character 0x1B. 
 
-* `&array` is now valid syntax (you no longer have to write
-   `&array[0]`).
+* `struct`, `union` and `typedef` are now supported, except as function arguments and function return values.
 
-* The `auto`, `register`, and `volatile` keywords are recognized
-   (as no-ops). 
+* Pointers to `struct`, `union` and `typedef` are now supported. A function may accept a *pointer* to a `struct` or `union` and a function may return a *pointer* to a `structure` or `union`.
+
+* `&array` is now valid syntax (you no longer have to write `&array[0]`).
+
+* The `auto`, `register`, and `volatile` keywords are recognized (as no-ops). 
 
 * `enum`'s may now be local.
 
@@ -73,6 +82,8 @@ Overview
 * Prototypes may have the `static` storage class.
 
 * The `#error`, `#line`, and `#pragma` commands have been added.
+
+* The `atexit()` mechanism is now supported.
 
 * A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
 
@@ -113,20 +124,122 @@ type abort.prg abs.prg exit.prg > stdlib.lib
 ```
 
 
-Next Release
+Stdlib Library
+--------------
+The following functions are supported in the ElfC stdlib C library.
+
+* void abort(void);
+* int abs(int n);
+* int atexit(int (*fn)());
+* int atoi(char \*s);
+* void \*bsearch(void \*key, void \*array, int count, int size, int (\*cmp)());
+* void \*calloc(int count, int size);
+* void div(int num, int denom, div_t *rp);
+* void exit(int n);
+* void free(void\* p);
+* void itoa(int n, char \*s);
+* void itox(int n, char \*s);
+* void itou(int n, char \*s);
+* void\* malloc(int size);
+* void qsort(void \*list, int count, int size, int (\*cmp)());
+* int rand(void);
+* void srand(int n);
+
+The following unistd.h file functions are included in the ElfC stdlib C library.
+
+* int	 creat(char \*path, int mode);
+* int	 open(char \*path, int flags);
+* int	 close(int fd);
+* int	 read(int fd, void \*buf, int len);
+* int	 write(int fd, void *\buf, int len);
+* int  unlink(char \*pat);
+* int	 rename(char \*old, char \*new);
+* int  lseek(int fd, int hi_off, int lo_off, int how);
+
+Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`
+
+Stdio Library
 -------------
+The following functions are supported in the ElfC stdio C library.
 
-* Implement the basic set of C libraries and header files as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
+Unbuffered Elf/OS System IO functions:
 
-* The C libraries should be created from C files using the ElfC (`-L`) library compile option.
+* char \*gets(char \*buf);
+* int	 puts(char \*s);
+* int	 putstr(char \*s);
+* int getch(void);
+* int	putch(int ch);
 
-* The header files should use `#pragma` statements so the libraries link properly.
+Note: putstr is similar to puts(), but it does not add a newline after the string.
+
+Buffered IO function:
+* int fgetc(FILE \*f);
+* int fputc(int c, FILE \*f);
+* char \*fgets(char \*s, int len, FILE \*f);
+* int fputs(char \*s, FILE \*f);
+* int putchar(int c);
+* int getchar(void);
+* int ungetc(int c, FILE \*f);
+
+Buffered file functions:
+
+* FILE \*fdopen(int fd, int iomode);
+* int fclose(FILE \*f);
+* FILE *fopen(char \*path, char \*mode);
+* int fread(void \*p, int size, int count, FILE \*f);
+* int fwrite(void \*p, int size, int count, FILE \*f);
+* int fflush(FILE \*f);
+
+Print functions:
+
+* int fprintf(FILE /*f, char /*fmt, ...);
+* int printf(char /*fmt, ...);
+* int sprintf(char /*buf, char /*fmt, ...);
+* int kprintf(int fd, char /*fmt, ...);
+* int vfprintf(FILE /*f, char /*fmt, void /*/*args);
+* int vprintf(char /*fmt, void /*/*args);
+* int vsprintf(char /*buf, char /*fmt, void /*/*args);
+
+Scan functions:
+
+* int fscanf(FILE /*f, char /*fmt, ...);
+* int scanf(char /*fmt, ...);
+* int sscanf(char /*src, char /*fmt, ...);
+
+File functions:
+* int remove(char /*path);
+* int rename(char /*old, char /*new);
+
+File position functions:
+
+* int fgetpos(FILE /*f, pos_t /*pos);
+* int fsetpos(FILE /*f, pos_t /*pos);
+* int fseek(FILE /*f, int offset, int how);
+* int ftell(FILE /*f);
+
+File error functions:
+
+* int ferror(FILE /*f);
+* int feof(FILE /*f);
+* void clrerror(FILE /*f);
+
+
+
+
+Planned for This Release
+-------------------------
+* Implement support for STG ROM break points.
 
 * Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
-* Implement the `atexit()` mechanism
+* Implement an assert function similar to the assert macro.
+
+Next Release
+-------------
 
 * Implement time functions compatible with Elf/OS (Mini-DOS) kernel and BIOS API.
+* Implement signed and unsigned keywords.
+* Implement the short int data type.
 
 Future Goals
 -------------
@@ -170,6 +283,10 @@ Differences Between SubC and Full C89
 
 *  Struct/union declarations must be global (struct and union
    objects may be declared locally, though).
+
+*  A struct/union cannot be passed as an argument to a function, nor can a function return
+   a struct/union value.  However, a *pointer* to struct/union can be passed as an argument to a 
+   function and a pointer to a struct/union may be returned by a function. 
 
 *  There is no support for bit fields.
 
