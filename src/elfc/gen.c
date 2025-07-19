@@ -391,9 +391,9 @@ int genadd(int p1, int p2, int swapped) {
 			if (	(p1 & STCMASK) == STCPTR ||
 				(p1 & STCMASK) == UNIPTR
 			)
-				cgscale2by(objsize(deref(p1), TVARIABLE, 1));
+				cgscaleby(objsize(deref(p1), TVARIABLE, 1));
 			else
-				cgscale2();
+				cgscale();
 		}
 		rp = p1;
 	}
@@ -402,9 +402,9 @@ int genadd(int p1, int p2, int swapped) {
 			if (	(p2 & STCMASK) == STCPTR ||
 				(p2 & STCMASK) == UNIPTR
 			)
-				cgscaleby(objsize(deref(p2), TVARIABLE, 1));
+				cgscale2by(objsize(deref(p2), TVARIABLE, 1));
 			else
-				cgscale();
+				cgscale2();
 		}
 		rp = p2;
 	}
@@ -983,7 +983,8 @@ void genswitch(int *vals, int *labs, int nc, int dflt) {
 	cgldswtch(ltbl);
 	cgcalswtch();
 	genlab(ltbl);
-	cgdefw(nc);
+	//grw - don't include count in table
+	//cgdefw(nc);
 	for (i = 0; i < nc; i++)
 		cgcase(vals[i], labs[i]);
 	cgdefl(dflt);

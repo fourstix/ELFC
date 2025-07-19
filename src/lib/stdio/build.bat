@@ -1,5 +1,6 @@
 ..\elfc -L gets.c
 ..\elfc -L puts.c
+..\elfc -L putstr.c
 ..\elfc -L getch.c
 ..\elfc -L putch.c
 ..\elfc -L fdopen.c
@@ -38,7 +39,7 @@
 ..\elfc -L ftell.c
 
 
-type gets.prg puts.prg getch.prg putch.prg fdopen.prg fclose.prg fopen.prg > stdio.lib
+type gets.prg puts.prg putstr.prg getch.prg putch.prg fdopen.prg fclose.prg fopen.prg > stdio.lib
 type feof.prg ferror.prg clrerror.prg fputc.prg putchar.prg fgetc.prg getchar.prg >> stdio.lib
 type fgets.prg fputs.prg fread.prg fwrite.prg ungetc.prg _vformat.prg _vscan.prg >> stdio.lib
 type printf.prg fprintf.prg sprintf.prg vprintf.prg vfprintf.prg vsprintf.prg >> stdio.lib

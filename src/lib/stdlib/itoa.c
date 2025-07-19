@@ -12,5 +12,6 @@ void itoa(int n, char *s) {
   asm("           dw 2          ; get pointer from argument stack");           
   asm("         copy ra, rd     ; copy pointer for function call");
   asm("         call itoa16     ; call elf itoa function");
-
+  asm("         ldi  0          ; terminate string"); 
+  asm("         str  rf         ; rf points to one past int digits");
 }

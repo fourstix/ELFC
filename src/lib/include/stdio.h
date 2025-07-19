@@ -12,6 +12,7 @@
 #pragma             extrn Cstdout
 #pragma             extrn Cstderr
 #pragma             extrn Cputs
+#pragma             extrn Cputstr
 #pragma             extrn Cgets
 #pragma             extrn Cputch
 #pragma             extrn Cgetch
@@ -140,6 +141,7 @@ typedef struct {
 /* unbuffered system IO functions */
 char *gets(char *buf);
 int	 puts(char *s);
+int	 putstr(char *s);
 int getch(void);
 int	putch(int ch);
 

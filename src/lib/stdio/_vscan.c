@@ -13,11 +13,13 @@
 #pragma             extrn Cisspace
 #pragma             extrn Cisdigit
 #pragma             extrn Ctolower
-
+#pragma             extrn C_lbuf
 
 #pragma .link .library string.lib
 #pragma .link .library ctype.lib
 #pragma .link .requires Cctype
+
+extern char *_lbuf;
 
 static FILE	*inf;
 static char	*inp;
@@ -48,7 +50,7 @@ static int skip(void) {
 
 static int scanchar(char *p, int len) {
 	int	c;
-
+	
 	if (0 == len) len = 1;
 	while (len--) {
 		if ((c = next()) == EOF)
@@ -60,21 +62,33 @@ static int scanchar(char *p, int len) {
 
 static int scanstr(char *p, int len) {
 	int	k, c;
-
 	k = len;
-	while (0 == len || k--) {
+	//grw - spec says %s should skip any leading whitespace 
+	do {
 		c = next();
+	} while (isspace(c));
+	
+	while (0 == len || k--) {
+    //grw - non-whitespace character read from above
+	  //		c = next();
 		if (isspace(c) || EOF == c) 
 			return 1;
 		if (p) *p++ = c;
+		//grw - get next character until whitespace encountered
+		c = next();
 	}
 	return 1;
 }
 
 static char *mkclass(char *fmt) {
-	static char	clss[128];
+	//grw - change to use line buffer
+	//static char	clss[128];
 	int		i = 0, j;
-
+	char *clss;
+	
+	//grw - use line buffer for class
+	clss = _lbuf;
+	
 	clss[0] = 0;
 	if ('^' == *fmt) fmt++, clss[0] = 1;
 	i = 1;
@@ -162,7 +176,7 @@ static int scannum(int *pi, int base, int len) {
 
 int _vscan(int mode, void *src, char *fmt, void **varg) {
 	int	noasg, len, na = 0, c, pna;
-	char	*clss;
+	//char	*clss;
 	void	*p;
 
 	if (0 == mode) {
@@ -226,8 +240,13 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 		else {
 			if ('%' == *fmt) fmt++;
 			if (isspace(*fmt)) {
-				while ((c = isspace(next())) != 0)
-					;
+				//grw - original code here was incorrect 
+				//grw - c would always be 1 or 0, rather than char from next()
+				//while ((c = isspace(next())) != 0)
+				//	;
+				do {
+					c = next();
+				} while (isspace(c));
 				back(c);
 			}
 			else if (*fmt != next())

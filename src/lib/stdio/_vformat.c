@@ -8,12 +8,18 @@
 #include <ctype.h>
 #include <errno.h>
 
-#define BPW 2
+//#define BPW 2
 
+#pragma             extrn C_lbuf
+#pragma             extrn Cputs
+#pragma             extrn Cputch
+#pragma             extrn Citoa
 #pragma             extrn Cabs
 #pragma             extrn Cmemcpy
+#pragma             extrn Citox
 #pragma             extrn C_fwrite
 #pragma             extrn Cwrite
+#pragma             extrn Cputstr
 #pragma             extrn Cstrchr
 #pragma             extrn Cstrlen
 #pragma             extrn Cmalloc
@@ -27,6 +33,8 @@
 
 int _fwrite(void *buf, int len, FILE *f);
 
+extern char *_lbuf;
+
 static int	ofd;
 static FILE	*outf;
 static int	olen;
@@ -38,75 +46,64 @@ static int	err;
  * Convert integer N to string. Write the string to P.
  * P must point to the *end* of the buffer initially;
  * the output is written backwards!
+ *
  * BASE is the numeric base (8,10,16). SGNCH points
  * to a buffer to which ritoa writes the sign of N. The
  * sign is *not* included in the buffer P.
+ *
  * When BASE is negative, upper case letters will be
  * used in hexa-decimal formatting.
+ *
+ * Octal and hexadecimal numbers are converted as 
+ * unsigned values.
  */
-
-static char *ritoa(char *p, int n, int base, char *sgnch) {
+static char *bitoa(char *p, int n, int base, char *sgnch) {
 	int	s = 0, a = 'a';
-
+	int d;
+	/* set null at end of string */
+	*--p = 0;
 	if (base < 0) base = -base, a = 'A';
-	if (n < 0) s = 1, n = -n;
-	*--p = 0;
-	while (n || 0 == *p) {
-		*--p = abs(n % base) + '0';
-		if (n % base > 9) *p += a-10-'0';
-		n = abs(n/base);
-	}
+	if (0 == n) {
+		/* zero is the same for every base */
+		*p = '0';
+	} else if (10 == base) {
+		/* signed integer */
+		if (n < 0) s = 1, n = -n;
+
+		while (n) {
+			*--p = (n % base) + '0';
+			n = (n/base);
+		} //while
+	} else if (16 == base) {
+			/* hex */
+			do {
+				*--p = (n & 0x000F) + '0';
+				if ((n & 0x000F) > 9) *p += a-10-'0';
+				n >>= 4;
+			} while (n);
+	} else {
+		  /* octal */
+		  do {
+			  *--p = (n & 0x0007) + '0';
+			  n >>= 3;
+			} while(n);
+	}	
 	if (s) *sgnch = '-';
-	return p;
-}
-
-/*
- * Convert integer N to unsigned hexa-decimal
- * string representation. Write string to P.
- * P must point to the *end* of the buffer
- * initially; the output is written backwards!
- */
-static char *ptoa(char *p, int n) {
-	int	i, x;
-
-	*--p = 0;
-	for (i=0; i<sizeof(int)*2; i++) {
-		x = n & 0xf;
-		*--p = x + '0';
-		if (x > 9) *p += 'a'-10-'0';
-		n >>= 4;
-	}
 	return p;
 }
 
 static void append(char *what, int len) {
 	int	k;
 	
-	if (0 == len)
+	if (0 == len) {
 		return;
-	
-	else if (ofd != -1) {
-		if (write(ofd, what, len) != len)
-			err = 1;
-		olen += len;
 	}
-	else if (outf) {
-			if (_fwrite(what, len, outf) != len)
-			err = 1;
-		olen += len;
-	}
-	else if (0 == limit) {
-		memcpy(vbuf + olen, what, len);
-		olen += len;
-		vbuf[olen] = 0;
-	}
-	else {
-		k = limit-olen-1;
-		len = len < k? len: k;
-		memcpy(vbuf + olen, what, len);
-		olen += len;
-		vbuf[olen] = 0;
-	}
+	//grw - write everything as a string buffer
+	k = limit-olen-1;
+	len = len < k ? len : k;
+	memcpy(vbuf + olen, what, len);
+	olen += len;
+	vbuf[olen] = 0;
 }
 
 /*
@@ -123,20 +120,26 @@ static void append(char *what, int len) {
 
 int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 
-	char	*lbuf, *p, *end;
+	char	*p, *end;
+//	char	*lbuf, *p, *end;
 	int	left, len, alt, k;
 	char	pad[1], sgnch[2], *pfx;
 	int	na = 0;
+	//grw - implement a smaller buffer
+	static char sbuf[8];
 
-  lbuf = (char *) malloc(_BUFLEN);
-	
-	/* check for out of memory */
-	if (lbuf == NULL) {
-		errno = ENOMEM;
-		return -1;
-	}
+  if (mode != 0) {
+	  //lbuf = (char *) malloc(_BUFLEN);
 		
-	end = &lbuf[_BUFLEN];
+		/* check for out of memory */
+		if (_lbuf == NULL) {
+			errno = ENOMEM;
+			return -1;
+		}
+  }	
+	//grw - implement a smaller buffer
+	//end = &lbuf[_BUFLEN];
+	end = &sbuf[8];
 	sgnch[1] = 0;
 
 	if (0 == mode) {
@@ -149,15 +152,22 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 		outf = NULL;
 		ofd = (int) dest;
 		err = 0;
+		vbuf = _lbuf;
+		*vbuf = 0;
 	}
 	else {
 		outf = dest;
 		ofd = -1;
 		err = 0;
+		vbuf = _lbuf;
+		*vbuf = 0;
 	}
 
 	olen = 0;
-	limit = max;
+	if (0 == max)
+		limit = _BUFLEN;
+	else	
+ 	  limit = max;
 
 	while (*fmt) {
 		left = len = 0;
@@ -165,9 +175,11 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 		pfx = "";
 
 		if ('%' == *fmt) {
+			//puts("format");
 			fmt++;
 			*pad = ' ';
 			alt = 0;
+
 			while (*fmt && strchr("-+0 #", *fmt)) {
 				if ('-' == *fmt) {
 					left = 1, *pad = ' ';
@@ -190,30 +202,37 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 					fmt++;
 				}
 			}
+
 			if ('*' == *fmt)
 				len = (int) *varg++, fmt++;
 			else
-				while (isdigit(*fmt))
+				while (isdigit(*fmt)) {
 					len = len * 10 + *fmt++ - '0';
+				}
+		
 			switch (*fmt++) {
 			case 'c':
 				*pad = ' ';
 				*sgnch = 0;
-				lbuf[0] = (char) *varg++;
-				lbuf[1] = 0;
-				p = lbuf;
+				//grw - implement a smaller buffer
+				sbuf[0] = (char) *varg++;
+				sbuf[1] = 0;
+				p = sbuf;
 				na++;
 				break;
 			case 'd':
-				p = ritoa(end, (int) *varg++, 10, sgnch);
+			case 'i':
+				p = bitoa(end, (int) *varg++, 10, sgnch);
 				na++;
 				break;
 			case 'n':
-				p = ritoa(end, olen, 10, sgnch);
+				p = bitoa(end, olen, 10, sgnch);
 				break;
 			case 'o':
-				p = ritoa(end, (int) *varg++, 8, sgnch);
+				p = bitoa(end, (int) *varg++, 8, sgnch);
 				if (alt) pfx = "0";
+				//grw - octal is always unsigned
+				*sgnch = 0;
 				na++;
 				break;
 			case 's':
@@ -224,38 +243,51 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				na++;
 				break;
 			case 'p':
-				p = ptoa(end, (int) *varg++);
+				//grw - reworked pointer to use Elf/OS function
+				//p = ptoa(end, (int) *varg++);
+				p = sbuf;
+				itox((int) *varg++, p);
 				pfx = "0x";
-				len = BPW*2+2;
-				*pad = '0';
+				//grw - length is always six with no padding required
+				//len = BPW*2+2;
+				//*pad = '0';
+				len = 6;
+				//grw - Elf/OS pointer is always unsigned
+				*sgnch = 0;
 				na++;
 				break;
 			case 'x':
 			case 'X':
 				k = 'X' == fmt[-1]? -16: 16;
-				p = ritoa(end, (int) *varg++, k, sgnch);
+				p = bitoa(end, (int) *varg++, k, sgnch);
 				if (alt) pfx = k<0? "0X": "0x";
+				//grw - hex is always unsigned
+				*sgnch = 0;
 				na++;
 				break;
 			default:
-				lbuf[0] = fmt[-1];
-				lbuf[1] = 0;
-				p = lbuf;
+			  //grw - implement a smaller buffer
+				sbuf[0] = fmt[-1];
+				sbuf[1] = 0;
+				p = sbuf;
 				break;
 			}
 		}
 		else {
-			lbuf[0] = *fmt++;
-			lbuf[1] = 0;
-			p = lbuf;
+			//grw - implement a smaller buffer
+			sbuf[0] = *fmt++;
+			sbuf[1] = 0;
+			p = sbuf;
 		}
 
 		k = strlen(p) + strlen(pfx) + strlen(sgnch);
+		
 		if ('0' == *pad) {
 			if (*sgnch) append(sgnch, 1);
 			append(pfx, strlen(pfx));
 			pfx = "";
 		}
+		
 		while (!left && len-- > k) {
 			append(pad, 1);
 		}
@@ -274,7 +306,27 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 		}
 		if (outf && err) break;
 	}
-	/* free the line buffer memory */
-	free(lbuf);
+	if (mode != 0) {
+		/* write out buffer to file */
+		if (ofd != -1) {
+			if (write(ofd, vbuf, olen) != olen) {
+				errno = EIO;
+				na = -1;
+			}
+		}	else {
+		  outf->last = _FWRITE;
+			/* short-circuit to speed up printf output */
+			if (_IOSYS == outf->mode) {
+				/* print direct to stdout */
+				putstr(vbuf);
+			} else if (_fwrite(vbuf, olen, outf) != olen) {
+					errno = EIO;
+					outf->iom &= _FERROR;
+					na = -1;	
+				}
+		}		
+		/* free the line buffer memory */
+		//free(lbuf);
+  }
 	return na;
 }

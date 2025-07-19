@@ -416,8 +416,10 @@ static void stmt(void) {
 	case DEFAULT:	wrong_ctx(DEFAULT); break;
 	case CASE:	wrong_ctx(CASE); break;
 	//grw - added logic to get result from expression stack
-	//grw - swapped commit and genpopd to optimize redundant push/pop
-	default:	expr(lv, 0); semi(); genpopd(); commit(); break;
+	//grw - genpopd will eliminate a redundant push/pop then do a commit 
+	default:	expr(lv, 0); semi(); genpopd(); break;
+	//default:	expr(lv, 0); semi(); genpopd(); commit(); break;
+
 	}
 	//grw - removed clear logic
 	//clear(1);

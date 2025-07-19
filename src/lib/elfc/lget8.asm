@@ -7,9 +7,9 @@
 ;   R9 - local data value pointer
 ;   RA - 2-byte variable value
 ;   RB - base pointer to local data in expression stack
-; usage:  call lget16
+; usage:  call lget8
 ;           dw loffset  ; index to local variable (signed)
-; returns: RA with 2-byte variable value
+; returns: RA with 1-byte variable value
 ; notes: leaves 16-bit value on expression stack
 ;        ESP is unchanged
 ;---------------------------------------------------------

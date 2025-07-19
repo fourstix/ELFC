@@ -17,7 +17,8 @@
 #pragma             extrn Cexit            
 #pragma             extrn Cfree  
 #pragma             extrn Citoa           
-#pragma             extrn Citox           
+#pragma             extrn Citox
+#pragma             extrn Citou           
 #pragma             extrn Cmalloc
 #pragma             extrn Cqsort
 #pragma             extrn Crand
@@ -116,6 +117,7 @@ void exit(int n);
 void free(void* p);
 void itoa(int n, char *s);
 void itox(int n, char *s);
+void itou(int n, char *s);
 void* malloc(int size);
 void qsort(void *list, int count, int size, int (*cmp)());
 int rand(void);

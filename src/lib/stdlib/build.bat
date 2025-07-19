@@ -11,6 +11,7 @@
 ..\elfc -L free.c
 ..\elfc -L itoa.c
 ..\elfc -L itox.c
+..\elfc -L itou.c
 ..\elfc -L malloc.c
 ..\elfc -L qsort.c
 ..\elfc -L rand.c
@@ -22,7 +23,7 @@
 ..\elfc -L lseek.c
 
 type _init.prg _fdinit.prg abs.prg abort.prg atexit.prg atoi.prg bsearch.prg > stdlib.lib
-type calloc.prg div.prg exit.prg free.prg itoa.prg itox.prg malloc.prg qsort.prg >> stdlib.lib
-type rand.prg creat.prg open.prg close.prg read.prg write.prg lseek.prg >> stdlib.lib
+type calloc.prg div.prg exit.prg free.prg itoa.prg itox.prg itou.prg malloc.prg >> stdlib.lib
+type  qsort.prg rand.prg creat.prg open.prg close.prg read.prg write.prg lseek.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib

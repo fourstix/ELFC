@@ -214,12 +214,12 @@ void emitcond(node *a, int ex) {
 }
 
 void emitargs(node *a) {
+	//grw - commit anything pending before arg
+	commit();
 	if (NULL == a) return;
 	//grw - debugging
 	gen(";----- emitarg -----");
 	emittree1(a->right);
-	//grw - commit after each arg
-	commit();
 	emitargs(a->left);
 }
 
@@ -300,8 +300,12 @@ static void emittree1(node *a) {
 			//gen(";----- emittree1 genlab(a->args[0]) -----");
 			genlab(a->args[0]);
 			break;
-	case OP_COMMA:	emittree1(a->left);
-			commit();
+	case OP_COMMA:	
+			emittree1(a->left);
+			//grw - pop result from expression on left side of comma
+			genpopd();
+			//grw - genpopd will eliminate a redundant push/pop then do a commit 
+			//commit();
 			//grw - removed clear logic
 			//clear(0);
 			emittree1(a->right);
