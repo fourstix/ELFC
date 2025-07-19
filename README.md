@@ -126,7 +126,7 @@ type abort.prg abs.prg exit.prg > stdlib.lib
 
 Stdlib Library
 --------------
-** The following functions are supported in the ElfC stdlib C library.
+**The following functions are supported in the ElfC stdlib C library.**
 
 * void abort(void);
 * int abs(int n);
@@ -145,7 +145,7 @@ Stdlib Library
 * int rand(void);
 * void srand(int n);
 
-** The following unistd.h file functions are included in the ElfC stdlib C library.
+**The following unistd.h file functions are included in the ElfC stdlib C library.**
 
 * int	 creat(char \*path, int mode);
 * int	 open(char \*path, int flags);
@@ -160,9 +160,9 @@ Stdlib Library
 
 Stdio Library
 -------------
-** The following functions are supported in the ElfC stdio C library.
+**The following functions are supported in the ElfC stdio C library.**
 
-** Unbuffered Elf/OS System IO functions:
+**Unbuffered Elf/OS System IO functions:**
 
 * char \*gets(char \*buf);
 * int	 puts(char \*s);
@@ -172,7 +172,7 @@ Stdio Library
 
 *Note: putstr is similar to puts(), but it does not add a newline after the string.*
 
-** Buffered IO function:
+**Buffered IO function:**
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
@@ -181,7 +181,7 @@ Stdio Library
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
 
-** Buffered file functions:
+**Buffered file functions:**
 
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
@@ -190,7 +190,7 @@ Stdio Library
 * int fwrite(void \*p, int size, int count, FILE \*f);
 * int fflush(FILE \*f);
 
-** Print functions:
+**Print functions:**
 
 * int fprintf(FILE \*f, char \*fmt, ...);
 * int printf(char \*fmt, ...);
@@ -200,24 +200,24 @@ Stdio Library
 * int vprintf(char \*fmt, void \*\*args);
 * int vsprintf(char \*buf, char \*fmt, void \*\*args);
 
-** Scan functions:
+**Scan functions:**
 
 * int fscanf(FILE \*f, char \*fmt, ...);
 * int scanf(char \*fmt, ...);
 * int sscanf(char \*src, char \*fmt, ...);
 
-** File functions:
+**File functions:**
 * int remove(char \*path);
 * int rename(char \*old, char \*new);
 
-** File position functions:
+**File position functions:**
 
 * int fgetpos(FILE \*f, pos_t \*pos);
 * int fsetpos(FILE \*f, pos_t \*pos);
 * int fseek(FILE \*f, int offset, int how);
 * int ftell(FILE \*f);
 
-** File error functions:
+**File error functions:**
 
 * int ferror(FILE \*f);
 * int feof(FILE \*f);
@@ -225,7 +225,7 @@ Stdio Library
 
 String Library
 -------------
-** The following functions are supported in the ElfC string C library.
+**The following functions are supported in the ElfC string C library.**
 
 * void \*memchr(void \*p, int c, int n);
 * int memcmp(void \*p1, void \*p2, int n);
@@ -254,6 +254,8 @@ String Library
 
 Planned for This Release
 -------------------------
+* Implement the realloc function in stdlib.
+
 * Implement support for STG ROM break points.
 
 * Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
