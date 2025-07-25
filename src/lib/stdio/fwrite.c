@@ -15,7 +15,7 @@ int _fwrite(void *p, int size, FILE *f) {
 	if (f->iom & _FERROR) return 0;
 	f->last = _FWRITE;
 	
-	if (f->mode == _IONBF) {
+	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		if ((k = write(f->fd, p, size)) != size) {
 			f->iom |= _FERROR;
 			errno = EIO;

@@ -63,20 +63,17 @@ static int scanchar(char *p, int len) {
 static int scanstr(char *p, int len) {
 	int	k, c;
 	k = len;
-	//grw - spec says %s should skip any leading whitespace 
-	do {
-		c = next();
-	} while (isspace(c));
-	
+	//grw - spec says %s should skip any leading whitespace
+	skip();
+ 	
 	while (0 == len || k--) {
-    //grw - non-whitespace character read from above
-	  //		c = next();
+	  c = next();
 		if (isspace(c) || EOF == c) 
-			return 1;
+			break;
 		if (p) *p++ = c;
-		//grw - get next character until whitespace encountered
-		c = next();
 	}
+	//grw - spec says string always adds null
+	*p = 0;
 	return 1;
 }
 
@@ -118,6 +115,9 @@ static int scanclass(char *p, char *clss, int len) {
 	in = *clss++? nstrchr: strchr;
 	while ((0 == len || k--) && in(clss, c = next()))
 		if (p) *p++ = c;
+		
+	//grw - spec says [] always adds null
+	if (p) *p = 0;	
 	return 1;
 }
 
@@ -200,37 +200,53 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 			pna = na;
 			switch (*fmt++) {
 			case 'c':
-				if (!noasg) p = *varg--;
+			  //grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scanchar(p, len)) na++;
 				break;
 			case 'd':
-				if (!noasg) p = *varg--;
+			  //grw - vargs go up not down
+			  //if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scannum(p, 10, len)) na++;
 				break;
 			case 'i':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scannum(p, 0, len)) na++;
 				break;
 			case 'n':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+ 				if (!noasg) p = *varg++;
 				*(int *)p = nchar;
 				break;
 			case 'o':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scannum(p, 8, len)) na++;
 				break;
 			case 's':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scanstr(p, len)) na++;
 				break;
 			case 'p':
 			case 'x':
 			case 'X':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scannum(p, 16, len)) na++;
 				break;
 			case '[':
-				if (!noasg) p = *varg--;
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
 				if (scanclass(p, mkclass(fmt), len))
 					na++;
 				break;
@@ -244,10 +260,7 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 				//grw - c would always be 1 or 0, rather than char from next()
 				//while ((c = isspace(next())) != 0)
 				//	;
-				do {
-					c = next();
-				} while (isspace(c));
-				back(c);
+				skip();
 			}
 			else if (*fmt != next())
 				break;

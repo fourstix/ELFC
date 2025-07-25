@@ -39,6 +39,7 @@ The stdlib, stdio, ctype, and string C libraries are supported as described in t
 
 * The header files use `#pragma` statements so the libraries link properly.
 
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Overview
 --------
@@ -55,9 +56,11 @@ Overview
 
 * In addition to these optimizations, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
 
+* The `asm` statement passes a string literal directly into the generated assembly file.
+
 * The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
 
-* The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
+* The `\_\_LINE\_\_` and `\_\_FILE\_\_` preprocessor directives were implemented in this version.
 
 * The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
 
@@ -86,6 +89,8 @@ Overview
 * The `atexit()` mechanism is now supported.
 
 * A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Library Compiler Option 
 ------------------------
@@ -128,32 +133,54 @@ Stdlib Library
 --------------
 **The following functions are supported in the ElfC stdlib C library.**
 
+**Program Exit Functions**
 * void abort(void);
-* int abs(int n);
 * int atexit(int (*fn)());
-* int atoi(char \*s);
-* void \*bsearch(void \*key, void \*array, int count, int size, int (\*cmp)());
-* void \*calloc(int count, int size);
-* void div(int num, int denom, div_t *rp);
 * void exit(int n);
+
+*Notes:*
+* *`abort` terminates a program immediately without closing any open files.*
+* *`exit` will call any function registered by `atexit`, then close any open files by calling `fclose`, and then terminate the program.*
+* *`exit` deletes any temporary files created by `tmpfile` by closing them with `fclose`.*
+* *Only one function can be registered by `atexit`.*
+
+
+**Memory Allocation**
+
+* void\* malloc(int size);
+* void \*calloc(int count, int size);
+* void \*realloc(void \*p, int size);
 * void free(void\* p);
+
+**Number Conversion**
+* int atoi(char \*s);
 * void itoa(int n, char \*s);
 * void itox(int n, char \*s);
 * void itou(int n, char \*s);
-* void\* malloc(int size);
+
+*Note: `itox` and `itou` are functions for hexadecimal and unsigned integer conversion.*
+
+**Math Utilities**
+
+* int abs(int n);
+* void div(int num, int denom, div_t *rp);
+* void \*bsearch(void \*key, void \*array, int count, int size, int (\*cmp)());
 * void qsort(void \*list, int count, int size, int (\*cmp)());
 * int rand(void);
 * void srand(int n);
+* int min(int a, int b);
+* int max(int a, int b);
 
 **The following unistd.h file functions are included in the ElfC stdlib C library.**
+
+**Low Level File Functions**
 
 * int	 creat(char \*path, int mode);
 * int	 open(char \*path, int flags);
 * int	 close(int fd);
 * int	 read(int fd, void \*buf, int len);
 * int	 write(int fd, void *\buf, int len);
-* int  unlink(char \*pat);
-* int	 rename(char \*old, char \*new);
+* int  unlink(char \*path);
 * int  lseek(int fd, int hi_off, int lo_off, int how);
 
 *Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`*
@@ -162,7 +189,7 @@ Stdio Library
 -------------
 **The following functions are supported in the ElfC stdio C library.**
 
-**Unbuffered Elf/OS System IO functions:**
+**Unbuffered Elf/OS Character I/O**
 
 * char \*gets(char \*buf);
 * int	 puts(char \*s);
@@ -172,7 +199,7 @@ Stdio Library
 
 *Note: putstr is similar to puts(), but it does not add a newline after the string.*
 
-**Buffered IO function:**
+**Buffered Character I/O**
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
@@ -181,16 +208,20 @@ Stdio Library
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
 
-**Buffered file functions:**
+*Note: all stdio functions, except the Unbuffered Elf/OS Character I//O functions, support a one byte push-back buffer through the ungetc() function.*
+
+**Buffered File I/O**
 
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
-* FILE *fopen(char \*path, char \*mode);
+* FILE \*fopen(char \*path, char \*mode);
 * int fread(void \*p, int size, int count, FILE \*f);
 * int fwrite(void \*p, int size, int count, FILE \*f);
-* int fflush(FILE \*f);
+* int fflush(FILE \*f);  
 
-**Print functions:**
+*Note: Elf/OS implements a write through buffer, so the fflush function is implemented as a NOP*
+
+**Formatted Output**
 
 * int fprintf(FILE \*f, char \*fmt, ...);
 * int printf(char \*fmt, ...);
@@ -200,38 +231,56 @@ Stdio Library
 * int vprintf(char \*fmt, void \*\*args);
 * int vsprintf(char \*buf, char \*fmt, void \*\*args);
 
-**Scan functions:**
+*Note: Information about supported print conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
+**Formatted Input**
 
 * int fscanf(FILE \*f, char \*fmt, ...);
 * int scanf(char \*fmt, ...);
 * int sscanf(char \*src, char \*fmt, ...);
 
-**File functions:**
+*Note: Information about supported scan conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
+**File Operations**
 * int remove(char \*path);
 * int rename(char \*old, char \*new);
+* char \*tmpnam(char \*buf);
+* FILE \*tmpfile(void);
 
-**File position functions:**
+*Notes:*
+* *`tmpnam` creates a filename such as `temp.00`.*
+* *`tmpfile` creates temporary file using a name generated by `tmpnam`.* 
+* *Files created by `tmpfile` are deleted when closed by `fclose`.*
+
+**File Position Functions**
 
 * int fgetpos(FILE \*f, pos_t \*pos);
 * int fsetpos(FILE \*f, pos_t \*pos);
 * int fseek(FILE \*f, int offset, int how);
 * int ftell(FILE \*f);
 
-**File error functions:**
+**File Erro Functionsr**
 
 * int ferror(FILE \*f);
 * int feof(FILE \*f);
 * void clrerror(FILE \*f);
+* void perror(char \*msg);
 
 String Library
--------------
+----------------
+
 **The following functions are supported in the ElfC string C library.**
+
+**Memory Functions**
 
 * void \*memchr(void \*p, int c, int n);
 * int memcmp(void \*p1, void \*p2, int n);
 * void \*memcpy(void \*d, void \*s, int n);
 * void \*memmove(void \*d, void \*s, int n);
 * void \*memset(void \*p, int c, int n);
+
+**String Functions**
+
 * char \*strcat(char \*d, char \*a);
 * char \*strchr(char \*s, int c);
 * int strcmp(char \*s1, char \*s2);
@@ -252,27 +301,67 @@ String Library
 
 *Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
 
+Ctype Library
+--------------
+
+**Character Type Functions**
+
+* int	isalnum(int c);
+* int	isalpha(int c);
+* int	iscntrl(int c);
+* int	isdigit(int c);
+* int	isgraph(int c);
+* int	islower(int c);
+* int	isprint(int c);
+* int	ispunct(int c);
+* int	isspace(int c);
+* int	isupper(int c);
+* int	isxdigit(int c);
+* int	tolower(int c);
+* int	toupper(int c);
+
+
+Assert Library
+--------------
+void assert(int a, char\* file, int line);
+
+*Notes:*
+*The assert macro is implemented by a function, because preprocessor macros do not support parameters.*
+*The pre-defined Macros \_\_FILE\_\_ and \_\_LINE\_\_ should be used for the file and line arguments.*
+*If the macro NDEBUG is defined then the assert function returns immediately*
+*Otherwise, it prints a message containing the file name and line number and then calls the abort() function to exit.* 
+
+Stdargs Library
+---------------
+* void	\*\*_va_start(void \*last);
+* void	 \*_va_arg(void \*\*ap);
+* void	  _va_end(void \*\*ap);
+
+*Notes:*
+*The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.*
+*The va_arg() function does not include an argument for the type.*
+*The va_end() function is a NOP.* 
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
 Planned for This Release
 -------------------------
-* Implement the realloc function in stdlib.
-
 * Implement support for STG ROM break points.
-
+* Implement an assert function similar to the assert macro.
 * Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
-* Implement an assert function similar to the assert macro.
 
 Next Release
 -------------
 
 * Implement time functions compatible with Elf/OS (Mini-DOS) kernel and BIOS API.
 * Implement signed and unsigned keywords.
-* Implement the short int data type.
+* Implement the short int data type as synonymn for int.
 
 Future Goals
 -------------
 
-* Convert library to 32-bit library and implement long and float data types. 
+* Convert library to 32-bit library and implement long, short and float data types. 
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.

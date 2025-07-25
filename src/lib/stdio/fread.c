@@ -23,7 +23,7 @@ int _fread(void *p, int size, FILE *f) {
 	}
 	f->last = _FREAD;
 	
-	if (f->mode == _IONBF) {
+	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		if ((total = read(f->fd, p, size)) != size) {
 			f->iom |= _FEOF;
 			errno = EIO;

@@ -21,7 +21,7 @@ int fputc(int c, FILE *f) {
     
   f->last = _FWRITE;
   
-  if (f->mode == _IONBF) {
+  if (f->mode == _IONBF || f->mode == _IOTMP) {
     /* non-buffered file io */
     *b = c;
     if (write(f->fd, b, 1) == 1)

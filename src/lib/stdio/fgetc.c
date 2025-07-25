@@ -30,7 +30,7 @@ int fgetc(FILE *f) {
 		return c;
 	}
 
-	if (f->mode == _IONBF) {
+	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		if (read(f->fd, b, 1) == 1)
 			return *b;
 		else {

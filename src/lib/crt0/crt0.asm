@@ -35,7 +35,6 @@ Elfstart: push   r6            ; save original return address on stack
           load   r2, cstack   ; set SP to C Program Stack
           load   r7, estack   ; set ESP (Expression Stack Pointer)
           copy   r7, rb       ; set Stack Frame BP (Base Pointer)
-          load   r1, $F000    ; DEBUG set R1 for breakpoint
 ;------ Need to call the _init function in stdlib ---------
           call   C_init
 ;------ load arguments for main function onto ES ---------

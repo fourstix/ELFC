@@ -191,6 +191,12 @@ void genname(char *name) {
 	//printf("Generate %s name\n", name);
 	genraw(gsym(name));
 	genraw(":");
+	//grw - a hack, but generate STG ROM support after main
+	if(!strcmp(name, "main")){
+		genraw("\n#ifdef STGROM\n");
+		genraw("      load   r1, $F000  ; set R1 to STG Breakpoint\n");
+		genraw("#endif\n");
+	}
 }
 
 void genpublic(char *name) {

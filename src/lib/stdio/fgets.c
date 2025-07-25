@@ -24,7 +24,7 @@ char *fgets(char *s, int len, FILE *f) {
 
 	f->last = _FREAD;
 
-	if (f->mode == _IONBF) {
+	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		while (len-- > 1) {
 			if (read(f->fd, p, 1) != 1) {
 				errno = EIO;

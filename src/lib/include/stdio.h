@@ -46,8 +46,14 @@
 #pragma             extrn Cfsetpos
 #pragma             extrn Cfseek
 #pragma             extrn Cftell
+#pragma             extrn Cperror
+#pragma             extrn Crewind
+#pragma             extrn Cremove
+#pragma             extrn Ctmpnam
+#pragma             extrn Ctmpfile
 #endif
 
+/* Maximum size of string in Elf/OS is 255 bytes */
 #ifndef _BUFFLEN
 #define _BUFLEN		  256
 #endif
@@ -69,11 +75,16 @@
 #endif 
 
 #ifndef TMP_MAX
-#define TMP_MAX		1
+#define TMP_MAX		64
 #endif
 
-#ifndef L_tmpname
-#define L_tmpname	8
+#ifndef TMP_FMT
+#define TMP_FMT		"temp.%02d"
+#endif
+
+
+#ifndef L_tmpnam
+#define L_tmpnam	8
 #endif
 
 #ifndef _IONBF
@@ -82,6 +93,10 @@
 
 #ifndef _IOSYS
 #define _IOSYS	1
+#endif
+
+#ifndef _IOTMP
+#define _IOTMP	2
 #endif
 
 #ifndef _FCLOSED
@@ -110,6 +125,7 @@ typedef struct {
 	int	last;
 	int	mode;
 	int	ch;
+	int tmpid;
 } FILE;
 
 extern FILE	*stdin, *stdout, *stderr;
@@ -180,15 +196,19 @@ int sscanf(char *src, char *fmt, ...);
 /* file functions */
 int remove(char *path);
 int rename(char *old, char *new);
+char *tmpnam(char *buf);
+FILE *tmpfile(void);
 
 /* file position functions */
 int fgetpos(FILE *f, pos_t *pos);
 int fsetpos(FILE *f, pos_t *pos);
 int fseek(FILE *f, int offset, int how);
 int ftell(FILE *f);
+void rewind(FILE *f);
 
 /* error functions */
 int ferror(FILE *f);
 int feof(FILE *f);
 void clrerror(FILE *f);
+void perror(char *msg);
 #endif

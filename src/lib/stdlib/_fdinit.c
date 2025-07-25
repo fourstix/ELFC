@@ -5,17 +5,39 @@
 #pragma             extrn Cerrno
 
 #ifndef FD_SIZE
-#define FD_SIZE   532
+#define FD_SIZE   534
 #endif
 
 #ifndef FD_MAX
-#define FD_MAX   4
+#define FD_MAX  4
 #endif
 
 static int _fdcnt = 0;
 #pragma             public C_fdcnt   
 
 #pragma             extrn Cmalloc    
+
+/* 
+ *  Elf/OS File Descriptor Layout
+ * --------------------------------
+ *  Byte : Desicription      : Length
+ * --------------------------------
+ *   0-3 : Current Offset    :  4
+ *   4-5 : DTA Pointer       :  2
+ *   6-7 : EOF               :  2
+ *   8   : Flags Byte        :  1
+ *  9-12 : DIR Sector        :  4
+ * 13-14 : DIR Offset        :  2
+ * 15-18 : Current Sector    :  4
+ *   19  : Drive Number (v5) :  1
+ *   20  : Drive FStype (v5) :  1
+ *   21  : 1 byte padding    :  1
+ *    Header Total = 22 bytes   
+ * --------------------------------
+ *          DTA (512 Bytes)
+ * --------------------------------
+ *   Total FD size = 534 bytes
+ */
 
 int _fdinit(void) {
   int fd;
@@ -39,8 +61,8 @@ int _fdinit(void) {
   asm("           dw -2         ; get pointer from argument stack");           
   asm("         copy ra, rf     ; copy fd pointer to buffer pointer");
   asm("         copy ra, rd     ; copy fd pointer to dta pointer");
-  asm("         glo  rd         ; dta is 20 bytes after filedes");
-  asm("         adi  20");
+  asm("         glo  rd         ; dta is 22 bytes after filedes");
+  asm("         adi  22");
   asm("         plo  rd         ; put lo byte into rd");
   asm("         ghi  rd         ; propagate carry into hi byte");
   asm("         adci 0          ; add carry bit to hi byte");
@@ -53,7 +75,7 @@ int _fdinit(void) {
   asm("         str  rf");
   asm("         inc  rf"); 
   asm("         str  rf");
-  asm("         inc  rf         ; move rr to dta value in filedes"); 
+  asm("         inc  rf         ; move to dta value in filedes"); 
   asm("         ghi  rd         ; put dta address hi byte next");
   asm("         str  rf");
   asm("         inc  rf");

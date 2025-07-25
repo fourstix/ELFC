@@ -65,7 +65,7 @@ static char *bitoa(char *p, int n, int base, char *sgnch) {
 	if (base < 0) base = -base, a = 'A';
 	if (0 == n) {
 		/* zero is the same for every base */
-		*p = '0';
+		*--p = '0';
 	} else if (10 == base) {
 		/* signed integer */
 		if (n < 0) s = 1, n = -n;
