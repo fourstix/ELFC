@@ -27,30 +27,30 @@ Registers Used
 ---------------
 
 <table>
-<tr><th>Register</th><th>Purpose</th><th>User</th><th>Availability</th></tr>
-<tr><td>R0</td><td>DMA Pointer</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R1</td><td>Interrupt Handler, STG Breakpoint</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R2</td><td>System Stack Pointer (SP)</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R3</td><td>Program Instruction Pointer</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R4</td><td>SCRT Call Routine</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R5</td><td>SCRT Return Routine</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>R6</td><td>SCRT Argument and Return Point</td><td>Elf/OS</td><td>Reserved</td></tr>
+<tr><th>Register</th><th>Purpose</th><th>Owner</th><th>Availability</th></tr>
+<tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R1</td><td>Interrupt Handler, STG Breakpoint</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R3</td><td>Program Instruction Pointer</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R4</td><td>SCRT Call Routine</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R5</td><td>SCRT Return Routine</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R6</td><td>SCRT Argument and Return Point</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R7</td><td>Expression Stack Pointer (ESP)</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>R8</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
 <tr><td>R9</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
 <tr><td>RA</td><td>Accumulator and Return Value</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RB</td><td>Caller Stack Frame Base Pointer</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>RC</td><td>Counter</td><td>BIOS</td><td>General Use</td></tr>
-<tr><td>RD</td><td>Destination Pointer, Data Value</td><td>BIOS</td><td>General Use</td></tr>
-<tr><td>RE.1</td><td>Baud Rate Byte</td><td>Elf/OS</td><td>Reserved</td></tr>
-<tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>Elf/OS</td><td>General Use</td></tr>
-<tr><td>RF</td><td>Buffer Pointer</td><td>BIOS</td><td>General Use</td></tr>
+<tr><td>RC</td><td>Counter</td><td>User</td><td>General Use</td></tr>
+<tr><td>RD</td><td>Destination Pointer, Data Value</td><td>User</td><td>General Use</td></tr>
+<tr><td>RE.1</td><td>Baud Rate Byte</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>User</td><td>General Use</td></tr>
+<tr><td>RF</td><td>Buffer Pointer</td><td>User</td><td>General Use</td></tr>
 </table>
 
 *Notes:*
-* *SCRT stands for the Elf/OS "Standard Call and Return" routine.*
-* *'Reserved' means that the values of these registers should not be changed, even when not in use by Elf/OS or ElfC.*
-* *'General Use' means that the register value may be changed when not directly in use by Elf/OS or ElfC*
+* *SCRT stands for the "Standard Call and Return" routine.*
+* *'Reserved' means that the values of these registers should not be changed, even when not in use by the OS or ElfC.*
+* *'General Use' means that the register value may be changed when not directly in use by the OS or ElfC*
 
 ElfC File Descriptor
 --------------------
@@ -119,7 +119,7 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.* 
-* *The system and genenv() have no equivalent functions in Elf/OS* 
+* *The system and genenv() have no equivalent functions in Elf/OS or MiniDOS* 
 
 
 Unsupported Stdio Functions
@@ -131,7 +131,7 @@ The following functions were omitted from the ElfC stdio C library.
 * int setvbuf(FILE\* stream, char \*buf, int mode, int size);
 * int setbuf(FILE\* stream, char \*buf;
 
-*Note: Elf/OS has its own buffering, and does not allow streams to be reassigned.*
+*Note: Elf/OS and MiniDOS use their own buffering, and do not allow streams to be reassigned.*
 
 Stdlib Modified Functions
 -------------------------
@@ -161,30 +161,32 @@ Stdarg Modified Functions
 
 Assert Modified Function
 ------------------------
-* `assert` is implemented by function, because preprocessor macros do not support parameters.
-* The `assert` function has agruments for the assertion, file name and line number. 
-* If the macro **NDEBUG** is defined the assert function returns immediately.
+* `assert` is implemented by function, because the preprocessor does not support macros with parameters.
+* The `assert` function has arguments for the assertion, file name and line number. 
+* If the macro `NDEBUG` is defined the `assert` function returns immediately.
 * The `__FILE__` and `__LINE__` macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
 
 Pre-Defined Macros
 -------------------
 * If `\_ELFCLIB\_` is defined, C code is compiled for an Elf/OS library procedure.
 * If `\_STGROM\_`  is defined, assembly code for the STG ROM is created.
-* `BRKPT` inserts assembly code to invoke the STG break point handler, if `\_STGROM\_` is defined.
+* `BRKPT` inserts assembly code to invoke the STG break point handler, when `\_STGROM\_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
 * If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
+
+*Note: `__LINE__` and `__FILE__` begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
 * The `setjmp` library is not supported.
 * The `signal` library is not supported.
-* The `math` library is not supported, because there are no float or double types in this release.
+* The `math` library is not supported, because there are no real types (float or double) in this release.
 * The `time` library is planned for a future release.
 
 Header files
 ------------
-* The header file `float.h` is not supported.
-* The header file `locale.h` is not supported.
-* The `stdlib.h` header implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
+* The `float.h` header file is not supported.
+* The `locale.h` header file is not supported.
+* The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
 * The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for an `#include <stdlib.h>` statement.

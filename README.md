@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Design Goals
 -------------
-* Use the Elf/OS [Asm/02](https://github.com/fourstix/Asm-02) assembler and [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
+* Use the [Asm/02](https://github.com/fourstix/Asm-02) assembler and the [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
 * Create a library based on Mike Riley's [Library/02](https://github.com/rileym65/Library-02) standard library.
 * Target both Elf/OS and Mini/DOS as a platform.
 * Target Windows as the development platform (cross-compiler)
@@ -18,7 +18,7 @@ This version is based on the [SubC book version, 2nd Ed.](https://www.t3x.org/su
 
 I strongly recommend reading Nils's book.  Practical Compiler Construction is a very good guide in explaining the theory behind the SubC compiler as well as describing the compiler's code.  The second edition can be ordered as a [paperback](https://www.lulu.com/en/us/shop/nils-m-holm/practical-compiler-construction/paperback/product-179kp29q.html) or [pdf ebook file](https://www.lulu.com/en/us/shop/nils-m-holm/practical-compiler-construction/ebook/product-18knr78q.html) from Lulu press.
 
-In Release 1 the code generation functions for Elf/OS have all been implemented.  The arithmetic and logical operators have all been implemented and tested.
+In Release 1 the code generation functions for Elf/OS and Mini/DOS have all been implemented.  The arithmetic and logical operators have all been implemented and tested.
 
 
 Release 2
@@ -31,7 +31,7 @@ The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Li
 
 The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
 
-An additional compiler option `-L` will compile and assemble Elf/OS library modules from C files.
+An additional compiler option `-L` will compile and assemble Elf/OS (Min/iDOS) library modules from C files.
 
 The stdlib, stdio, ctype, and string C libraries are supported as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
@@ -44,11 +44,11 @@ More information about unsupported library functions, header files and ElfC inte
 Overview
 --------
 
-* Version 2 implements the code generation functions required to compile a C file and assemble the resulting CDP1802 assembly and link code files into a binary program for the Elf/OS (or Mini/DOS) operating system.  
+* Version 2 implements the code generation functions required to compile a C file and assemble the resulting CDP1802 assembly and link code files into a binary program for the Elf/OS (Mini/DOS) operating system.  
 
 * The assembler [Asm/02]((https://github.com/fourstix/Asm-02)) and linker [Link/02](https://github.com/fourstix/Link-02) are now invoked with the same path as the compiler.  The C library files and header files are located in the same manner, so that the preprocessor commands `#include <header.h>` and `#include "header.h"` work as expected.
 
-* Version 2 extends the library of arithmetic and variable functions based on the Elf/OS 16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
+* Version 2 extends the library of arithmetic and variable functions based on the  16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
 
 * This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).
 
@@ -88,9 +88,7 @@ Overview
 
 * The `atexit()` mechanism is now supported.
 
-* The `atexit()` mechanism is now supported.
-
-* The `stdarg` macros are implemented as functions to add a (slightly incompatible) varargs mechanism.
+* The `varags` mechanism is now supported, although as (slightly incompatible) functions.
 
 * The `assert` macro is implemented as a function.
 
@@ -101,9 +99,9 @@ More information about unsupported library functions, header files and ElfC inte
 Library Compiler Option 
 ------------------------
 
-* The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS library procedure.
+* The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
 
-* The source file should contian a public function with same name as the file name of the C file. If no public function in the file matches the file name, an error will be generated.
+* The source file should contain a public function with same name as the file name of the C file. If no public function in the file matches the file name, an error will be generated.
 
 * The procedure name will be the file name with the C prefix and serve as the public entry point for the procedure function.
 
@@ -111,11 +109,11 @@ Library Compiler Option
 
 * The entry point function's public name will be suppressed to prevent duplication of the procedure name when assembling.
 
-* The prg produced by the assembler can then be incorporated into an Elf/OS library.
+* The prg produced by the assembler can then be incorporated into a library for Elf/OS or Mini/DOS.
 
 * The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
 
-* An Elf/OS library is created by concatenating multiple procedure prg files.
+* An Elf/OS (Mini/DOS) library is created by concatenating multiple procedure prg files.
 
 Example:
 
@@ -129,7 +127,7 @@ When compiled with:
 ```
 ..\elfc -L abs.c
 ```
-Will produce the file abs.prg that can be concatenated into an Elf/OS library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs()` function.  
+Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.  
 ```
 type abort.prg abs.prg exit.prg > stdlib.lib 
 ```
@@ -195,7 +193,7 @@ Stdio Library
 -------------
 **The following functions are supported in the ElfC stdio C library.**
 
-**Unbuffered Elf/OS Character I/O**
+**Unbuffered Character I/O**
 
 * char \*gets(char \*buf);
 * int	 puts(char \*s);
@@ -214,7 +212,7 @@ Stdio Library
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
 
-*Note: all stdio functions, except the Unbuffered Elf/OS Character I//O functions, support a one byte push-back buffer through the ungetc() function.*
+*Note: all stdio functions, except the Unbuffered Character I//O functions, support a one byte push-back buffer through the ungetc() function.*
 
 **Buffered File I/O**
 
@@ -225,7 +223,7 @@ Stdio Library
 * int fwrite(void \*p, int size, int count, FILE \*f);
 * int fflush(FILE \*f);  
 
-*Note: Elf/OS implements a write through buffer, so the fflush function is implemented as a NOP*
+*Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP*
 
 **Formatted Output**
 
@@ -360,7 +358,7 @@ Planned for This Release
 Next Release
 -------------
 
-* Implement time functions compatible with Elf/OS (Mini-DOS) kernel and BIOS API.
+* Implement time functions compatible with Elf/OS (Mini/DOS) kernel and BIOS API.
 * Implement signed and unsigned keywords.
 * Implement the short int data type as synonymn for int.
 
@@ -372,7 +370,7 @@ Future Goals
 * Implement double keyword as synonym for float
 * Implement the C math library.
 * Implement signed and unsigned data types.
-* Create a native Elf/OS version of ElfC that uses the native Asm/02 and Link/02 programs in Elf/OS.  
+* Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.  
 
 
 Differences Between SubC and Full C89
@@ -449,7 +447,8 @@ Differences Between SubC and Full C89
    and they have no argument types. Note that this declaration
    will in fact generate a pointer to `int(*)(void)`.
 
-*  There is no `assert()` due to the lack of parameterized macros.
+*  Due to the lack of parameterized macros, `assert()` and other 
+   macros are implemented as functions.
    
 *  The SubC compiler accepts `//` comments in addition to `/* */`.
 
@@ -479,7 +478,7 @@ Placed in the public domain by the author.
 Elf/OS 
 Copyright (c) 2004-2025 by Mike Riley
 
-Mini-DOS 
+Mini/DOS 
 Copyright (c) 2025-2025 by David Madole
   
 Asm/02 1802 Assembler 
