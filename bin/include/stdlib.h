@@ -2,6 +2,15 @@
 #ifndef _STDLIB_
 #define _STDLIB_
 
+#ifdef _STGROM_
+#pragma #define STGROM
+
+#ifndef BRKPT
+#define BRKPT asm("     brkpt    ;---- jump to routine in stg rom\n");
+#endif
+
+#endif
+
 /* don't define all external functions inside C libraries to prevent dupes */
 #ifndef _ELFCLIB_ 
 #pragma             extrn C_init
@@ -9,17 +18,18 @@
 #pragma             extrn C_fdcnt
 #pragma             extrn Cabort
 #pragma             extrn Cabs
-#pragma             extrn Catexit    
-#pragma             extrn Catoi    
-#pragma             extrn Cbsearch           
-#pragma             extrn Ccalloc    
-#pragma             extrn Cdiv 
+#pragma             extrn Catexit      
 #pragma             extrn Cexit            
+#pragma             extrn Cmalloc
+#pragma             extrn Ccalloc 
+#pragma             extrn Crealloc
 #pragma             extrn Cfree  
+#pragma             extrn Catoi 
 #pragma             extrn Citoa           
 #pragma             extrn Citox
 #pragma             extrn Citou           
-#pragma             extrn Cmalloc
+#pragma             extrn Cdiv 
+#pragma             extrn Cbsearch              
 #pragma             extrn Cqsort
 #pragma             extrn Crand
 #pragma             extrn Csrand
@@ -29,6 +39,10 @@
 #pragma             extrn Cread
 #pragma             extrn Cwrite
 #pragma             extrn Clseek
+#pragma             extrn Cunlink
+#pragma             extrn Crename
+#pragma             extrn Cmin
+#pragma             extrn Cmax
 #endif
 
 #ifndef SEEK_SET
@@ -42,10 +56,6 @@
 #ifndef SEEK_END
 #define SEEK_END	2
 #endif 
-
-#ifndef FD_SIZE
-#define FD_SIZE   532
-#endif
 
 #ifndef O_OPEN
 #define O_OPEN    0    
@@ -98,37 +108,46 @@
 #define  EXIT_ERROR  (-1)
 #endif 
 
+/* typedef's from stddef.h */
+typedef int size_t;
+typedef int ptrdiff_t;
+typedef int wchar_t;
+typedef int max_align_t;
+
+
 typedef struct {
     int quot;       /* quotient */
     int rem;        /* remainder */
 } div_t;
 
-
 void _init(void);
 int _fdinit(void);
 void abort(void);
-int abs(int n);
-int atexit(int (*fn)());
-int atoi(char *s);
-void *bsearch(void *key, void *array, int count, int size, int (*cmp)());
-void *calloc(int count, int size);
-void div(int num, int denom, div_t *rp);
 void exit(int n);
+int atexit(int (*fn)());
+void* malloc(int size);
+void *calloc(int count, int size);
+void *realloc(void* p, int size);
 void free(void* p);
+int atoi(char *s);
 void itoa(int n, char *s);
 void itox(int n, char *s);
 void itou(int n, char *s);
-void* malloc(int size);
+int abs(int n);
+void div(int num, int denom, div_t *rp);
+void *bsearch(void *key, void *array, int count, int size, int (*cmp)());
 void qsort(void *list, int count, int size, int (*cmp)());
 int rand(void);
 void srand(int n);
+int min(int a, int b);
+int max(int a, int b);
+
 /* unistd file functions */
 int	 creat(char *path, int mode);
 int	 open(char *path, int flags);
 int	 close(int fd);
 int	 read(int fd, void *buf, int len);
 int	 write(int fd, void *buf, int len);
-int  unlink(char *pat);
-int	 rename(char *old, char *new);
+int  unlink(char *path);
 int  lseek(int fd, int hi_off, int lo_off, int how);
 #endif
