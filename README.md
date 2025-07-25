@@ -60,7 +60,7 @@ Overview
 
 * The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
 
-* The `\_\_LINE\_\_` and `\_\_FILE\_\_` preprocessor directives were implemented in this version.
+* The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
 
 * The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
 
@@ -87,6 +87,12 @@ Overview
 * The `#error`, `#line`, and `#pragma` commands have been added.
 
 * The `atexit()` mechanism is now supported.
+
+* The `atexit()` mechanism is now supported.
+
+* The `stdarg` macros are implemented as functions to add a (slightly incompatible) varargs mechanism.
+
+* The `assert` macro is implemented as a function.
 
 * A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
 
@@ -140,7 +146,7 @@ Stdlib Library
 
 *Notes:*
 * *`abort` terminates a program immediately without closing any open files.*
-* *`exit` will call any function registered by `atexit`, then close any open files by calling `fclose`, and then terminate the program.*
+* *`exit` will call the function registered by `atexit`, then close any open files by calling `fclose`, and then terminate the program.*
 * *`exit` deletes any temporary files created by `tmpfile` by closing them with `fclose`.*
 * *Only one function can be registered by `atexit`.*
 
@@ -326,10 +332,10 @@ Assert Library
 void assert(int a, char\* file, int line);
 
 *Notes:*
-*The assert macro is implemented by a function, because preprocessor macros do not support parameters.*
-*The pre-defined Macros \_\_FILE\_\_ and \_\_LINE\_\_ should be used for the file and line arguments.*
-*If the macro NDEBUG is defined then the assert function returns immediately*
-*Otherwise, it prints a message containing the file name and line number and then calls the abort() function to exit.* 
+* *The `assert` macro is implemented by a function, because preprocessor macros do not support parameters.*
+* *The pre-defined macros `__FILE__` and `__LINE__` should be used for the file and line arguments.*
+* *If the macro `NDEBUG` is defined then the assert function returns immediately*
+* *Otherwise, `assert` prints a message containing the file name and line number and then calls the `abort` function to exit.* 
 
 Stdargs Library
 ---------------
@@ -338,9 +344,9 @@ Stdargs Library
 * void	  _va_end(void \*\*ap);
 
 *Notes:*
-*The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.*
-*The va_arg() function does not include an argument for the type.*
-*The va_end() function is a NOP.* 
+* *The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.*
+* *The va_arg() function does not include an argument for the type.*
+* *The va_end() function is a NOP.* 
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 

@@ -36,7 +36,7 @@ Registers Used
 <tr><td>R5</td><td>SCRT Return Routine</td><td>Elf/OS</td><td>Reserved</td></tr>
 <tr><td>R6</td><td>SCRT Argument and Return Point</td><td>Elf/OS</td><td>Reserved</td></tr>
 <tr><td>R7</td><td>Expression Stack Pointer (ESP)</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>R8</td><td>Expression Temp Valuee</td><td>ElfC</td><td>General Use</td></tr>
+<tr><td>R8</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
 <tr><td>R9</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
 <tr><td>RA</td><td>Accumulator and Return Value</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RB</td><td>Caller Stack Frame Base Pointer</td><td>ElfC</td><td>Reserved</td></tr>
@@ -49,7 +49,7 @@ Registers Used
 
 *Notes:*
 * *SCRT stands for the Elf/OS "Standard Call and Return" routine.*
-* *'Reserved' means that the values of these registers should not be chanegd, even when not in use by Elf/OS or ElfC.*
+* *'Reserved' means that the values of these registers should not be changed, even when not in use by Elf/OS or ElfC.*
 * *'General Use' means that the register value may be changed when not directly in use by Elf/OS or ElfC*
 
 ElfC File Descriptor
@@ -118,8 +118,8 @@ The following functions were omitted from the ElfC stdlib C library.
 * char\* getenv(char *name);
 
 *Notes:*
-* *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The system and genenv() have no equivalent functions in Elf/OS*
+* *All the long and double utility functions were omitted because these types are not supported in the current version.* 
+* *The system and genenv() have no equivalent functions in Elf/OS* 
 
 
 Unsupported Stdio Functions
@@ -164,16 +164,16 @@ Assert Modified Function
 * `assert` is implemented by function, because preprocessor macros do not support parameters.
 * The `assert` function has agruments for the assertion, file name and line number. 
 * If the macro **NDEBUG** is defined the assert function returns immediately.
-* The \_\_FILE\_\_ and \_\_LINE\_\_ macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
+* The `__FILE__` and `__LINE__` macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
 
 Pre-Defined Macros
 -------------------
-* \_ELFCLIB\_ If defined, C code is compiled for an Elf/OS library procedure.
-* \_STGROM\_  If defined, assembly code for the STG ROM is emitted.
-* BRKPT  If \_STGROM\_is defined, BRKPT macro inserts assembly code to invoke the STG break point handler.
-\_\_LINE\_\_ Inserts the current line number in the code file.
-\_\_FILE\_\_ Insert the current file name in the code file.
-* NDEBUG If defined causes the `assert` to return immediately, and suppresses the generated code for the assert message.
+* If `\_ELFCLIB\_` is defined, C code is compiled for an Elf/OS library procedure.
+* If `\_STGROM\_`  is defined, assembly code for the STG ROM is created.
+* `BRKPT` inserts assembly code to invoke the STG break point handler, if `\_STGROM\_` is defined.
+* `__LINE__` inserts the current line number in the code file.
+* `__FILE__` insert the current file name in the code file.
+* If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
 
 Unsupported Libraries
 ---------------------
@@ -184,7 +184,7 @@ Unsupported Libraries
 
 Header files
 ------------
-* The header file float.h is not supported.
-* The header file locale.h is not supported.
-* The stdlib header implements definitions for unistd.h, stddef.h and fcntl.h.
-* The unistd.h, stddef.h and fcntl.h header files are empty except for an `#include <stdlib.h>` statement.
+* The header file `float.h` is not supported.
+* The header file `locale.h` is not supported.
+* The `stdlib.h` header implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
+* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for an `#include <stdlib.h>` statement.
