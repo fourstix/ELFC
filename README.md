@@ -88,9 +88,11 @@ Overview
 
 * The `atexit()` mechanism is now supported.
 
-* The `varags` mechanism is now supported, although as (slightly incompatible) functions.
+* The `varags` mechanism is now supported as functions as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
 
-* The `assert` macro is implemented as a function.
+* The `assert` macro is implemented as a function with support for the `NDEBUG` macro.
+
+* STG ROM break points are supported by the `_STGROM_` and `BRKPT` macros.
 
 * A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
 
@@ -204,6 +206,7 @@ Stdio Library
 *Note: putstr is similar to puts(), but it does not add a newline after the string.*
 
 **Buffered Character I/O**
+
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
@@ -246,6 +249,7 @@ Stdio Library
 *Note: Information about supported scan conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 **File Operations**
+
 * int remove(char \*path);
 * int rename(char \*old, char \*new);
 * char \*tmpnam(char \*buf);
@@ -263,7 +267,7 @@ Stdio Library
 * int fseek(FILE \*f, int offset, int how);
 * int ftell(FILE \*f);
 
-**File Erro Functionsr**
+**File Error Functions**
 
 * int ferror(FILE \*f);
 * int feof(FILE \*f);
@@ -307,6 +311,7 @@ String Library
 
 Ctype Library
 --------------
+**The following functions are supported in the ElfC ctype C library.**
 
 **Character Type Functions**
 
@@ -327,7 +332,10 @@ Ctype Library
 
 Assert Library
 --------------
-void assert(int a, char\* file, int line);
+
+**The following function is supported in the ElfC assert C library.**
+
+* void assert(int a, char\* file, int line);
 
 *Notes:*
 * *The `assert` macro is implemented by a function, because preprocessor macros do not support parameters.*
@@ -335,32 +343,28 @@ void assert(int a, char\* file, int line);
 * *If the macro `NDEBUG` is defined then the assert function returns immediately*
 * *Otherwise, `assert` prints a message containing the file name and line number and then calls the `abort` function to exit.* 
 
-Stdargs Library
+Stdarg Library
 ---------------
+
+**The following functions are supported in the ElfC stdarg C library.**
+
 * void	\*\*_va_start(void \*last);
 * void	 \*_va_arg(void \*\*ap);
 * void	  _va_end(void \*\*ap);
 
 *Notes:*
-* *The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.*
-* *The va_arg() function does not include an argument for the type.*
-* *The va_end() function is a NOP.* 
+* *The `stdarg` library is implemented by functions, because preprocessor macros do not support parameters.*
+* *The `va_arg` function does not include an argument for the type.*
+* *The `va_end` function is a NOP.* 
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
-
-Planned for This Release
--------------------------
-* Implement support for STG ROM break points.
-* Implement an assert function similar to the assert macro.
-* Implement the va_args mechanism described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
-
 
 Next Release
 -------------
 
 * Implement time functions compatible with Elf/OS (Mini/DOS) kernel and BIOS API.
 * Implement signed and unsigned keywords.
-* Implement the short int data type as synonymn for int.
+* Implement the short keyword as synonym for the int data type.
 
 Future Goals
 -------------
@@ -447,7 +451,7 @@ Differences Between SubC and Full C89
    and they have no argument types. Note that this declaration
    will in fact generate a pointer to `int(*)(void)`.
 
-*  Due to the lack of parameterized macros, `assert()` and other 
+*  Due to the lack of parameterized macros, `assert` and other 
    macros are implemented as functions.
    
 *  The SubC compiler accepts `//` comments in addition to `/* */`.

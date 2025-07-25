@@ -43,14 +43,14 @@ Registers Used
 <tr><td>RC</td><td>Counter</td><td>User</td><td>General Use</td></tr>
 <tr><td>RD</td><td>Destination Pointer, Data Value</td><td>User</td><td>General Use</td></tr>
 <tr><td>RE.1</td><td>Baud Rate Byte</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>User</td><td>General Use</td></tr>
+<tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>OS</td><td>General Use</td></tr>
 <tr><td>RF</td><td>Buffer Pointer</td><td>User</td><td>General Use</td></tr>
 </table>
 
 *Notes:*
 * *SCRT stands for the "Standard Call and Return" routine.*
-* *'Reserved' means that the values of these registers should not be changed, even when not in use by the OS or ElfC.*
-* *'General Use' means that the register value may be changed when not directly in use by the OS or ElfC*
+* *'Reserved' means that the values of these registers should not be changed, even when not in use by its owner.*
+* *'General Use' means that the register value may be changed when not directly in use by its owner.*
 
 ElfC File Descriptor
 --------------------
@@ -72,7 +72,7 @@ ElfC File Descriptor
 *Notes:*
 * *The total Size of ElfC File Descriptor is 534 bytes.*
 * *The DTA begins 22 bytes offset from the start of the FD.*
-* *This FD format is valid for Mini-DOS and Elf/OS v5*
+* *This FD format is valid for Mini/DOS and Elf/OS v5*
 
 Additional Statements
 ---------------------
@@ -99,7 +99,7 @@ Scan Conversions
 * The width specification is suppored.
 * The suppression operator `(\*)` is supported.
 * The `%d, %i, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
-* The charset operators %[...] and %[^...] are supported.
+* The charset operators `%[...]` and `%[^...]` are supported.
 * The %u, %f, %e, and %g conversions are not supported.
 
 Unsupported Stdlib Functions
@@ -169,13 +169,13 @@ Assert Modified Function
 Pre-Defined Macros
 -------------------
 * If `\_ELFCLIB\_` is defined, C code is compiled for an Elf/OS library procedure.
-* If `\_STGROM\_`  is defined, assembly code for the STG ROM is created.
-* `BRKPT` inserts assembly code to invoke the STG break point handler, when `\_STGROM\_` is defined.
+* If `\_STGROM\_`  is defined, assembly code to support the STG ROM is created.
+* `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `\_STGROM\_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
 * If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
 
-*Note: `__LINE__` and `__FILE__` begin and end with **two** underscores.*
+*Note: The `__LINE__` and `__FILE__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
