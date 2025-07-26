@@ -45,14 +45,14 @@ static void pushcont(int id) {
  */
 
 static void break_stmt(void) {
-	//grw - debug
+	//grw - trace
 	gen(";----- begin break");
 
 	Token = scan();
 	if (!Bsp) error("'break' not in loop/switch context", NULL);
 	genjump(Breakstk[Bsp-1]);
 	semi();
-	//grw - debug
+	//grw - trace
 	gen(";----- end break");
 }
 
@@ -61,14 +61,14 @@ static void break_stmt(void) {
  */
 
 static void continue_stmt(void) {
-	//grw - debug
+	//grw - trace
 	gen(";----- begin coninue");
 
 	Token = scan();
 	if (!Csp) error("'continue' not in loop context", NULL);
 	genjump(Contstk[Csp-1]);
 	semi();
-	//grw - debug
+	//grw - trace
 	gen(";----- end continue");
 }
 
@@ -78,7 +78,7 @@ static void continue_stmt(void) {
 
 static void do_stmt(void) {
 	int	ls, lb, lc;
-	//grw - debug
+	//grw - trace
 	gen(";----- begin do");
 
 	Token = scan();
@@ -99,7 +99,7 @@ static void do_stmt(void) {
 	semi();
 	Bsp--;
 	Csp--;
-	//grw - debug
+	//grw - trace
 	gen(";----- end do");
 }
 
@@ -113,7 +113,7 @@ static void do_stmt(void) {
 
 static void for_stmt(void) {
 	int	ls, lbody, lb, lc;
-	//grw - debug
+	//grw - trace
 	gen(";----- begin for");
 
 	Token = scan();
@@ -156,7 +156,7 @@ static void for_stmt(void) {
 	Bsp--;
 	Csp--;
 	
-	//grw - debug
+	//grw - trace
 	gen(";----- end for");
 }
 
@@ -168,15 +168,13 @@ static void for_stmt(void) {
 
 static void if_stmt(void) {
 	int	l1, l2;
-	//grw - debug
+	//grw - trace
 	gen(";----- begin if");
 
 	Token = scan();
 	lparen();
 	rexpr();
 	l1 = label();
-	//grw - debug
-	//ngen(";----- %s genbrfalse l1 = %d","if", l1);
 	genbrfalse(l1);
 	//grw - removed clear logic
 	//clear(1);
@@ -190,11 +188,8 @@ static void if_stmt(void) {
 		Token = scan();
 		stmt();
 	}
-	//grw - debug
-	//gen(";----- if genlab(l1)");
-	//ngen(";----- %s genlab  l1 = %d","if", l1);
 	genlab(l1);
-	//grw - debug
+	//grw - trace
 	gen(";----- end if");
 
 }
@@ -228,7 +223,7 @@ static void asm_stmt(void) {
 
 static void return_stmt(void) {
 	int	lv[LV];
-	//grw - debug
+	//grw - trace
 	gen(";----- begin return");
 
 	Token = scan();
@@ -247,7 +242,7 @@ static void return_stmt(void) {
 
 	genjump(Retlab);
 	semi();
-	//grw - debug
+	//grw - trace
 	gen(";----- end return");
 }
 
@@ -270,7 +265,7 @@ static void switch_block(void) {
 	int	cval[MAXCASE];
 	int	clab[MAXCASE];
 	int	nc = 0;
-	//grw - debug
+	//grw - trace
 	gen(";----- begin switch block");
 
 	Token = scan();
@@ -314,13 +309,13 @@ static void switch_block(void) {
 	genlab(lb);
 	Token = scan();
 	Bsp--;
-	//grw - debug
+	//grw - trace
 	gen(";----- end switch block");
 
 }
 
 static void switch_stmt(void) {
-	//grw - debug
+	//grw - trace
 	gen(";----- begin switch");
 
 	Token = scan();
@@ -333,7 +328,7 @@ static void switch_stmt(void) {
 	if (Token != LBRACE)
 		error("'{' expected after 'switch'", NULL);
 	switch_block();
-	//grw - debug
+	//grw - trace
 	gen(";----- end switch");
 
 }
@@ -344,7 +339,7 @@ static void switch_stmt(void) {
 
 static void while_stmt(void) {
 	int	lb, lc;
-	//grw - debug
+	//grw - trace
 	gen(";----- begin while");
 
 	Token = scan();
@@ -362,7 +357,7 @@ static void while_stmt(void) {
 	genlab(lb);
 	Bsp--;
 	Csp--;
-	//grw - debug
+	//grw - trace
 	gen(";----- end while");
 }
 
@@ -397,7 +392,7 @@ static void wrong_ctx(int t) {
 
 static void stmt(void) {
 	int	lv[LV];
-	//grw - debug
+	//grw - trace
 	gen(";----- begin stmt ------");
 
 	switch (Token) {
@@ -423,6 +418,6 @@ static void stmt(void) {
 	}
 	//grw - removed clear logic
 	//clear(1);
-	//grw - debug
+	//grw - trace
 	gen(";----- end stmt ------");
 }

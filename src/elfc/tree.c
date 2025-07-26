@@ -188,37 +188,26 @@ void dumptree(node *a) {
 #endif /* debug */
 
 void emitcond(node *a, int ex) {
-	//grw - debugging
-	//gen(";----- begin emitcond -----");
 
 	if (OP_GLUE == a->left->left->op)
 		emitcond(a->left->left, ex);
 	emittree1(a->left->left);
-  //grw - debugging
-	//ngen(";----- %s label = %d","emitcond", (a->left->args[0]));
 	genbrfalse(a->left->args[0]);
   //grw - removed clear logic
 	//clear(0);
 	emittree1(a->left->right);
 	genjump(ex);
 	commit();
-	//grw - debug
-	//gen(";----- emitcond genlab(a->left->args[0])");
 	genlab(a->left->args[0]);
 	//grw - removed clear logic
 	//clear(0);
 	emittree1(a->right);
-	//grw - debugging
-	//gen(";----- end emitcond -----");
-
 }
 
 void emitargs(node *a) {
 	//grw - commit anything pending before arg
 	commit();
 	if (NULL == a) return;
-	//grw - debugging
-	gen(";----- emitarg -----");
 	emittree1(a->right);
 	emitargs(a->left);
 }
@@ -226,8 +215,6 @@ void emitargs(node *a) {
 static void emittree1(node *a) {
 	int	lv[LV];
 	int	ptr;
-	//grw - debugging
-	//gen(";----- begin emittree1 -----");
 	if (NULL == a) return;
 	switch (a->op) {
 	case OP_IDENT:	/* ignore */ break;
@@ -251,8 +238,6 @@ static void emittree1(node *a) {
 			break;
 	case OP_LAB:	emittree1(a->left);
 			commit();
-			//grw - debug
-			//gen(";----- emittreee1 OP_LAB genlab -----");
 			genlab(a->args[0]);
 			break;
 	case OP_LDLAB:	genldlab(a->args[0]); break;
@@ -281,8 +266,6 @@ static void emittree1(node *a) {
 	case OP_BRFALSE:/* fallthru */
 	case OP_BRTRUE:	emittree1(a->left);
 			commit();
-			//grw - debugging
-			//gen(";----- OP_BRFALSE, OP_BTRUE");
 			//grw - changed to use short-circuit code generators
 			//a->op == OP_BRTRUE?
 			//genbrtrue(a->args[0]):
@@ -296,8 +279,6 @@ static void emittree1(node *a) {
 			break;
 	case OP_IFELSE:	emitcond(a->left, a->args[0]);
 			commit();
-			//grw - debug
-			//gen(";----- emittree1 genlab(a->args[0]) -----");
 			genlab(a->args[0]);
 			break;
 	case OP_COMMA:	
@@ -400,8 +381,6 @@ static void emittree1(node *a) {
 			genstore(lv);
 			break;
 	}
-	//grw - debug
-	//gen(";----- end emittree1 -----");
 }
 
 void emittree(node *a) {

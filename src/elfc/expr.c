@@ -724,8 +724,6 @@ static node *cond2(int *lv, int op) {
 	int	lab = 0;
 	node	*n, *n2 = NULL;
 	int	tv = 1;
-	//grw - debug
-	//gen(";----- begin cond2");
 	
 	n = op == LOGOR? cond2(lv, LOGAND): binexpr(lv);
 	while (Token == op) {
@@ -746,8 +744,6 @@ static node *cond2(int *lv, int op) {
 		lv[LVPRIM] = PINT;
 		lv[LVADDR] = 0;
 	}
-	//grw - debug
-	//gen(";----- end cond2");
 	return n;
 }
 
@@ -885,26 +881,17 @@ static node *exprlist(int *lv, int ckvoid) {
 
 void expr(int *lv, int ckvoid) {
 	node	*n;
-  //grw - debug
-	//gen(";----- begin expr -----");
 
 	Ndtop = 1;
 	n = exprlist(lv, ckvoid);
 	n = rvalue(n, lv);
 	emittree(n);
-	//grw - debug
-	//gen(";----- end expr -----");
-
 }
 
 void rexpr(void) {
 	int	lv[LV];
-	//grw - debug
-	//gen(";----- begin rexpr -----");
 
 	expr(lv, 1);
-	//grw - debug
-	//gen(";----- end rexpr -----");
 }
 
 int constexpr(void) {

@@ -333,13 +333,7 @@ int main(int argc, char *argv[]) {
     //grw - if elfc not found, set file path string to empty
     Fpath = "";
   }
-  
-  //grw - debugging
-  //if (Fpath != NULL)
-  //  printf("Path = '%s'\n", Fpath);
-  //else 
-  //  printf("No path\n");
-    
+      
 	for (i=1; i<argc; i++) {
 		if (*argv[i] != '-') break;
 		if (!strcmp(argv[i], "-")) {
@@ -374,8 +368,6 @@ int main(int argc, char *argv[]) {
 				break;
       case 'L':
 				O_library = 1;
-        //grw - debug 
-        //printf("Library mode.\n");
 				break;
 			//grw - remove no stdio option
       /*
@@ -403,8 +395,6 @@ int main(int argc, char *argv[]) {
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
-      //grw - debug
-      //printf("Compiling...\n");
 			compile(argv[i], def);
       //grw - set name for linker
       fname = argv[i]; 

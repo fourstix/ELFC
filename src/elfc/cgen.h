@@ -145,3 +145,5 @@ void cgpopd(void);
 char *procname(char *file);
 //grw - function to return entry point
 int  cgentrypt(void);
+//grw - set up handler for STG breakpoint
+void cgsetup(void);

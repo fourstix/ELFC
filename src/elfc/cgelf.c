@@ -567,3 +567,11 @@ int cgentrypt(void) {
 	entry = 0;
 	return val;
 }
+
+/* Set up breakpoint handler based on program code */
+void cgsetup(void) {
+	genraw("\n  ;----- cgsetup\n");
+	genraw("#ifdef STGROM\n");
+	genraw("      load   r1, $F000  ; set up handler for STG Breakpoint\n");
+	genraw("#endif\n");
+}

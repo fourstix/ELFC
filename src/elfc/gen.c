@@ -181,21 +181,15 @@ void genname(char *name) {
 		genlab(cgentrypt());
 		return;
 		} else {
-		//grw - debug
-		//printf("Other name: %s\n", name);
 		//grw - commit any queued jump before generating label
 		commit();
 		}		
 	}		
-	//grw - debug 
-	//printf("Generate %s name\n", name);
 	genraw(gsym(name));
 	genraw(":");
-	//grw - a hack, but generate STG ROM support after main
+	//grw - setup handler at the beggining of main
 	if(!strcmp(name, "main")){
-		genraw("\n#ifdef STGROM\n");
-		genraw("      load   r1, $F000  ; set R1 to STG Breakpoint\n");
-		genraw("#endif\n");
+		cgsetup();
 	}
 }
 
@@ -209,8 +203,7 @@ void genpublic(char *name) {
 			error("Proc Name is Null.", NULL);
 
 		if (!strcmp(gsym(name), pname)) {
-			//grw - debug
-			//printf("Public label supressed\n");
+			//grw - public label supressed
 			return;
 		}
   }
@@ -278,7 +271,7 @@ void commit(void) {
 
 void queue_jmp(int val) {
 	commit();
-	//grw - debug
+	//grw - trace
 	ngen(";---- queue %s L%d", "lbr", val);
 	Q_jmp = jump;
 	Q_dest = val;
@@ -287,7 +280,7 @@ void queue_jmp(int val) {
 
 void queue_push() {
 	commit();
-	//grw - debug
+	//grw - trace
 	gen(";---- queue dpush");
 	Q_push = push;
 }
@@ -522,7 +515,7 @@ void commit_cmp(void) {
 }
 
 void queue_cmp(int op) {
-  //grw  - debug
+  //grw  - trace
 	gen(";----- queue_cmp");
 	commit();
 	Q_cmp = op;
@@ -556,7 +549,7 @@ void commit_bool(void) {
 }
 
 void queue_bool(int op) {
-  //grw  - debug
+  //grw  - trace
 	gen(";----- queue_bool");	
 	//ngen(";----- queue_bool %s = %d", "op", op);
 	commit();
@@ -661,7 +654,7 @@ void genbranch(int dest, int inv) {
 }
 
 void genlogbr(int dest, int inv) {
-	//grw - debug 
+	//grw - trace 
 	gen(";----- genlogbr");
 	//ngen(";----- genlogbr %s = %d", "inv", inv);
 	//ngen(";----- genlogbr %s = %d", "Q_bool", Q_bool);
@@ -685,7 +678,7 @@ void genlogbr(int dest, int inv) {
 void genbrfalse(int dest) {
 	//grw - removed gentext
 	//gentext();
-	//grw - debug 
+	//grw - trace 
 	gen(";----- genbrfalse");
 	if (Q_cmp != cnone) {
 		genbranch(dest, 0);
@@ -702,7 +695,7 @@ void genbrfalse(int dest) {
 void genbrtrue(int dest) {
 	//grw - removed gentext
 	//gentext();
-	//grw - debug 
+	//grw - trace 
 	gen(";----- genbrtrue");
 	//ngen(";----- %s dest = %d", "genbrtrue", dest);
 	if (Q_cmp != cnone) {
@@ -718,13 +711,13 @@ void genbrtrue(int dest) {
 }
 
 void gensctrue(int dest) {
-	//grw - debug 
+	//grw - trace 
 	gen(";----- gensctrue");
 	cgbrtrue(dest, 1);
 }
 
 void genscfalse(int dest) {
-	//grw - debug 
+	//grw - trace 
 	gen(";----- gensctrue");
 	cgbrfalse(dest, 1);
 }
@@ -1000,10 +993,6 @@ void genswitch(int *vals, int *labs, int nc, int dflt) {
 
 void genstore(int *lv) {
 	if (NULL == lv) return;
-	//grw - debug
-	//ngen(";----- genstore %s = %d", "swapped", swapped);
-	//ngen2(";----- genstore %s: lv = %d lv2 = %d", "lvars", lv[LVSYM], lv2[LVSYM]);
-	//ngen2(";----- genstore %s: lv = %d lv2 = %d", "prim", lv[LVPRIM], lv2[LVPRIM]);
   //grw - removed gentext
 	//gentext();
 	if (!lv[LVSYM]) {
