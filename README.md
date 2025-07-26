@@ -58,7 +58,7 @@ Overview
 
 * The `asm` statement passes a string literal directly into the generated assembly file.
 
-* The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file as well as the the asm() statement.
+* The `#pragma` preprocessor directive can be used to directly insert an assembly directive or a line of assembly code directly into the generated assembly file.
 
 * The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
 
