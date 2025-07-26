@@ -84,6 +84,43 @@ The following statement and preprocessor directive were added to SubC by ElfC to
 * The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file.
 
 
+Library Compiler Option 
+------------------------
+
+* The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
+
+* The source file should contain a public function with same name as the file name of the C file. If no public function in the file matches the file name, an error will be generated.
+
+* The procedure name will be the file name with the C prefix and serve as the public entry point for the procedure function.
+
+* If needed, the compiler will emit an immediate jump to the public entry point function with the same name as the procedure.
+
+* The entry point function's public name will be suppressed to prevent duplication of the procedure name when assembling.
+
+* The prg produced by the assembler can then be incorporated into a library for Elf/OS or Mini/DOS.
+
+* The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
+
+* An Elf/OS (Mini/DOS) library is created by concatenating multiple procedure prg files.
+
+Example:
+
+The C file `abs.c` containing the function:
+```
+int abs(int n) {
+  return (n < 0) ? -n : n;
+  }
+```
+When compiled with:
+```
+..\elfc -L abs.c
+```
+Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.  
+```
+type abort.prg abs.prg exit.prg > stdlib.lib 
+```
+
+
 Print Conversions
 ------------------
 * The flags `-, +, space, 0 and #` are supported.

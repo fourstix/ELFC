@@ -98,42 +98,15 @@ Overview
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
-Library Compiler Option 
-------------------------
 
-* The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
+Compiler Option Changes
+-----------------------
+* The `-L` (Library) ElfC option was added to compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
 
-* The source file should contain a public function with same name as the file name of the C file. If no public function in the file matches the file name, an error will be generated.
+* The `-N` (No stdio) option to not compile with the stdio library has been removed.
+* The `-V` (Verbose) option was simplified to display *all* verbose messages or none.
 
-* The procedure name will be the file name with the C prefix and serve as the public entry point for the procedure function.
-
-* If needed, the compiler will emit an immediate jump to the public entry point function with the same name as the procedure.
-
-* The entry point function's public name will be suppressed to prevent duplication of the procedure name when assembling.
-
-* The prg produced by the assembler can then be incorporated into a library for Elf/OS or Mini/DOS.
-
-* The file can contain public functions and public labels. These will be available in the procedure, along with the procedure function name.
-
-* An Elf/OS (Mini/DOS) library is created by concatenating multiple procedure prg files.
-
-Example:
-
-The C file `abs.c` containing the function:
-```
-int abs(int n) {
-  return (n < 0) ? -n : n;
-  }
-```
-When compiled with:
-```
-..\elfc -L abs.c
-```
-Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.  
-```
-type abort.prg abs.prg exit.prg > stdlib.lib 
-```
-
+More information about `-L` Library option can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Stdlib Library
 --------------
