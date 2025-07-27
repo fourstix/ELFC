@@ -4,7 +4,7 @@ Types Supported
 ---------------
 
 <table>
-<tr><th><keyword></th><th>name</th><th>description</th><th>minimum</th><th>maximum</th></tr>
+<tr><th>Keyword</th><th>Type Name</th><th>Description</th><th>Minimum</th><th>Maximum</th></tr>
 <tr><td>char</td><td>Character</td><td>8-bit unsigned</td><td>0</td><td>255</td></tr>
 <tr><td>int</td><td>Integer</td><td>16-bit signed</td><td>-32767</td><td>32767</td></tr>
 <tr><td>void</td><td>Void</td><td>No Value</td><td>0</td><td>0</td></tr>
@@ -19,6 +19,7 @@ Types Supported
 
 *Notes:*
 * *Single dimension arrays of the above types are supported, such as int[] char\*[], etc.*
+* *Function pointers are limited to one single type, `int(\*)()`, and they have no argument types.*
 * *Structures and unions composed of the above types are supported.*
 * *Pointers to structures and pointers to unions are supported.*
 * *Typedef is supported.*
@@ -29,7 +30,7 @@ Registers Used
 <table>
 <tr><th>Register</th><th>Purpose</th><th>Owner</th><th>Availability</th></tr>
 <tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R1</td><td>Interrupt Handler, STG Breakpoint</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R3</td><td>Program Instruction Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R4</td><td>SCRT Call Routine</td><td>OS</td><td>Reserved</td></tr>
