@@ -4,7 +4,7 @@ Types Supported
 ---------------
 
 <table>
-<tr><th>Keyword</th><th>Type Name</th><th>Description</th><th>Minimum</th><th>Maximum</th></tr>
+<tr><th>Keyword</th><th>Name</th><th>Description</th><th>Minimum</th><th>Maximum</th></tr>
 <tr><td>char</td><td>Character</td><td>8-bit unsigned</td><td>0</td><td>255</td></tr>
 <tr><td>int</td><td>Integer</td><td>16-bit signed</td><td>-32767</td><td>32767</td></tr>
 <tr><td>void</td><td>Void</td><td>No Value</td><td>0</td><td>0</td></tr>
@@ -126,7 +126,7 @@ Print Conversions
 ------------------
 * The flags `-, +, space, 0 and #` are supported.
 * The width specification is suppored.
-* The suppression operator `(\*)` is supported.
+* The suppression operator `*` is supported.
 * The decimal precision is not supported.
 * The length modifiers h, l (el) and L are not supported. 
 * The `%d, %i, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
@@ -135,7 +135,7 @@ Print Conversions
 Scan Conversions
 -----------------
 * The width specification is suppored.
-* The suppression operator `(\*)` is supported.
+* The suppression operator `*` is supported.
 * The `%d, %i, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
 * The charset operators `%[...]` and `%[^...]` are supported.
 * The %u, %f, %e, and %g conversions are not supported.
@@ -157,7 +157,7 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.* 
-* *The system and genenv() have no equivalent functions in Elf/OS or MiniDOS* 
+* *The system and genenv() have no equivalent functions in Elf/OS or Mini/DOS* 
 
 
 Unsupported Stdio Functions
@@ -169,7 +169,7 @@ The following functions were omitted from the ElfC stdio C library.
 * int setvbuf(FILE\* stream, char \*buf, int mode, int size);
 * int setbuf(FILE\* stream, char \*buf;
 
-*Note: Elf/OS and MiniDOS use their own buffering, and do not allow streams to be reassigned.*
+*Note: Elf/OS and Mini/DOS use their own buffering, and do not allow streams to be reassigned.*
 
 Stdlib Modified Functions
 -------------------------
