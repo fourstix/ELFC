@@ -1,6 +1,15 @@
 # ELFC
 A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC is based on SubC written by Nils M Holms.
 
+Installation
+-------------
+* Unzip the file elfc_r2.zip into the desired directory
+* Copy the file `hello.c` into the directory.
+* Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
+* Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
+* Make the file executable using the *chmod +x hello.elfos* command
+* Run the command *hello.elfos* to view the "Hello, World!" message
+
 Design Goals
 -------------
 * Use the [Asm/02](https://github.com/fourstix/Asm-02) assembler and the [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
@@ -455,7 +464,12 @@ Repository Contents
   * Link02.exe -- Link/02 linker
 * **/src/bin/include**  -- ElfC C Include files 
 * **/src/bin/lib**  -- ElfC C Library files 
-* **elfc_r2.zip** -- A zip file with the Release 2 ElfC binary files, include files and library files. To Install, unzip this file into the desired directory.
+* **/examples** -- Example C files
+  * hello.c -- Classic C "Hello, World" example
+  * fib.c -- Demo to print series of Fibonacci numbers
+  * printfmt.c -- Demo of various printf format conversions
+  * scanfmt.c -- Demo of various scanf format conversions
+* **elfc_r2.zip** -- A zip file with the Release 2 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
 
 License Information
 -------------------
