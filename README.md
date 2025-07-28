@@ -430,6 +430,33 @@ Differences Between SubC and Full C89
    
 *  The SubC compiler accepts `//` comments in addition to `/* */`.
 
+
+Repository Contents
+-------------------
+ 
+* **/src/elfc**  -- Source files for compiling ElfC.
+  * MakeElfC - Windows nmake file to compile source files. Use the command *nmake -f MakeElfC* to compile the elfc.exe file.  The command *nmake -f MakeElfC clean* will remove generated files before compiling.
+* **/src/lib**  -- Source files for compiling ElfC C libraries
+  * macro.inc -- Assembly opcodes for elfc system library files.
+* **/src/lib/include**  -- Common include files for compiling ElfC C libraries
+* **/src/lib/elfc**  -- Source files for elfc.lib library
+  * clean.bat - Batch file to clean binaries before assembling.
+  * build.bat - Batch file to assemble files into elfc.lib system library.
+* **/src/lib/crt0**  -- Source files for ElfC runtime start-up library
+* **/src/lib/stdlib**  -- Source files for ElfC stdlib C library
+* **/src/lib/stdio**  -- Source files for ElfC stdio C library
+* **/src/lib/string**  -- Source files for ElfC string C library
+* **/src/lib/ctype**  -- Source files for ElfC ctype C library
+* **/src/lib/stdarg**  -- Source files for ElfC stdarg C library
+* **/src/lib/assert**  -- Source files for ElfC assert C library
+* **/src/bin**  -- Binary files for ElfC
+  * ElfC.exe -- ElfC Compiler
+  * Asm02.exe -- Asm/02 assembler
+  * Link02.exe -- Link/02 linker
+* **/src/bin/include**  -- ElfC C Include files 
+* **/src/bin/lib**  -- ElfC C Library files 
+* **elfc_r2.zip** -- A zip file with the Release 2 ElfC binary files, include files and library files. To Install, unzip this file into the desired directory.
+
 License Information
 -------------------
   
