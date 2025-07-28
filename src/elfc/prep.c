@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012
+ *	NMH's Simple C Compiler, 2011,2012,2014
  *	Preprocessor
  */
 
@@ -13,10 +13,20 @@ void playmac(char *s) {
 	Macp[Mp++] = s;
 }
 
+int getln(char *buf, int max) {
+	int	k;
+
+	if (fgets(buf, max, Infile) == NULL) return 0;
+	k = strlen(buf);
+	if (k) buf[--k] = 0;
+	if (k && '\r' == buf[k-1]) buf[--k] = 0;
+	return k;
+}
+
 static void defmac(void) {
 	char	name[NAMELEN+1];
 	char	buf[TEXTLEN+1], *p;
-	int	k, y;
+	int	y;
 
 	Token = scanraw();
 	if (Token != IDENT)
@@ -25,9 +35,7 @@ static void defmac(void) {
 	if ('\n' == Putback)
 		buf[0] = 0;
 	else
-		fgets(buf, TEXTLEN-1, Infile);
-	k = strlen(buf);
-	if (k) buf[k-1] = 0;
+		getln(buf, TEXTLEN-1);
 	for (p = buf; isspace(*p); p++)
 		;
 	if ((y = findmac(name)) != 0) {
@@ -61,18 +69,19 @@ static void include(void) {
 
 	if ((c = skip()) == '<')
 		c = '>';
-	fgets(file, TEXTLEN-strlen(SCCDIR)-9, Infile);
+	//grw - change SCCDIR to Fpath to use path from command string
+	//k = getln(file, TEXTLEN-strlen(SCCDIR)-9);
+	k = getln(file, TEXTLEN-strlen(Fpath)-9);
 	Line++;
-	k = strlen(file);
-	file[k-1] = 0;
-	if (file[k-2] != c)
+	if (!k || file[k-1] != c)
 		error("missing delimiter in '#include'", NULL);
-	file[k-2] = 0;
+	if (k) file[k-1] = 0;
 	if (c == '"')
 		strcpy(path, file);
 	else {
-		strcpy(path, SCCDIR);
-		strcat(path, "/include/");
+		//grw - change SCCDIR to Fpath to use path from command string
+		strcpy(path, Fpath);
+		strcat(path, "include/");
 		strcat(path, file);
 	}
 	if ((inc = fopen(path, "r")) == NULL)
@@ -103,7 +112,7 @@ static void ifdef(int expect) {
 	char	name[NAMELEN+1];
 
 	if (Isp >= MAXIFDEF)
-		fatal("too many nested #ifdef's");
+		fatal("too many nested '#ifdef's");
 	Token = scanraw();
 	copyname(name, Text);
 	if (IDENT != Token)
@@ -137,10 +146,50 @@ static void endif(void) {
 		Isp--;
 }
 
+static void pperror(void) {
+	char	buf[TEXTLEN+1];
+
+	if ('\n' == Putback)
+		buf[0] = 0;
+	else
+		getln(buf, TEXTLEN-1);
+	error("#error: %s", buf);
+	exit(1);
+}
+
+static char FNbuf[TEXTLEN];
+
+static void setline(void) {
+	char	buf[TEXTLEN+1], *p, *q;
+
+	if ('\n' == Putback)
+		buf[0] = 0;
+	else
+		getln(buf, TEXTLEN-1);
+	Line = atoi(buf) - 1;
+	if ((p = strchr(buf, '"')) != NULL) {
+		p++;
+		if ((q = strchr(p, '"')) != NULL) {
+			*q = 0;
+			File = strcpy(FNbuf, p);
+		}
+	}
+}
+
 static void junkln(void) {
 	while (!feof(Infile) && fgetc(Infile) != '\n')
 		;
 	Line++;
+}
+
+/* function to emit line to assembly file */
+static void emitln(void) {
+		char	buf[TEXTLEN+1];
+		getln(buf, TEXTLEN-1); 
+		genraw("\n");  //grw - make sure text is on its own line
+		genraw(buf);
+		genraw("\n"); 
+		Line++;
 }
 
 int frozen(int depth) {
@@ -153,7 +202,8 @@ void preproc(void) {
 	putback('#');
 	Token = scanraw();
 	if (	frozen(1) &&
-		(P_DEFINE == Token || P_INCLUDE == Token || P_UNDEF == Token)
+		P_IFDEF != Token && P_IFNDEF != Token &&
+		P_ELSE != Token && P_ENDIF != Token
 	) {
 		junkln();
 		return;
@@ -166,6 +216,11 @@ void preproc(void) {
 	case P_IFNDEF:	ifdef(0); break;
 	case P_ELSE:	p_else(); break;
 	case P_ENDIF:	endif(); break;
+	case P_ERROR:	pperror(); break;
+	case P_LINE:	setline(); break;
+	//grw - change PRAGMA to emit line directly to asm file
+	//case P_PRAGMA:	junkln(); break;
+	case P_PRAGMA: emitln(); break;
 	default:	junkln(); break;
 			break;
 	}

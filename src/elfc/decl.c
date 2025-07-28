@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012
+ *	NMH's Simple C Compiler, 2011--2022
  *	Declaration parser
  */
 
@@ -7,11 +7,11 @@
 #include "data.h"
 #include "decl.h"
 
-int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
-		int *pval, int *pinit);
+static int declarator(int arg, int scls, char *name, int *pprim, int *psize,
+			int *pval, int *pinit);
 
 /*
- * enumdecl := { enumlist }
+ * enumdecl := { enumlist } ;
  *
  * enumlist :=
  *	  enumerator
@@ -22,7 +22,7 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
  *	| IDENT = constexpr
  */
 
-static void enumdecl(void) {
+static void enumdecl(int glob) {
 	int	v = 0;
 	char	name[NAMELEN+1];
 
@@ -30,20 +30,23 @@ static void enumdecl(void) {
 	if (IDENT == Token)
 		Token = scan();
 	lbrace();
-	for (;;) {
+	while (RBRACE != Token) {
 		copyname(name, Text);
 		ident();
 		if (ASSIGN == Token) {
 			Token = scan();
 			v = constexpr();
 		}
-		addglob(name, PINT, TCONSTANT, 0, 0, v++, NULL, 0);
+		if (glob)
+			addglob(name, PINT, TCONSTANT, 0, 0, v++, NULL, 0);
+		else
+			addloc(name, PINT, TCONSTANT, 0, 0, v++, 0);
 		if (Token != COMMA)
 			break;
 		Token = scan();
 		if (eofcheck()) return;
 	}
-	match(RBRACE, "'}'");
+	rbrace();
 	semi();
 }
 
@@ -60,16 +63,19 @@ static void enumdecl(void) {
 static int initlist(char *name, int prim) {
 	int	n = 0, v;
 	char	buf[30];
-
-	gendata();
+	
+	//grw - removed gendata
+	//gendata();
 	genname(name);
 	if (STRLIT == Token) {
 		if (PCHAR != prim)
 			error("initializer type mismatch: %s", name);
 		gendefs(Text, Value);
 		gendefb(0);
+		//grw - removed genalign
+		//genalign(Value-1);
 		Token = scan();
-		return Value -1;
+		return Value-1;
 	}
 	lbrace();
 	while (Token != RBRACE) {
@@ -91,15 +97,44 @@ static int initlist(char *name, int prim) {
 			break;
 		if (eofcheck()) return 0;
 	}
+	//grw - removed genalign
+	//if (PCHAR == prim) genalign(n);
 	Token = scan();
 	if (!n) error("too few initializers", NULL);
 	return n;
 }
 
-int primtype(int t) {
-	return t == CHAR? PCHAR:
+int primtype(int t, char *s) {
+	int	p, y;
+	char	sname[NAMELEN+1];
+
+	p = t == CHAR? PCHAR:
 		t == INT? PINT:
+		t == STRUCT? PSTRUCT:
+		t == UNION? PUNION:
 		PVOID;
+	if (PUNION == p || PSTRUCT == p) {
+		if (!s) {
+			Token = scan();
+			copyname(sname, Text);
+			s = sname;
+			if (IDENT != Token) {
+				error("struct/union name expected: %s", Text);
+				return p;
+			}
+		}
+		if ((y = findstruct(s)) == 0 || Prims[y] != p)
+			error("no such struct/union: %s", s);
+		p |= y;
+	}
+	return p;
+}
+
+int usertype(char *s) {
+	int	y;
+
+	if ((y = findsym(s)) == 0) return 0;
+	return CTYPE == Stcls[y]? y: 0;
 }
 
 /*
@@ -111,62 +146,88 @@ int primtype(int t) {
  * pmtrlist :=
  *	  primtype declarator
  *	| primtype declarator , pmtrlist
+ *	| usertype declarator
+ *	| usertype declarator , pmtrlist
+ *
+ * usertype :=
+ *	  TYPEDEF_NAME
  */
 
 static int pmtrdecls(void) {
 	char	name[NAMELEN+1];
-	int	prim, type, size, na, y, addr;
+	int	utype, prim, type, size, na, addr;
 	int	dummy;
 
 	if (RPAREN == Token)
 		return 0;
 	na = 0;
+	//grw - our stack frome does not include ret address nor frame address 
+	//addr = 2*BPW;
+	addr = 0;
 	for (;;) {
+		utype = 0;
 		if (na > 0 && ELLIPSIS == Token) {
 			Token = scan();
 			na = -(na + 1);
 			break;
 		}
-		else if (IDENT == Token) {
+		else if (IDENT == Token &&
+			 (utype = usertype(Text)) == 0)
+		{
 			prim = PINT;
 		}
 		else {
-			if (Token != CHAR && Token != INT && Token != VOID) {
+			if (	CHAR == Token || INT == Token ||
+				VOID == Token ||
+				STRUCT == Token || UNION == Token ||
+				(IDENT == Token && utype != 0)
+			) {
+				name[0] = 0;
+				prim = utype? Prims[utype]:
+					primtype(Token, NULL);
+				Token = scan();
+				if (RPAREN == Token && prim == PVOID && !na)
+					return 0;
+			}
+			else {
 				error("type specifier expected at: %s", Text);
 				Token = synch(RPAREN);
 				return na;
 			}
-			name[0] = 0;
-			prim = primtype(Token);
-			Token = scan();
-			if (RPAREN == Token && prim == PVOID && !na)
-				return 0;
 		}
 		size = 1;
 		type = declarator(1, CAUTO, name, &prim, &size, &dummy,
 				&dummy);
-		addloc(name, prim, type, CAUTO, size, 0, 0);
+		if ((utype && TARRAY == Types[utype]) || TARRAY == type) {
+			prim = pointerto(prim);
+			type = TVARIABLE;
+		}
+		addloc(name, prim, type, CAUTO, size, addr, 0);
+		addr += BPW;
 		na++;
 		if (COMMA == Token)
 			Token = scan();
 		else
 			break;
 	}
-	//grw - our stack frome does not include ret address nor frame address 
-	//addr = INTSIZE*2;
-	addr = 0;
-	for (y = Locs; y < NSYMBOLS; y++) {
-		addr += INTSIZE;
-		Vals[y] = addr;
-	}
 	return na;
 }
 
 int pointerto(int prim) {
+	int	y;
+
 	if (CHARPP == prim || INTPP == prim || VOIDPP == prim ||
-	    FUNPTR == prim
+	    FUNPTR == prim ||
+	    (prim & STCMASK) == STCPP || (prim & STCMASK) == UNIPP
 	)
 		error("too many levels of indirection", NULL);
+	y = prim & ~STCMASK;
+	switch (prim & STCMASK) {
+	case PSTRUCT:	return STCPTR | y;
+	case STCPTR:	return STCPP | y;
+	case PUNION:	return UNIPTR | y;
+	case UNIPTR:	return UNIPP | y;
+	}
 	return PINT == prim? INTPTR:
 		PCHAR == prim? CHARPTR:
 		PVOID == prim? VOIDPTR:
@@ -189,12 +250,14 @@ int pointerto(int prim) {
  *	| ( * IDENT ) ( )
  */
 
-int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
-		int *pval, int *pinit)
+static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
+			int *pval, int *pinit)
 {
 	int	type = TVARIABLE;
 	int	ptrptr = 0;
-
+	char	*unsupp;
+	
+	unsupp = "unsupported typedef syntax";
 	if (STAR == Token) {
 		Token = scan();
 		*pprim = pointerto(*pprim);
@@ -205,8 +268,10 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		}
 	}
 	else if (LPAREN == Token) {
+		if (CTYPE == scls)
+			error(unsupp, NULL);
 		if (*pprim != PINT)
-			error("function pointers are limited to 'int'",
+			error("function pointers are limited to type 'int'",
 				NULL);
 		Token = scan();
 		*pprim = FUNPTR;
@@ -226,13 +291,19 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		rparen();
 	}
 	if (!pmtr && ASSIGN == Token) {
+		if (CTYPE == scls)
+			error(unsupp, NULL);
 		Token = scan();
 		*pval = constexpr();
+		if (PCHAR == *pprim)
+			*pval &= 0xff;
 		if (*pval && !inttype(*pprim))
-			error("non-null pointer initialization", NULL);
+			error("non-zero pointer initialization", NULL);
 		*pinit = 1;
 	}
 	else if (!pmtr && LPAREN == Token) {
+		if (CTYPE == scls)
+			error(unsupp, NULL);
 		Token = scan();
 		*psize = pmtrdecls();
 		rparen();
@@ -243,6 +314,8 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			error("too many levels of indirection: %s", name);
 		Token = scan();
 		if (RBRACK == Token) {
+			if (CTYPE == scls)
+				error(unsupp, NULL);
 			Token = scan();
 			if (pmtr) {
 				*pprim = pointerto(*pprim);
@@ -273,12 +346,10 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			}
 		}
 		else {
-			if (pmtr) error("array size not supported in "
-					"parameters: %s", name);
 			*psize = constexpr();
-			if (*psize <= 0) {
+			if (*psize < 1) {
 				error("invalid array size", NULL);
-				*psize = 1;
+				*psize = 0;
 			}
 			type = TARRAY;
 			rbrack();
@@ -289,20 +360,14 @@ int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	return type;
 }
 
-void signature(int fn, int from, int to) {
-	char	types[MAXFNARGS+1];
-	int	i;
-
-	if (to - from > MAXFNARGS)
-		error("too many function parameters", Names[fn]);
-	for (i=0; i<MAXFNARGS && from < to; i++)
-		types[i] = Prims[--to];
-	types[i] = 0;
-	if (NULL == Mtext[fn])
-		Mtext[fn] = globname(types);
-	else if (Sizes[fn] >= 0 && strcmp(Mtext[fn], types))
-		error("redefinition does not match prior type: %s",
-			Names[fn]);
+int upgrade_array(int utype, int type, int *size) {
+	if (utype && TARRAY == Types[utype]) {
+		if (TARRAY == type)
+			error("unsupported typedef (array of array)", NULL);
+		*size = *size? *size * Sizes[utype]: Sizes[utype];
+		return TARRAY;
+	}
+	return type;
 }
 
 /*
@@ -312,8 +377,18 @@ void signature(int fn, int from, int to) {
  *
  * ldecl :=
  *	  primtype ldecl_list ;
- *	| STATIC ldecl_list ;
- *	| STATIC primtype ldecl_list ;
+ *	| usertype ldecl_list ;
+ *	| lclass primtype ldecl_list ;
+ *	| lclass ldecl_list ;
+ *	| enum_decl
+ *	| struct_decl
+ *
+ * lclass :=
+ *	| AUTO
+ *	| EXTERN
+ *	| REGISTER
+ *	| STATIC
+ *	| VOLATILE
  *
  * ldecl_list :=
  *	  declarator
@@ -322,27 +397,49 @@ void signature(int fn, int from, int to) {
 
 static int localdecls(void) {
 	char	name[NAMELEN+1];
-	int	prim, type, size, addr = 0, val, ini;
-	int	stat;
+	int	utype, prim, type, size, addr = 0, val, ini;
+	int	stat, extn;
 	int	pbase, rsize;
 
 	Nli = 0;
-	while (	STATIC == Token ||
-		INT == Token || CHAR == Token || VOID == Token
+	utype = 0;
+	while ( AUTO == Token || EXTERN == Token || REGISTER == Token ||
+		STATIC == Token || VOLATILE == Token ||
+		INT == Token || CHAR == Token || VOID == Token ||
+		ENUM == Token ||
+		STRUCT == Token || UNION == Token ||
+		(IDENT == Token && (utype = usertype(Text)) != 0)
 	) {
-		stat = 0;
-		if (STATIC == Token) {
+		if (ENUM == Token) {
+			enumdecl(0);
+			continue;
+		}
+		extn = stat = 0;
+		if (AUTO == Token || REGISTER == Token || STATIC == Token ||
+			VOLATILE == Token || EXTERN == Token
+		) {
+			stat = STATIC == Token;
+			extn = EXTERN == Token;
 			Token = scan();
-			stat = 1;
-			if (INT == Token || CHAR == Token || VOID == Token) {
-				prim = primtype(Token);
+			if (	INT == Token || CHAR == Token ||
+				VOID == Token ||
+				STRUCT == Token || UNION == Token
+			) {
+				prim = primtype(Token, NULL);
 				Token = scan();
+			}
+			else if (utype) {
+				prim = Prims[utype];
 			}
 			else
 				prim = PINT;
 		}
+		else if (utype) {
+			prim = Prims[utype];
+			Token = scan();
+		}
 		else {
-			prim = primtype(Token);
+			prim = primtype(Token, NULL);
 			Token = scan();
 		}
 		pbase = prim;
@@ -353,11 +450,16 @@ static int localdecls(void) {
 			ini = val = 0;
 			type = declarator(0, CAUTO, name, &prim, &size,
 					&val, &ini);
+			type = upgrade_array(utype, type, &size);
 			rsize = objsize(prim, type, size);
 			rsize = (rsize + INTSIZE-1) / INTSIZE * INTSIZE;
 			if (stat) {
 				addloc(name, prim, type, CLSTATC, size,
 					label(), val);
+			}
+			else if (extn) {
+				addloc(name, prim, type, CEXTERN, size,
+					0, val);
 			}
 			else {
 				addr -= rsize;
@@ -378,8 +480,32 @@ static int localdecls(void) {
 				break;
 		}
 		semi();
+		utype = 0;
 	}
 	return addr;
+}
+
+static int intcmp(int *x1, int *x2) {
+	while (*x1 && *x1 == *x2)
+		x1++, x2++;
+	return *x1 - *x2;
+}
+
+static void signature(int fn, int from, int to) {
+	int	types[MAXFNARGS+1], i;
+
+	if (to - from > MAXFNARGS)
+		error("too many function parameters", Names[fn]);
+	for (i=0; i<MAXFNARGS && from < to; i++)
+		types[i] = Prims[--to];
+	types[i] = 0;
+	if (NULL == Mtext[fn]) {
+		Mtext[fn] = galloc((i+1) * sizeof(int), 1);
+		memcpy(Mtext[fn], types, (i+1) * sizeof(int));
+	}
+	else if (intcmp((int *) Mtext[fn], types))
+		error("declaration does not match prior prototype: %s",
+			Names[fn]);
 }
 
 /*
@@ -392,7 +518,7 @@ static int localdecls(void) {
  *	| declarator , decl_list
  */
 
-void decl(int clss, int prim) {
+void decl(int clss, int prim, int utype) {
 	char	name[NAMELEN+1];
 	int	pbase, type, size = 0, val, init;
 	int	lsize;
@@ -403,21 +529,24 @@ void decl(int clss, int prim) {
 		val = 0;
 		init = 0;
 		type = declarator(0, clss, name, &prim, &size, &val, &init);
+		type = upgrade_array(utype, type, &size);
 		if (TFUNCTION == type) {
-			if (SEMI == Token) {
-				Token = scan();
-				clss = CEXTERN;
-			}
+			clss = clss == CSTATIC? CSPROTO: CEXTERN;
 			Thisfn = addglob(name, prim, type, clss, size, 0,
 					NULL, 0);
 			signature(Thisfn, Locs, NSYMBOLS);
-			if (clss != CEXTERN) {
-				lbrace();
+			if (LBRACE == Token) {
+				clss = clss == CSPROTO? CSTATIC:
+					clss == CEXTERN? CPUBLIC: clss;
+				Thisfn = addglob(name, prim, type, clss, size,
+					0, NULL, 0);
+				Token = scan();
 				lsize = localdecls();
-				//grw no need for text label
+				//grw - no need for text label in Asm/02
 				//gentext();
-				//grw - no need to mark public in ASM/02
-				//if (CPUBLIC == clss) genpublic(name);
+				if (CPUBLIC == clss) genpublic(name);
+				//grw - no need for alignment
+				//genaligntext();
 				genname(name);
 				genentry();
 				genstack(lsize);
@@ -430,6 +559,9 @@ void decl(int clss, int prim) {
 				if (O_debug & D_LSYM)
 					dumpsyms("LOCALS: ", name, Locs,
 						NSYMBOLS);
+			}
+			else {
+				semi();
 			}
 			clrlocs();
 			return;
@@ -447,12 +579,123 @@ void decl(int clss, int prim) {
 }
 
 /*
+ * structdecl :=
+ *	  STRUCT IDENT { member_list } opt_decl ;
+ *	| UNION IDENT { member_list } opt_decl ;
+ *	| STRUCT { member_list } opt_decl ;
+ *	| UNION { member_list } opt_decl ;
+ *
+ * opt_decl :=
+ *      | decl
+ *
+ * member_list :=
+ *	  primtype mdecl_list ;
+ *	| primtype mdecl_list ; member_list
+ *	| usertype mdecl_list ;
+ *	| usertype mdecl_list ; member_list
+ *
+ * mdecl_list :=
+ *	  declarator
+ *	| declatator , mdecl_list
+ */
+
+void structdecl(int clss, int uniondecl) {
+	int	utype, base, prim, size, dummy, type, addr = 0;
+	char	name[NAMELEN+1], sname[NAMELEN+1];
+	int	y, usize = 0;
+
+	Token = scan();
+	if (IDENT == Token) {
+		copyname(sname, Text);
+		Token = scan();
+	}
+	else {
+		sname[0] = 0;
+	}
+	if (Token != LBRACE) {
+		prim = primtype(uniondecl? UNION: STRUCT, sname);
+		decl(clss, prim, 0);
+		return;
+	}
+	y = addglob(sname, uniondecl? PUNION: PSTRUCT, TSTRUCT,
+			CMEMBER, 0, 0, NULL, 0);
+	Token = scan();
+	utype = 0;
+	while (	INT == Token || CHAR == Token || VOID == Token ||
+		STRUCT == Token || UNION == Token ||
+		(IDENT == Token && (utype = usertype(Text)) != 0)
+	) {
+		base = utype? Prims[utype]: primtype(Token, NULL);
+		size = 0;
+		Token = scan();
+		for (;;) {
+			if (eofcheck()) return;
+			prim = base;
+			type = declarator(1, CMEMBER, name, &prim, &size,
+						&dummy, &dummy);
+			addglob(name, prim, type, CMEMBER, size, addr,
+				NULL, 0);
+			size = objsize(prim, type, size);
+			if (size < 1)
+				error("size of struct/union member"
+					" is unknown: %s",
+					name);
+			if (uniondecl) {
+				usize = size > usize? size: usize;
+			}
+			else {
+				addr += size;
+				addr = (addr + INTSIZE-1) / INTSIZE * INTSIZE;
+			}
+			if (Token != COMMA) break;
+			Token = scan();
+		}
+		semi();
+		utype = 0;
+	}
+	rbrace();
+	Sizes[y] = uniondecl? usize: addr;
+	if (Token != SEMI)
+		decl(clss, Prims[y] | y, y);
+	else
+		semi();
+}
+
+/*
+ * typedecl :=
+ *	  TYPEDEF primtype decl
+ *	| TYPEDEF usertype decl
+ *	| TYPEDEF structdecl
+ */
+
+void typedecl(void) {
+	int	utype, prim;
+
+	Token = scan();
+	if (STRUCT == Token || UNION == Token) {
+		structdecl(CTYPE, UNION == Token);
+	}
+	else if ((utype = usertype(Text)) != 0) {
+		Token = scan();
+		decl(CTYPE, Prims[utype], utype);
+	}
+	else {
+		prim = primtype(Token, NULL);
+		Token = scan();
+		decl(CTYPE, prim, 0);
+	}
+}
+
+/*
  * top :=
  *	  ENUM enumdecl
  *	| decl
  *	| primtype decl
  *	| storclass decl
  *	| storclass primtype decl
+ *	| typedecl
+ *	| usertype decl
+ *	| storclass usertype decl
  *
  * storclass :=
  *	  EXTERN
@@ -460,29 +703,79 @@ void decl(int clss, int prim) {
  */
 
 void top(void) {
-	int	prim, clss = CPUBLIC;
+	int	utype, prim, clss = CPUBLIC;
 
 	switch (Token) {
 	case EXTERN:	clss = CEXTERN; Token = scan(); break;
 	case STATIC:	clss = CSTATIC; Token = scan(); break;
+	case VOLATILE:	Token = scan(); break;
 	}
 	switch (Token) {
 	case ENUM:
-		enumdecl();
+		enumdecl(1);
+		break;
+	case TYPEDEF:
+		typedecl();
+		break;
+	case STRUCT:
+	case UNION:
+		structdecl(clss, UNION == Token);
 		break;
 	case CHAR:
 	case INT:
 	case VOID:
-		prim = primtype(Token);
+		prim = primtype(Token, NULL);
 		Token = scan();
-		decl(clss, prim);
+		decl(clss, prim, 0);
 		break;
 	case IDENT:
-		decl(clss, PINT);
+		if ((utype = usertype(Text)) != 0) {
+			Token = scan();
+			decl(clss, Prims[utype], utype);
+		}
+		else
+			decl(clss, PINT, 0);
 		break;
 	default:
 		error("type specifier expected at: %s", Text);
 		Token = synch(SEMI);
 		break;
 	}
+}
+
+static void stats(void) {
+	printf(	"Memory usage: "
+		"Symbols: %5d/%5d, "
+		"Names: %5d/%5d, "
+		"Nodes: %5d/%5d\n",
+		Globs, NSYMBOLS,
+		Nbot, POOLSIZE,
+		Ndmax, NODEPOOLSZ);
+}
+
+void defarg(char *s) {
+	char	*p;
+
+	if (NULL == s) return;
+	if ((p = strchr(s, '=')) != NULL)
+		*p++ = 0;
+	else
+		p = "";
+	addglob(s, 0, TMACRO, 0, 0, 0, globname(p), 0);
+	if (*p) *--p = '=';
+}
+
+void program(char *name, FILE *in, FILE *out, char *def) {
+	init();
+	defarg(def);
+	Infile = in;
+	Outfile = out;
+	File = Basefile = name;
+	genprelude();
+	Token = scan();
+	while (XEOF != Token)
+		top();
+	genpostlude();
+	if (O_debug & D_GSYM) dumpsyms("GLOBALS", "", 1, Globs);
+	if (O_debug & D_STAT) stats();
 }

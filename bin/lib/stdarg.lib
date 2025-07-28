@@ -1,0 +1,45 @@
+.big
+{Cva_start
+/epush16 000a 00
+\epush16 000b
+/lpush16 000f 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 01 d4 00
+\lpush16 0010
+/sclsos2 0014 00
+\sclsos2 0015
+/add16 0017 00
+\add16 0018
+/dpop16 001a 00
+\dpop16 001b
+/escheck 001e 00
+\escheck 001f
+:0010 00 00 00 d4 00 00 d4 00 00 d4 00 00 e2 d4 00 00
+:0020 60 72 ab f0 bb d5
+}
+.big
+{Cva_arg
+/lpush16 000a 00
+\lpush16 000b
+/psave 000f 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 00 d4 00
+\psave 0010
+/deref16 0012 00
+\deref16 0013
+/pincptr 0015 00
+\pincptr 0016
+/deref16 001a 00
+\deref16 001b
+/dpop16 001d 00
+\dpop16 001e
+:0010 00 d4 00 00 d4 00 00 00 02 d4 00 00 d4 00 00 e2
+/escheck 0021 00
+\escheck 0022
+:0020 d4 00 00 60 72 ab f0 bb d5
+}
+.big
+{Cva_end
+/escheck 000b 00
+\escheck 000c
+:0000 e2 9b 73 8b 73 87 ab 97 bb e2 d4 00 00 60 72 ab
+:0010 f0 bb d5
+}

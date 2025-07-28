@@ -1,10 +1,7 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012,2022
+ *	NMH's Simple C Compiler, 2011,2012
  *	Binary operator precedence
  */
-
-/* !!! The order of thes symbols must match the
-   !!! order of corresponding symbols in defs.h */
 
 static int Prec[] = {
 	7, /* SLASH */

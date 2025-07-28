@@ -1,21 +1,11 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012,2022
+ *	NMH's Simple C Compiler, 2011--2022
  *	Error handling
  */
 
 #include "defs.h"
 #include "data.h"
 #include "decl.h"
-
-static void cleanup(void) {
-	if (!O_testonly && NULL != Basefile) {
-		//grw extensions for Asm/02 and Link/02
-		/* remove(newfilename(Basefile, 's')); */
-		/* remove(newfilename(Basefile, 'o')); */
-		remove(newfilename(Basefile, "asm")); 
-		remove(newfilename(Basefile, "prg")); 
-	}
-}
 
 void error(char *s, char *a) {
 	if (Syntoken) return;
@@ -35,7 +25,7 @@ void fatal(char *s) {
 	exit(EXIT_FAILURE);
 }
 
-void cerror(char *s, int c) {
+void scnerror(char *s, int c) {
 	char	buf[32];
 
 	if (isprint(c))
@@ -50,8 +40,8 @@ int synch(int syn) {
 
 	t = scan();
 	while (t != syn) {
-		if (XEOF == t)
-			fatal("found EOF in error recovery");
+		if (EOF == t)
+			fatal("error recovery failed");
 		t = scan();
 	}
 	Syntoken = syn;

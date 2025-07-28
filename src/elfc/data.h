@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012
+ *	NMH's Simple C Compiler, 2011--2014
  *	Global variables
  */
 
@@ -21,6 +21,7 @@ extern_ int	Rejval;
 extern_ char	Rejtext[TEXTLEN+1];
 extern_ char	*File;
 extern_ char	*Basefile;
+extern_ char	*Fpath;
 extern_ char	*Macp[MAXNMAC];
 extern_ int	Macc[MAXNMAC];
 extern_ int	Mp;
@@ -28,10 +29,13 @@ extern_ int	Expandmac;
 extern_ int	Ifdefstk[MAXIFDEF], Isp;
 extern_ int	Inclev;
 extern_ int	Textseg;
+extern_ int	Nodes[NODEPOOLSZ];
+extern_ int	Ndtop;
+extern_ int	Ndmax;
 
 /* symbol tabel structure */
 extern_ char	*Names[NSYMBOLS];
-extern_ char	Prims[NSYMBOLS];
+extern_ int	Prims[NSYMBOLS];
 extern_ char	Types[NSYMBOLS];
 extern_ char	Stcls[NSYMBOLS];
 extern_ int	Sizes[NSYMBOLS];
@@ -47,6 +51,7 @@ extern_ char	Nlist[POOLSIZE];
 extern_ int	Nbot;
 extern_ int	Ntop;
 
+/* label stacks */
 extern_ int	Breakstk[MAXBREAK], Bsp;
 extern_ int	Contstk[MAXBREAK], Csp;
 extern_ int	Retlab;
@@ -56,12 +61,31 @@ extern_ int	LIaddr[MAXLOCINIT];
 extern_ int	LIval[MAXLOCINIT];
 extern_ int	Nli;
 
+/* synthesizer operand queue */
+//grw - refactor Q_type to Q_jmp, Q_val to Q_dest
+//extern_ int	Q_type;
+//extern_ int	Q_val;
+//grw - removed Q_name
+//extern_ char	Q_name[NAMELEN+1];
+//grw - added logic to eliminate push followed by immediate pop
+extern_ int	Q_jmp;
+extern_ int	Q_dest;
+extern_ int	Q_cmp;
+extern_ int	Q_bool;
+extern_ int	Q_push;
+
+/* file collector */
 extern_ char	*Files[MAXFILES];
+extern_ char	Temp[MAXFILES];
 extern_ int	Nf;
 
+/* options */
 extern_ int	O_verbose;
 extern_ int	O_componly;
 extern_ int	O_asmonly;
 extern_ int	O_testonly;
+extern_ int	O_stdio;
 extern_ char	*O_outfile;
 extern_ int	O_debug;
+//grw - added library object actdion
+extern_ int	O_library;

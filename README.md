@@ -3,8 +3,8 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Design Goals
 -------------
-* Use the Elf/OS Asm/02 assembler and Link/02 linker to produce CDP1802 code.
-* Create a library based on Mike Riley's Library/02 standard library.
+* Use the [Asm/02](https://github.com/fourstix/Asm-02) assembler and the [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
+* Create a library based on Mike Riley's [Library/02](https://github.com/rileym65/Library-02) standard library.
 * Target both Elf/OS and Mini/DOS as a platform.
 * Target Windows as the development platform (cross-compiler)
 * Use an expression stack similar to the one implemented in Mike Riley's Fortran/02 program.
@@ -18,37 +18,416 @@ This version is based on the [SubC book version, 2nd Ed.](https://www.t3x.org/su
 
 I strongly recommend reading Nils's book.  Practical Compiler Construction is a very good guide in explaining the theory behind the SubC compiler as well as describing the compiler's code.  The second edition can be ordered as a [paperback](https://www.lulu.com/en/us/shop/nils-m-holm/practical-compiler-construction/paperback/product-179kp29q.html) or [pdf ebook file](https://www.lulu.com/en/us/shop/nils-m-holm/practical-compiler-construction/ebook/product-18knr78q.html) from Lulu press.
 
-In Release 1 the code generation functions for Elf/OS have all been implemented.  The arithmetic and logical operators have all been implemented and tested.
+In Release 1 the code generation functions for Elf/OS and Mini/DOS have all been implemented.  The arithmetic and logical operators have all been implemented and tested.
 
+
+Release 2
+----------
+This release migrates the code base to the current [Experimental SubC](https://www.t3x.org/subc/index.html) version so that the code generator can include structures, unions and typedefs.
+
+This release supports some basic code optimization as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms
+
+The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
+
+The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
+
+An additional compiler option `-L` will compile and assemble Elf/OS (Min/iDOS) library modules from C files.
+
+The stdlib, stdio, ctype, and string C libraries are supported as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
+
+* The C libraries are created from C files using the ElfC (`-L`) library compile option.
+
+* The header files use `#pragma` statements so the libraries link properly.
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Overview
 --------
-* Implement the code generation functions required to compile a C file and generate a CDP1802 assembly code file for the Elf/OS (or Mini/DOS) operating system.  
 
-* Create a library of arithmetic and variable functions based on the Elf/OS 16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
+* Version 2 implements the code generation functions required to compile a C file and assemble the resulting CDP1802 assembly and link code files into a binary program for the Elf/OS (Mini/DOS) operating system.  
 
-* Implement the minimal changes to the book compiler code required to assemble and link the code to create an Elf/OS program file.
+* The assembler [Asm/02]((https://github.com/fourstix/Asm-02)) and linker [Link/02](https://github.com/fourstix/Link-02) are now invoked with the same path as the compiler.  The C library files and header files are located in the same manner, so that the preprocessor commands `#include <header.h>` and `#include "header.h"` work as expected.
 
-* Implement the asm() statement in C to directly insert assembly code into the generated assembly file.
+* Version 2 extends the library of arithmetic and variable functions based on the  16-bit standard library [Library/02](https://github.com/rileym65/Library-02) to manipulate values on an expression stack.
+
+* This version implements the changes to the book compiler code contained in the latest current [Experimental version of SubC](https://www.t3x.org/subc/index.html).
+
+* The peep-hole code optimizations are all implemented except for the 386 assembly code Type Synthesis optimizations which have no equivalents available in 1802 assembly code.  In the discussion *RISC vs CISC* on page 362 of [Practical Compiler Construction](https://www.t3x.org/reload/index.html), Nils M Holm covers this topic in more detail. 
+
+* In addition to these optimizations, jump optimizations and push / pop optimizations were added that are specific to 1802 assembly code.  Constant folding and AST trees are supported as in the [Experimental SubC](https://www.t3x.org/subc/index.html) code.
+
+* The `asm` statement passes a string literal directly into the generated assembly file.
+
+* The `#pragma` preprocessor directive can be used to directly insert an assembly directive or a line of assembly code directly into the generated assembly file.
+
+* The `__LINE__` and `__FILE__` preprocessor directives were implemented in this version.
+
+* The arguments `int argc` and `char **argv` are now available as arguments to main.  Up to eight arguments are supported.  The argument `argv[0]` points to the command string that invoked the program.
+
+* The `stdlib`, `stdio`, `ctype`, and `string` are supported.
+
+* The ElfC compiler now accepts inline comments (`// comments`) as well as traditional C commments (`/* comments */`).
+
+* The ElfC compiler now accepts `\e` as an escape sequence for the ASCII escape character 0x1B. 
+
+* `struct`, `union` and `typedef` are now supported, except as function arguments and function return values.
+
+* Pointers to `struct`, `union` and `typedef` are now supported. A function may accept a *pointer* to a `struct` or `union` and a function may return a *pointer* to a `structure` or `union`.
+
+* `&array` is now valid syntax (you no longer have to write `&array[0]`).
+
+* The `auto`, `register`, and `volatile` keywords are recognized (as no-ops). 
+
+* `enum`'s may now be local.
+
+* `extern` identifiers may now be declared locally.
+
+* Prototypes may have the `static` storage class.
+
+* The `#error`, `#line`, and `#pragma` commands have been added.
+
+* The `atexit()` mechanism is now supported.
+
+* The `varags` mechanism is now supported as functions as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms. 
+
+* The `assert` macro is implemented as a function with support for the `NDEBUG` macro.
+
+* STG ROM break points are supported by the `_STGROM_` and `BRKPT` macros.
+
+* A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL. 
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
+Compiler Option Changes
+-----------------------
+* The `-L` (Library) ElfC option was added to compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
+
+* The `-N` (No stdio) option to not compile with the stdio library has been removed.
+* The `-V` (Verbose) option was simplified to display *all* verbose messages or none.
+
+More information about `-L` Library option can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+Stdlib Library
+--------------
+**The following functions are supported in the ElfC stdlib C library.**
+
+**Program Exit Functions**
+* void abort(void);
+* int atexit(int (*fn)());
+* void exit(int n);
+
+*Notes:*
+* *`abort` terminates a program immediately without closing any open files.*
+* *`exit` will call the function registered by `atexit`, then close any open files by calling `fclose`, and then terminate the program.*
+* *`exit` deletes any temporary files created by `tmpfile` by closing them with `fclose`.*
+* *Only one function can be registered by `atexit`.*
+
+
+**Memory Allocation**
+
+* void\* malloc(int size);
+* void \*calloc(int count, int size);
+* void \*realloc(void \*p, int size);
+* void free(void\* p);
+
+**Number Conversion**
+* int atoi(char \*s);
+* void itoa(int n, char \*s);
+* void itox(int n, char \*s);
+* void itou(int n, char \*s);
+
+*Note: `itox` and `itou` are functions for hexadecimal and unsigned integer conversion.*
+
+**Math Utilities**
+
+* int abs(int n);
+* void div(int num, int denom, div_t *rp);
+* void \*bsearch(void \*key, void \*array, int count, int size, int (\*cmp)());
+* void qsort(void \*list, int count, int size, int (\*cmp)());
+* int rand(void);
+* void srand(int n);
+* int min(int a, int b);
+* int max(int a, int b);
+
+**The following unistd.h file functions are included in the ElfC stdlib C library.**
+
+**Low Level File Functions**
+
+* int	 creat(char \*path, int mode);
+* int	 open(char \*path, int flags);
+* int	 close(int fd);
+* int	 read(int fd, void \*buf, int len);
+* int	 write(int fd, void *\buf, int len);
+* int  unlink(char \*path);
+* int  lseek(int fd, int hi_off, int lo_off, int how);
+
+*Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`*
+
+Stdio Library
+-------------
+**The following functions are supported in the ElfC stdio C library.**
+
+**Unbuffered Character I/O**
+
+* char \*gets(char \*buf);
+* int	 puts(char \*s);
+* int	 putstr(char \*s);
+* int getch(void);
+* int	putch(int ch);
+
+*Note: putstr is similar to puts(), but it does not add a newline after the string.*
+
+**Buffered Character I/O**
+
+* int fgetc(FILE \*f);
+* int fputc(int c, FILE \*f);
+* char \*fgets(char \*s, int len, FILE \*f);
+* int fputs(char \*s, FILE \*f);
+* int putchar(int c);
+* int getchar(void);
+* int ungetc(int c, FILE \*f);
+
+*Note: all stdio functions, except the Unbuffered Character I//O functions, support a one byte push-back buffer through the ungetc() function.*
+
+**Buffered File I/O**
+
+* FILE \*fdopen(int fd, int iomode);
+* int fclose(FILE \*f);
+* FILE \*fopen(char \*path, char \*mode);
+* int fread(void \*p, int size, int count, FILE \*f);
+* int fwrite(void \*p, int size, int count, FILE \*f);
+* int fflush(FILE \*f);  
+
+*Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP*
+
+**Formatted Output**
+
+* int fprintf(FILE \*f, char \*fmt, ...);
+* int printf(char \*fmt, ...);
+* int sprintf(char \*buf, char \*fmt, ...);
+* int kprintf(int fd, char \*fmt, ...);
+* int vfprintf(FILE \*f, char \*fmt, void \*\*args);
+* int vprintf(char \*fmt, void \*\*args);
+* int vsprintf(char \*buf, char \*fmt, void \*\*args);
+
+*Note: Information about supported print conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
+**Formatted Input**
+
+* int fscanf(FILE \*f, char \*fmt, ...);
+* int scanf(char \*fmt, ...);
+* int sscanf(char \*src, char \*fmt, ...);
+
+*Note: Information about supported scan conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
+**File Operations**
+
+* int remove(char \*path);
+* int rename(char \*old, char \*new);
+* char \*tmpnam(char \*buf);
+* FILE \*tmpfile(void);
+
+*Notes:*
+* *`tmpnam` creates a filename such as `temp.00`.*
+* *`tmpfile` creates temporary file using a name generated by `tmpnam`.* 
+* *Files created by `tmpfile` are deleted when closed by `fclose`.*
+
+**File Position Functions**
+
+* int fgetpos(FILE \*f, pos_t \*pos);
+* int fsetpos(FILE \*f, pos_t \*pos);
+* int fseek(FILE \*f, int offset, int how);
+* int ftell(FILE \*f);
+
+**File Error Functions**
+
+* int ferror(FILE \*f);
+* int feof(FILE \*f);
+* void clrerror(FILE \*f);
+* void perror(char \*msg);
+
+String Library
+----------------
+
+**The following functions are supported in the ElfC string C library.**
+
+**Memory Functions**
+
+* void \*memchr(void \*p, int c, int n);
+* int memcmp(void \*p1, void \*p2, int n);
+* void \*memcpy(void \*d, void \*s, int n);
+* void \*memmove(void \*d, void \*s, int n);
+* void \*memset(void \*p, int c, int n);
+
+**String Functions**
+
+* char \*strcat(char \*d, char \*a);
+* char \*strchr(char \*s, int c);
+* int strcmp(char \*s1, char \*s2);
+* char \*strcpy(char \*d, char \*s);
+* int strcspn(char \*s, char \*set);
+* char \*strdup(char \*s);
+* char \*strerror(int err);
+* int strlen(char \*s);
+* char \*strncat(char \*d, char \*a, int n);
+* int strncmp(char \*s1, char \*s2, int n);
+* char \*strncpy(char \*d, char \*s, int n);
+* char \*strlcpy(char \*d, char \*s, int n);
+* char \*strpbrk(char \*s, char \*set);
+* char \*strrchr(char \*s, int c);
+* int strspn(char \*s, char \*set);
+* char \*strstr(char \*s1, char \*s2);
+* char \*strtok(char \*s, char \*sep);
+
+*Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
+
+Ctype Library
+--------------
+**The following functions are supported in the ElfC ctype C library.**
+
+**Character Type Functions**
+
+* int	isalnum(int c);
+* int	isalpha(int c);
+* int	iscntrl(int c);
+* int	isdigit(int c);
+* int	isgraph(int c);
+* int	islower(int c);
+* int	isprint(int c);
+* int	ispunct(int c);
+* int	isspace(int c);
+* int	isupper(int c);
+* int	isxdigit(int c);
+* int	tolower(int c);
+* int	toupper(int c);
+
+
+Assert Library
+--------------
+
+**The following function is supported in the ElfC assert C library.**
+
+* void assert(int a, char\* file, int line);
+
+*Notes:*
+* *The `assert` macro is implemented by a function, because preprocessor macros do not support parameters.*
+* *The pre-defined macros `__FILE__` and `__LINE__` should be used for the file and line arguments.*
+* *If the macro `NDEBUG` is defined then the assert function returns immediately*
+* *Otherwise, `assert` prints a message containing the file name and line number and then calls the `abort` function to exit.* 
+
+Stdarg Library
+---------------
+
+**The following functions are supported in the ElfC stdarg C library.**
+
+* void	\*\*_va_start(void \*last);
+* void	 \*_va_arg(void \*\*ap);
+* void	  _va_end(void \*\*ap);
+
+*Notes:*
+* *The `stdarg` library is implemented by functions, because preprocessor macros do not support parameters.*
+* *The `va_arg` function does not include an argument for the type.*
+* *The `va_end` function is a NOP.* 
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Next Release
 -------------
 
-* Migrate the code base to the current [Experimental SubC](https://www.t3x.org/subc/index.html) version so that the code generator can include structures, unions and typedefs.
-
-* Merge all changes made to Release 1 into Experimental SubC version.
+* Implement time functions compatible with Elf/OS (Mini/DOS) kernel and BIOS API.
+* Implement signed and unsigned keywords.
+* Implement the short keyword as synonym for the int data type.
 
 Future Goals
 -------------
 
-* Implement standard library and standard I/O C functions.
-* Convert library to 32-bit library and implement long and float data types. 
+* Convert library to 32-bit library and implement long, short and float data types. 
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.
 * Implement signed and unsigned data types.
-* Create a native Elf/OS version of ElfC that uses the native Asm/02 and Link/02 programs in Elf/OS.  
+* Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.  
 
+
+Differences Between SubC and Full C89
+-------------------------------------
+
+*  The following keywords are not recognized:
+   `const`, `double`, `float`, `goto`, `long`, `short`,
+   `signed`, `unsigned`.
+
+*  There are only two primitive data types: the signed `int` and
+   the unsigned `char`; there are also void pointers, and there
+   is limited support for `int(*)()` (pointers to functions
+   of type int).
+
+*  No more than two levels of indirection are supported, and
+   arrays are limited to one dimension, i.e. valid declarators
+   are limited to `x`, `x[]`, `*x`, `*x[]`, `**x` (and `(*x)()`).
+
+*  K&R-style function declarations (with parameter declarations
+   between the parameter list and function body) are not
+   accepted.
+
+*  There are no `const` variables.
+
+*  There are no unsigned integers, long integers, or signed
+   chars.
+
+*  Struct/union declarations must be separate from the
+   declarations of struct/union objects, i.e.
+   `struct p { int x, y; } q;` will not work.
+
+*  Struct/union declarations must be global (struct and union
+   objects may be declared locally, though).
+
+*  A struct/union cannot be passed as an argument to a function, nor can a function return
+   a struct/union value.  However, a *pointer* to struct/union can be passed as an argument to a 
+   function and a pointer to a struct/union may be returned by a function. 
+
+*  There is no support for bit fields.
+
+*  Only ints, chars, and arrays of int and char can be
+   initialized in their declarations; pointers can be
+   initialized with 0 or NULL.
+
+*  Local arrays cannot have initializers.
+
+*  Local declarations are limited to the beginnings of function
+   bodies (they do not work in other compound statements).
+
+*  Arguments of prototypes must be named.
+
+*  There is no `goto`.
+
+*  There are no parameterized macros.
+
+*  The `#if` and `#elif` preprocessor commands are not recognized.
+
+*  The preprocessor does not accept multi-line commands.
+
+*  The preprocessor does not accept comments in (some) commands.
+
+*  The preprocessor does not recognize the `#` and `##` operators.
+
+*  There may not be any blanks between the `#` that introduces
+   a preprocessor command and the subsequent command (e.g.:
+   `# define` would not be recognized as a valid command).
+
+*  The `sizeof` operator requires parentheses.
+
+*  Subscripting an integer with a pointer (e.g. `1["foo"]`) is
+   not supported.
+
+*  Function pointers are limited to one single type, `int(*)()`,
+   and they have no argument types. Note that this declaration
+   will in fact generate a pointer to `int(*)(void)`.
+
+*  Due to the lack of parameterized macros, `assert` and other 
+   macros are implemented as functions.
+   
+*  The SubC compiler accepts `//` comments in addition to `/* */`.
 
 License Information
 -------------------
@@ -76,7 +455,7 @@ Placed in the public domain by the author.
 Elf/OS 
 Copyright (c) 2004-2025 by Mike Riley
 
-Mini-DOS 
+Mini/DOS 
 Copyright (c) 2025-2025 by David Madole
   
 Asm/02 1802 Assembler 

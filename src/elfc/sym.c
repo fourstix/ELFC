@@ -1,5 +1,5 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012
+ *	NMH's Simple C Compiler, 2011--2021
  *	Symbol table management
  */
 
@@ -11,11 +11,12 @@
 int findglob(char *s) {
 	int	i;
 
-	for (i=0; i<Globs; i++)
-		if (	Types[i] != TMACRO &&
+	for (i=0; i<Globs; i++) {
+		if (	Types[i] != TMACRO && Stcls[i] != CMEMBER &&
 			*s == *Names[i] && !strcmp(s, Names[i])
 		)
 			return i;
+	}
 	return 0;
 }
 
@@ -23,10 +24,19 @@ int findloc(char *s) {
 	int	i;
 
 	for (i=Locs; i<NSYMBOLS; i++) {
-		if (*s == *Names[i] && !strcmp(s, Names[i]))
+		if (	Stcls[i] != CMEMBER &&
+			*s == *Names[i] && !strcmp(s, Names[i])
+		)
 			return i;
 	}
 	return 0;
+}
+
+int findsym(char *s) {
+	int	y;
+
+	if ((y = findloc(s)) != 0) return y;
+	return findglob(s);
 }
 
 int findmac(char *s) {
@@ -40,11 +50,40 @@ int findmac(char *s) {
 	return 0;
 }
 
+int findstruct(char *s) {
+	int	i;
+
+	for (i=Locs; i<NSYMBOLS; i++)
+		if (	TSTRUCT == Types[i] &&
+			*s == *Names[i] && !strcmp(s, Names[i])
+		)
+			return i;
+	for (i=0; i<Globs; i++)
+		if (	TSTRUCT == Types[i] &&
+			*s == *Names[i] && !strcmp(s, Names[i])
+		)
+			return i;
+	return 0;
+}
+
+int findmem(int y, char *s) {
+	y++;
+	while (	(y < Globs ||
+		 (y >= Locs && y < NSYMBOLS)) &&
+		CMEMBER ==  Stcls[y]
+	) {
+		if (*s == *Names[y] && !strcmp(s, Names[y]))
+			return y;
+		y++;
+	}
+	return 0;
+}
+
 int newglob(void) {
 	int	p;
 
 	if ((p = Globs++) >= Locs)
-		fatal("symbol table overflow");
+		fatal("too many global symbols");
 	return p;
 }
 
@@ -52,20 +91,37 @@ int newloc(void) {
 	int	p;
 
 	if ((p = --Locs) <= Globs)
-		fatal("symbol table overflow");
+		fatal("too many local symbols");
 	return p;
 }
 
-char *globname(char *s) {
-	int	p, k;
+#ifdef __SUBC__
+ #define PTR_INT_CAST	(int)
+#else
+ #define PTR_INT_CAST	(int) (long)
+#endif
 
-	k = strlen(s) + 1;
+char *galloc(int k, int align) {
+	int	p, mask;
+
+	k += align * sizeof(int);
 	if (Nbot + k >= Ntop)
-		fatal("name list overflow");
+		fatal("out of space for symbol names");
 	p = Nbot;
 	Nbot += k;
-	strcpy(&Nlist[p], s);
+	mask = sizeof(int)-1;
+	if (align)
+		while (PTR_INT_CAST &Nlist[p] & mask)
+			p++;
 	return &Nlist[p];
+}
+
+char *globname(char *s) {
+	char	*p;
+	
+	p = galloc(strlen(s)+1, 0);
+	strcpy(p, s);
+	return p;
 }
 
 char *locname(char *s) {
@@ -73,7 +129,7 @@ char *locname(char *s) {
 
 	k = strlen(s) + 1;
 	if (Nbot + k >= Ntop)
-		fatal("name list overflow");
+		fatal("out of space for symbol names");
 	Ntop -= k;
 	p = Ntop;
 	strcpy(&Nlist[p], s);
@@ -83,31 +139,78 @@ char *locname(char *s) {
 static void defglob(char *name, int prim, int type, int size, int val,
 			int scls, int init)
 {
+	int	st;
+
 	if (TCONSTANT == type || TFUNCTION == type) return;
-	gendata();
-	//grw - no need to mark public in ASM/02
-	//if (CPUBLIC == scls) genpublic(name);
+	//grw - removed gendata
+	//gendata();
+	st = scls == CSTATIC;
+	if (CPUBLIC == scls) genpublic(name);
 	if (init && TARRAY == type)
 		return;
-	if (TARRAY != type) genname(name);
-	if (PCHAR == prim) {
+	if (TARRAY != type && !(prim & STCMASK)) genname(name);
+	if (prim & STCMASK) {
 		if (TARRAY == type)
-			genbss(gsym(name), size);
+			genbss(gsym(name), objsize(prim, TARRAY, size), st);
 		else
+			genbss(gsym(name), objsize(prim, TVARIABLE, size), st);
+	}
+	else if (PCHAR == prim) {
+		if (TARRAY == type)
+			genbss(gsym(name), size, st);
+		else {
 			gendefb(val);
+			//grw - removed genalign
+			//genalign(1);
+		}
 	}
 	else if (PINT == prim) {
 		if (TARRAY == type)
-			genbss(gsym(name), size*INTSIZE);
+			genbss(gsym(name), size*INTSIZE, st);
 		else
 			gendefw(val);
 	}
 	else {
 		if (TARRAY == type)
-			genbss(gsym(name), size*PTRSIZE);
+			genbss(gsym(name), size*PTRSIZE, st);
 		else
 			gendefp(val);
 	}
+}
+
+int redeclare(char *name, int oldcls, int newcls) {
+	switch (oldcls) {
+	case CEXTERN:
+		if (newcls != CPUBLIC && newcls != CEXTERN)
+			error("extern symbol redeclared static: %s", name);
+		return newcls;
+	case CPUBLIC:
+		if (CEXTERN == newcls)
+			return CPUBLIC;
+		if (newcls != CPUBLIC) {
+			error("extern symbol redeclared static: %s", name);
+			return CPUBLIC;
+		}
+		break;
+	case CSPROTO:
+		if (newcls != CSTATIC && newcls != CSPROTO)
+			error("static symbol redeclared extern: %s", name);
+		return newcls;
+	case CSTATIC:
+		if (CSPROTO == newcls)
+			return CSTATIC;
+		if (newcls != CSTATIC) {
+			error("static symbol redeclared extern: %s", name);
+			return CSTATIC;
+		}
+		break;
+	case CTYPE:
+		error("redefinition of typedef name", Text);
+		return CTYPE;
+		break;
+	}
+	error("redefined symbol: %s", name);
+	return newcls;
 }
 
 int addglob(char *name, int prim, int type, int scls, int size, int val,
@@ -115,15 +218,15 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 {
 	int	y;
 
-	if ((y = findglob(name)) != 0) {
-		if (Stcls[y] != CEXTERN)
-			error("redefinition of: %s", name);
-		else if (CSTATIC == scls)
-			error("extern symbol redeclared static: %s", name);
+	if (0 == *name)
+		y = 0;
+	else if ((y = findglob(name)) != 0) {
+		scls = redeclare(name, Stcls[y], scls);
+		if (CTYPE == scls) return y;
 		if (TFUNCTION == Types[y])
 			mtext = Mtext[y];
 	}
-	if (y == 0) {
+	if (0 == y) {
  		y = newglob();
 		Names[y] = globname(name);
 	}
@@ -144,23 +247,33 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 }
 
 static void defloc(int prim, int type, int size, int val, int init) {
-	gendata();
-	if (type != TARRAY) genlab(val);
-	if (PCHAR == prim) {
+	//grw - removed gendata
+	//gendata();
+	if (type != TARRAY && !(prim &STCMASK)) genlab(val);
+	if (prim & STCMASK) {
 		if (TARRAY == type)
-			genbss(labname(val), size);
+			genbss(labname(val), objsize(prim, TARRAY, size), 1);
 		else
+			genbss(labname(val), objsize(prim, TVARIABLE, size),1);
+	}
+	else if (PCHAR == prim) {
+		if (TARRAY == type)
+			genbss(labname(val), size, 1);
+		else {
 			gendefb(init);
+			//grw - removed genalign
+			//genalign(1);
+		}
 	}
 	else if (PINT == prim) {
 		if (TARRAY == type)
-			genbss(labname(val), size*INTSIZE);
+			genbss(labname(val), size*INTSIZE, 1);
 		else
 			gendefw(init);
 	}
 	else {
 		if (TARRAY == type)
-			genbss(labname(val), size*PTRSIZE);
+			genbss(labname(val), size*PTRSIZE, 1);
 		else
 			gendefp(init);
 	}
@@ -190,8 +303,9 @@ void clrlocs(void) {
 }
 
 int objsize(int prim, int type, int size) {
-	int	k = 0;
+	int	k = 0, sp;
 
+	sp = prim & STCMASK;
 	if (PINT == prim)
 		k = INTSIZE;
 	else if (PCHAR == prim)
@@ -200,16 +314,30 @@ int objsize(int prim, int type, int size) {
 		k = PTRSIZE;
 	else if (INTPP == prim || CHARPP == prim || VOIDPP == prim)
 		k = PTRSIZE;
+	else if (STCPTR == sp || STCPP == sp)
+		k = PTRSIZE;
+	else if (UNIPTR == sp || UNIPP == sp)
+		k = PTRSIZE;
+	else if (PSTRUCT == sp || PUNION == sp)
+		k = Sizes[prim & ~STCMASK];
 	else if (FUNPTR == prim)
 		k = PTRSIZE;
 	if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
-		return 0;
+		return -1;
 	if (TARRAY == type)
 		k *= size;
 	return k;
 }
 
 static char *typename(int p) {
+	switch (p & STCMASK) {
+	case PSTRUCT:	return "STRUCT";
+	case STCPTR:	return "STCT*";
+	case STCPP:	return "STCT**";
+	case PUNION:	return "UNION";
+	case UNIPTR:	return "UNIO*";
+	case UNIPP:	return "UNIO**";
+	}
 	return	PINT    == p? "INT":
 		PCHAR   == p? "CHAR":
 		INTPTR  == p? "INT*":
@@ -224,7 +352,7 @@ static char *typename(int p) {
 
 void dumpsyms(char *title, char *sub, int from, int to) {
 	int	i;
-	char	*p;
+	int	*p;
 
 	printf("\n===== %s%s =====\n", title, sub);
 	printf(	"PRIM    TYPE  STCLS   SIZE  VALUE  NAME [MVAL]/(SIG)\n"
@@ -236,12 +364,16 @@ void dumpsyms(char *title, char *sub, int from, int to) {
 				TARRAY == Types[i]? "ARRY":
 				TFUNCTION == Types[i]? "FUN ":
 				TCONSTANT == Types[i]? "CNST":
-				TMACRO == Types[i]? "MAC ": "n/a ",
+				TMACRO == Types[i]? "MAC ":
+				TSTRUCT == Types[i]? "STCT": "n/a",
 			CPUBLIC == Stcls[i]? "PUBLC":
 				CEXTERN == Stcls[i]? "EXTRN":
 				CSTATIC == Stcls[i]? "STATC":
+				CSPROTO == Stcls[i]? "STATP":
 				CLSTATC == Stcls[i]? "LSTAT":
-				CAUTO == Stcls[i]? "AUTO ": "n/a  ",
+				CAUTO   == Stcls[i]? "AUTO ":
+				CMEMBER == Stcls[i]? "MEMBR":
+				CTYPE   == Stcls[i]? "TYPE ": "n/a  ",
 			Sizes[i],
 			Vals[i],
 			Names[i]);
@@ -249,7 +381,7 @@ void dumpsyms(char *title, char *sub, int from, int to) {
 			printf(" [\"%s\"]", Mtext[i]);
 		if (TFUNCTION == Types[i]) {
 			printf(" (");
-			for (p = Mtext[i]; *p; p++) {
+			for (p = (int *) Mtext[i]; *p; p++) {
 				printf("%s", typename(*p));
 				if (p[1]) printf(", ");
 			}

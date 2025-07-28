@@ -1,6 +1,5 @@
-
 /*
- *	NMH's Simple C Compiler, 2011,2012
+ *	NMH's Simple C Compiler, 2011--2016
  *	Statement parser
  */
 
@@ -8,7 +7,7 @@
 #include "data.h"
 #include "decl.h"
 
-void stmt(void);
+static void stmt(void);
 
 /*
  * compound :=
@@ -20,7 +19,7 @@ void stmt(void);
  *	| stmt stmt_list
  */
 
-void compound(int lbr) {
+void compound(int lbr) {	
 	if (lbr) Token = scan();
 	while (RBRACE != Token) {
 		if (eofcheck()) return;
@@ -46,10 +45,15 @@ static void pushcont(int id) {
  */
 
 static void break_stmt(void) {
+	//grw - trace
+	gen(";----- begin break");
+
 	Token = scan();
 	if (!Bsp) error("'break' not in loop/switch context", NULL);
 	genjump(Breakstk[Bsp-1]);
 	semi();
+	//grw - trace
+	gen(";----- end break");
 }
 
 /*
@@ -57,10 +61,15 @@ static void break_stmt(void) {
  */
 
 static void continue_stmt(void) {
+	//grw - trace
+	gen(";----- begin coninue");
+
 	Token = scan();
 	if (!Csp) error("'continue' not in loop context", NULL);
 	genjump(Contstk[Csp-1]);
 	semi();
+	//grw - trace
+	gen(";----- end continue");
 }
 
 /*
@@ -69,6 +78,8 @@ static void continue_stmt(void) {
 
 static void do_stmt(void) {
 	int	ls, lb, lc;
+	//grw - trace
+	gen(";----- begin do");
 
 	Token = scan();
 	ls = label();
@@ -81,11 +92,15 @@ static void do_stmt(void) {
 	genlab(lc);
 	rexpr();
 	genbrtrue(ls);
+	//grw - removed clear logic
+	//clear(1);
 	genlab(lb);
 	rparen();
 	semi();
 	Bsp--;
 	Csp--;
+	//grw - trace
+	gen(";----- end do");
 }
 
 /*
@@ -98,6 +113,8 @@ static void do_stmt(void) {
 
 static void for_stmt(void) {
 	int	ls, lbody, lb, lc;
+	//grw - trace
+	gen(";----- begin for");
 
 	Token = scan();
 	ls = label();
@@ -107,26 +124,29 @@ static void for_stmt(void) {
 	lparen();
 	if (Token != SEMI) {
 		rexpr();
-		clear();
-		//grw
-		genpopd();   /* clean up expression stack after intialization */
+		//grw - removed clear logic
+		//clear(1);
+		//grw - clean up expression stack after init clause
+		genpopd();   
 	}
 	semi();
 	genlab(ls);
 	if (Token != SEMI) {
 		rexpr();
-		clear();
 		genbrfalse(lb);
+		//grw - removed clear logic
+		//clear(1);
 	}
 	genjump(lbody);
 	semi();
 	genlab(lc);
 	if (Token != RPAREN) {
 		rexpr();
-		clear();
-		//grw
-		genpopd();   /* clean up expression stack after increment*/
+		//grw - clean up expression stack after inc clause
+		genpopd();   
 	}
+	//grw - removed clear logic
+	//clear(1);
 	genjump(ls);
 	rparen();
 	genlab(lbody);
@@ -135,6 +155,9 @@ static void for_stmt(void) {
 	genlab(lb);
 	Bsp--;
 	Csp--;
+	
+	//grw - trace
+	gen(";----- end for");
 }
 
 /*
@@ -145,14 +168,17 @@ static void for_stmt(void) {
 
 static void if_stmt(void) {
 	int	l1, l2;
+	//grw - trace
+	gen(";----- begin if");
 
 	Token = scan();
 	lparen();
 	rexpr();
-	clear();
-	rparen();
 	l1 = label();
 	genbrfalse(l1);
+	//grw - removed clear logic
+	//clear(1);
+	rparen();
 	stmt();
 	if (ELSE == Token) {
 		l2 = label();
@@ -163,8 +189,10 @@ static void if_stmt(void) {
 		stmt();
 	}
 	genlab(l1);
-}
+	//grw - trace
+	gen(";----- end if");
 
+}
 
 /*
  * asm_stmt :=
@@ -173,20 +201,19 @@ static void if_stmt(void) {
  */
 
 static void asm_stmt(void) {
-	
 	Token = scan();
 	lparen();
-	//grw - for now just accept string literals, maybe later add char* 
+	//grw - for now, only accept string literals
 	if (STRLIT == Token) {
 		genasm(Text);
 		Token = scan();
 	}	else 
 	  error("asm statement requires string literal", NULL);	
-	clear();
+	//grw - removed clear logic
+	//clear(1);
 	rparen();
 	semi();
 }
-
 
 /*
  * return_stmt :=
@@ -196,11 +223,12 @@ static void asm_stmt(void) {
 
 static void return_stmt(void) {
 	int	lv[LV];
+	//grw - trace
+	gen(";----- begin return");
 
 	Token = scan();
 	if (Token != SEMI) {
-		if (expr(lv))
-			rvalue(lv);
+		expr(lv, 1);
 		if (!typematch(lv[LVPRIM], Prims[Thisfn]))
 			error("incompatible type in 'return'", NULL);
 	}
@@ -209,9 +237,13 @@ static void return_stmt(void) {
 			error("missing value after 'return'", NULL);
 	}
 	//grw - get return result from expression stack
-	genpopd();	
+	if (Prims[Thisfn] != PVOID)
+		genpopd();
+
 	genjump(Retlab);
 	semi();
+	//grw - trace
+	gen(";----- end return");
 }
 
 /*
@@ -233,6 +265,8 @@ static void switch_block(void) {
 	int	cval[MAXCASE];
 	int	clab[MAXCASE];
 	int	nc = 0;
+	//grw - trace
+	gen(";----- begin switch block");
 
 	Token = scan();
 	pushbrk(lb = label());
@@ -275,17 +309,28 @@ static void switch_block(void) {
 	genlab(lb);
 	Token = scan();
 	Bsp--;
+	//grw - trace
+	gen(";----- end switch block");
+
 }
 
 static void switch_stmt(void) {
+	//grw - trace
+	gen(";----- begin switch");
+
 	Token = scan();
 	lparen();
 	rexpr();
-	clear();
+	commit();
+	//grw - removed clear logic
+	//clear(0);
 	rparen();
 	if (Token != LBRACE)
 		error("'{' expected after 'switch'", NULL);
 	switch_block();
+	//grw - trace
+	gen(";----- end switch");
+
 }
 
 /*
@@ -294,6 +339,8 @@ static void switch_stmt(void) {
 
 static void while_stmt(void) {
 	int	lb, lc;
+	//grw - trace
+	gen(";----- begin while");
 
 	Token = scan();
 	pushbrk(lb = label());
@@ -301,17 +348,20 @@ static void while_stmt(void) {
 	genlab(lc);
 	lparen();
 	rexpr();
-	clear();
 	genbrfalse(lb);
+	//grw - removed clear logic
+	//clear(1);
 	rparen();
 	stmt();
 	genjump(lc);
 	genlab(lb);
 	Bsp--;
 	Csp--;
+	//grw - trace
+	gen(";----- end while");
 }
 
-void wrong_ctx(int t) {
+static void wrong_ctx(int t) {
 	if (DEFAULT == t) {
 		error("'default' not in 'switch' context", NULL);
 		Token = scan();
@@ -340,10 +390,14 @@ void wrong_ctx(int t) {
  *	| expr ;
  */
 
-void stmt(void) {
+static void stmt(void) {
+	int	lv[LV];
+	//grw - trace
+	gen(";----- begin stmt ------");
+
 	switch (Token) {
 	//grw -- added asm statement
-	case ASM:	asm_stmt(); break;  
+	case ASM:	asm_stmt(); break;  	
 	case BREAK:	break_stmt(); break;
 	case CONTINUE:	continue_stmt(); break;
 	case DO:	do_stmt(); break;
@@ -356,10 +410,14 @@ void stmt(void) {
 	case SEMI:	Token = scan(); break;
 	case DEFAULT:	wrong_ctx(DEFAULT); break;
 	case CASE:	wrong_ctx(CASE); break;
-	//grw - added logic to get resupt from expression stack
-	default:	rexpr(); semi(); genpopd(); break;
+	//grw - added logic to get result from expression stack
+	//grw - genpopd will eliminate a redundant push/pop then do a commit 
+	default:	expr(lv, 0); semi(); genpopd(); break;
+	//default:	expr(lv, 0); semi(); genpopd(); commit(); break;
+
 	}
-	clear();
-	//grw DEBUG mark end of statement
-	//genraw(";----- end of stmt ------\n");
+	//grw - removed clear logic
+	//clear(1);
+	//grw - trace
+	gen(";----- end stmt ------");
 }

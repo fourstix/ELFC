@@ -1,11 +1,14 @@
 /*
- *	NMH's Simple C Compiler, 2011,2012,2022
+ *	NMH's Simple C Compiler, 2011--2021
  *	Lexical analysis (scanner)
  */
 
 #include "defs.h"
 #include "data.h"
 #include "decl.h"
+
+//grw - add static buffer for predefined macros
+char pbuf[33];
 
 int next(void) {
 	int	c;
@@ -57,6 +60,8 @@ static int scanch(void) {
 		switch (c = next()) {
 		case 'a': return '\a';
 		case 'b': return '\b';
+		//grw - added escape character escape sequence
+		case 'e': return '\033';
 		case 'f': return '\f';
 		case 'n': return '\n';
 		case 'r': return '\r';
@@ -68,7 +73,7 @@ static int scanch(void) {
 		case '0': case '1': case '2':
 		case '3': case '4': case '5':
 		case '6': case '7':
-			for (c2 = i = 0; isdigit(c) && c < '8'; c = next()) {
+			for (i = c2 = 0; isdigit(c) && c < '8'; c = next()) {
 				if (++i > 3) break;
 				c2 = c2 * 8 + (c - '0');
 			}
@@ -77,7 +82,7 @@ static int scanch(void) {
 		case 'x':
 			return hexchar();
 		default:
-			cerror("unknown escape sequence: %s", c);
+			scnerror("unknown escape sequence: %s", c);
 			return ' ';
 		}
 	}
@@ -105,7 +110,7 @@ static int scanint(int c) {
 	while ((k = chrpos("0123456789abcdef", tolower(c))) >= 0) {
 		Text[i++] = c;
 		if (k >= radix)
-			cerror("invalid digit in integer literal: %s", c);
+			scnerror("invalid digit in integer literal: %s", c);
 		val = val * radix + k;
 		c = next();
 	}
@@ -172,18 +177,26 @@ int skip(void) {
 		nl = 0;
 		if (c != '/')
 			break;
-		if ((c = next()) != '*') {
+		c = next();
+		if (c != '*' && c != '/') {
 			putback(c);
 			c = '/';
 			break;
 		}
-		p = 0;
-		while ((c = next()) != EOF) {
-			if ('/' == c && '*' == p) {
-				c = next();
-				break;
+		if (c == '/') {
+			while ((c = next()) != EOF) {
+				if (c == '\n') break;
 			}
-			p = c;
+                }
+                else {
+			p = 0;
+			while ((c = next()) != EOF) {
+				if ('/' == c && '*' == p) {
+					c = next();
+					break;
+				}
+				p = c;
+			}
 		}
 	}
 	return c;
@@ -199,21 +212,29 @@ static int keyword(char *s) {
 		case 'e':
 			if (!strcmp(s, "#else")) return P_ELSE;
 			if (!strcmp(s, "#endif")) return P_ENDIF;
+			if (!strcmp(s, "#error")) return P_ERROR;
 			break;
 		case 'i':
 			if (!strcmp(s, "#ifdef")) return P_IFDEF;
 			if (!strcmp(s, "#ifndef")) return P_IFNDEF;
 			if (!strcmp(s, "#include")) return P_INCLUDE;
 			break;
+		case 'l':
+			if (!strcmp(s, "#line")) return P_LINE;
+			break;
+		case 'p':
+			if (!strcmp(s, "#pragma")) return P_PRAGMA;
+			break;
 		case 'u':
 			if (!strcmp(s, "#undef")) return P_UNDEF;
 			break;
 		}
 		break;
-	//grw - added asm statement
 	case 'a':
+		if (!strcmp(s, "auto")) return AUTO;
+		//grw - added asm statement
 		if (!strcmp(s, "asm")) return ASM;
-		break;	
+		break;
 	case 'b':
 		if (!strcmp(s, "break")) return BREAK;
 		break;
@@ -239,21 +260,27 @@ static int keyword(char *s) {
 		if (!strcmp(s, "int")) return INT;
 		break;
 	case 'r':
+		if (!strcmp(s, "register")) return REGISTER;
 		if (!strcmp(s, "return")) return RETURN;
 		break;
 	case 's':
 		if (!strcmp(s, "sizeof")) return SIZEOF;
 		if (!strcmp(s, "static")) return STATIC;
+		if (!strcmp(s, "struct")) return STRUCT;
 		if (!strcmp(s, "switch")) return SWITCH;
+		break;
+	case 't':
+		if (!strcmp(s, "typedef")) return TYPEDEF;
+		break;
+	case 'u':
+		if (!strcmp(s, "union")) return UNION;
 		break;
 	case 'v':
 		if (!strcmp(s, "void")) return VOID;
+		if (!strcmp(s, "volatile")) return VOLATILE;
 		break;
 	case 'w':
 		if (!strcmp(s, "while")) return WHILE;
-		break;
-	case '_':
-		if (!strcmp(s, "__argc")) return __ARGC;
 		break;
 	}
 	return 0;
@@ -261,16 +288,27 @@ static int keyword(char *s) {
 
 static int macro(char *name) {
 	int	y;
+	char *p;
+	int  size;
 
 	y = findmac(name);
 	if (!y || Types[y] != TMACRO)
 		return 0;
-	playmac(Mtext[y]);
+	if (!strcmp(name, "__LINE__")) {
+		//grw - print line number as raw number in source 
+		sprintf(pbuf, "%d", Line);
+		playmac(pbuf);
+	} else if (!strcmp(name, "__FILE__")){
+		//grw - print file name as C string in source (double qyoted)
+		sprintf(pbuf, "\"%s\"", File);	
+		playmac(pbuf);
+	} else 
+	  playmac(Mtext[y]);
 	return 1;
 }
 
 static int scanpp(void) {
-	int	i, c, t;
+	int	c, t;
 
 	if (Rejected != -1) {
 		t = Rejected;
@@ -352,6 +390,10 @@ static int scanpp(void) {
 			else if ('=' == c) {
 				Text[1] = '=';
 				return ASMINUS;
+			}
+			else if ('>' == c) {
+				Text[1] = '>';
+				return ARROW;
 			}
 			else {
 				putback(c);
@@ -475,12 +517,17 @@ static int scanpp(void) {
 			error("unknown preprocessor command: %s", Text);
 			return IDENT;
 		case '.':
-			for (i=1; i<3; i++)
-				Text[i] = next();
-			Text[i] = 0;
-			if (strcmp(Text, "..."))
-				error("malformed ellipsis: '%s'", Text);
-			return ELLIPSIS;
+			if ((c = next()) == '.') {
+				Text[1] = Text[2] = '.';
+				Text[3] = 0;
+				if ((c = next()) == '.')
+					return ELLIPSIS;
+				putback(c);
+				error("incomplete '...'", NULL);
+				return ELLIPSIS;
+			}
+			putback(c);
+			return DOT;
 		default:
 			if (isdigit(c)) {
 				Value = scanint(c);
@@ -495,7 +542,7 @@ static int scanpp(void) {
 				return IDENT;
 			}
 			else {
-				cerror("funny input character: %s", c);
+				scnerror("funny input character: %s", c);
 				break;
 			}
 		}
@@ -508,7 +555,7 @@ int scan(void) {
 	do {
 		t = scanpp();
 		if (!Inclev && Isp && XEOF == t)
-			fatal("missing #endif at EOF");
+			fatal("missing '#endif'");
 	} while (frozen(1));
 	if (t == Syntoken)
 		Syntoken = 0;

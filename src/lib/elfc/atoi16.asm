@@ -78,4 +78,3 @@ atoi_0_2:     glo     re               ; retrieve character
               lbr     atoi_0_1         ; loop back for more digits
 
               endp
-
