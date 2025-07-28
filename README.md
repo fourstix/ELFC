@@ -101,10 +101,11 @@ More information about unsupported library functions, header files and ElfC inte
 
 Compiler Option Changes
 -----------------------
-* The `-L` (Library) ElfC option was added to compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
+* Added the `-L` (Library) ElfC option to compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
 
-* The `-N` (No stdio) option to not compile with the stdio library has been removed.
-* The `-V` (Verbose) option was simplified to display *all* verbose messages or none.
+* Removed the `-N` (No stdio) option compile without the stdio C library.
+
+* Simplified the `-V` (Verbose) option to display *all* verbose messages or none. There is no longer any need to specify multiple verbose options for additional messages.
 
 More information about `-L` Library option can be found on the [ELFC Detailed Information](ELFC.md) page.
 
