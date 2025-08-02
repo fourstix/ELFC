@@ -1,7 +1,7 @@
 #define _ELFCLIB_
 #include <stdio.h>
 
-void clrerror(FILE *f) {
+void clearerr(FILE *f) {
 	//grw - clear error and eof flag bits
 	if (f != NULL) {
     f->iom &= ~_FERROR;

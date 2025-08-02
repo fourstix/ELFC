@@ -40,7 +40,7 @@ int fgetpos(FILE *f, pos_t *pos) {
   asm("         phi  r8         ; set high byte of hi word offset register");
   asm("         plo  r7         ; set low byte of lo word offset register");           
   asm("         phi  r7         ; set high byte of lo word offset register");
-  asm("         call o_seek     ; call seek to get position");
+  asm("         call O_SEEK     ; call seek to get position");
   asm("         copy r7, rc     ; save low position word");
   asm("         pop  r7         ; restore expression stack pointer immediately");
   asm("         copy r8, rd     ; save high position word");

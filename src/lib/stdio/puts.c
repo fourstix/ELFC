@@ -7,8 +7,8 @@ int puts(char* s) {
   asm("         call  lget16      ; put buffer pointer variable");
   asm("           dw  0           ; offset for arg 1 ");         
   asm("         copy  ra, rf      ; ra holds result of assigning pointer");
-  asm("         call  o_msg       ; output string to elf/os"); 
-  asm("         call  o_inmsg     ; output newline after string");
+  asm("         call  O_MSG       ; output string to elf/os"); 
+  asm("         call  O_INMSG     ; output newline after string");
   asm("           db 10,0");  
   return 1;
 }

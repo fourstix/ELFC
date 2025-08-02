@@ -26,7 +26,7 @@ int  lseek(int fd, int hi_off, int lo_off, int how) {
   asm("         call lget16     ; get the low offset value ");
   asm("           dw 2          ; from the argument stack");           
   asm("         copy ra, r7     ; copy to low position register");
-  asm("         call o_seek     ; attempt to seek within file");
+  asm("         call O_SEEK     ; attempt to seek within file");
   asm("         pop  r7         ; restore stack pointer");
   asm("         ldi  0          ; set default value for success");
   asm("         lsnf            ; DF = 0, means success");

@@ -1,7 +1,7 @@
 #include      ../macros.inc
 
 ; ************************************************
-; Compare 2 unsigned 16-bit values for TOS < SOS 
+; Compare 2 unsigned 16-bit values for SOS < TOS 
 ; R7 - Pointer to expression stack     
 ; ************************************************
               proc    ult16
@@ -17,7 +17,7 @@
               or                       ; combine with MSB
               sex     r2               ; point X back to stack
               lbz     false16          ; If result was zero, then not less than
-              lbdf    true16           ; If no borrow, TOS < SOS 
+              lbnf    true16           ; If borrow, SOS < TOS 
               lbr     false16          ; otherwise false
 
               endp

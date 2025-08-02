@@ -19,7 +19,7 @@ int	close(int fd) {
   asm("         call lget16     ; get the fd argument ");
   asm("           dw 0          ; get from argument stack");           
   asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
-  asm("         call o_close    ; attempt to close the file");
+  asm("         call O_CLOSE    ; attempt to close the file");
   asm("         ldi  0          ; set default value for success");
   asm("         lsnf            ; DF = 0, means success");
   asm("         ldi  $Ff        ; otherwise set result for error");

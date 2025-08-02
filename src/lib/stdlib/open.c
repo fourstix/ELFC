@@ -24,7 +24,7 @@ int	open(char *path, int flags) {
   asm("           dw 2          ; get from argument stack");           
   asm("         push r7         ; save ESP before using r7 for flags");
   asm("         copy ra, r7     ; set flags for open");
-  asm("         call o_open     ; attempt to close the file");
+  asm("         call O_OPEN     ; attempt to close the file");
   asm("         pop r7          ; restore ESP r7");
   asm("         ldi  0          ; set default value for success");
   asm("         lsnf            ; DF = 0, means success");

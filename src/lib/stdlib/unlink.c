@@ -16,7 +16,7 @@ int	unlink(char* path) {
   asm("         call lget16     ; get the path argument ");
   asm("           dw 0          ; get from argument stack");           
   asm("         copy ra, rf     ; copy path string to buffer pointer");
-  asm("         call o_delete   ; attempt to delete the file");
+  asm("         call O_DELETE   ; attempt to delete the file");
   asm("         ldi  0          ; set default value for success");
   asm("         lsnf            ; DF = 0, means success");
   asm("         ldi  $Ff        ; otherwise set result for error");

@@ -2,7 +2,7 @@
 int getch(void) {
   int ch;
   
-  asm("         call  o_readkey     ; read a character from input");
+  asm("         call  O_READKEY     ; read a character from input");
   asm("         plo ra              ; save in return register");
   asm("         ldi 0               ; pad register with zero");
   asm("         phi ra              ");

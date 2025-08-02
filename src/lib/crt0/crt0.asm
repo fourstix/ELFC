@@ -67,7 +67,7 @@ Elfexit:  load   rf, ostack   ; get original SP
           return              ; return to Elf/OS
 
 ;----- error handling for when expression stack exhausted
-auto_err: call o_inmsg        ; print error msg
+auto_err: call O_INMSG        ; print error msg
             db 'Out of Stack Space for Auto Variables',10,13,0
           load   ra, -1       ; set error value for return
           stc                 ; set DF for error return

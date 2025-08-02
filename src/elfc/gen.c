@@ -288,6 +288,8 @@ void queue_push() {
 void genaddr(int y) {
 	//grw - removed gentext
 	//gentext();
+	//grw - added commit 
+	commit();
 	if (CAUTO == Stcls[y])
 		cgldla(Vals[y]);
 		//grw - remove queue
@@ -306,6 +308,8 @@ void genldlab(int id) {
 	//grw - remove queue
 	//gentext();
 	//queue(addr_label, id, NULL);
+	//grw - added commit 
+	commit();
 	cgldlab(id);
 }
 
@@ -313,6 +317,8 @@ void genlit(int v) {
 	//grw - remove queue
 	//gentext();
 	//queue(literal, v, NULL);
+	//grw - added commit 
+	commit();
 	cglit(v);
 }
 
