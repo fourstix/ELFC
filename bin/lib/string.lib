@@ -81,7 +81,7 @@
 /lget16 005a 00
 \lget16 005b
 :0050 d4 00 00 00 02 8a ad 9a bd d4 00 00 00 04 8a ac
-:0060 9a bc 4f 52 4d f7 ca 00 79 2c 8c ca 00 62 9c ca
+:0060 9a bc 4f 52 4d f5 ca 00 79 2c 8c ca 00 62 9c ca
 :0070 00 62 f8 00 ba aa c0 00 81 aa fe f8 00 c7 f8 ff
 /lset16 0082 00
 \lset16 0083
@@ -366,26 +366,31 @@
 :0030 8a f1 c2 00 3d d4 00 00 d4 00 00 00 02 d4 00 00
 /lget16 0048 00
 \lget16 0049
-:0040 9a 52 8a f1 c2 00 69 d4 00 00 00 00 8a af 9a bf
+:0040 9a 52 8a f1 c2 00 79 d4 00 00 00 00 8a af 9a bf
 /lget16 0051 00
 \lget16 0052
-:0050 d4 00 00 00 02 8a ad 9a bd d4 ff 12 aa fe f8 00
-/lset16 0065 00
-\lset16 0066
-/lpush16 006a 00
-\lpush16 006b
-/dpop16 006f 00
-:0060 c7 f8 ff ba d4 00 00 ff fe d4 00 00 ff fe d4 00
-\dpop16 0070
-/esmove 0072 00
-\esmove 0073
-?auto_err 0077
-/escheck 007b 00
-\escheck 007c
-:0070 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00 60 72 ab
-:0080 f0 bb d5
+:0050 d4 00 00 00 02 8a ad 9a bd 4d 52 4f c2 00 66 f7
+:0060 c2 00 59 c0 00 6c f0 c2 00 6c fd 00 aa fe f8 00
+/lset16 0075 00
+\lset16 0076
+/lpush16 007a 00
+\lpush16 007b
+/dpop16 007f 00
+:0070 c7 f8 ff ba d4 00 00 ff fe d4 00 00 ff fe d4 00
+\dpop16 0080
+/esmove 0082 00
+\esmove 0083
+?auto_err 0087
+/escheck 008b 00
+\escheck 008c
+:0080 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00 60 72 ab
+:0090 f0 bb d5
 +0033
 +0045
++005d
++0061
++0064
++0068
 }
 .big
 {Cstrcpy
@@ -509,18 +514,18 @@
 /esmove 0036 00
 \esmove 0037
 ?auto_err 003b
-/epush16 003e 00
-\epush16 003f
+/dpush16 003e 00
+\dpush16 003f
 :0030 00 00 d4 00 00 d4 00 00 00 02 c3 00 00 d4 00 00
-/dpush16 0043 00
-\dpush16 0044
+/epush16 0041 00
+\epush16 0042
 /add16 0046 00
 \add16 0047
 /Cmalloc 0049 00
 \Cmalloc 004a
 /esmove 004c 00
 \esmove 004d
-:0040 00 01 d4 00 00 d4 00 00 d4 00 00 d4 00 00 00 02
+:0040 d4 00 00 00 01 d4 00 00 d4 00 00 d4 00 00 00 02
 ?auto_err 0051
 /dpush16 0054 00
 \dpush16 0055
@@ -786,35 +791,37 @@
 :0030 8a f1 c2 00 3d d4 00 00 d4 00 00 00 02 d4 00 00
 /lget16 0048 00
 \lget16 0049
-:0040 9a 52 8a f1 c2 00 8c d4 00 00 00 00 8a af 9a bf
+:0040 9a 52 8a f1 c2 00 93 d4 00 00 00 00 8a af 9a bf
 /lget16 0051 00
 \lget16 0052
 /lget16 005a 00
 \lget16 005b
 :0050 d4 00 00 00 02 8a ad 9a bd d4 00 00 00 04 8a ac
-:0060 9a bc 4f 52 4d f7 ca 00 7d f0 c2 00 76 2c 8c ca
-:0070 00 62 9c ca 00 62 f8 00 ba aa c0 00 85 aa fe f8
-/lset16 0086 00
-\lset16 0087
-/lpush16 008d 00
-\lpush16 008e
-:0080 00 c7 f8 ff ba d4 00 00 ff fe fc 00 d4 00 00 ff
-/dpop16 0092 00
-\dpop16 0093
-/esmove 0095 00
-\esmove 0096
-?auto_err 009a
-/escheck 009e 00
-\escheck 009f
-:0090 fe d4 00 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00
-:00a0 60 72 ab f0 bb d5
+:0060 9a bc 4f 52 4d c2 00 80 f5 ca 00 84 f0 c2 00 79
+:0070 2c 8c ca 00 62 9c ca 00 62 f8 00 ba aa c0 00 8c
+/lset16 008d 00
+\lset16 008e
+:0080 f0 c2 00 79 aa fe f8 00 c7 f8 ff ba d4 00 00 ff
+/lpush16 0094 00
+\lpush16 0095
+/dpop16 0099 00
+\dpop16 009a
+/esmove 009c 00
+\esmove 009d
+:0090 fe fc 00 d4 00 00 ff fe d4 00 00 d4 00 00 00 02
+?auto_err 00a1
+/escheck 00a5 00
+\escheck 00a6
+:00a0 c3 00 00 e2 d4 00 00 60 72 ab f0 bb d5
 +0033
 +0045
-+0067
-+006b
-+0070
-+0074
-+007b
++0066
++006a
++006e
++0073
++0077
++007e
++0082
 }
 .big
 {Cstrncpy

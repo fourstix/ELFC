@@ -4,11 +4,9 @@
 
 #ifdef _STGROM_
 #pragma #define STGROM
-
-#ifndef BRKPT
 #define BRKPT asm("     brkpt    ;---- jump to routine in stg rom\n");
-#endif
-
+#else 
+#define BRKPT  
 #endif
 
 /* don't define all external functions inside C libraries to prevent dupes */
@@ -104,9 +102,17 @@
 #define  EXIT_SUCCESS  (0)
 #endif 
 
+#ifndef EXIT_FAILURE
+#define  EXIT_FAILURE  (1)
+#endif 
+
 #ifndef EXIT_ERROR
 #define  EXIT_ERROR  (-1)
 #endif 
+
+#ifndef RAND_MAX
+#define RAND_MAX	65535
+#endif
 
 /* typedef's from stddef.h */
 typedef int size_t;

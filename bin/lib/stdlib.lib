@@ -467,28 +467,72 @@ v0029
 :0020 00 9a 52 8a f1 ca 00 2b c0 00 36 d4 00 00 00 00
 /dpop16 0031 00
 \dpop16 0032
-/lget16 0037 00
-\lget16 0038
-:0030 d4 00 00 c0 00 53 d4 00 00 00 00 8a af 9a bf d4
-/atoi16 0040 00
-\atoi16 0041
-/lset16 0047 00
-\lset16 0048
-/lpush16 004c 00
-\lpush16 004d
-:0040 00 00 8c aa 9c ba d4 00 00 ff fe d4 00 00 ff fe
-/dpop16 0051 00
-\dpop16 0052
-/esmove 0054 00
-\esmove 0055
-?auto_err 0059
-/escheck 005d 00
-\escheck 005e
-:0050 d4 00 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00 60
-:0060 72 ab f0 bb d5
+/lpush16 0037 00
+\lpush16 0038
+/deref8 003c 00
+\deref8 003d
+/Cisspace 003f 00
+:0030 d4 00 00 c0 00 ad d4 00 00 00 00 d4 00 00 d4 00
+\Cisspace 0040
+/esmove 0042 00
+\esmove 0043
+?auto_err 0047
+/dpush16 004a 00
+\dpush16 004b
+/dpop16 004d 00
+\dpop16 004e
+:0040 00 d4 00 00 00 02 c3 00 00 d4 00 00 d4 00 00 9a
+/lpush16 0057 00
+\lpush16 0058
+/linc16 005c 00
+\linc16 005d
+:0050 52 8a f1 c2 00 66 d4 00 00 00 00 d4 00 00 00 00
+/dpop16 0061 00
+\dpop16 0062
+/lpush16 0067 00
+\lpush16 0068
+/deref8 006c 00
+\deref8 006d
+/epush16 006f 00
+:0060 d4 00 00 c0 00 36 d4 00 00 00 00 d4 00 00 d4 00
+\epush16 0070
+/eq16 0074 00
+\eq16 0075
+/dpop16 0077 00
+\dpop16 0078
+:0070 00 00 2b d4 00 00 d4 00 00 9a 52 8a f1 ca 00 83
+/lpush16 0084 00
+\lpush16 0085
+/linc16 0089 00
+\linc16 008a
+/dpop16 008e 00
+\dpop16 008f
+:0080 c0 00 90 d4 00 00 00 00 d4 00 00 00 00 d4 00 00
+/lget16 0091 00
+\lget16 0092
+/atoi16 009a 00
+\atoi16 009b
+:0090 d4 00 00 00 00 8a af 9a bf d4 00 00 8c aa 9c ba
+/lset16 00a1 00
+\lset16 00a2
+/lpush16 00a6 00
+\lpush16 00a7
+/dpop16 00ab 00
+\dpop16 00ac
+/esmove 00ae 00
+\esmove 00af
+:00a0 d4 00 00 ff fe d4 00 00 ff fe d4 00 00 d4 00 00
+?auto_err 00b3
+/escheck 00b7 00
+\escheck 00b8
+:00b0 00 02 c3 00 00 e2 d4 00 00 60 72 ab f0 bb d5
 +0026
 +0029
 +0034
++0054
++0064
++007e
++0081
 }
 .big
 {Cbsearch
@@ -847,7 +891,7 @@ v028b
 /esmove 000a 00
 \esmove 000b
 ?auto_err 000f
-:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff fc c3 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff fa c3 00
 /lpush16 0012 00
 \lpush16 0013
 /lpush16 0017 00
@@ -864,7 +908,7 @@ v028b
 /Cmalloc 002c 00
 \Cmalloc 002d
 /esmove 002f 00
-:0020 00 ff fc d4 00 00 d4 00 00 ff fc d4 00 00 d4 00
+:0020 00 ff fa d4 00 00 d4 00 00 ff fa d4 00 00 d4 00
 \esmove 0030
 ?auto_err 0034
 /dpush16 0037 00
@@ -884,45 +928,52 @@ v028b
 /dpop16 0059 00
 \dpop16 005a
 /lpush16 005f 00
-:0050 c0 00 5e d4 00 00 00 00 d4 00 00 c0 00 98 d4 00
+:0050 c0 00 5e d4 00 00 00 00 d4 00 00 c0 00 a5 d4 00
 \lpush16 0060
-/ldec16 0064 00
-\ldec16 0065
+/lstor16 0064 00
+\lstor16 0065
 /dpop16 0069 00
 \dpop16 006a
-:0060 00 ff fc d4 00 00 ff fc d4 00 00 9a 52 8a f1 c2
-/lpush16 0073 00
-\lpush16 0074
-/linc16 0078 00
-\linc16 0079
-/epush16 007d 00
-\epush16 007e
-:0070 00 90 d4 00 00 ff fe d4 00 00 ff fe d4 00 00 00
-/swap16 0082 00
-\swap16 0083
-/dpop16 0085 00
-\dpop16 0086
-/pstor8 0088 00
-\pstor8 0089
-/dpop16 008b 00
-\dpop16 008c
-:0080 00 d4 00 00 d4 00 00 d4 00 00 d4 00 00 c0 00 5e
-/lpush16 0091 00
-\lpush16 0092
-/dpop16 0096 00
-\dpop16 0097
-/esmove 0099 00
-\esmove 009a
-?auto_err 009e
-:0090 d4 00 00 ff fe d4 00 00 d4 00 00 00 04 c3 00 00
-/escheck 00a2 00
-\escheck 00a3
-:00a0 e2 d4 00 00 60 72 ab f0 bb d5
+/lpush16 006c 00
+\lpush16 006d
+:0060 00 ff fe d4 00 00 ff fc d4 00 00 d4 00 00 ff fa
+/ldec16 0071 00
+\ldec16 0072
+/dpop16 0076 00
+\dpop16 0077
+:0070 d4 00 00 ff fa d4 00 00 9a 52 8a f1 c2 00 9d d4
+/lpush16 0080 00
+\lpush16 0081
+/linc16 0085 00
+\linc16 0086
+/epush16 008a 00
+\epush16 008b
+/swap16 008f 00
+:0080 00 00 ff fe d4 00 00 ff fe d4 00 00 00 00 d4 00
+\swap16 0090
+/dpop16 0092 00
+\dpop16 0093
+/pstor8 0095 00
+\pstor8 0096
+/dpop16 0098 00
+\dpop16 0099
+/lpush16 009e 00
+\lpush16 009f
+:0090 00 d4 00 00 d4 00 00 d4 00 00 c0 00 6b d4 00 00
+/dpop16 00a3 00
+\dpop16 00a4
+/esmove 00a6 00
+\esmove 00a7
+?auto_err 00ab
+/escheck 00af 00
+:00a0 ff fc d4 00 00 d4 00 00 00 06 c3 00 00 e2 d4 00
+\escheck 00b0
+:00b0 00 60 72 ab f0 bb d5
 +004e
 +0051
 +005c
-+0070
-+008e
++007d
++009b
 }
 .big
 {Cmalloc
@@ -1791,16 +1842,16 @@ v028b
 /esmove 0135 00
 \esmove 0136
 ?auto_err 013a
-/epush16 013d 00
-\epush16 013e
-:0130 58 d4 00 00 d4 00 00 00 04 c3 00 00 d4 00 00 00
-/dpush16 0142 00
-\dpush16 0143
+/dpush16 013d 00
+\dpush16 013e
+:0130 58 d4 00 00 d4 00 00 00 04 c3 00 00 d4 00 00 d4
+/epush16 0140 00
+\epush16 0141
 /lte16 0145 00
 \lte16 0146
 /dpop16 0148 00
 \dpop16 0149
-:0140 00 d4 00 00 d4 00 00 d4 00 00 9a 52 8a f1 ca 01
+:0140 00 00 00 00 d4 00 00 d4 00 00 9a 52 8a f1 ca 01
 /lpush16 0158 00
 \lpush16 0159
 /lpush16 015d 00

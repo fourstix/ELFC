@@ -17,7 +17,7 @@ int memcmp(void *p1, void *p2, int n) {
 		asm("loop:    lda  rf         ; get byte from first string");
 		asm("         str  r2         ; store for compare");
 		asm("         lda  rd         ; get byte from second string");
-		asm("         sm              ; compare");
+		asm("         sd              ; compare c1 - c2");
 		asm("         lbnz bad        ; jump if no match");
 		asm("         dec  rc         ; decrement characters to compare");
 		asm("         glo  rc         ; see if done");

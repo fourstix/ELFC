@@ -1,5 +1,5 @@
-#ifndef _STRING_
-#define _STRING_
+#ifndef _CTYPE_
+#define _CTYPE_
  
 /* include stdlib if not included already */
 #ifndef _STDLIB_
@@ -17,9 +17,10 @@
 #pragma             extrn  Cisgraph
 #pragma             extrn  Cislower
 #pragma             extrn  Cisprint
+#pragma             extrn  Cispunct
 #pragma             extrn  Cisspace
 #pragma             extrn  Cisupper
-#pragma             extrn  Cixdigit
+#pragma             extrn  Cisxdigit
 #pragma             extrn  Ctolower
 #pragma             extrn  Ctoupper
 #endif
