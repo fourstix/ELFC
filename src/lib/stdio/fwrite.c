@@ -33,7 +33,7 @@ int _fwrite(void *p, int size, FILE *f) {
 		k = total;
 	}	else {
 		/* set error for Unknown io type*/
-		f->iom &= _FERROR;
+		f->iom |= _FERROR;
 		errno = EINVAL;
 		k = -1;
 		}

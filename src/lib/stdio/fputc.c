@@ -28,7 +28,7 @@ int fputc(int c, FILE *f) {
       return c;
     else {
       /* set error bit on io flag */
-      f->iom &= _FERROR;
+      f->iom |= _FERROR;
       errno = EIO;
       return EOF;
     }
@@ -37,7 +37,7 @@ int fputc(int c, FILE *f) {
     return putch(c);
   } else {
     /* set error for Unknown io type*/
-    f->iom &= _FERROR;
+    f->iom |= _FERROR;
     errno = EINVAL;
     return EOF;
   }

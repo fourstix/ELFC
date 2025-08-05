@@ -28,8 +28,10 @@ FILE *fdopen(int fd, int iomode) {
 		return NULL;
 	}
 	
-	if ((f = malloc(sizeof(FILE))) == NULL)
+	if ((f = malloc(sizeof(FILE))) == NULL) {
+		errno = ENOMEM;
 		return NULL;
+	}
 	
 	_files[i] = f;
 	f->fd   = fd;
@@ -44,6 +46,7 @@ FILE *fdopen(int fd, int iomode) {
 		errno = EINVAL;
 		return NULL;
 	}
+	
   //grw - no buffers since Elf/OS file I/O is already buffered
 	return f;
 }

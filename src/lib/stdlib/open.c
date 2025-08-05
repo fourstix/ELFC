@@ -4,6 +4,12 @@
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fdinit
+#pragma             extrn C_fdcnt
+#pragma             extrn Cfree
+
+
+extern int _fdcnt;    
+
 
 int	open(char *path, int flags) {
   int fd;
@@ -34,8 +40,11 @@ int	open(char *path, int flags) {
   asm("         call lset16     ; set result argument ");
   asm("           dw -4         ; get from argument stack");           
 
+  /* if open failed, set errno and release fd from _fdinit */
   if (result == EOF) {
-    errno = EIO;  
+    errno = EIO;
+    _fdcnt--;  
+    free((void *) fd); 
     return EOF;
   }
   return fd;

@@ -13,8 +13,8 @@
 #endif
 
 static int _fdcnt = 0;
-#pragma             public C_fdcnt   
 
+#pragma             public C_fdcnt   
 #pragma             extrn Cmalloc    
 
 /* 

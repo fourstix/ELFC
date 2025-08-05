@@ -7,9 +7,9 @@
 
 /* define only extern procedures required */
 #pragma           extrn Cfseek
-#pragma           extrn Cclrerror
+#pragma           extrn Cclearerr
 
 void rewind(FILE *f) {
 	fseek(f, 0, SEEK_SET);
-	clrerror(f);
+	clearerr(f);
 }

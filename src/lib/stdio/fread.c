@@ -43,7 +43,7 @@ int _fread(void *p, int size, FILE *f) {
 		return total;
 	} else {
 		/* set error for Unknown io type*/
-		f->iom &= _FERROR;
+		f->iom |= _FERROR;
 		errno = EINVAL;
 		return -1;
 	}

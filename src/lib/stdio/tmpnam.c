@@ -31,6 +31,7 @@ char *tmpnam(char *buf) {
 			}
 			return tmp;
 		}
+		/* close existing file and try again */
 		fclose(f);
 	}
 }

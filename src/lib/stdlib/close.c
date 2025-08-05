@@ -4,6 +4,9 @@
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fdcnt
+#pragma             extrn Cfree
+
+
 extern int _fdcnt;    
 
 
@@ -28,11 +31,14 @@ int	close(int fd) {
   asm("         call lset16     ; set the fd argument ");
   asm("           dw -2         ; in the local variable on the stack");           
 
-  /* if error, set errno but don't decrement count*/
-  if (result == EOF)
+  /* if close failed, set errno */
+  if (result == EOF) {
     errno = EIO;
-  else   
-    _fdcnt--;  // decrement fd count after successful close
+  } else {  
+    /* otherwise, release the file descriptor */
+    _fdcnt--;     
+    free((void *)fd);
+  } 
   
   return result;
 }

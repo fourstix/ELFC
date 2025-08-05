@@ -26,25 +26,29 @@ int _openmode(char *mode) {
 FILE *fopen(char *path, char *mode) {
 	int	fd;
 	int flags;
-	FILE	*f;
+
 	/* mode for everything but read only */
 	int  iomode = _FREAD | _FWRITE;
 	
 	flags = _openmode(mode);
 	
 	if (flags == EOF) {
-		errno = EIO;  
+		errno = EINVAL;  
 		return NULL;
 	}
 		
 	fd = open(path, flags);
+	
 	if (fd == EOF) { 
-		/* if read-only then not found error */
-		if (flags == O_RDONLY)
-			errno = ENOENT;
-		/* otherwise, then file access error */
-		else 
-			errno = EACCESS;
+		/* map generic io error to file error */
+		if (errno == EIO) {
+			/* if read-only then not found error */
+		  if (flags == O_RDONLY)
+			  errno = ENOENT;
+		  /* otherwise, then file access error */
+		  else 
+			  errno = EACCESS;
+		}
 		return NULL;
 	}
 	if (flags == O_RDONLY)

@@ -1285,7 +1285,7 @@ v028b
 \lget16 0046
 /lget16 004e 00
 \lget16 004f
-:0040 00 c0 00 b1 d4 00 00 ff fe 8a ad 9a bd d4 00 00
+:0040 00 c0 00 ce d4 00 00 ff fe 8a ad 9a bd d4 00 00
 /lget16 0057 00
 \lget16 0058
 :0050 00 00 8a af 9a bf d4 00 00 00 02 97 73 87 73 8a
@@ -1309,29 +1309,45 @@ v028b
 ?Cerrno 0099
 /dpop16 009c 00
 \dpop16 009d
-/epush16 009f 00
-:0090 a9 d4 00 00 00 03 d4 00 00 00 00 d4 00 00 d4 00
-\epush16 00a0
-/dpop16 00a4 00
-\dpop16 00a5
-/lpush16 00aa 00
-\lpush16 00ab
-/dpop16 00af 00
-:00a0 00 ff ff d4 00 00 c0 00 b1 d4 00 00 ff fe d4 00
-\dpop16 00b0
-/esmove 00b2 00
-\esmove 00b3
-?auto_err 00b7
-/escheck 00bb 00
-\escheck 00bc
-:00b0 00 d4 00 00 00 04 c3 00 00 e2 d4 00 00 60 72 ab
-:00c0 f0 bb d5
+/vpush16 009f 00
+:0090 c6 d4 00 00 00 03 d4 00 00 00 00 d4 00 00 d4 00
+\vpush16 00a0
+?C_fdcnt 00a1
+/vdec16 00a4 00
+\vdec16 00a5
+?C_fdcnt 00a6
+/dpop16 00a9 00
+\dpop16 00aa
+/lpush16 00ac 00
+\lpush16 00ad
+:00a0 00 00 00 d4 00 00 00 00 d4 00 00 d4 00 00 ff fe
+/Cfree 00b1 00
+\Cfree 00b2
+/esmove 00b4 00
+\esmove 00b5
+?auto_err 00b9
+/epush16 00bc 00
+\epush16 00bd
+:00b0 d4 00 00 d4 00 00 00 02 c3 00 00 d4 00 00 ff ff
+/dpop16 00c1 00
+\dpop16 00c2
+/lpush16 00c7 00
+\lpush16 00c8
+/dpop16 00cc 00
+\dpop16 00cd
+/esmove 00cf 00
+:00c0 d4 00 00 c0 00 ce d4 00 00 ff fe d4 00 00 d4 00
+\esmove 00d0
+?auto_err 00d4
+/escheck 00d8 00
+\escheck 00d9
+:00d0 00 00 04 c3 00 00 e2 d4 00 00 60 72 ab f0 bb d5
 +0034
 +0037
 +0042
 +008c
 +008f
-+00a7
++00c4
 }
 .big
 {Cclose
@@ -1363,7 +1379,7 @@ v028b
 :0030 d4 00 00 00 00 d4 00 00 d4 00 00 ff ff d4 00 00
 /lget16 0044 00
 \lget16 0045
-:0040 c0 00 9a d4 00 00 00 00 8a ad 9a bd d4 03 12 f8
+:0040 c0 00 aa d4 00 00 00 00 8a ad 9a bd d4 03 12 f8
 /lset16 0057 00
 \lset16 0058
 /epush16 005c 00
@@ -1390,20 +1406,28 @@ v028b
 /vdec16 008b 00
 \vdec16 008c
 ?C_fdcnt 008d
-:0080 00 00 c0 00 92 d4 00 00 00 00 d4 00 00 00 00 d4
+:0080 00 00 c0 00 a2 d4 00 00 00 00 d4 00 00 00 00 d4
 /dpop16 0090 00
 \dpop16 0091
 /lpush16 0093 00
 \lpush16 0094
-/dpop16 0098 00
-\dpop16 0099
+/Cfree 0098 00
+\Cfree 0099
 /esmove 009b 00
 \esmove 009c
-:0090 00 00 d4 00 00 ff fe d4 00 00 d4 00 00 00 02 c3
+:0090 00 00 d4 00 00 00 00 d4 00 00 d4 00 00 00 02 c3
 ?auto_err 00a0
-/escheck 00a4 00
-\escheck 00a5
-:00a0 00 00 e2 d4 00 00 60 72 ab f0 bb d5
+/lpush16 00a3 00
+\lpush16 00a4
+/dpop16 00a8 00
+\dpop16 00a9
+/esmove 00ab 00
+\esmove 00ac
+:00a0 00 00 d4 00 00 ff fe d4 00 00 d4 00 00 00 02 c3
+?auto_err 00b0
+/escheck 00b4 00
+\escheck 00b5
+:00b0 00 00 e2 d4 00 00 60 72 ab f0 bb d5
 +0026
 +0029
 +0041
