@@ -25,6 +25,19 @@ int fseek(FILE *f, int offset, int how) {
 		errno = EINVAL;
 		return -1;
 	}
+	
+	
+	/* don't seek before start of file */
+	if ((how == SEEK_SET) && offset < 0) {
+		errno = EINVAL;
+		return -1;		
+	}
+	
+	/* don't seek past the end of the file */
+	if ((how == SEEK_END) && offset > 0) {
+		errno = EINVAL;
+		return -1;		
+	}
   
   /* adjust offset for a character in ugetc buffer */
   if (how == SEEK_CUR && _FREAD == f->last) {

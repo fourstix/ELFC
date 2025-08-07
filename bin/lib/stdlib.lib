@@ -270,7 +270,7 @@
 \lget16 0097
 :0090 00 00 c0 00 db d4 00 00 ff fe 8a af 9a bf 8a ad
 :00a0 9a bd 8d fc 16 ad 9d 7c 00 bd f8 00 5f 1f 5f 1f
-:00b0 5f 1f 5f 1f 9d 5f 1f 8d 5f 1f f8 0e ac f8 00 5f
+:00b0 5f 1f 5f 1f 9d 5f 1f 8d 5f 1f f8 10 ac f8 00 5f
 /vpush16 00c7 00
 \vpush16 00c8
 /vinc16 00cc 00
@@ -1620,10 +1620,10 @@ v028b
 :0040 c0 00 ae d4 00 00 00 00 8a ad 9a bd d4 00 00 00
 /lget16 0056 00
 \lget16 0057
-:0050 06 8a ac 9a bc d4 00 00 00 04 8a a8 9a b8 97 73
+:0050 06 8a ac 9a bc d4 00 00 00 02 8a a8 9a b8 97 73
 /lget16 0063 00
 \lget16 0064
-:0060 87 73 d4 00 00 00 02 8a a7 9a b7 d4 03 0f 60 72
+:0060 87 73 d4 00 00 00 04 8a a7 9a b7 d4 03 0f 60 72
 /lset16 007b 00
 \lset16 007c
 :0070 a7 f0 b7 f8 00 c7 f8 ff ba aa d4 00 00 ff fe d4

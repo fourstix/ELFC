@@ -82,7 +82,7 @@ int _fdinit(void) {
   asm("         glo  rd         ; put dta address hi byte next");
   asm("         str  rf");
   asm("         inc  rf");
-  asm("         ldi  $0E        ; zero out next 14 bytes");
+  asm("         ldi  $10        ; zero out next 16 bytes");
   asm("         plo  rc         ; set up counter");
   asm("fd_rpt:  ldi  0");
   asm("         str  rf         ; zero out next byte");
