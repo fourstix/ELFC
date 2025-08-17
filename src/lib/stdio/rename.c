@@ -18,7 +18,11 @@ int rename(char *old, char *new) {
 	asm("         call lget16     ; get the new name argument ");
 	asm("           dw 2          ; get from argument stack");           
 	asm("         copy ra, rc     ; copy path string to buffer pointer");
+
+	asm("         push rb         ; save stack frame base pointer on the stack"); 
 	asm("         call O_RENAME   ; attempt to rename the file");
+	asm("         pop rb          ; restore stack frame base pointer from the stack"); 
+	
 	asm("         ldi  0          ; set default value for success");
 	asm("         lsnf            ; DF = 0, means success");
 	asm("         ldi  $Ff        ; otherwise set result for error");

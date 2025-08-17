@@ -34,11 +34,14 @@ int	close(int fd) {
   /* if close failed, set errno */
   if (result == EOF) {
     errno = EIO;
-  } else {  
-    /* otherwise, release the file descriptor */
-    _fdcnt--;     
-    free((void *)fd);
   } 
+  
+  /* decrement count */
+  if (_fdcnt > 0) {  
+    _fdcnt--;    
+  } 
+  /* release the file descriptor */
+  free((void *)fd);
   
   return result;
 }

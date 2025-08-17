@@ -18,13 +18,14 @@ extern FILE	*_files[];
 
 int fclose(FILE *f) {
 	int	i;
+	int result;
 	char	tmpn[L_tmpnam];
 
 	if (NULL == f) return _FCLOSED;
 	//grw - don't close stdin, stdout or stderr, but return success
 	if (_IOSYS == f->mode) return _FCLOSED;
 	
-	close(f->fd);
+	result = close(f->fd);
 	
 	for (i=3; i<FOPEN_MAX; i++) {
 		if (f == _files[i]) {
@@ -40,5 +41,5 @@ int fclose(FILE *f) {
 	}
 		
 	free(f);
-	return _FCLOSED;
+	return result;
 }

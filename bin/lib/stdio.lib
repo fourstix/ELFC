@@ -418,7 +418,7 @@
 /esmove 000a 00
 \esmove 000b
 ?auto_err 000f
-:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff f6 c3 00
+:0000 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff f4 c3 00
 /lpush16 0012 00
 \lpush16 0013
 /epush16 0017 00
@@ -437,7 +437,7 @@
 \epush16 0038
 /lpush16 003c 00
 \lpush16 003d
-:0030 d4 00 00 c0 01 81 d4 00 00 00 06 d4 00 00 00 00
+:0030 d4 00 00 c0 01 8c d4 00 00 00 06 d4 00 00 00 00
 /add16 0041 00
 \add16 0042
 /deref16 0044 00
@@ -459,158 +459,164 @@
 /deref16 006c 00
 \deref16 006d
 /Cclose 006f 00
-:0060 d4 00 00 c0 01 81 d4 00 00 00 00 d4 00 00 d4 00
+:0060 d4 00 00 c0 01 8c d4 00 00 00 00 d4 00 00 d4 00
 \Cclose 0070
 /esmove 0072 00
 \esmove 0073
 ?auto_err 0077
-/epush16 007a 00
-\epush16 007b
-/lstor16 007f 00
-:0070 00 d4 00 00 00 02 c3 00 00 d4 00 00 00 03 d4 00
-\lstor16 0080
-/dpop16 0084 00
-\dpop16 0085
-/lpush16 0087 00
-\lpush16 0088
-/epush16 008c 00
-\epush16 008d
-:0080 00 ff fe d4 00 00 d4 00 00 ff fe d4 00 00 00 07
-/lt16 0091 00
-\lt16 0092
-/dpop16 0094 00
-\dpop16 0095
-:0090 d4 00 00 d4 00 00 9a 52 8a f1 ca 00 a0 c0 01 02
-/lpush16 00a4 00
-\lpush16 00a5
-/linc16 00a9 00
-\linc16 00aa
-/dpop16 00ae 00
-\dpop16 00af
-:00a0 c0 00 b3 d4 00 00 ff fe d4 00 00 ff fe d4 00 00
-/epush16 00b4 00
-\epush16 00b5
-?C_files 00b6
-/lpush16 00b9 00
-\lpush16 00ba
-/scltos2 00be 00
-\scltos2 00bf
-:00b0 c0 00 86 d4 00 00 00 00 d4 00 00 ff fe d4 00 00
-/add16 00c1 00
-\add16 00c2
-/deref16 00c4 00
-\deref16 00c5
-/lpush16 00c7 00
-\lpush16 00c8
-/eq16 00cc 00
-\eq16 00cd
-/dpop16 00cf 00
-:00c0 d4 00 00 d4 00 00 d4 00 00 00 00 d4 00 00 d4 00
-\dpop16 00d0
-/epush16 00dc 00
-\epush16 00dd
-?C_files 00de
-:00d0 00 9a 52 8a f1 ca 00 db c0 00 ff d4 00 00 00 00
-/lpush16 00e1 00
-\lpush16 00e2
-/scltos2 00e6 00
-\scltos2 00e7
-/add16 00e9 00
-\add16 00ea
-/epush16 00ec 00
-\epush16 00ed
-:00e0 d4 00 00 ff fe d4 00 00 d4 00 00 d4 00 00 00 00
-/swap16 00f1 00
-\swap16 00f2
-/dpop16 00f4 00
-\dpop16 00f5
-/pstor16 00f7 00
-\pstor16 00f8
-/dpop16 00fa 00
-\dpop16 00fb
-:00f0 d4 00 00 d4 00 00 d4 00 00 d4 00 00 c0 01 02 c0
-/epush16 0103 00
-\epush16 0104
-/lpush16 0108 00
-\lpush16 0109
-/add16 010d 00
-\add16 010e
-:0100 00 a3 d4 00 00 00 06 d4 00 00 00 00 d4 00 00 d4
-/deref16 0110 00
-\deref16 0111
-/epush16 0113 00
-\epush16 0114
-/eq16 0118 00
-\eq16 0119
-/dpop16 011b 00
-\dpop16 011c
-:0110 00 00 d4 00 00 00 02 d4 00 00 d4 00 00 9a 52 8a
-:0120 f1 ca 01 27 c0 01 69 c0 01 34 74 65 6d 70 2e 25
-/epush16 0135 00
-\epush16 0136
-/lpush16 013a 00
-\lpush16 013b
-/add16 013f 00
-:0130 30 32 64 00 d4 00 00 00 0a d4 00 00 00 00 d4 00
-\add16 0140
-/deref16 0142 00
-\deref16 0143
-/epush16 0145 00
-\epush16 0146
-/laddr16 014a 00
-\laddr16 014b
-/Csprintf 014f 00
-:0140 00 d4 00 00 d4 00 00 01 2a d4 00 00 ff f6 d4 00
-\Csprintf 0150
-/esmove 0152 00
-\esmove 0153
-?auto_err 0157
-/laddr16 015a 00
-\laddr16 015b
-/Cremove 015f 00
-:0150 00 d4 00 00 00 06 c3 00 00 d4 00 00 ff f6 d4 00
-\Cremove 0160
-/esmove 0162 00
-\esmove 0163
-?auto_err 0167
-/lpush16 016a 00
-\lpush16 016b
-/Cfree 016f 00
-:0160 00 d4 00 00 00 02 c3 00 00 d4 00 00 00 00 d4 00
-\Cfree 0170
-/esmove 0172 00
-\esmove 0173
-?auto_err 0177
-/epush16 017a 00
-\epush16 017b
-/dpop16 017f 00
-:0170 00 d4 00 00 00 02 c3 00 00 d4 00 00 00 00 d4 00
-\dpop16 0180
-/esmove 0182 00
-\esmove 0183
-?auto_err 0187
-/escheck 018b 00
-\escheck 018c
-:0180 00 d4 00 00 00 0a c3 00 00 e2 d4 00 00 60 72 ab
-:0190 f0 bb d5
+/dpush16 007a 00
+\dpush16 007b
+/lstor16 007d 00
+\lstor16 007e
+:0070 00 d4 00 00 00 02 c3 00 00 d4 00 00 d4 00 00 ff
+/dpop16 0082 00
+\dpop16 0083
+/epush16 0085 00
+\epush16 0086
+/lstor16 008a 00
+\lstor16 008b
+/dpop16 008f 00
+:0080 fc d4 00 00 d4 00 00 00 03 d4 00 00 ff fe d4 00
+\dpop16 0090
+/lpush16 0092 00
+\lpush16 0093
+/epush16 0097 00
+\epush16 0098
+/lt16 009c 00
+\lt16 009d
+/dpop16 009f 00
+:0090 00 d4 00 00 ff fe d4 00 00 00 07 d4 00 00 d4 00
+\dpop16 00a0
+/lpush16 00af 00
+:00a0 00 9a 52 8a f1 ca 00 ab c0 01 0d c0 00 be d4 00
+\lpush16 00b0
+/linc16 00b4 00
+\linc16 00b5
+/dpop16 00b9 00
+\dpop16 00ba
+/epush16 00bf 00
+:00b0 00 ff fe d4 00 00 ff fe d4 00 00 c0 00 91 d4 00
+\epush16 00c0
+?C_files 00c1
+/lpush16 00c4 00
+\lpush16 00c5
+/scltos2 00c9 00
+\scltos2 00ca
+/add16 00cc 00
+\add16 00cd
+/deref16 00cf 00
+:00c0 00 00 00 d4 00 00 ff fe d4 00 00 d4 00 00 d4 00
+\deref16 00d0
+/lpush16 00d2 00
+\lpush16 00d3
+/eq16 00d7 00
+\eq16 00d8
+/dpop16 00da 00
+\dpop16 00db
+:00d0 00 d4 00 00 00 00 d4 00 00 d4 00 00 9a 52 8a f1
+/epush16 00e7 00
+\epush16 00e8
+?C_files 00e9
+/lpush16 00ec 00
+\lpush16 00ed
+:00e0 ca 00 e6 c0 01 0a d4 00 00 00 00 d4 00 00 ff fe
+/scltos2 00f1 00
+\scltos2 00f2
+/add16 00f4 00
+\add16 00f5
+/epush16 00f7 00
+\epush16 00f8
+/swap16 00fc 00
+\swap16 00fd
+/dpop16 00ff 00
+:00f0 d4 00 00 d4 00 00 d4 00 00 00 00 d4 00 00 d4 00
+\dpop16 0100
+/pstor16 0102 00
+\pstor16 0103
+/dpop16 0105 00
+\dpop16 0106
+/epush16 010e 00
+\epush16 010f
+:0100 00 d4 00 00 d4 00 00 c0 01 0d c0 00 ae d4 00 00
+/lpush16 0113 00
+\lpush16 0114
+/add16 0118 00
+\add16 0119
+/deref16 011b 00
+\deref16 011c
+/epush16 011e 00
+\epush16 011f
+:0110 00 06 d4 00 00 00 00 d4 00 00 d4 00 00 d4 00 00
+/eq16 0123 00
+\eq16 0124
+/dpop16 0126 00
+\dpop16 0127
+:0120 00 02 d4 00 00 d4 00 00 9a 52 8a f1 ca 01 32 c0
+:0130 01 74 c0 01 3f 74 65 6d 70 2e 25 30 32 64 00 d4
+/epush16 0140 00
+\epush16 0141
+/lpush16 0145 00
+\lpush16 0146
+/add16 014a 00
+\add16 014b
+/deref16 014d 00
+\deref16 014e
+:0140 00 00 00 0a d4 00 00 00 00 d4 00 00 d4 00 00 d4
+/epush16 0150 00
+\epush16 0151
+/laddr16 0155 00
+\laddr16 0156
+/Csprintf 015a 00
+\Csprintf 015b
+/esmove 015d 00
+\esmove 015e
+:0150 00 00 01 35 d4 00 00 ff f4 d4 00 00 d4 00 00 00
+?auto_err 0162
+/laddr16 0165 00
+\laddr16 0166
+/Cremove 016a 00
+\Cremove 016b
+/esmove 016d 00
+\esmove 016e
+:0160 06 c3 00 00 d4 00 00 ff f4 d4 00 00 d4 00 00 00
+?auto_err 0172
+/lpush16 0175 00
+\lpush16 0176
+/Cfree 017a 00
+\Cfree 017b
+/esmove 017d 00
+\esmove 017e
+:0170 02 c3 00 00 d4 00 00 00 00 d4 00 00 d4 00 00 00
+?auto_err 0182
+/lpush16 0185 00
+\lpush16 0186
+/dpop16 018a 00
+\dpop16 018b
+/esmove 018d 00
+\esmove 018e
+:0180 02 c3 00 00 d4 00 00 ff fc d4 00 00 d4 00 00 00
+?auto_err 0192
+/escheck 0196 00
+\escheck 0197
+:0190 0c c3 00 00 e2 d4 00 00 60 72 ab f0 bb d5
 +0026
 +0029
 +0034
 +0056
 +0059
 +0064
-+009b
-+009e
-+00a1
-+00b1
-+00d6
-+00d9
-+00fd
-+0100
-+0122
-+0125
-+0128
-+0147
++00a6
++00a9
++00ac
++00bc
++00e1
++00e4
++0108
++010b
++012d
++0130
++0133
++0152
 }
 .big
 {Cfopen
@@ -7788,46 +7794,47 @@ v0ff2
 \dpop16 0056
 /lget16 005b 00
 \lget16 005c
-:0050 00 00 ff ff d4 00 00 c0 00 aa d4 00 00 00 00 8a
+:0050 00 00 ff ff d4 00 00 c0 00 b3 d4 00 00 00 00 8a
 /lget16 0064 00
 \lget16 0065
-:0060 af 9a bf d4 00 00 00 02 8a ac 9a bc d4 03 1b f8
-/lset16 0077 00
-\lset16 0078
-/epush16 007c 00
-\epush16 007d
-:0070 00 c7 f8 ff ba aa d4 00 00 ff fe d4 00 00 ff ff
-/lpush16 0081 00
-\lpush16 0082
-/eq16 0086 00
-\eq16 0087
-/dpop16 0089 00
-\dpop16 008a
-:0080 d4 00 00 ff fe d4 00 00 d4 00 00 9a 52 8a f1 ca
-/epush16 0096 00
-\epush16 0097
-/vstor16 009b 00
-\vstor16 009c
-?Cerrno 009d
-:0090 00 95 c0 00 a2 d4 00 00 00 03 d4 00 00 00 00 d4
-/dpop16 00a0 00
-\dpop16 00a1
-/lpush16 00a3 00
-\lpush16 00a4
-/dpop16 00a8 00
-\dpop16 00a9
-/esmove 00ab 00
-\esmove 00ac
-:00a0 00 00 d4 00 00 ff fe d4 00 00 d4 00 00 00 02 c3
-?auto_err 00b0
-/escheck 00b4 00
-\escheck 00b5
-:00b0 00 00 e2 d4 00 00 60 72 ab f0 bb d5
+:0060 af 9a bf d4 00 00 00 02 8a ac 9a bc 9b 73 8b 73
+:0070 d4 03 1b 60 72 ab f0 bb f8 00 c7 f8 ff ba aa d4
+/lset16 0080 00
+\lset16 0081
+/epush16 0085 00
+\epush16 0086
+/lpush16 008a 00
+\lpush16 008b
+/eq16 008f 00
+:0080 00 00 ff fe d4 00 00 ff ff d4 00 00 ff fe d4 00
+\eq16 0090
+/dpop16 0092 00
+\dpop16 0093
+/epush16 009f 00
+:0090 00 d4 00 00 9a 52 8a f1 ca 00 9e c0 00 ab d4 00
+\epush16 00a0
+/vstor16 00a4 00
+\vstor16 00a5
+?Cerrno 00a6
+/dpop16 00a9 00
+\dpop16 00aa
+/lpush16 00ac 00
+\lpush16 00ad
+:00a0 00 00 03 d4 00 00 00 00 d4 00 00 d4 00 00 ff fe
+/dpop16 00b1 00
+\dpop16 00b2
+/esmove 00b4 00
+\esmove 00b5
+?auto_err 00b9
+/escheck 00bd 00
+\escheck 00be
+:00b0 d4 00 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00 60
+:00c0 72 ab f0 bb d5
 +0026
 +0040
 +0058
-+0090
-+0093
++0099
++009c
 }
 .big
 {Cfgetpos
