@@ -4,14 +4,6 @@
 
 #pragma             extrn Cerrno
 
-#ifndef FD_SIZE
-#define FD_SIZE   534
-#endif
-
-#ifndef FD_MAX
-#define FD_MAX  4
-#endif
-
 static int _fdcnt = 0;
 
 #pragma             public C_fdcnt   

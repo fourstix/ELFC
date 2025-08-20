@@ -1,5 +1,6 @@
 ..\elfc -L _init.c
 ..\elfc -L _fdinit.c
+..\elfc -L _fdvalid.c
 ..\elfc -L abort.c
 ..\elfc -L abs.c
 ..\elfc -L atexit.c
@@ -26,9 +27,9 @@
 ..\elfc -L min.c
 ..\elfc -L max.c
 
-type _init.prg _fdinit.prg abort.prg exit.prg atexit.prg atoi.prg bsearch.prg > stdlib.lib
+type _init.prg _fdinit.prg _fdvalid.prg abort.prg exit.prg atexit.prg atoi.prg  > stdlib.lib
 type calloc.prg malloc.prg free.prg itoa.prg itox.prg itou.prg realloc.prg >> stdlib.lib
 type creat.prg open.prg close.prg read.prg write.prg lseek.prg unlink.prg >> stdlib.lib
-type qsort.prg rand.prg div.prg abs.prg min.prg max.prg >> stdlib.lib
+type bsearch.prg qsort.prg rand.prg div.prg abs.prg min.prg max.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib

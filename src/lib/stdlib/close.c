@@ -5,6 +5,7 @@
 #pragma             extrn Cerrno
 #pragma             extrn C_fdcnt
 #pragma             extrn Cfree
+#pragma             extrn C_fdvalid
 
 
 extern int _fdcnt;    
@@ -13,8 +14,8 @@ extern int _fdcnt;
 int	close(int fd) {
   int result;
   
-  /* don't close invalid fd */
-  if(fd == EOF) {
+  /* don't close an invalid fd */
+  if(!_fdvalid(fd)) {
     errno = EBADF;
     return EOF;
   }
