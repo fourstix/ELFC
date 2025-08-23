@@ -321,7 +321,7 @@ Assert Library
 * void assert(int a, char\* file, int line);
 
 *Notes:*
-* *The `assert` macro is implemented by a function, because preprocessor macros do not support parameters.*
+* *`assert` is implemented by a function, rather than a macro, because preprocessor macros do not support parameters.*
 * *The pre-defined macros `__FILE__` and `__LINE__` should be used for the file and line arguments.*
 * *If the macro `NDEBUG` is defined then the assert function returns immediately*
 * *Otherwise, `assert` prints a message containing the file name and line number and then calls the `abort` function to exit.* 
