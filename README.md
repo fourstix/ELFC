@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Installation
 -------------
-* Unzip the file elfc_r2.zip into the desired directory
+* Unzip the file elfc_r21.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -136,7 +136,7 @@ Stdlib Library
 
 **Memory Allocation**
 
-* void\* malloc(int size);
+* void \*malloc(int size);
 * void \*calloc(int count, int size);
 * void \*realloc(void \*p, int size);
 * void free(void\* p);
@@ -458,18 +458,22 @@ Repository Contents
 * **/src/lib/ctype**  -- Source files for ElfC ctype C library
 * **/src/lib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/lib/assert**  -- Source files for ElfC assert C library
-* **/src/bin**  -- Binary files for ElfC
+* **/src/tests**  -- Functional test files for ElfC
+* **/src/tests/ptest1.c to ptest5.c**  -- Functional tests for pointer and array arithmetic
+* **/src/tests/libtest1.c to libtest4.c**  -- Functional tests for various library functions
+* **/src/tests/filetest1.c to filetest5.c**  -- Functional tests for buffered file functions
+* **/bin**  -- Binary files for ElfC
   * ElfC.exe -- ElfC Compiler
   * Asm02.exe -- Asm/02 assembler
   * Link02.exe -- Link/02 linker
-* **/src/bin/include**  -- ElfC C Include files 
-* **/src/bin/lib**  -- ElfC C Library files 
+* **/bin/include**  -- ElfC C Include files 
+* **/bin/lib**  -- ElfC C Library files 
 * **/examples** -- Example C files
   * hello.c -- Classic C "Hello, World" example
   * fib.c -- Demo to print series of Fibonacci numbers
   * printfmt.c -- Demo of various printf format conversions
   * scanfmt.c -- Demo of various scanf format conversions
-* **elfc_r2.zip** -- A zip file with the Release 2 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+* **elfc_r21.zip** -- A zip file with the Release 2.1 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
 
 License Information
 -------------------
