@@ -3,18 +3,23 @@
 #include <errno.h>
 
 #pragma             extrn Cerrno
+#pragma             extrn C_fildes
 
 int  lseek(int fd, int hi_off, int lo_off, int how) {
+  int fildes;
   int result;
   
+  /* get system file descriptor */
+  fildes = _fildes(fd);
+  
   /* don't seek invalid fd */
-  if(fd == EOF) {
+  if(fildes == EOF) {
     errno = EBADF;
     return EOF;
   }
   
-  asm("         call lget16     ; get the fd argument ");
-  asm("           dw 0          ; from argument stack");           
+  asm("         call lget16     ; get the fildes variable ");
+  asm("           dw -2          ; from local variable stack");           
   asm("         copy ra, rd     ; copy fd to fildes register");
   asm("         call lget16     ; get the how to seek argument ");
   asm("           dw 6          ; from argument stack");           
@@ -34,7 +39,7 @@ int  lseek(int fd, int hi_off, int lo_off, int how) {
   asm("         phi  ra         ; set result for 0 or -1 ");
   asm("         plo  ra         ; set result in ra ");
   asm("         call lset16     ; set the result ");
-  asm("           dw -2         ; in the local variable");           
+  asm("           dw -4         ; in the local variable");           
   
   /* if error, set errno */
   if (result == EOF)

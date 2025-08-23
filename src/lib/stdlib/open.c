@@ -4,26 +4,27 @@
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fdinit
-#pragma             extrn C_fdcnt
+#pragma             extrn C_fdtable
 #pragma             extrn Cfree
 
-
-extern int _fdcnt;    
-
-
 int	open(char *path, int flags) {
+  int fildes;
   int fd;
   int  result;
   
+  /* create file descriptor for system file */
   fd = _fdinit();
   
   if (fd == EOF) 
     return EOF;
   
-  asm("         call lget16     ; get the fd argument ");
+  /* get system file descriptor */
+  fildes = _fdtable[fd];
+  
+  asm("         call lget16     ; get the fildes argument ");
   asm("           dw -2         ; get from the local variable");           
-  asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
-  asm("         call lget16     ; get the fd argument ");
+  asm("         copy ra, rd     ; copy fildes pointer to buffer pointer");
+  asm("         call lget16     ; get the name argument ");
   asm("           dw 0          ; get from argument stack");
   asm("         copy ra, rf     ; copy path argument as name buffer");
   asm("         call lget16     ; get the flags argument ");
@@ -38,14 +39,17 @@ int	open(char *path, int flags) {
   asm("         phi  ra         ; set result to 0 or -1 ");
   asm("         plo  ra         ; set result in ra ");
   asm("         call lset16     ; set result argument ");
-  asm("           dw -4         ; get from argument stack");           
+  asm("           dw -6         ; get from argument stack");           
 
-  /* if open failed, set errno and release fd from _fdinit */
+  /* if open failed, set errno and undo _fdinit */
   if (result == EOF) {
     errno = EIO;
-    _fdcnt--;  
-    free((void *) fd); 
+    /* free the system file descriptor in memory */
+    free((void *) fildes); 
+    /* mark the entry in the table as unused */
+    _fdtable[fd] = EOF;  
     return EOF;
   }
+  
   return fd;
 }

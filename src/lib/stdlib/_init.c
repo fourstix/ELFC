@@ -6,6 +6,8 @@
 #pragma             extrn Cfdopen
 #pragma             extrn Cmalloc
 
+int   _fdtable[FD_MAX];
+
 FILE	*_files[FOPEN_MAX];
 
 FILE	*stdin, *stdout, *stderr;
@@ -17,9 +19,19 @@ int	errno = EOK;
 void _init(void) {
 	int	i;
 	
+	/* set pre-defined file handles */
+	_fdtable[0] = 0;
+	_fdtable[1] = 1;
+	_fdtable[2] = 2;
+	
+	/* set system handles in table as unused */
+	for (i=FD_SYS; i<FD_MAX; i++)
+		_fdtable[i] = EOF;
+	
 	for (i=0; i<FOPEN_MAX; i++)
 		_files[i] = NULL;
 
+	/* create pre-defined file streams */	
 	stdin = fdopen(0, _FREAD);
 	stdout = fdopen(1, _FWRITE);
 	stderr = fdopen(2, _FWRITE);

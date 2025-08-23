@@ -3,18 +3,23 @@
 #include <errno.h>
 
 #pragma             extrn Cerrno
+#pragma             extrn C_fildes
 
 int write(int fd, void *buf, int n) {
+  int fildes;
   int n_write;
   
-  /* if fd is invalid, return with error */
-  if (fd == EOF) {
+  /* get system file descriptor */
+  fildes = _fildes(fd);
+  
+  /* if fildes is invalid, return with error */
+  if (fildes == EOF) {
     errno = EBADF;      
     return EOF;
    }
      
-  asm("         call lget16     ; get the fd argument ");
-  asm("           dw 0          ; get from argument stack");           
+  asm("         call lget16     ; get the fildes variable ");
+  asm("           dw -2         ; from the local variable stack");           
   asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
   asm("         call lget16     ; get the buffer argument ");
   asm("           dw 2          ; get from argument stack");           
@@ -29,7 +34,7 @@ int write(int fd, void *buf, int n) {
   asm("         plo  rc         ; set result in ra ");
   asm("rd_ok:   copy rc, ra     ; set count as return value ");
   asm("         call lset16     ; set the local variable to the count ");
-  asm("           dw -2         ; on the argument stack");           
+  asm("           dw -4         ; on the argument stack");           
 
   if (n_write == EOF) {
     errno = EIO;

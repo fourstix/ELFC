@@ -13,7 +13,8 @@
 #ifndef _ELFCLIB_ 
 #pragma             extrn C_init
 #pragma             extrn C_fdinit
-#pragma             extrn C_fdcnt
+#pragma             extrn C_fdtable
+#pragma             extrn C_fildes
 #pragma             extrn Cabort
 #pragma             extrn Cabs
 #pragma             extrn Catexit      
@@ -43,6 +44,33 @@
 #pragma             extrn Cmax
 #endif
 
+/* file descriptor constants */
+#ifndef FD_MAX
+#define FD_MAX  7
+#endif
+
+/* start of system file descriptors */
+#ifndef FD_SYS
+#define FD_SYS  3
+#endif
+
+#ifndef FD_SIZE
+#define FD_SIZE   534
+#endif
+
+/* file descriptor constants */
+#ifndef FD_MAX
+#define FD_MAX  7
+#endif
+
+#ifndef FD_SIZE
+#define FD_SIZE   534
+#endif
+
+extern int _fdtable[FD_MAX];
+
+
+/* file position constnts */
 #ifndef SEEK_SET
 #define SEEK_SET	0
 #endif 
@@ -55,6 +83,7 @@
 #define SEEK_END	2
 #endif 
 
+/* fcntl constants mapped to Elf/OS constants */
 #ifndef O_OPEN
 #define O_OPEN    0    
 #endif
@@ -79,7 +108,6 @@
 #define O_RDONLY 16
 #endif 
 
-/* fcntl constants mapped to Elf/OS constants */
 /* Read/Write is the default open mode in Elf/OS */
 #ifndef O_RDWR
 #define O_RDWR    0    
@@ -128,6 +156,7 @@ typedef struct {
 
 void _init(void);
 int _fdinit(void);
+int _fildes(int fd);
 void abort(void);
 void exit(int n);
 int atexit(int (*fn)());

@@ -3,10 +3,7 @@
 #include <errno.h>
 
 #pragma             extrn Cerrno
-
-static int _fdcnt = 0;
-
-#pragma             public C_fdcnt   
+#pragma             extrn C_fdtable   
 #pragma             extrn Cmalloc    
 
 /* 
@@ -32,34 +29,44 @@ static int _fdcnt = 0;
  */
 
 int _fdinit(void) {
+  int fildes;
   int fd;
   
-  if (_fdcnt >= FD_MAX) {
+  /* find available entry in table, skipping over the */
+  /* predefined entries for stdin, stdout & stderr */
+  for(fd = FD_SYS; fd < FD_MAX; fd++) {
+    if(EOF == _fdtable[fd]) 
+      break;
+  }
+  
+  
+  /* if no more system entries are available, exit with error */
+  if (fd >= FD_MAX) {
       errno = EMFILE;
       return EOF;
-    }
+  }
   
   
-  fd = (int) malloc(FD_SIZE);
+  fildes = (int) malloc(FD_SIZE);
   
   /* if malloc failed return error */
-  if (fd == 0) {
+  if (fildes == 0) {
     errno = ENOMEM;
     return EOF;
   }
   
   /* set up fd format */
-  asm("         call lget16     ; get the fd buffer pointer");
+  asm("         call lget16     ; get the fildes buffer pointer");
   asm("           dw -2         ; get pointer from argument stack");           
-  asm("         copy ra, rf     ; copy fd pointer to buffer pointer");
-  asm("         copy ra, rd     ; copy fd pointer to dta pointer");
+  asm("         copy ra, rf     ; copy fildes pointer to buffer pointer");
+  asm("         copy ra, rd     ; copy fildes pointer to dta pointer");
   asm("         glo  rd         ; dta is 22 bytes after filedes");
   asm("         adi  22");
   asm("         plo  rd         ; put lo byte into rd");
   asm("         ghi  rd         ; propagate carry into hi byte");
   asm("         adci 0          ; add carry bit to hi byte");
   asm("         phi  rd         ; rd now points to dta"); 
-  asm("         ldi  0          ; zero out first four bytes of filedes");
+  asm("         ldi  0          ; zero out first four bytes of fildes");
   asm("         str  rf");
   asm("         inc  rf"); 
   asm("         str  rf");
@@ -83,6 +90,8 @@ int _fdinit(void) {
   asm("         glo rc          ; check if counter has gone to zero");
   asm("         lbnz fd_rpt     ; if not keep going");
   
-  _fdcnt++;            
+  /* set the system file descriptor for the new entry */ 
+  _fdtable[fd] = fildes;
+  
   return fd;
 } 

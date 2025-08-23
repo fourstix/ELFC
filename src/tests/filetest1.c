@@ -3,10 +3,9 @@
  * Nils M Holm, 1995, 1014
  * In the public domain
  *
- * Test the stdout and math functions
- * Test 4 of 
+ * Test the open, close and temp file functions
+ * Test 1 of 
  */
- 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,7 +41,7 @@ void test_file(void) {
     fail("fopen-1");
     perror("remove");
   }
-	fclose(f);
+  fclose(f);
 	if (remove(TSTFILE) < 0) fail("remove-1");
 	if (remove(TSTFILE) >= 0) fail("remove-2");
 
@@ -142,11 +141,11 @@ void test_stdio(void) {
 				fgets(buf, 80, f);
 			}
 			fd = fileno(f);
-			if (fclose(f)) fail("fclose-1");
-			if (close(fd) == 0) fail("fclose-2");
+			if (fclose(f)) fail("fclose-3");
+			if (close(fd) == 0) fail("fclose-4");
 		}
 	}
-	// unlink(TSTFILE);
+	unlink(TSTFILE3);
 }
 
 

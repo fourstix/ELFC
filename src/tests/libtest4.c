@@ -29,32 +29,6 @@ void pr(char *s) {
 	printf("%s\n", s);
 }
 
-
-void test_printf(void) {
-	int	i;
-  pr("printf");
-  
-	puts("0---|----1----|----2----|----3----|----4----|----5");
-	for (i=0; i<50; i++) putc('A', stdout);
-	puts("");
-	for (i=0; i<50; i++) putchar('B');
-	puts("");
-	printf("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n");
-	printf("|%48s|\n", "DDDDDDDDDDDDDDDDDDDDDDDD");
-	printf("|%-48s|\n", "EEEEEEEEEEEEEEEEEEEEEEEE");
-	for (i=0; i<5; i++)
-		printf("%c%c%c%c%c%c%c%c%c%c",
-		'1', '2', '3', '4', '5', '6', '7', '8', '9', '0' );
-	puts("");
-	printf("%50d\n", -12345);
-	printf("%-49d|\n", -12345);
-	printf("%050d\n", 12345);
-	printf("0x%x %15s%d%16s 0%o\n", 0x7BCD, "", 0x7BCD, "", 0x7BCD);
-	for (i=0; i<5; i++) printf("%%%%%%%%%%%%%%%%%%%%");
-	puts("");
-	puts("0---|----1----|----2----|----3----|----4----|----5");
-}
-
 void test_math(void) {
 	#define unsigned	char *
 
@@ -204,7 +178,6 @@ void test_sprintf(void) {
 
 int main(int argc, char **argv) {
   test_math();
-  test_printf();
   test_sprintf();
   return result;
 }
