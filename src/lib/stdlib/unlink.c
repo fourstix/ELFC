@@ -16,7 +16,11 @@ int	unlink(char* path) {
   asm("         call lget16     ; get the path argument ");
   asm("           dw 0          ; get from argument stack");           
   asm("         copy ra, rf     ; copy path string to buffer pointer");
-  asm("         call o_delete   ; attempt to delete the file");
+  
+  asm("         push rb         ; save stack frame base pointer on the stack"); 
+  asm("         call O_DELETE   ; attempt to delete the file");
+  asm("         pop rb          ; restore stack frame base pointer from the stack"); 
+  
   asm("         ldi  0          ; set default value for success");
   asm("         lsnf            ; DF = 0, means success");
   asm("         ldi  $Ff        ; otherwise set result for error");
@@ -24,7 +28,7 @@ int	unlink(char* path) {
   asm("         plo  ra         ; set result in ra ");
   asm("         call lset16     ; set the fd argument ");
   asm("           dw -2         ; in the local variable on the stack");           
-
+  
   /* if error, set errno */
   if (result == EOF)
     errno = EIO;

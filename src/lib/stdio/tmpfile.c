@@ -22,7 +22,7 @@ FILE *tmpfile(void) {
 	/*	remove(s); */
 	/* Instead we store information to delete in fclose */
 	f->mode = _IOTMP;
-	f->tmpid = _tmpid;
+	f->tmpid = _tmpid-1;
 	
 	return f;
 }

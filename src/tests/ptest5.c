@@ -1,0 +1,389 @@
+/*
+ * Ad-hoc C pointer arithmetics test suite
+ * Nils M Holm, 2013
+ * In the public domain
+ *
+ * Test 4 of 5
+ */
+
+#include <stdlib.h>
+#include <stdio.h>
+
+#define N sizeof(void *)
+#define N2 (N*2)
+
+int	r;
+int	a;
+int	*p;
+int	**pp;
+int	*A, _A[3], **P, *_P[3];
+int	Ea[3], *Ep[3];
+
+int test(char *what, int val, int ea, int ep, int epp) {
+	int	i;
+	
+	printf("Testing: %s\n", what);
+	if (r != val)
+		printf("%s: expected value %d (%p), got %d (%p)\n",
+			what, val, val, r, r);
+	if (a != ea)
+		printf("%s: expected a=%d (%p), got %d (%p)\n",
+			what, ea, ea, a, a);
+	if ((int) p != ep)
+		printf("%s: expected p=%d (%p), got %d (%p)\n",
+			what, ep, ep, p, p);
+	if ((int) pp != epp)
+		printf("%s: expected pp=%d (%p), got %d (%p)\n",
+			what, epp, epp, pp, pp);
+	for (i=-1; i<2; i++) {
+		if (Ea[i+1] != A[i])
+			printf("%s: expected A[%d]=%d (%p), got %d (%p)\n",
+				what, i, Ea[i+1], Ea[i+1], A[i], A[i]);
+		if (Ep[i+1] != P[i])
+			printf("%s: expected P[%d]=%d (%p), got %d (%p)\n",
+				what, i, Ep[i+1], Ep[i+1], P[i], P[i]);
+	}
+}
+
+void reset(void) {
+	a = 1;
+	A = &_A[1];
+	P = &_P[1];
+	A[-1] = 1;
+	A[0] = 2;
+	A[1] = 3;
+	P[-1] = &A[-1];
+	P[0] = &A[0];
+	P[1] = &A[1];
+	p = A;
+	pp = P;
+}
+
+int main(void) {
+  reset();
+  r = (int) (p[-1]-=1);
+  Ea[0] = 0;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[-1]-=1", (int) 0, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (p[0]-=1);
+  Ea[0] = 1;
+  Ea[1] = 1;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[0]-=1", (int) 1, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (p[1]-=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 2;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[1]-=1", (int) 2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (p[-1]-=-1);
+  Ea[0] = 2;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[-1]-=-1", (int) 2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (p[0]-=-1);
+  Ea[0] = 1;
+  Ea[1] = 3;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[0]-=-1", (int) 3, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (p[1]-=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 4;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("p[1]-=-1", (int) 4, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]+1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]+1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]+1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]+1", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]+1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[1]+1", (int) A+N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]++);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]++", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]++);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A+N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]++", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]++);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N2);
+  test("pp[1]++", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (++pp[-1]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("++pp[-1]", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (++pp[0]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A+N);
+  Ep[2] = (void *) ((int) A+N);
+  test("++pp[0]", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (++pp[1]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N2);
+  test("++pp[1]", (int) A+N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]-1", (int) A-N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]-1", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[1]-1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]--);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N2);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]--", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]--);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A-N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]--", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]--);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A);
+  test("pp[1]--", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (--pp[-1]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N2);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("--pp[-1]", (int) A-N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (--pp[0]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A-N);
+  Ep[2] = (void *) ((int) A+N);
+  test("--pp[0]", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (--pp[1]);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A);
+  test("--pp[1]", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]+=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]+=1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]+=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A+N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]+=1", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]+=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N2);
+  test("pp[1]+=1", (int) A+N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]+=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N2);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]+=-1", (int) A-N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]+=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A-N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]+=-1", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]+=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A);
+  test("pp[1]+=-1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]-=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N2);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]-=1", (int) A-N2, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]-=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A-N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]-=1", (int) A-N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]-=1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A);
+  test("pp[1]-=1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[-1]-=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[-1]-=-1", (int) A, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[0]-=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A+N);
+  Ep[2] = (void *) ((int) A+N);
+  test("pp[0]-=-1", (int) A+N, (int) 1, (int) A, (int) P);
+  reset();
+  r = (int) (pp[1]-=-1);
+  Ea[0] = 1;
+  Ea[1] = 2;
+  Ea[2] = 3;
+  Ep[0] = (void *) ((int) A-N);
+  Ep[1] = (void *) ((int) A);
+  Ep[2] = (void *) ((int) A+N2);
+  test("pp[1]-=-1", (int) A+N2, (int) 1, (int) A, (int) P);
+
+	return EXIT_SUCCESS;
+}

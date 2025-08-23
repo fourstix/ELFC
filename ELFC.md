@@ -173,7 +173,7 @@ The following functions were omitted from the ElfC stdio C library.
 
 Stdlib Modified Functions
 -------------------------
-* `lseek` takes two int arguments for the offset since long is not supported.
+*  Because long types are not supported, `lseek` takes two int arguments for the offset, and returns an int value, 0  for success or -1 for error.
 *  `div` uses a pointer to a div_t structure for the result, because returning a structure is not supported.
 * `min` and `max` are implemented as functions because macro parameters are not supported.
 * `itox` and `itou` are available to convert int values to hexadecimal and unsigned integer ASCII strings.

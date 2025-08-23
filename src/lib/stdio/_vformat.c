@@ -321,7 +321,7 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				putstr(vbuf);
 			} else if (_fwrite(vbuf, olen, outf) != olen) {
 					errno = EIO;
-					outf->iom &= _FERROR;
+					outf->iom |= _FERROR;
 					na = -1;	
 				}
 		}		

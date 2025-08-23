@@ -7,6 +7,6 @@ void free(void* p) {
   asm("         call lget16     ; set the pointer value to free");
   asm("           dw 0          ; from argument stack");             
   asm("         copy ra, rf     ; put pointer into rf"); 
-  asm("         call o_dealloc  ; call kernel dealloc function");
+  asm("         call O_DEALLOC  ; call kernel dealloc function");
   return;
 }

@@ -10,7 +10,7 @@
               extrn   true16
               extrn   false16
 
-              call    sub16            ; subtract arg1 from arg2
+              call    sub16            ; subtract arg2 from arg1 (SOS - TOS)
               sex     r7               ; point X to expression stack
               irx                      ; point to LSB of result
               ldxa                     ; retrieve it
@@ -23,4 +23,3 @@
               lbr     false16          ; otherwise false
 
               endp
-

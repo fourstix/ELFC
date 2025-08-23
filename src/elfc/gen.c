@@ -288,6 +288,8 @@ void queue_push() {
 void genaddr(int y) {
 	//grw - removed gentext
 	//gentext();
+	//grw - added commit 
+	commit();
 	if (CAUTO == Stcls[y])
 		cgldla(Vals[y]);
 		//grw - remove queue
@@ -306,6 +308,8 @@ void genldlab(int id) {
 	//grw - remove queue
 	//gentext();
 	//queue(addr_label, id, NULL);
+	//grw - added commit 
+	commit();
 	cgldlab(id);
 }
 
@@ -313,6 +317,8 @@ void genlit(int v) {
 	//grw - remove queue
 	//gentext();
 	//queue(literal, v, NULL);
+	//grw - added commit 
+	commit();
 	cglit(v);
 }
 
@@ -421,13 +427,13 @@ int gensub(int p1, int p2, int swapped) {
 	if (!inttype(p1) && !inttype(p2) && p1 != p2)
 		error("incompatible pointer types in binary '-'", NULL);
 	if (ptr(p1) && !ptr(p2)) {
-		if (needscale(p1)) {
+			if (needscale(p1)) {
 			if (	(p1 & STCMASK) == STCPTR ||
 				(p1 & STCMASK) == UNIPTR
 			)
-				cgscale2by(objsize(deref(p1), TVARIABLE, 1));
+				cgscaleby(objsize(deref(p1), TVARIABLE, 1));
 			else
-				cgscale2();
+				cgscale();
 		}
 		rp = p1;
 	}

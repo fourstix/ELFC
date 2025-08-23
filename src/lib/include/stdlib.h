@@ -4,17 +4,16 @@
 
 #ifdef _STGROM_
 #pragma #define STGROM
-
-#ifndef BRKPT
 #define BRKPT asm("     brkpt    ;---- jump to routine in stg rom\n");
-#endif
-
+#else 
+#define BRKPT  
 #endif
 
 /* don't define all external functions inside C libraries to prevent dupes */
 #ifndef _ELFCLIB_ 
 #pragma             extrn C_init
 #pragma             extrn C_fdinit
+#pragma             extrn C_fdvalid
 #pragma             extrn C_fdcnt
 #pragma             extrn Cabort
 #pragma             extrn Cabs
@@ -45,6 +44,16 @@
 #pragma             extrn Cmax
 #endif
 
+/* file descriptor constants */
+#ifndef FD_SIZE
+#define FD_SIZE   534
+#endif
+
+#ifndef FD_MAX
+#define FD_MAX  4
+#endif
+
+/* file position constnts */
 #ifndef SEEK_SET
 #define SEEK_SET	0
 #endif 
@@ -57,6 +66,7 @@
 #define SEEK_END	2
 #endif 
 
+/* fcntl constants mapped to Elf/OS constants */
 #ifndef O_OPEN
 #define O_OPEN    0    
 #endif
@@ -81,7 +91,6 @@
 #define O_RDONLY 16
 #endif 
 
-/* fcntl constants mapped to Elf/OS constants */
 /* Read/Write is the default open mode in Elf/OS */
 #ifndef O_RDWR
 #define O_RDWR    0    
@@ -104,9 +113,17 @@
 #define  EXIT_SUCCESS  (0)
 #endif 
 
+#ifndef EXIT_FAILURE
+#define  EXIT_FAILURE  (1)
+#endif 
+
 #ifndef EXIT_ERROR
 #define  EXIT_ERROR  (-1)
 #endif 
+
+#ifndef RAND_MAX
+#define RAND_MAX	65535
+#endif
 
 /* typedef's from stddef.h */
 typedef int size_t;
@@ -122,6 +139,7 @@ typedef struct {
 
 void _init(void);
 int _fdinit(void);
+int _fdvalid(int fd);
 void abort(void);
 void exit(int n);
 int atexit(int (*fn)());

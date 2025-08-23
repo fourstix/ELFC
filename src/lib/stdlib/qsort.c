@@ -4,6 +4,9 @@
  */
 
 /* In fact we are using the shellsort algorithm (TCPL, ed2, pg62) */
+#define _ELFCLIB_
+#include <stdlib.h>
+
 
 void qsort(void *list, int count, int size, int (*cmp)()) {
 	int	gap, i, j, k, tmp;

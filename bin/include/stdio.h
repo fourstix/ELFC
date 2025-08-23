@@ -23,7 +23,7 @@
 #pragma             extrn Cfopen
 #pragma             extrn Cferror
 #pragma             extrn Cfeof
-#pragma             extrn Cclrerror
+#pragma             extrn Cclearerr
 #pragma             extrn Cfgetc
 #pragma             extrn Cfputc
 #pragma             extrn Cfgets
@@ -51,6 +51,7 @@
 #pragma             extrn Cremove
 #pragma             extrn Ctmpnam
 #pragma             extrn Ctmpfile
+#pragma             extrn Cfileno
 #endif
 
 /* Maximum size of string in Elf/OS is 255 bytes */
@@ -196,6 +197,7 @@ int sscanf(char *src, char *fmt, ...);
 /* file functions */
 int remove(char *path);
 int rename(char *old, char *new);
+int fileno(FILE *f);
 char *tmpnam(char *buf);
 FILE *tmpfile(void);
 
@@ -209,6 +211,6 @@ void rewind(FILE *f);
 /* error functions */
 int ferror(FILE *f);
 int feof(FILE *f);
-void clrerror(FILE *f);
+void clearerr(FILE *f);
 void perror(char *msg);
 #endif

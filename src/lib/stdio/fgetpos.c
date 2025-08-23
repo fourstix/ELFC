@@ -5,6 +5,7 @@
 
 #pragma             extrn Cerrno
 
+
 int fgetpos(FILE *f, pos_t *pos) {
   int fd;
   int hi;
@@ -40,7 +41,7 @@ int fgetpos(FILE *f, pos_t *pos) {
   asm("         phi  r8         ; set high byte of hi word offset register");
   asm("         plo  r7         ; set low byte of lo word offset register");           
   asm("         phi  r7         ; set high byte of lo word offset register");
-  asm("         call o_seek     ; call seek to get position");
+  asm("         call O_SEEK     ; attempt to seek within file");
   asm("         copy r7, rc     ; save low position word");
   asm("         pop  r7         ; restore expression stack pointer immediately");
   asm("         copy r8, rd     ; save high position word");
@@ -54,10 +55,10 @@ int fgetpos(FILE *f, pos_t *pos) {
   asm("         copy rd, ra     ; save high position word");
   asm("         call lset16     ; set the hi word result ");
   asm("           dw -4         ; in the local variable");           
-  asm("         copy rc, ra     ; save high position word");
-  asm("         call lset16     ; set the hi word result ");
+  asm("         copy rc, ra     ; save low position word");
+  asm("         call lset16     ; set the lo word result ");
   asm("           dw -6         ; in the local variable");           
-
+  
   /* adjust for any character in pushback buffer from previous read*/
   if (_FREAD == f->last) {
     if (f->ch != EOF) {
@@ -71,8 +72,6 @@ int fgetpos(FILE *f, pos_t *pos) {
 
   pos->hi = hi;
   pos->lo = lo;
-  
-
 
   return result;
 }

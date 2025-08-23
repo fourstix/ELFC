@@ -27,6 +27,8 @@ char *fgets(char *s, int len, FILE *f) {
 	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		while (len-- > 1) {
 			if (read(f->fd, p, 1) != 1) {
+				/* iF read failed we reached end of file */
+				f->iom |= _FEOF;
 				errno = EIO;
 				s = NULL;
 				break;
@@ -54,7 +56,7 @@ char *fgets(char *s, int len, FILE *f) {
 		*p = 0;
 	} else {
 		/* set error for Unknown io type*/
-		f->iom &= _FERROR;
+		f->iom |= _FERROR;
 		errno = EINVAL;
 		s = NULL;
 	}

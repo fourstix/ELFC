@@ -7,6 +7,7 @@
 #pragma             extrn Cread
 #pragma             extrn Cerrno
 
+
 int fgetc(FILE *f) {
 	char	c, b[1];
 
@@ -35,7 +36,7 @@ int fgetc(FILE *f) {
 			return *b;
 		else {
       /* iF read failed we reached end of file */
-      f->mode &= _FEOF;
+      f->iom |= _FEOF;
 			errno = EIO;
 			return EOF;
 		}
@@ -43,7 +44,7 @@ int fgetc(FILE *f) {
       return getch();
   } else {
     /* set error for unknown io type*/
-    f->iom &= _FERROR;
+    f->iom |= _FERROR;
     errno = EINVAL;
     return EOF;
   }   

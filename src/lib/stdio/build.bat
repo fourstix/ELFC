@@ -8,7 +8,7 @@
 ..\elfc -L fopen.c
 ..\elfc -L feof.c
 ..\elfc -L ferror.c
-..\elfc -L clrerror.c
+..\elfc -L clearerr.c
 ..\elfc -L fputc.c
 ..\elfc -L putchar.c
 ..\elfc -L fgetc.c
@@ -41,13 +41,15 @@
 ..\elfc -L rewind.c
 ..\elfc -L tmpnam.c
 ..\elfc -L tmpfile.c
+..\elfc -L fileno.c
+
 
 type gets.prg puts.prg putstr.prg getch.prg putch.prg fdopen.prg fclose.prg fopen.prg > stdio.lib
-type feof.prg ferror.prg clrerror.prg fputc.prg putchar.prg fgetc.prg getchar.prg >> stdio.lib
+type feof.prg ferror.prg clearerr.prg fputc.prg putchar.prg fgetc.prg getchar.prg >> stdio.lib
 type fgets.prg fputs.prg fread.prg fwrite.prg ungetc.prg _vformat.prg _vscan.prg >> stdio.lib
 type printf.prg fprintf.prg sprintf.prg vprintf.prg vfprintf.prg vsprintf.prg >> stdio.lib
 type kprintf.prg fscanf.prg scanf.prg sscanf.prg fflush.prg remove.prg rename.prg >> stdio.lib
 type fgetpos.prg fsetpos.prg fseek.prg ftell.prg perror.prg  rewind.prg tmpnam.prg >> stdio.lib
-type tmpfile.prg >> stdio.lib
+type tmpfile.prg fileno.prg >> stdio.lib
 
 copy stdio.lib ..\lib\stdio.lib

@@ -19,7 +19,7 @@ int fputs(char *s, FILE *f) {
 		asm("         call  lget16      ; put buffer pointer variable");
 		asm("           dw  0           ; offset for arg 1 ");         
 		asm("         copy  ra, rf      ; ra holds buffer pointer to string");
-		asm("         call  o_msg       ; output string to elf/os"); 
+		asm("         call  O_MSG       ; output string to elf/os"); 
   } else if (_fwrite(s, k, f) != k)
     return EOF;
   return k;
