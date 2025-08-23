@@ -36,7 +36,7 @@ This release migrates the code base to the current [Experimental SubC](https://w
 
 This release supports some basic code optimization as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms
 
-The compiler supports the [Asm/02]((https://github.com/fourstix/Asm-02)) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
+The compiler supports the [Asm/02](https://github.com/fourstix/Asm-02) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
 
 The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
 
@@ -49,6 +49,12 @@ The stdlib, stdio, ctype, and string C libraries are supported as described in t
 * The header files use `#pragma` statements so the libraries link properly.
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
+Release 2.1
+------------
+
+This release passes all the functional tests from the [Experimental version of SubC](https://www.t3x.org/subc/index.html).  No new function was added to this release, only a few minor issues were fixed in this release.  The functional test cases are included in this release.
 
 Overview
 --------
