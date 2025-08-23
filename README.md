@@ -459,9 +459,9 @@ Repository Contents
 * **/src/lib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/lib/assert**  -- Source files for ElfC assert C library
 * **/src/tests**  -- Functional test files for ElfC
-* **/src/tests/ptest1.c to ptest5.c**  -- Functional tests for pointer and array arithmetic
-* **/src/tests/libtest1.c to libtest4.c**  -- Functional tests for various library functions
-* **/src/tests/filetest1.c to filetest5.c**  -- Functional tests for buffered file functions
+  * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
+  * libtest1.c to libtest4.c  -- Functional tests for various library functions
+  * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
 * **/bin**  -- Binary files for ElfC
   * ElfC.exe -- ElfC Compiler
   * Asm02.exe -- Asm/02 assembler
