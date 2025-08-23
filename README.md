@@ -36,7 +36,7 @@ This release migrates the code base to the current [Experimental SubC](https://w
 
 This release supports some basic code optimization as described in the book [Practical Compiler Construction](https://www.t3x.org/reload/index.html) by Nils M Holms
 
-The compiler supports the [Asm/02](https://github.com/fourstix/Asm-02) and [Link/02]((https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
+The compiler supports the [Asm/02](https://github.com/fourstix/Asm-02) and [Link/02](https://github.com/fourstix/Link-02) linker better, and included files and libraries are better organized.
 
 The C runtime module `crt0` now holds the start-up code for the program.  The start up code now pushes the expected command line arguments for `main` onto the stack (`int argc` and `char **argv`) and then calls the main function.
 
