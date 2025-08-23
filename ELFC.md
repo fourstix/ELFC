@@ -167,7 +167,7 @@ The following functions were omitted from the ElfC stdio C library.
 
 * FILE\* reopen(char\* filename, char \*mode, FILE\* stream);
 * int setvbuf(FILE\* stream, char \*buf, int mode, int size);
-* int setbuf(FILE\* stream, char \*buf;
+* int setbuf(FILE\* stream, char \*buf);
 
 *Note: Elf/OS and Mini/DOS use their own buffering, and do not allow streams to be reassigned.*
 
@@ -206,9 +206,9 @@ Assert Modified Function
 
 Pre-Defined Macros
 -------------------
-* If `\_ELFCLIB\_` is defined, C code is compiled for an Elf/OS library procedure.
-* If `\_STGROM\_`  is defined, assembly code to support the STG ROM is created.
-* `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `\_STGROM\_` is defined.
+* If `_ELFCLIB_` is defined, C code is compiled for an Elf/OS library procedure.
+* If `_STGROM_`  is defined, assembly code to support the STG ROM is created.
+* `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `_STGROM_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
 * If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
@@ -227,4 +227,4 @@ Header files
 * The `float.h` header file is not supported.
 * The `locale.h` header file is not supported.
 * The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
-* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for an `#include <stdlib.h>` statement.
+* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for a single `#include <stdlib.h>` statement.
