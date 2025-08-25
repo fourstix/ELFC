@@ -451,6 +451,11 @@ Repository Contents
  
 * **/src/elfc**  -- Source files for compiling ElfC.
   * MakeElfC - Windows nmake file to compile source files. Use the command *nmake -f MakeElfC* to compile the elfc.exe file.  The command *nmake -f MakeElfC clean* will remove generated files before compiling.
+* **/src/examples** -- Example C files
+  * hello.c -- Classic C "Hello, World" example
+  * fib.c -- Demo to print series of Fibonacci numbers
+  * printfmt.c -- Demo of various printf format conversions
+  * scanfmt.c -- Demo of various scanf format conversions  
 * **/src/lib**  -- Source files for compiling ElfC C libraries
   * macro.inc -- Assembly opcodes for elfc system library files.
 * **/src/lib/include**  -- Common include files for compiling ElfC C libraries
@@ -474,11 +479,8 @@ Repository Contents
   * Link02.exe -- Link/02 linker
 * **/bin/include**  -- ElfC C Include files 
 * **/bin/lib**  -- ElfC C Library files 
-* **/examples** -- Example C files
-  * hello.c -- Classic C "Hello, World" example
-  * fib.c -- Demo to print series of Fibonacci numbers
-  * printfmt.c -- Demo of various printf format conversions
-  * scanfmt.c -- Demo of various scanf format conversions
+* **/build/examples** -- Build files for Example C files
+* **/build/tests** -- Build files for ElfC C functional test files
 * **elfc_r21.zip** -- A zip file with the Release 2.1 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
 
 License Information
