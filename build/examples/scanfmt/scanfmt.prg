@@ -1,0 +1,372 @@
+.big
+{scanfmt
+=Cfname 0000
+>0014
+=Ci 0014
+=Cch 0016
+=Cmain 0017
+/esmove 0021 00
+\esmove 0022
+:0014 00 00 00 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 ff
+?auto_err 0026
+/epush16 0029 00
+\epush16 002a
+/lstor16 002e 00
+\lstor16 002f
+/dpop16 0033 00
+:0024 fc c3 00 00 d4 00 00 00 00 d4 00 00 ff fc d4 00
+\dpop16 0034
+:0034 00 c0 00 66 45 6e 74 65 72 20 61 6e 20 69 6e 74
+:0044 65 67 65 72 20 6e 75 6d 62 65 72 20 28 62 65 74
+:0054 77 65 65 6e 20 25 64 20 61 6e 64 20 25 64 29 3a
+/epush16 0067 00
+\epush16 0068
+/epush16 006c 00
+\epush16 006d
+/epush16 0071 00
+\epush16 0072
+:0064 20 00 d4 00 00 7f ff d4 00 00 80 01 d4 00 00 00
+/Cprintf 0076 00
+\Cprintf 0077
+/esmove 0079 00
+\esmove 007a
+?auto_err 007e
+:0074 38 d4 00 00 d4 00 00 00 06 c3 00 00 c0 00 86 25
+/epush16 0087 00
+\epush16 0088
+/epush16 008c 00
+\epush16 008d
+/Cscanf 0091 00
+\Cscanf 0092
+:0084 64 00 d4 00 00 00 14 d4 00 00 00 83 d4 00 00 d4
+/esmove 0094 00
+\esmove 0095
+?auto_err 0099
+:0094 00 00 00 04 c3 00 00 c0 00 af 0a 59 6f 75 20 65
+/vpush16 00b0 00
+\vpush16 00b1
+:00a4 6e 74 65 72 65 64 20 25 69 0a 00 d4 00 00 00 14
+/epush16 00b5 00
+\epush16 00b6
+/Cprintf 00ba 00
+\Cprintf 00bb
+/esmove 00bd 00
+\esmove 00be
+?auto_err 00c2
+:00b4 d4 00 00 00 9e d4 00 00 d4 00 00 00 04 c3 00 00
+:00c4 c0 00 e1 57 68 61 74 20 69 73 20 79 6f 75 72 20
+/epush16 00e2 00
+\epush16 00e3
+:00d4 66 69 72 73 74 20 6e 61 6d 65 3f 0a 00 d4 00 00
+/Cprintf 00e7 00
+\Cprintf 00e8
+/esmove 00ea 00
+\esmove 00eb
+?auto_err 00ef
+:00e4 00 c7 d4 00 00 d4 00 00 00 02 c3 00 00 c0 00 f9
+/epush16 00fa 00
+\epush16 00fb
+/epush16 00ff 00
+\epush16 0100
+:00f4 25 31 39 73 00 d4 00 00 00 00 d4 00 00 00 f4 d4
+/Cscanf 0104 00
+\Cscanf 0105
+/esmove 0107 00
+\esmove 0108
+?auto_err 010c
+:0104 00 00 d4 00 00 00 04 c3 00 00 c0 01 1e 0a 48 65
+/epush16 011f 00
+\epush16 0120
+:0114 6c 6c 6f 2c 20 25 73 21 0a 00 d4 00 00 00 00 d4
+/epush16 0124 00
+\epush16 0125
+/Cprintf 0129 00
+\Cprintf 012a
+/esmove 012c 00
+\esmove 012d
+?auto_err 0131
+:0124 00 00 01 11 d4 00 00 d4 00 00 00 04 c3 00 00 c0
+:0134 01 53 45 6e 74 65 72 20 61 20 68 65 78 61 64 65
+:0144 63 69 6d 61 6c 20 6e 75 6d 62 65 72 3a 0a 00 d4
+/epush16 0154 00
+\epush16 0155
+/Cprintf 0159 00
+\Cprintf 015a
+/esmove 015c 00
+\esmove 015d
+?auto_err 0161
+:0154 00 00 01 36 d4 00 00 d4 00 00 00 02 c3 00 00 c0
+/epush16 016a 00
+\epush16 016b
+/epush16 016f 00
+\epush16 0170
+:0164 01 69 25 78 00 d4 00 00 00 14 d4 00 00 01 66 d4
+/Cscanf 0174 00
+\Cscanf 0175
+/esmove 0177 00
+\esmove 0178
+?auto_err 017c
+:0174 00 00 d4 00 00 00 04 c3 00 00 c0 01 94 0a 59 6f
+:0184 75 20 65 6e 74 65 72 65 72 64 20 25 23 78 0a 00
+/vpush16 0195 00
+\vpush16 0196
+/epush16 019a 00
+\epush16 019b
+/Cprintf 019f 00
+\Cprintf 01a0
+/esmove 01a2 00
+\esmove 01a3
+:0194 d4 00 00 00 14 d4 00 00 01 81 d4 00 00 d4 00 00
+?auto_err 01a7
+:01a4 00 04 c3 00 00 c0 01 c4 45 6e 74 65 72 20 61 6e
+:01b4 20 6f 63 74 61 6c 20 6e 75 6d 62 65 72 3a 0a 00
+/epush16 01c5 00
+\epush16 01c6
+/Cprintf 01ca 00
+\Cprintf 01cb
+/esmove 01cd 00
+\esmove 01ce
+?auto_err 01d2
+:01c4 d4 00 00 01 ac d4 00 00 d4 00 00 00 02 c3 00 00
+/epush16 01db 00
+\epush16 01dc
+/epush16 01e0 00
+\epush16 01e1
+:01d4 c0 01 da 25 6f 00 d4 00 00 00 14 d4 00 00 01 d7
+/Cscanf 01e5 00
+\Cscanf 01e6
+/esmove 01e8 00
+\esmove 01e9
+?auto_err 01ed
+:01e4 d4 00 00 d4 00 00 00 04 c3 00 00 c0 02 05 0a 59
+:01f4 6f 75 20 65 6e 74 65 72 65 72 64 20 25 23 6f 0a
+/vpush16 0206 00
+\vpush16 0207
+/epush16 020b 00
+\epush16 020c
+/Cprintf 0210 00
+\Cprintf 0211
+/esmove 0213 00
+:0204 00 d4 00 00 00 14 d4 00 00 01 f2 d4 00 00 d4 00
+\esmove 0214
+?auto_err 0218
+:0214 00 00 04 c3 00 00 c0 02 3b 45 6e 74 65 72 20 61
+:0224 20 6e 6f 6e 2d 73 70 61 63 65 20 63 68 61 72 61
+/epush16 023c 00
+\epush16 023d
+/Cprintf 0241 00
+\Cprintf 0242
+:0234 63 74 65 72 3a 0a 00 d4 00 00 02 1d d4 00 00 d4
+/esmove 0244 00
+\esmove 0245
+?auto_err 0249
+/epush16 0253 00
+:0244 00 00 00 02 c3 00 00 c0 02 52 20 25 63 00 d4 00
+\epush16 0254
+/epush16 0258 00
+\epush16 0259
+/Cscanf 025d 00
+\Cscanf 025e
+/esmove 0260 00
+\esmove 0261
+:0254 00 00 16 d4 00 00 02 4e d4 00 00 d4 00 00 00 04
+?auto_err 0265
+:0264 c3 00 00 c0 02 83 0a 59 6f 75 20 65 6e 74 65 72
+:0274 65 72 64 20 27 25 63 27 20 28 25 64 29 0a 00 d4
+/vpush8 0284 00
+\vpush8 0285
+/vpush8 0289 00
+\vpush8 028a
+/epush16 028e 00
+\epush16 028f
+/Cprintf 0293 00
+:0284 00 00 00 16 d4 00 00 00 16 d4 00 00 02 6a d4 00
+\Cprintf 0294
+/esmove 0296 00
+\esmove 0297
+?auto_err 029b
+:0294 00 d4 00 00 00 06 c3 00 00 c0 02 bc 45 6e 74 65
+:02a4 72 20 61 6e 79 20 66 69 76 65 20 63 68 61 72 61
+/epush16 02bd 00
+\epush16 02be
+/Cprintf 02c2 00
+\Cprintf 02c3
+:02b4 63 74 65 72 73 3a 0a 00 d4 00 00 02 a0 d4 00 00
+/esmove 02c5 00
+\esmove 02c6
+?auto_err 02ca
+:02c4 d4 00 00 00 02 c3 00 00 c0 02 d3 25 35 63 00 d4
+/lpush16 02d4 00
+\lpush16 02d5
+/epush16 02d9 00
+\epush16 02da
+/Cscanf 02de 00
+\Cscanf 02df
+/esmove 02e1 00
+\esmove 02e2
+:02d4 00 00 ff fc d4 00 00 02 cf d4 00 00 d4 00 00 00
+?auto_err 02e6
+/epush16 02e9 00
+\epush16 02ea
+/epush16 02ee 00
+\epush16 02ef
+/add16 02f3 00
+:02e4 04 c3 00 00 d4 00 00 00 00 d4 00 00 00 05 d4 00
+\add16 02f4
+/epush16 02f6 00
+\epush16 02f7
+/swap16 02fb 00
+\swap16 02fc
+/dpop16 02fe 00
+\dpop16 02ff
+/pstor8 0301 00
+\pstor8 0302
+:02f4 00 d4 00 00 00 00 d4 00 00 d4 00 00 d4 00 00 d4
+/dpop16 0304 00
+\dpop16 0305
+:0304 00 00 c0 03 1a 0a 59 6f 75 20 65 6e 74 65 72 65
+/lpush16 031b 00
+\lpush16 031c
+/epush16 0320 00
+\epush16 0321
+:0314 64 20 25 73 0a 00 d4 00 00 ff fc d4 00 00 03 09
+/Cprintf 0325 00
+\Cprintf 0326
+/esmove 0328 00
+\esmove 0329
+?auto_err 032d
+:0324 d4 00 00 d4 00 00 00 04 c3 00 00 c0 03 4b 0a 53
+:0334 63 61 6e 73 65 74 3a 20 6e 75 6d 62 65 72 73 20
+/epush16 034c 00
+\epush16 034d
+/Cprintf 0351 00
+\Cprintf 0352
+:0344 6f 6e 6c 79 3a 0a 00 d4 00 00 03 32 d4 00 00 d4
+/esmove 0354 00
+\esmove 0355
+?auto_err 0359
+:0354 00 00 00 02 c3 00 00 c0 03 68 20 25 31 39 5b 30
+/lpush16 0369 00
+\lpush16 036a
+/epush16 036e 00
+\epush16 036f
+/Cscanf 0373 00
+:0364 2d 39 5d 00 d4 00 00 ff fc d4 00 00 03 5e d4 00
+\Cscanf 0374
+/esmove 0376 00
+\esmove 0377
+?auto_err 037b
+:0374 00 d4 00 00 00 04 c3 00 00 c0 03 91 0a 59 6f 75
+/lpush16 0392 00
+\lpush16 0393
+:0384 20 65 6e 74 65 72 65 64 20 25 73 0a 00 d4 00 00
+/epush16 0397 00
+\epush16 0398
+/Cprintf 039c 00
+\Cprintf 039d
+/esmove 039f 00
+\esmove 03a0
+:0394 ff fc d4 00 00 03 80 d4 00 00 d4 00 00 00 04 c3
+?auto_err 03a4
+:03a4 00 00 c0 03 c9 0a 5e 53 63 61 6e 73 65 74 3a 20
+:03b4 6e 6f 20 63 61 70 69 74 61 6c 20 6c 65 74 74 65
+/epush16 03ca 00
+\epush16 03cb
+/Cprintf 03cf 00
+\Cprintf 03d0
+/esmove 03d2 00
+\esmove 03d3
+:03c4 72 73 3a 0a 00 d4 00 00 03 a9 d4 00 00 d4 00 00
+?auto_err 03d7
+:03d4 00 02 c3 00 00 c0 03 e7 20 25 31 39 5b 5e 41 2d
+/lpush16 03e8 00
+\lpush16 03e9
+/epush16 03ed 00
+\epush16 03ee
+/Cscanf 03f2 00
+\Cscanf 03f3
+:03e4 5a 5d 00 d4 00 00 ff fc d4 00 00 03 dc d4 00 00
+/esmove 03f5 00
+\esmove 03f6
+?auto_err 03fa
+:03f4 d4 00 00 00 04 c3 00 00 c0 04 10 0a 59 6f 75 20
+/lpush16 0411 00
+\lpush16 0412
+:0404 65 6e 74 65 72 65 64 20 25 73 0a 00 d4 00 00 ff
+/epush16 0416 00
+\epush16 0417
+/Cprintf 041b 00
+\Cprintf 041c
+/esmove 041e 00
+\esmove 041f
+?auto_err 0423
+:0414 fc d4 00 00 03 ff d4 00 00 d4 00 00 00 04 c3 00
+/esmove 0426 00
+\esmove 0427
+?auto_err 042b
+/escheck 042f 00
+\escheck 0430
+:0424 00 d4 00 00 00 04 c3 00 00 e2 d4 00 00 60 72 ab
+:0434 f0 bb d5
++002b
++0036
++0073
++0081
++0089
++008e
++009c
++00b2
++00b7
++00c5
++00e4
++00f2
++00fc
++0101
++010f
++0121
++0126
++0134
++0156
++0164
++016c
++0171
++017f
++0197
++019c
++01aa
++01c7
++01d5
++01dd
++01e2
++01f0
++0208
++020d
++021b
++023e
++024c
++0255
++025a
++0268
++0286
++028b
++0290
++029e
++02bf
++02cd
++02db
++02eb
++0307
++0322
++0330
++034e
++035c
++0370
++037e
++0399
++03a7
++03cc
++03da
++03ef
++03fd
++0418
+}

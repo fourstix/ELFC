@@ -1,0 +1,295 @@
+.big
+{printfmt
+=Ci 0000
+=Cj 0002
+=Cstr 0004
+=Cmain 000b
+:0000 32 00 d4 fe 73 74 72 69 6e 67 00 e2 9b 73 8b 73
+:0010 87 ab 97 bb c0 00 25 49 6e 74 20 66 6f 72 6d 61
+/epush16 0026 00
+\epush16 0027
+/Cprintf 002b 00
+\Cprintf 002c
+/esmove 002e 00
+\esmove 002f
+:0020 74 73 3a 0a 00 d4 00 00 00 17 d4 00 00 d4 00 00
+?auto_err 0033
+:0030 00 02 c3 00 00 c0 00 48 70 6c 61 69 6e 3a 20 5f
+/vpush16 0049 00
+\vpush16 004a
+/vpush16 004e 00
+\vpush16 004f
+:0040 25 64 5f 25 64 5f 0a 00 d4 00 00 00 02 d4 00 00
+/epush16 0053 00
+\epush16 0054
+/Cprintf 0058 00
+\Cprintf 0059
+/esmove 005b 00
+\esmove 005c
+:0050 00 00 d4 00 00 00 38 d4 00 00 d4 00 00 00 06 c3
+?auto_err 0060
+:0060 00 00 c0 00 78 2b 20 66 6c 61 67 3a 20 5f 25 2b
+/vpush16 0079 00
+\vpush16 007a
+/vpush16 007e 00
+\vpush16 007f
+:0070 64 5f 25 2b 64 5f 0a 00 d4 00 00 00 02 d4 00 00
+/epush16 0083 00
+\epush16 0084
+/Cprintf 0088 00
+\Cprintf 0089
+/esmove 008b 00
+\esmove 008c
+:0080 00 00 d4 00 00 00 65 d4 00 00 d4 00 00 00 06 c3
+?auto_err 0090
+:0090 00 00 c0 00 a8 73 69 7a 65 20 34 3a 20 5f 25 34
+/vpush16 00a9 00
+\vpush16 00aa
+/vpush16 00ae 00
+\vpush16 00af
+:00a0 64 5f 25 34 64 5f 0a 00 d4 00 00 00 02 d4 00 00
+/epush16 00b3 00
+\epush16 00b4
+/Cprintf 00b8 00
+\Cprintf 00b9
+/esmove 00bb 00
+\esmove 00bc
+:00b0 00 00 d4 00 00 00 95 d4 00 00 d4 00 00 00 06 c3
+?auto_err 00c0
+:00c0 00 00 c0 00 db 30 34 20 66 6c 61 67 3a 20 5f 25
+/vpush16 00dc 00
+\vpush16 00dd
+:00d0 30 34 64 5f 25 30 34 64 5f 0a 00 d4 00 00 00 02
+/vpush16 00e1 00
+\vpush16 00e2
+/epush16 00e6 00
+\epush16 00e7
+/Cprintf 00eb 00
+\Cprintf 00ec
+/esmove 00ee 00
+\esmove 00ef
+:00e0 d4 00 00 00 00 d4 00 00 00 c5 d4 00 00 d4 00 00
+?auto_err 00f3
+:00f0 00 06 c3 00 00 c0 01 0e 2d 34 20 66 6c 61 67 3a
+/vpush16 010f 00
+:0100 20 5f 25 2d 34 64 5f 25 2d 34 64 5f 0a 00 d4 00
+\vpush16 0110
+/vpush16 0114 00
+\vpush16 0115
+/epush16 0119 00
+\epush16 011a
+/Cprintf 011e 00
+\Cprintf 011f
+:0110 00 00 02 d4 00 00 00 00 d4 00 00 00 f8 d4 00 00
+/esmove 0121 00
+\esmove 0122
+?auto_err 0126
+:0120 d4 00 00 00 06 c3 00 00 c0 01 41 20 34 20 66 6c
+:0130 61 67 3a 20 5f 25 20 34 64 5f 25 20 34 64 5f 0a
+/vpush16 0142 00
+\vpush16 0143
+/vpush16 0147 00
+\vpush16 0148
+/epush16 014c 00
+\epush16 014d
+:0140 00 d4 00 00 00 02 d4 00 00 00 00 d4 00 00 01 2b
+/Cprintf 0151 00
+\Cprintf 0152
+/esmove 0154 00
+\esmove 0155
+?auto_err 0159
+:0150 d4 00 00 d4 00 00 00 06 c3 00 00 c0 01 72 2b 30
+:0160 34 3a 20 5f 25 2b 30 34 64 5f 25 2b 30 34 64 5f
+/vpush16 0173 00
+\vpush16 0174
+/vpush16 0178 00
+\vpush16 0179
+/epush16 017d 00
+\epush16 017e
+:0170 0a 00 d4 00 00 00 02 d4 00 00 00 00 d4 00 00 01
+/Cprintf 0182 00
+\Cprintf 0183
+/esmove 0185 00
+\esmove 0186
+?auto_err 018a
+:0180 5e d4 00 00 d4 00 00 00 06 c3 00 00 c0 01 9d 49
+/epush16 019e 00
+\epush16 019f
+:0190 6e 74 20 30 36 3a 25 30 36 69 21 0a 00 d4 00 00
+/epush16 01a3 00
+\epush16 01a4
+/Cprintf 01a8 00
+\Cprintf 01a9
+/esmove 01ab 00
+\esmove 01ac
+:01a0 00 03 d4 00 00 01 8f d4 00 00 d4 00 00 00 04 c3
+?auto_err 01b0
+:01b0 00 00 c0 01 cf 50 6f 69 6e 74 65 72 20 25 70 20
+:01c0 61 6e 64 20 73 74 72 69 6e 67 20 25 73 0a 00 d4
+/epush16 01d0 00
+\epush16 01d1
+/epush16 01d5 00
+\epush16 01d6
+/epush16 01da 00
+\epush16 01db
+/Cprintf 01df 00
+:01d0 00 00 00 04 d4 00 00 00 04 d4 00 00 01 b5 d4 00
+\Cprintf 01e0
+/esmove 01e2 00
+\esmove 01e3
+?auto_err 01e7
+:01e0 00 d4 00 00 00 06 c3 00 00 c0 01 fd 43 68 61 72
+/epush16 01fe 00
+\epush16 01ff
+:01f0 61 63 74 65 72 20 25 63 20 25 63 0a 00 d4 00 00
+/deref8 0203 00
+\deref8 0204
+/epush16 0206 00
+\epush16 0207
+/epush16 020b 00
+\epush16 020c
+:0200 00 04 d4 00 00 d4 00 00 00 71 d4 00 00 01 ec d4
+/Cprintf 0210 00
+\Cprintf 0211
+/esmove 0213 00
+\esmove 0214
+?auto_err 0218
+:0210 00 00 d4 00 00 00 06 c3 00 00 c0 02 28 48 65 78
+/vpush16 0229 00
+\vpush16 022a
+/vpush16 022e 00
+\vpush16 022f
+:0220 20 25 78 20 25 58 0a 00 d4 00 00 00 02 d4 00 00
+/epush16 0233 00
+\epush16 0234
+/Cprintf 0238 00
+\Cprintf 0239
+/esmove 023b 00
+\esmove 023c
+:0230 00 00 d4 00 00 02 1d d4 00 00 d4 00 00 00 06 c3
+?auto_err 0240
+:0240 00 00 c0 02 57 41 6c 74 20 48 65 78 3a 20 25 23
+/vpush16 0258 00
+\vpush16 0259
+/vpush16 025d 00
+\vpush16 025e
+:0250 78 20 25 23 58 0a 00 d4 00 00 00 02 d4 00 00 00
+/epush16 0262 00
+\epush16 0263
+/Cprintf 0267 00
+\Cprintf 0268
+/esmove 026a 00
+\esmove 026b
+?auto_err 026f
+:0260 00 d4 00 00 02 45 d4 00 00 d4 00 00 00 06 c3 00
+:0270 00 c0 02 81 4f 63 74 61 6c 20 25 6f 20 25 6f 0a
+/vpush16 0282 00
+\vpush16 0283
+/vpush16 0287 00
+\vpush16 0288
+/epush16 028c 00
+\epush16 028d
+:0280 00 d4 00 00 00 02 d4 00 00 00 00 d4 00 00 02 74
+/Cprintf 0291 00
+\Cprintf 0292
+/esmove 0294 00
+\esmove 0295
+?auto_err 0299
+:0290 d4 00 00 d4 00 00 00 06 c3 00 00 c0 02 b1 41 6c
+:02a0 74 20 4f 63 74 61 6c 20 25 23 6f 20 25 23 6f 0a
+/vpush16 02b2 00
+\vpush16 02b3
+/vpush16 02b7 00
+\vpush16 02b8
+/epush16 02bc 00
+\epush16 02bd
+:02b0 00 d4 00 00 00 02 d4 00 00 00 00 d4 00 00 02 9e
+/Cprintf 02c1 00
+\Cprintf 02c2
+/esmove 02c4 00
+\esmove 02c5
+?auto_err 02c9
+:02c0 d4 00 00 d4 00 00 00 06 c3 00 00 c0 02 f4 4e 75
+:02d0 6d 62 65 72 20 63 68 61 72 61 63 74 65 72 73 20
+:02e0 77 72 69 74 74 65 6e 20 73 6f 20 66 61 72 3a 20
+/epush16 02f5 00
+\epush16 02f6
+/Cprintf 02fa 00
+\Cprintf 02fb
+/esmove 02fd 00
+\esmove 02fe
+:02f0 25 6e 0a 00 d4 00 00 02 ce d4 00 00 d4 00 00 00
+?auto_err 0302
+:0300 02 c3 00 00 c0 03 1b 45 73 63 61 70 65 20 66 6f
+/epush16 031c 00
+\epush16 031d
+:0310 72 20 25 25 20 73 69 67 6e 0a 00 d4 00 00 03 07
+/Cprintf 0321 00
+\Cprintf 0322
+/esmove 0324 00
+\esmove 0325
+?auto_err 0329
+/escheck 032d 00
+\escheck 032e
+:0320 d4 00 00 d4 00 00 00 02 c3 00 00 e2 d4 00 00 60
+:0330 72 ab f0 bb d5
++0015
++0028
++0036
++004b
++0050
++0055
++0063
++007b
++0080
++0085
++0093
++00ab
++00b0
++00b5
++00c3
++00de
++00e3
++00e8
++00f6
++0111
++0116
++011b
++0129
++0144
++0149
++014e
++015c
++0175
++017a
++017f
++018d
++01a5
++01b3
++01d2
++01d7
++01dc
++01ea
++0200
++020d
++021b
++022b
++0230
++0235
++0243
++025a
++025f
++0264
++0272
++0284
++0289
++028e
++029c
++02b4
++02b9
++02be
++02cc
++02f7
++0305
++031e
+}
