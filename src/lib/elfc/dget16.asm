@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; dget16 - get a 2-byte value from expression stack 

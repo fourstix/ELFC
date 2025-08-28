@@ -8,50 +8,7 @@
 
 /* don't define all external functions inside C library procdures to prevent dupes */
 #ifndef _ELFCLIB_
-#pragma             extrn Cstdin
-#pragma             extrn Cstdout
-#pragma             extrn Cstderr
-#pragma             extrn Cputs
-#pragma             extrn Cputstr
-#pragma             extrn Cgets
-#pragma             extrn Cputch
-#pragma             extrn Cgetch
-#pragma             extrn Cputchar
-#pragma             extrn Cgetchar
-#pragma             extrn Cfdopen
-#pragma             extrn Cfclose
-#pragma             extrn Cfopen
-#pragma             extrn Cferror
-#pragma             extrn Cfeof
-#pragma             extrn Cclearerr
-#pragma             extrn Cfgetc
-#pragma             extrn Cfputc
-#pragma             extrn Cfgets
-#pragma             extrn Cfputs
-#pragma             extrn Cungetc
-#pragma             extrn Cfread
-#pragma             extrn Cfwrite
-#pragma             extrn Cfflush
-#pragma             extrn Cfprintf
-#pragma             extrn Ckprintf
-#pragma             extrn Cprintf
-#pragma             extrn Csprintf
-#pragma             extrn Cvfprintf
-#pragma             extrn Cvprintf
-#pragma             extrn Cvsprintf
-#pragma             extrn Cfscanf
-#pragma             extrn Cscanf
-#pragma             extrn Csscanf
-#pragma             extrn Cfgetpos
-#pragma             extrn Cfsetpos
-#pragma             extrn Cfseek
-#pragma             extrn Cftell
-#pragma             extrn Cperror
-#pragma             extrn Crewind
-#pragma             extrn Cremove
-#pragma             extrn Ctmpnam
-#pragma             extrn Ctmpfile
-#pragma             extrn Cfileno
+#pragma #include include/stdio.inc
 #endif
 
 /* Maximum size of string in Elf/OS is 255 bytes */

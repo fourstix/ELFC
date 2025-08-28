@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; vpush8 - push a global or static char type variable 

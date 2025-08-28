@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; vstor16 - get a 2-byte value from the expression stack

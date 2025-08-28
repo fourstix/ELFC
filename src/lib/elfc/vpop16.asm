@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; vpop16 - pop 2-byte value from expression stack into a

@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lstor8 - get a char value from the expression stack

@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 #include      ../include/bios.inc
 #include      ../include/kernel.inc
 

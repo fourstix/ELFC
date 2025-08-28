@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;-----------------------------------------------------
 ; Invert a 16-bit integer on expression stack       

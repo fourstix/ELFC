@@ -1,19 +1,19 @@
 #include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
-; lget8 - get a 1-byte value from a local variable
-; into register ra. 
+; lset8 - set a 1-byte local variable with the value
+; in register ra. 
 ; registers used:
 ;   R9 - local data value pointer
-;   RA - 2-byte variable value
+;   RA.0 - 1-byte variable value
 ;   RB - base pointer to local data in expression stack
-; usage:  call lget8
+; usage:  call lget16
 ;           dw loffset  ; index to local variable (signed)
-; returns: RA with 1-byte variable value
+; returns: 1-byte local variable set with byte value from RA
 ; notes: leaves 16-bit value on expression stack
 ;        ESP is unchanged
 ;---------------------------------------------------------
-              proc lget8         
+              proc lset8         
             ;---- set up pointer to local variable  
             sex     r2      ; make sure X = SP
             lda     r6      ; get the MSB of offset
@@ -31,9 +31,7 @@
             inc     r9      ; move pointer up to local data
             
             ;---- copy local variable into ra
-            ldn     r9      ; get LSB from local variable 
-            plo     ra      ; save in LSB of ra
-            ldi     0       ; pad MSB with zero
-            phi     ra      ; save in ra
+            glo     ra      ; get LSB of ra
+            str     r9      ; save as local variable 
             rtn             ; return to caller
               endp 

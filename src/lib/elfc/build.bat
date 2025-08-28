@@ -8,7 +8,6 @@
 ..\asm02 -L gt16.asm
 ..\asm02 -L gte16.asm
 ..\asm02 -L itoa16.asm
-..\asm02 -L lfsrshift.asm
 ..\asm02 -L lt16.asm
 ..\asm02 -L lte16.asm
 ..\asm02 -L mdnorm16.asm
@@ -17,7 +16,6 @@
 ..\asm02 -L ne16.asm
 ..\asm02 -L neg16.asm
 ..\asm02 -L or16.asm
-..\asm02 -L rnd16.asm
 ..\asm02 -L sgn16.asm
 ..\asm02 -L sub16.asm
 ..\asm02 -L tobcd16.asm
@@ -89,8 +87,8 @@
 type epush16.prg dpop16.prg vpush16.prg vpop16.prg dpush16.prg dpush8.prg > elfc.lib
 type epush8.prg vpush8.prg lstor16.prg linit16.prg esmove.prg >> elfc.lib
 type abs16.prg add16.prg and16.prg atoi16.prg div16.prg eq16.prg false16.prg >> elfc.lib
-type gt16.prg gte16.prg itoa16.prg lfsrshift.prg lt16.prg lte16.prg mdnorm16.prg >> elfc.lib
-type mod16.prg mul16.prg ne16.prg neg16.prg or16.prg rnd16.prg sgn16.prg sub16.prg >> elfc.lib
+type gt16.prg gte16.prg itoa16.prg lt16.prg lte16.prg mdnorm16.prg >> elfc.lib
+type mod16.prg mul16.prg ne16.prg neg16.prg or16.prg sgn16.prg sub16.prg >> elfc.lib
 type tobcd16.prg true16.prg xor16.prg not16.prg bool16.prg inv16.prg >> elfc.lib
 type shl16.prg shr16.prg vstor16.prg vstor8.prg lstor8.prg swap16.prg dget16.prg >> elfc.lib
 type lpush16.prg lpush8.prg deref16.prg deref8.prg laddr16.prg pstor16.prg pstor8.prg >> elfc.lib

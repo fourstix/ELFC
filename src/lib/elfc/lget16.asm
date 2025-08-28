@@ -1,4 +1,4 @@
-#include      ../macros.inc 
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lget16 - get a 2-byte local variable and save it 

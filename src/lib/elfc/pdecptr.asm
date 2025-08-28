@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; pdecptr - decrement a pointer value referenced by the  
@@ -12,6 +12,7 @@
 ; note: leaves the expression stack and ESP unchanged
 ;---------------------------------------------------------
                 proc pdecptr
+
               sex     r2      ; make sure X = SP 
               lda     ra      ; get pointer LSB referenced by pointer
               plo     r8      ; save in temp register
@@ -23,7 +24,7 @@
               lda     r6
               plo     rc      ; rc has pointer size
 
-              sub16   r8, rc  ; decrement temp pointer by size
+              subr16  r8, rc  ; decrement temp pointer by size
               
               ghi     r8      ; get MSB from decremented value
               str     ra      ; save in referenced pointer MSB

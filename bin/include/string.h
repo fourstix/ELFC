@@ -8,29 +8,7 @@
 
 #ifndef _ELFCLIB_
 #pragma .link .library string.lib
-
-#pragma             extrn Cmemchr
-#pragma             extrn Cmemcmp
-#pragma             extrn Cmemcpy
-#pragma             extrn Cmemmove
-#pragma             extrn Cmemset
-#pragma             extrn Cstrcat
-#pragma             extrn Cstrchr
-#pragma             extrn Cstrcmp
-#pragma             extrn Cstrcpy
-#pragma             extrn Cstrcspn
-#pragma             extrn Cstrdup
-#pragma             extrn Cstrerror
-#pragma             extrn Cstrlen
-#pragma             extrn Cstrncat
-#pragma             extrn Cstrncmp
-#pragma             extrn Cstrncpy
-#pragma             extrn Cstrlcpy
-#pragma             extrn Cstrpbrk
-#pragma             extrn Cstrrchr
-#pragma             extrn Cstrspn
-#pragma             extrn Cstrstr
-#pragma             extrn Cstrtok
+#pragma #include include/string.inc
 #endif
 
 #ifndef EOF

@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ******************************************************
 ; ***** Multiply top 2 numbers on expression stack *****

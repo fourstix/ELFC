@@ -1,0 +1,13 @@
+             extrn  Cisalnum 
+             extrn  Cisalpha
+             extrn  Ciscntrl
+             extrn  Cisdigit
+             extrn  Cisgraph
+             extrn  Cislower
+             extrn  Cisprint
+             extrn  Cispunct
+             extrn  Cisspace
+             extrn  Cisupper
+             extrn  Cisxdigit
+             extrn  Ctolower
+             extrn  Ctoupper

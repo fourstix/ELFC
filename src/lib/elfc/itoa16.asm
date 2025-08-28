@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ***************************************************
 ; ***** Output 16-bit integer                   *****
@@ -71,4 +71,3 @@ itoaz:        ghi     r8
               lbr     itoa3
 
               endp
-

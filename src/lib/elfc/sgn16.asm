@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ***********************************************
 ; ***** Get sign of top of expression stack *****
@@ -33,4 +33,3 @@ sgn0:         dec     r7               ; no need to touch if zero
               rtn                      ; and return to caller
 
               endp
-

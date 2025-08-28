@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lpinc16 - increment a local pointer variable located 
@@ -42,7 +42,7 @@
             ldn     r9      ; get MSB of variable value
             phi     r8      ; save in temp register
             
-            add16   r8, rc  ; increment temp value
+            addr16  r8, rc  ; increment temp value
             
             ghi     r8    ; get MSB of incremented value
             str     r9    ; save in MSB of variable

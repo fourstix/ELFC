@@ -11,47 +11,34 @@
 
 /* don't define all external functions inside C libraries to prevent dupes */
 #ifndef _ELFCLIB_ 
-#pragma             extrn C_init
-#pragma             extrn C_fdinit
-#pragma             extrn C_fdvalid
-#pragma             extrn C_fdcnt
-#pragma             extrn Cabort
-#pragma             extrn Cabs
-#pragma             extrn Catexit      
-#pragma             extrn Cexit            
-#pragma             extrn Cmalloc
-#pragma             extrn Ccalloc 
-#pragma             extrn Crealloc
-#pragma             extrn Cfree  
-#pragma             extrn Catoi 
-#pragma             extrn Citoa           
-#pragma             extrn Citox
-#pragma             extrn Citou           
-#pragma             extrn Cdiv 
-#pragma             extrn Cbsearch              
-#pragma             extrn Cqsort
-#pragma             extrn Crand
-#pragma             extrn Csrand
-#pragma             extrn Ccreat
-#pragma             extrn Copen
-#pragma             extrn Cclose
-#pragma             extrn Cread
-#pragma             extrn Cwrite
-#pragma             extrn Clseek
-#pragma             extrn Cunlink
-#pragma             extrn Crename
-#pragma             extrn Cmin
-#pragma             extrn Cmax
+#pragma #include include/stdlib.inc
 #endif
 
 /* file descriptor constants */
+#ifndef FD_MAX
+#define FD_MAX  7
+#endif
+
+/* start of system file descriptors */
+#ifndef FD_SYS
+#define FD_SYS  3
+#endif
+
 #ifndef FD_SIZE
 #define FD_SIZE   534
 #endif
 
+/* file descriptor constants */
 #ifndef FD_MAX
-#define FD_MAX  4
+#define FD_MAX  7
 #endif
+
+#ifndef FD_SIZE
+#define FD_SIZE   534
+#endif
+
+extern int _fdtable[FD_MAX];
+
 
 /* file position constnts */
 #ifndef SEEK_SET
@@ -139,7 +126,7 @@ typedef struct {
 
 void _init(void);
 int _fdinit(void);
-int _fdvalid(int fd);
+int _fildes(int fd);
 void abort(void);
 void exit(int n);
 int atexit(int (*fn)());

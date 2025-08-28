@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
               proc    div16
 
@@ -116,4 +116,3 @@ divno:        ghi     rd
               lbr     divst
 
               endp
-

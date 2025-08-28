@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ******************************************************
 ; ***** Xor two 16-bit numbers on expression stack *****

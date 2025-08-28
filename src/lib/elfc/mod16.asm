@@ -1,7 +1,7 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; *****************************************************************
-; ***** Compute Module of top two numbers on expression stack *****
+; ***** Compute Modulo of top two numbers on expression stack *****
 ; ***** R7 - pointer to expression stack                      *****
 ; *****************************************************************
               proc    mod16
@@ -20,4 +20,3 @@
               rtn                      ; then return to caller
 
               endp
-

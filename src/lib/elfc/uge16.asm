@@ -1,7 +1,7 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ************************************************
-; Compare 2 unsigned 16-bit values for TOS >= SOS 
+; Compare 2 unsigned 16-bit values for SOS >= TOS 
 ; R7 - Pointer to expression stack      
 ; ************************************************
               proc    uge16

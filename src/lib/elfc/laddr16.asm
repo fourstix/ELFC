@@ -1,4 +1,4 @@
-#include      ../macros.inc 
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; laddr16 - put the address of a local variable onto 
