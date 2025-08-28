@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ************************************************
 ; Compare 2 unsigned 16-bit values for SOS > TOS 

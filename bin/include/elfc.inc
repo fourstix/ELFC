@@ -14,7 +14,6 @@
         	extrn   gt16
         	extrn   gte16
         	extrn   itoa16
-        	extrn   lfsrshift
         	extrn   lt16
         	extrn   lte16
         	extrn   mdnorm16
@@ -23,7 +22,6 @@
         	extrn   ne16
         	extrn   neg16
         	extrn   or16
-        	extrn   rnd16
         	extrn   sgn16
         	extrn   sub16
         	extrn   tobcd16

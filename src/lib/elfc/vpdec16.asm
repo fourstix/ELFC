@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; vpdec16 - decrement a global or static pointer to 
@@ -17,7 +17,8 @@
 ;   the same order (LSB first) as auto variables on the
 ;   expression stack
 ;---------------------------------------------------------
-              proc vpdec16          
+              proc vpdec16
+            
             sex     r2      ; make sure X = SP 
 
             lda     r6      ; set up pointer to variable
@@ -35,7 +36,7 @@
             ldn     r9      ; get MSB of variable value
             phi     r8      ; save in temp register
             
-            sub16   r8, rc  ; decrement pointer by size 
+            subr16  r8, rc  ; decrement pointer by size 
             
             ghi     r8      ; get MSB of decremented value
             str     r9      ; save in MSB of variable

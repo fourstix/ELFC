@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; **************************************************
 ; ***** Boolean Not of a 16-bit value          *****

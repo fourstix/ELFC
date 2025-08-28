@@ -1,4 +1,4 @@
-#include      ../macros.inc 
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lget8 - get a 1-byte value from a local variable

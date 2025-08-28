@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; pincptr - increment a pointer value referenced by the  
@@ -12,6 +12,7 @@
 ; note: leaves the expression stack and ESP unchanged
 ;---------------------------------------------------------
                 proc pincptr
+
               sex     r2      ; make sure X = SP 
               
               lda     r6      ; set up pointer size
@@ -24,7 +25,7 @@
               ldn     ra      ; get the pointer MSB referenced by pointer
               phi     r8      ; save in temp register
               
-              add16   r8, rc  ; increment temp pointer by size
+              addr16  r8, rc  ; increment temp pointer by size
               
               ghi     r8      ; get MSB from incremented value
               str     ra      ; save in referenced pointer MSB

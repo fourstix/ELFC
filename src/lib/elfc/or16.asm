@@ -1,7 +1,7 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ******************************************************
-; ***** Or two 16-bit numbers on expression stack  *****
+; ***** OR two 16-bit numbers on expression stack  *****
 ; ***** R7 - pointer to expression  stack          *****
 ; ***** Numbers on expressin stack are LSB first   *****
 ; ******************************************************
@@ -22,4 +22,3 @@
               rtn                      ; and return to caller
 
               endp
-

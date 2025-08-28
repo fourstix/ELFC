@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; *****************************************************
 ; ***** Negate 16-bit integer on expression stack *****
@@ -21,4 +21,3 @@
               rtn                      ; and return to caller
 
               endp
-

@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ******************************************************
 ; ***** Add two 16-bit numbers on expression stack *****
@@ -22,4 +22,3 @@
               rtn                      ; and return to caller
 
               endp
-

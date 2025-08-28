@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; **************************************************
 ; ***** Compare 2 16-bit values for inequality *****
@@ -20,4 +20,3 @@
               lbr     false16          ; otherwise not equal
 
               endp
-

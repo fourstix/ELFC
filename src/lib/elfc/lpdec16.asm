@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lpdec16 - decrement a local pointer variable located 
@@ -42,7 +42,7 @@
             ldn     r9      ; get MSB of variable value
             phi     r8      ; save in temp register
             
-            sub16   r8, rc  ; decrement temp value
+            subr16  r8, rc  ; decrement temp value
             
             ghi     r8      ; get MSB of decremented value
             str     r9      ; save in MSB of variable

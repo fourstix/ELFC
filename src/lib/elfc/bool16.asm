@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------------
 ; Convert 16-bit value on expression stack to Boolean (1 or 0) 

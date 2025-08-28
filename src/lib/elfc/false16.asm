@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ********************************************
 ; ***** Push .false. to expression stack *****
@@ -14,4 +14,3 @@
               rtn                      ; return to caller
 
               endp
-

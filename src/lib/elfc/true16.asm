@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ********************************************
 ; ***** Push .true. to expression stack  *****

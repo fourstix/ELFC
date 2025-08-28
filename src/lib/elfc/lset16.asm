@@ -1,4 +1,4 @@
-#include      ../macros.inc 
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lset16 - set a 2-byte local variable with the  

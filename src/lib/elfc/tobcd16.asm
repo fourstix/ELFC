@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; **************************************
 ; ***** Convert RC to bcd in M[RF] *****
@@ -88,4 +88,3 @@ tobcdlp4:     lda     rf
               rtn
 
               endp
-

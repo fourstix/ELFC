@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; *********************************************************
 ; ***** Get absolute value of top of expression stack *****
@@ -18,4 +18,3 @@
               rtn                      ; and return to caller
 
               endp
-

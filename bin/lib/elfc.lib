@@ -76,7 +76,8 @@
 }
 .big
 {div16
-?mdnorm16 000c
+/mdnorm16 000c 00
+\mdnorm16 000d
 :0000 e7 60 72 ad 72 bd 72 ac f0 bc e2 d4 00 00 ae 8d
 :0010 ca 00 1e 9d ca 00 1e e7 f8 00 73 73 e2 d5 f8 00
 :0020 bf af b8 a8 18 9d fa 80 ca 00 3a 8d fe ad 9d 7e
@@ -100,7 +101,8 @@
 }
 .big
 {eq16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?false16 000c
 :0000 d4 00 00 e7 60 72 f1 e2 c2 00 00 c0 00 00
@@ -111,7 +113,8 @@
 }
 .big
 {gt16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?false16 0009
 ?true16 000e
 :0000 d4 00 00 e7 60 72 f1 e2 c2 00 00 07 fe cb 00 00
@@ -120,7 +123,8 @@
 }
 .big
 {gte16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?true16 000e
 :0000 d4 00 00 e7 60 72 f1 e2 c2 00 00 07 fe cb 00 00
@@ -131,7 +135,8 @@
 {itoa16
 :0000 82 ff 06 a2 92 7f 00 b2 82 af 92 bf 1f 9c fe cb
 :0010 00 1f f8 2d 5d 1d 8c fb ff ac 9c fb ff bc 1c d4
-?tobcd16 0020
+/tobcd16 0020 00
+\tobcd16 0021
 :0020 00 00 82 af 92 bf 1f f8 05 a8 f8 04 b8 4f c2 00
 :0030 4b 52 f8 00 b8 02 fc 30 5d 1d 28 88 ca 00 2d 82
 :0040 fc 06 a2 92 7c 00 b2 f8 00 5d d5 98 c2 00 36 ff
@@ -143,19 +148,9 @@
 +0053
 }
 .big
-{lfsr_shift
-/LFSR_ 0001
-\LFSR_ 0004
-:0000 f8 00 b9 f8 00 a9 19 19 19 09 ae f6 52 8e f3 ae
-:0010 02 f6 52 8e f3 ae 02 f6 f6 52 8e f3 ae 02 f6 f6
-:0020 52 8e f3 ae 29 29 29 09 fe 7e 52 8e f3 fb 01 f6
-:0030 09 76 59 19 09 76 59 19 09 76 59 19 09 76 59 2c
-:0040 8c ca 00 00 d5
-+0042
-}
-.big
 {lt16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?false16 0009
 ?true16 000e
 :0000 d4 00 00 e7 60 72 f1 e2 c2 00 00 07 fe c3 00 00
@@ -164,7 +159,8 @@
 }
 .big
 {lte16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?true16 000e
 :0000 d4 00 00 e7 60 72 f1 e2 c2 00 00 07 fe c3 00 00
@@ -181,12 +177,14 @@
 }
 .big
 {mod16
-?div16 0001
+/div16 0001 00
+\div16 0002
 :0000 d4 00 00 17 17 9c 57 27 8c 57 27 d5
 }
 .big
 {mul16
-?mdnorm16 000c
+/mdnorm16 000c 00
+\mdnorm16 000d
 :0000 e7 60 72 ad 72 bd 72 ac f0 bc e2 d4 00 00 ae f8
 :0010 00 bf af 8d ca 00 30 9d ca 00 30 8e f6 cb 00 29
 :0020 8f fb ff af 9f fb ff bf 1f e7 9f 73 8f 73 e2 d5
@@ -200,7 +198,8 @@
 }
 .big
 {ne16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?false16 000c
 :0000 d4 00 00 e7 60 72 f1 e2 ca 00 00 c0 00 00
@@ -213,16 +212,6 @@
 .big
 {or16
 :0000 e7 60 72 60 f1 73 72 60 f1 73 27 e2 d5
-}
-.big
-{rnd16
-?lfsr_shift 0004
-/LFSR_ 0007
-\LFSR_ 000a
-:0000 f8 10 ac d4 00 00 f8 00 b9 f8 00 a9 49 af 09 bf
-:0010 17 47 a9 07 b9 9f fa 7f 57 27 8f 57 27 99 57 27
-?mod16 0024
-:0020 89 57 27 c0 00 00
 }
 .big
 {sgn16
@@ -472,7 +461,8 @@ v005f
 }
 .big
 {ugt16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?false16 0009
 ?true16 000c
 ?false16 000f
@@ -481,7 +471,8 @@ v005f
 }
 .big
 {uge16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?true16 000c
 ?false16 000f
@@ -490,7 +481,8 @@ v005f
 }
 .big
 {ult16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?false16 0009
 ?true16 000c
 ?false16 000f
@@ -499,7 +491,8 @@ v005f
 }
 .big
 {ule16
-?sub16 0001
+/sub16 0001 00
+\sub16 0002
 ?true16 0009
 ?true16 000c
 ?false16 000f

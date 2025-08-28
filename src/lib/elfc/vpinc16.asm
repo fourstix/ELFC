@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; vpinc16 - increment a global or static pointer to a 
@@ -17,7 +17,8 @@
 ;   the same order (LSB first) as auto variables on the
 ;   expression stack
 ;---------------------------------------------------------
-              proc vpinc16          
+              proc vpinc16       
+     
             sex     r2      ; make sure X = SP 
 
             lda     r6      ; set up pointer to variable
@@ -35,7 +36,7 @@
             ldn     r9      ; get MSB of variable value
             phi     r8      ; save in temp register
             
-            add16   r8, rc  ; increment pointer by size
+            addr16  r8, rc  ; increment pointer by size
             
             ghi     r8      ; get MSB of incremented value
             str     r9      ; save in MSB of variable

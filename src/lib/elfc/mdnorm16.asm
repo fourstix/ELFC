@@ -1,4 +1,4 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; **************************************************************
 ; ***** Prepare 16-bit numbers for multiplication/division *****
@@ -39,4 +39,3 @@ mdnorm3:      glo     re               ; recover sign difference'
               rtn                      ; and return to caller
 
               endp
-

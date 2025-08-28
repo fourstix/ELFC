@@ -1,4 +1,4 @@
-#include      ../macros.inc 
+#include      ../include/ops_c.inc
 
 ;---------------------------------------------------------
 ; lstor16 - copy a 2-byte value from the expression stack

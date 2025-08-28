@@ -10,19 +10,7 @@
 #ifndef _ELFCLIB_
 #pragma .link .library ctype.lib
 #pragma .link .requires Cctype
-#pragma             extrn  Cisalnum 
-#pragma             extrn  Cisalpha
-#pragma             extrn  Ciscntrl
-#pragma             extrn  Cisdigit
-#pragma             extrn  Cisgraph
-#pragma             extrn  Cislower
-#pragma             extrn  Cisprint
-#pragma             extrn  Cispunct
-#pragma             extrn  Cisspace
-#pragma             extrn  Cisupper
-#pragma             extrn  Cisxdigit
-#pragma             extrn  Ctolower
-#pragma             extrn  Ctoupper
+#pragma #include include/stdlib.inc
 #endif
 
 int	isalnum(int c);

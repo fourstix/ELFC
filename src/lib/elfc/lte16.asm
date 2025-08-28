@@ -1,7 +1,8 @@
-#include      ../macros.inc
+#include      ../include/ops_c.inc
 
 ; ************************************************
-; ***** Compare 2 16-bit values for equality *****
+; ****  Compare 2 16-bit values for SOS      *****
+; ****  less than or equal to TOS            *****
 ; **** R7 - Pointer to expression stack      *****
 ; ************************************************
               proc    lte16

@@ -457,7 +457,6 @@ Repository Contents
   * printfmt.c -- Demo of various printf format conversions
   * scanfmt.c -- Demo of various scanf format conversions  
 * **/src/lib**  -- Source files for compiling ElfC C libraries
-  * macro.inc -- Assembly opcodes for elfc system library files.
 * **/src/lib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/lib/elfc**  -- Source files for elfc.lib library
   * clean.bat - Batch file to clean binaries before assembling.
