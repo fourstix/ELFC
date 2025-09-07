@@ -284,7 +284,7 @@ The following functions are supported as documented.
 * _asctime()_ provides a pointer to a buffer with a simple string representation of the time.
 * _strftim()_ formats the date and time information pointed to by _tp_ into a buffer _s_ using a format string _fmt_ that is similar to a printf format string.  
 * _strftime()_ will write up to _smax_ characters are written into the buffer _s_ and will return the actual number of characters written, excluding '\0'.
-* All of the ANSI strftime conversion formats are supported, plus some of the POSIX formats.
+* All of the ANSI (C89) strftime conversion formats are supported.
 
 Strftime Conversions
 ---------------------
