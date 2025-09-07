@@ -76,26 +76,26 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 
         case 'b':
-        case 'h':
+        /* case 'h': */
           pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab+(t->tm_mon)*4, pt, ptlim);
           continue;
-          
+/*          
         case 'C':
           pt = _conv((t->tm_year + 1900) / 100, "%02d", pt, ptlim);
           continue;
-
+*/
         case 'c':
           pt = _fmt("%a %b %e %H:%M:%S %Y", t, pt, ptlim);
           continue;
-          
+/*          
         case 'D':
           pt = _fmt("%m/%d/%y", t, pt, ptlim);
           continue;
-          
+*/          
         case 'd':
           pt = _conv(t->tm_mday, "%02d", pt, ptlim);
           continue;
-          
+/*          
         case 'e':
           pt = _conv(t->tm_mday, "%2d", pt, ptlim);
           continue;
@@ -103,7 +103,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'F':
           pt = _fmt("%Y-%m-%d", t, pt, ptlim);
           continue;
-
+*/
         case 'H':
           pt = _conv(t->tm_hour, "%02d", pt, ptlim);
           continue;
@@ -115,7 +115,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'j':
           pt = _conv(t->tm_yday + 1, "%03d", pt, ptlim);
           continue;
-          
+/*          
         case 'k':
           pt = _conv(t->tm_hour, "%2d", pt, ptlim);
           continue;
@@ -123,7 +123,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'l':
           pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12, "%2d", pt, ptlim);
           continue;
-
+*/
         case 'M':
           pt = _conv(t->tm_min, "%02d", pt, ptlim);
           continue;
@@ -131,19 +131,16 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'm':
           pt = _conv(t->tm_mon + 1, "%02d", pt, ptlim);
           continue;
-          
+/*          
         case 'n':
           pt = _add("\n", pt, ptlim);
           continue;
           
-        case 'P':
+*/
+        case 'p':
           pt = _add((t->tm_hour >= 12) ? "PM" : "AM", pt, ptlim);
           continue;
-
-        case 'p':
-          pt = _add((t->tm_hour >= 12) ? "pm" : "am", pt, ptlim);
-          continue;
-          
+/*          
         case 'R':
           pt = _fmt("%H:%M", t, pt, ptlim);
           continue;
@@ -151,11 +148,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'r':
           pt = _fmt("%I:%M:%S %P", t, pt, ptlim);
           continue;          
-
+*/
         case 'S':
           pt = _conv(t->tm_sec, "%02d", pt, ptlim);
           continue;
-
+/*
         case 'T':
           pt = _fmt("%H:%M:%S", t, pt, ptlim);
           continue;
@@ -163,11 +160,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 't':
           pt = _add("\t", pt, ptlim);
           continue;
-  
+*/  
         case 'U':
           pt = _conv((t->tm_yday + 7 - t->tm_wday) / 7, "%02d", pt, ptlim);
           continue;
-
+/*
         case 'u':
           pt = _conv((t->tm_wday == 0) ? 7 : t->tm_wday, "%d", pt, ptlim);
           continue;
@@ -175,7 +172,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'v':
           pt = _fmt("%e-%b-%Y", t, pt, ptlim);
           continue;
-
+*/
         case 'W':
           pt = _conv((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7, "%02d", pt, ptlim);
           continue;
@@ -199,7 +196,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'Y':
           pt = _conv(t->tm_year + 1900, "%04d", pt, ptlim);
           continue;
-        
+/*        
         case 'z': {
           if (_tz_hr < 0)
             pt = _add("-", pt, ptlim);
@@ -211,7 +208,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         
           continue;
         }
-        
+*/        
         case 'Z':
           pt = _add(_tzname ? _tzname : "?", pt, ptlim);
           continue;          

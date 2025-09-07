@@ -294,30 +294,15 @@ Strftime Conversions
 <tr><td>%b</td><td>abbreviated month name</td></tr>
 <tr><td>%B</td><td>full month name</td></tr>
 <tr><td>%c</td><td>local date and time representation</td></tr>
-<tr><td>%C</td><td>first two digits of year as century</td></tr>
 <tr><td>%d</td><td>day of month, as two digits with zero (01 to 31)</td></tr>
-<tr><td>%D</td><td>local date as "%m/%d/%y"</td></tr>
-<tr><td>%e</td><td>day of month, as two digits with space ( 1 to 31)</td></tr>
-<tr><td>%F</td><td>ISO 8601 date as "%Y-%m-%d"</td></tr>
-<tr><td>%h</td><td>abbreviated month name (equivalent to %b)</td></tr>
 <tr><td>%H</td><td>hour (24-hour clock) as two digits with zero (00 to 23)</td></tr>
 <tr><td>%I</td><td>hour (12-hour clock) as two digits with zero (01 to 12)</td></tr>
 <tr><td>%j</td><td>day of year (001-366)</td></tr>
-<tr><td>%k</td><td>hour (24-hour clock) as two digits with space ( 0 to 23)</td></tr>
-<tr><td>%l</td><td>hour (12-hour clock) as two digits with space( 1 to 12)</td></tr>
 <tr><td>%m</td><td>month (01 to 12)</td></tr>
 <tr><td>%M</td><td>minute (00 to 59)</td></tr>
-<tr><td>%n</td><td>newline character (\\n)</td></tr>
-<tr><td>%p</td><td>am or pm</td></tr>
-<tr><td>%P</td><td>AM or PM</td></tr>
-<tr><td>%r</td><td>local 12-hour time as "%I:%M:%S %P"</td></tr>
-<tr><td>%R</td><td>local 24-hour time as "%H:%M"</td></tr>
+<tr><td>%p</td><td>AM or PM</td></tr>
 <tr><td>%S</td><td>second (00 to 60)</td></tr>
-<tr><td>%T</td><td>local 24-hour time as "%H:%M:%S"</td></tr>
-<tr><td>%t</td><td>horizontal tab character (\\t)</td></tr>
-<tr><td>%u</td><td>ISO 8601 day of week where 1 is Monday (1 to 7)</td></tr>
 <tr><td>%U</td><td>week number of the year, Sunday as first day of week (00 to 53)</td></tr>
-<tr><td>%v</td><td>local date as "%e-%b-%Y"</td></tr>
 <tr><td>%w</td><td>weekday (0 to 6, Sunday is 0)</td></tr>
 <tr><td>%W</td><td>week number of the year, Monday as first day of week (00 to 53)</td></tr>
 <tr><td>%x</td><td>local date representation</td></tr>
@@ -325,7 +310,6 @@ Strftime Conversions
 <tr><td>%y</td><td>year without century (00 to 99)</td></tr>
 <tr><td>%Y</td><td>year with century</td></tr>
 <tr><td>%Z</td><td>time zone offset in hours and minutes, as set by timezone function</td></tr>
-<tr><td>%z</td><td>time zone name, as set by timezone function</td></tr>
 <tr><td>%%</td><td>percent sign (%)</td></tr>
 </table>
 
