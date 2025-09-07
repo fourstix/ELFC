@@ -17,7 +17,7 @@ void _dow(struct tm* tp) {
     d = tp->tm_mday;
     
     y -= m < 2;
-    y += 1900;
+
     tp->tm_wday = (y + y/4 - y/100 + y/400 + _mdow[m] + d) % 7;
   }
 }
