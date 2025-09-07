@@ -495,6 +495,7 @@ Repository Contents
   * MakeElfC - Windows nmake file to compile source files. Use the command *nmake -f MakeElfC* to compile the elfc.exe file.  The command *nmake -f MakeElfC clean* will remove generated files before compiling.
 * **/src/examples** -- Example C files
   * hello.c -- Classic C "Hello, World" example
+  * datetime.c -- Demo of various time and date format conversions  
   * fib.c -- Demo to print series of Fibonacci numbers
   * printfmt.c -- Demo of various printf format conversions
   * scanfmt.c -- Demo of various scanf format conversions  
