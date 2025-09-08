@@ -84,8 +84,9 @@ extern_ int	O_verbose;
 extern_ int	O_componly;
 extern_ int	O_asmonly;
 extern_ int	O_testonly;
-extern_ int	O_stdio;
+//grw - added no c libs option
+extern_ int	O_clibs;
 extern_ char	*O_outfile;
 extern_ int	O_debug;
-//grw - added library object actdion
+//grw - added library object action
 extern_ int	O_library;
