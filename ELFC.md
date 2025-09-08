@@ -181,7 +181,7 @@ Stdlib Modified Functions
 Stdio Modified Functions
 -------------------------
 * `ftell` and `fseek` use an int type value for position, since long type is not supported.
-* `fflush` is implemented as a NOP.
+* `fflush` is implemented as a NOP (No Operation) function.
 * `tmpnam` creates a filename with form similar to `temp.00`.
 * `fclose` will delete a temporary file created by `tmpfile` after closing it.
 * Terminating a program by `abort` or without calling `fclose` to close a temporary file, may leave behind files created by `tmpfile`.
@@ -195,7 +195,7 @@ Stdarg Modified Functions
 -------------------------
 * The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.
 * `va_arg` function does not include an argument for the type name, because macro parameters is not supported.
-* `va_end` is implemented as a NOP.
+* `va_end` is implemented as a NOP (No Operation) function.
 
 Assert Modified Function
 ------------------------
@@ -203,6 +203,116 @@ Assert Modified Function
 * The `assert` function has arguments for the assertion, file name and line number. 
 * If the macro `NDEBUG` is defined the `assert` function returns immediately.
 * The `__FILE__` and `__LINE__` macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
+
+Time Library
+---------------------------
+
+
+**The standard C time structure tm is defined by the ElfC time C library.**
+```
+struct tm {
+    int tm_sec;       /* seconds after the minute (0 to 60) */
+    int tm_min;       /* minutes after the hour (0 to 60) */
+    int tm_hour;      /* hours after midnight (0 to 23) */
+    int tm_mday;      /* day of the month (1 to 31) */
+    int tm_mon;       /* months since January (0 to 11) */
+    int tm_year;      /* years since 1900 */
+    int tm_wday;      /* days since Sunday (0 to 6) */
+    int tm_yday;      /* days since January 1 (0 to 365) */
+    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */ 
+};
+```
+
+*Notes:*
+* Many of the functions in C time library use static objects that may be over-written by other calls.
+
+Unsupported Time Functions
+---------------------------
+The following functions were omitted from the ElfC time C library because Elf/OS v5 and Mini/DOS do not provide API for a clock or system time variable.  Equivalent functions that provide the same information through a time structure are provided instead.
+
+* clock_t clock(void)
+* time_t void(void)
+* double difftime(time_t time2, time_t time1)
+* time_t mktime(struct tm *tp)
+
+Local Timezone information
+---------------------------
+ElfC does not support the _locale.h_ header, so the following function should be used to set time zone information and daylight savings time information before calling other time functions.
+
+* void timezone(char \*tzname, int tzoff_min, int tzdst) 
+
+*Notes:*
+* _tzname_ is a string abbreviation for the time zone name, such as "EST" for US Eastern Standard Time.
+* _tzoff_min_ is the offset from Universal Co-ordinated Time in minutes.  Offset values WEST of UTC should be negative, while offsets to the EAST are positive.
+* _tzdst_ indicates if daylight savings time is in effect. It should be 1 if daylingt savings time is in effect, and 0 if not.
+
+
+Equivalent Time Functions
+--------------------------
+The following functions provide equivalent time functions by through a pointer to a time structure rather than through a time_t system time variable.
+
+* int  systime(struct tm \*tp) _(equivalent to the localtime() function)_
+* int  utctime(struct tm \*tp) _(equivalent to the gmttime() function_)
+* char \*cstime(struct tm \*tp) _(equivalent to the ctime() function_)
+
+*Notes:*
+* The _systime()_ function will populate the time structure pointed to by the tp argument with values from the OS kernel API.
+* The _systime()_ function will use the time zone to set the _tm_isdst_ field, or will set _tm_isdst_ field to -1 (Unknown) if _timezone()_ function has not been called previously.
+* The _\_dow()_ and _\_doy()_ internal time functions are used to set the tm_wday and tm_yday fields.
+* The _utctime()_ function uses information set by the _timezone()_ to calculate Universal Co-ordinated Time (UTC).
+* The _utctime()_ function may not be accurate if _timezone()_ has not be called previously.
+* The _systime()_ and _utctime()_ return 1 if a Real Time Clock (RTC) was used to provide the current time and 0 if data values in the kernel were used instead.
+* The _cstime()_ function will return a pointer to a buffer with a string representing the current time.
+* The _cstime()_ function is equivalent to calling _systime()_ and passing the pointer with the result to _asctime()_. 
+
+Internal Time Functions
+-----------------------
+The following internal time functions calculate the day of the week and day of the year from the fields of the time structure, and then sets the corresponding value in the time structure.
+
+* void _dow(struct tm \*tp)
+* void _doy(struct tm \*tp)
+
+Supported Time Functions
+-------------------------
+The following functions are supported as documented.
+
+* char \*asctime(struct tm *tp)
+* int  strftime(char \*s, int smax, char \*fmt, struct tm \*tp);
+
+*Notes:*
+
+* _asctime()_ provides a pointer to a buffer with a simple string representation of the time.
+* _strftim()_ formats the date and time information pointed to by _tp_ into a buffer _s_ using a format string _fmt_ that is similar to a printf format string.  
+* _strftime()_ will write up to _smax_ characters are written into the buffer _s_ and will return the actual number of characters written, excluding '\0'.
+* All of the ANSI (C89) strftime conversion formats are supported.
+
+Strftime Conversions
+---------------------
+<table>
+<tr><td>%a</td><td>abbreviated weekday name</td></tr>
+<tr><td>%A</td><td>full weekday name</td></tr>
+<tr><td>%b</td><td>abbreviated month name</td></tr>
+<tr><td>%B</td><td>full month name</td></tr>
+<tr><td>%c</td><td>local date and time representation</td></tr>
+<tr><td>%d</td><td>day of month, as two digits with zero (01 to 31)</td></tr>
+<tr><td>%H</td><td>hour (24-hour clock) as two digits with zero (00 to 23)</td></tr>
+<tr><td>%I</td><td>hour (12-hour clock) as two digits with zero (01 to 12)</td></tr>
+<tr><td>%j</td><td>day of year (001-366)</td></tr>
+<tr><td>%m</td><td>month (01 to 12)</td></tr>
+<tr><td>%M</td><td>minute (00 to 59)</td></tr>
+<tr><td>%p</td><td>AM or PM</td></tr>
+<tr><td>%S</td><td>second (00 to 60)</td></tr>
+<tr><td>%U</td><td>week number of the year, Sunday as first day of week (00 to 53)</td></tr>
+<tr><td>%w</td><td>weekday (0 to 6, Sunday is 0)</td></tr>
+<tr><td>%W</td><td>week number of the year, Monday as first day of week (00 to 53)</td></tr>
+<tr><td>%x</td><td>local date representation</td></tr>
+<tr><td>%X</td><td>local time representation</td></tr>
+<tr><td>%y</td><td>year without century (00 to 99)</td></tr>
+<tr><td>%Y</td><td>year with century</td></tr>
+<tr><td>%Z</td><td>time zone offset in hours and minutes, as set by timezone function</td></tr>
+<tr><td>%%</td><td>percent sign (%)</td></tr>
+</table>
+
 
 Pre-Defined Macros
 -------------------
@@ -220,7 +330,7 @@ Unsupported Libraries
 * The `setjmp` library is not supported.
 * The `signal` library is not supported.
 * The `math` library is not supported, because there are no real types (float or double) in this release.
-* The `time` library is planned for a future release.
+
 
 Header files
 ------------

@@ -50,14 +50,19 @@ The stdlib, stdio, ctype, and string C libraries are supported as described in t
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
+Release 2.5
+------------
+
+This release adds an implementation of the C time library to ElfC.
+
 
 Release 2.1
 ------------
 
 This release passes all the functional tests from the [Experimental version of SubC](https://www.t3x.org/subc/index.html).  No new function was added to this release, only a few minor issues were fixed in this release.  The functional test cases are included in this release.
 
-Overview
---------
+Version 2
+----------
 
 * Version 2 implements the code generation functions required to compile a C file and assemble the resulting CDP1802 assembly and link code files into a binary program for the Elf/OS (Mini/DOS) operating system.  
 
@@ -118,7 +123,7 @@ Compiler Option Changes
 -----------------------
 * Added the `-L` (Library) ElfC option to compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
 
-* Removed the `-N` (No stdio) option compile without the stdio C library.
+* The `-N` (No libraries) option compiles without the stdio and stdlib C libraries.  The user should supply the _init() function that is called by ElfC before the main function. 
 
 * Simplified the `-V` (Verbose) option to display *all* verbose messages or none. There is no longer any need to specify multiple verbose options for additional messages.
 
@@ -215,7 +220,7 @@ Stdio Library
 * int fwrite(void \*p, int size, int count, FILE \*f);
 * int fflush(FILE \*f);  
 
-*Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP*
+*Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP (No Operation) function*
 
 **Formatted Output**
 
@@ -344,16 +349,53 @@ Stdarg Library
 *Notes:*
 * *The `stdarg` library is implemented by functions, because preprocessor macros do not support parameters.*
 * *The `va_arg` function does not include an argument for the type.*
-* *The `va_end` function is a NOP.* 
+* *The `va_end` function is a NOP (No Operation) function.* 
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
+Time Library
+-------------
+
+**The standard C time structure tm is defined by the ElfC time C library.**
+```
+struct tm {
+    int tm_sec;       /* seconds after the minute (0 to 60) */
+    int tm_min;       /* minutes after the hour (0 to 60) */
+    int tm_hour;      /* hours after midnight (0 to 23) */
+    int tm_mday;      /* day of the month (1 to 31) */
+    int tm_mon;       /* months since January (0 to 11) */
+    int tm_year;      /* years since 1900 */
+    int tm_wday;      /* days since Sunday (0 to 6) */
+    int tm_yday;      /* days since January 1 (0 to 365) */
+    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */ 
+};
+```
+
+**The following functions are supported in the ElfC time C library.**
+
+* int  systime(struct tm \*tp);
+* char \*asctime(struct tm \*tp);
+* char \*cstime(void);
+* int  strftime(char \*s, int smax, char \*fmt, struct tm \*tp);
+* void timezone(char \*tzname, int tzoff_min, int tzdst);
+* int  utctime(struct tm \*tp);
+
+*Notes:*
+* Elf/OS v5 and Mini/DOS do not API for the time_t or clock_t variables nor is there support for timezone information, but they do support the current time through kernel API.
+* Functions that provide the clock or system time variables are not supported.
+* The ElfC time library supports modified time functions that use the standard C time structure instead of the clock time or system time variables.
+* The systime(struct tm \*tp) and utctime(struct tm \*tp) populate a time structure with values obtained from the kernel.
+* The ElfC time library provides a timezone function to manually set the locale timezone Information and dst values used by the utctime() and strftim() functions in the C time library.
+* The timezone() function should be called before to set the local values before calling other time functions.
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Next Release
 -------------
 
-* Implement time functions compatible with Elf/OS (Mini/DOS) kernel and BIOS API.
 * Implement signed and unsigned keywords.
-* Implement the short keyword as synonym for the int data type.
+* Implement a SEP subroutine scheme for frequently used routines in the ElfC library to improve performance.
 
 Future Goals
 -------------
@@ -453,6 +495,7 @@ Repository Contents
   * MakeElfC - Windows nmake file to compile source files. Use the command *nmake -f MakeElfC* to compile the elfc.exe file.  The command *nmake -f MakeElfC clean* will remove generated files before compiling.
 * **/src/examples** -- Example C files
   * hello.c -- Classic C "Hello, World" example
+  * datetime.c -- Demo of various time and date format conversions  
   * fib.c -- Demo to print series of Fibonacci numbers
   * printfmt.c -- Demo of various printf format conversions
   * scanfmt.c -- Demo of various scanf format conversions  
