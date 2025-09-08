@@ -382,8 +382,8 @@ struct tm {
 * int  utctime(struct tm \*tp);
 
 *Notes:*
-* Elf/OS v5 and Mini/DOS do not API for the time_t or clock_t variables nor is there support for timezone information, but they do support the current time through kernel API.
-* Functions that provide the clock or system time variables are not supported.
+* Elf/OS v5 and Mini/DOS do not provide API for the time_t or clock_t variables nor is there support for timezone information, but they do support the current time through kernel API.
+* Library functions that provide the clock or system time variables are not supported.
 * The ElfC time library supports modified time functions that use the standard C time structure instead of the clock time or system time variables.
 * The systime(struct tm \*tp) and utctime(struct tm \*tp) populate a time structure with values obtained from the kernel.
 * The ElfC time library provides a timezone function to manually set the locale timezone Information and dst values used by the utctime() and strftim() functions in the C time library.
@@ -395,7 +395,7 @@ Next Release
 -------------
 
 * Implement signed and unsigned keywords.
-* Implement a SEP subroutine scheme for frequently used routines in the ElfC library to improve performance.
+* Implement a subroutine scheme for frequently used routines in the ElfC library to improve performance.
 
 Future Goals
 -------------
@@ -404,7 +404,6 @@ Future Goals
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.
-* Implement signed and unsigned data types.
 * Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.  
 
 
