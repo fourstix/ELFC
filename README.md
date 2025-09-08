@@ -53,8 +53,9 @@ More information about unsupported library functions, header files and ElfC inte
 Release 2.5
 ------------
 
-This release adds an implementation of the C time library to ElfC.
+This release adds an implementation of the C time library to ElfC, and a compiler option -N to compile without linking the C stdlib and stdio libraries.
 
+More information about the time library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Release 2.1
 ------------
