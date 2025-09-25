@@ -3,9 +3,24 @@
 ;---------------------------------------------------------
 ; rsh16 - Right shift two numbers on expression stack so  
 ;         the SOS shifted right by TOS number of bits
-;
+; RC - Shift counter
+; R7 - Pointer to expression stack      
+; R8 - Temporary value
 ; note: SOS is a 16-bit dividend, TOS is an 16-bit divisor 
 ;---------------------------------------------------------
+
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
               extrn   false16
 
                 proc    shr16
@@ -43,7 +58,7 @@ rshft16:      ghi     r8          ; get MSB for shifting
               stxd                ; save on TOS as result
 
   rshnop:     sex     r2          ; set X back to SP
-              rtn                 ; and return to caller
+              rsub                ; return from subroutine
               
   rshzero:    irx                 ; move to TOS
               lbr     false16     ; push zero on stack as result

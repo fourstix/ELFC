@@ -16,7 +16,7 @@ int fputs(char *s, FILE *f) {
   
 	/* fputs doesn't append newline at end of string */
 	if (f->mode == _IOSYS) {
-		asm("         call  lget16      ; put buffer pointer variable");
+		asm("         gosub s_lget16    ; put buffer pointer variable");
 		asm("           dw  0           ; offset for arg 1 ");         
 		asm("         copy  ra, rf      ; ra holds buffer pointer to string");
 		asm("         call  O_MSG       ; output string to elf/os"); 

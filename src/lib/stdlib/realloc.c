@@ -18,7 +18,7 @@ void *realloc(void* p, int size) {
 	if (p == NULL) return NULL;
 	
 	/* get the memory block size directly from the heap */
-	asm("         call lget16     ; get the old pointer value");
+	asm("         gosub s_lget16  ; get the old pointer value");
 	asm("           dw 0          ; from argument stack");             
 	asm("         copy ra, rf     ; put pointer into rf"); 
 	asm("         dec rf          ; walk back 2 bytes before memory block");
@@ -27,7 +27,7 @@ void *realloc(void* p, int size) {
 	asm("         phi ra          ; set high byte to store ");
 	asm("         lda rf          ; get the size lo byte (LSB)");
 	asm("         plo ra          ; set lo byte to store ");
-	asm("         call lstor16    ; set the old size value");
+	asm("         gosub s_lset16  ; set the old size value");
 	asm("           dw -4         ; in the local argument stack");  
 
 	if ((new = malloc(size)) == NULL)

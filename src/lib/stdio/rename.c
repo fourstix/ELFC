@@ -12,10 +12,10 @@ int rename(char *old, char *new) {
 		return EOF;
 	}
 	
-	asm("         call lget16     ; get the old name argument ");
+	asm("         gosub s_lget16  ; get the old name argument ");
 	asm("           dw 0          ; get from argument stack");           
 	asm("         copy ra, rf     ; copy path string to buffer pointer");
-	asm("         call lget16     ; get the new name argument ");
+	asm("         gosub s_lget16  ; get the new name argument ");
 	asm("           dw 2          ; get from argument stack");           
 	asm("         copy ra, rc     ; copy path string to buffer pointer");
 
@@ -28,7 +28,7 @@ int rename(char *old, char *new) {
 	asm("         ldi  $Ff        ; otherwise set result for error");
 	asm("         phi  ra         ; set result for 0 or -1 ");
 	asm("         plo  ra         ; set result in ra ");
-	asm("         call lset16     ; set the result argument ");
+	asm("         gosub s_lset16  ; set the result argument ");
 	asm("           dw -2         ; in the local variable on the stack");           
 	
 	if (result == EOF)

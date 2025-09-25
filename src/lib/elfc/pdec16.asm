@@ -6,9 +6,22 @@
 ; registers used:
 ;   RA - pointer value pointing to variable   
 ;   R8 - temp value   
-; usage:   CALL pdec16
+; usage:   GOSUB pdec16
 ; note: leaves the expression stack and ESP unchanged
 ;---------------------------------------------------------
+
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
                 proc pdec16
               lda     ra      ; get variable LSB referenced by pointer
               plo     r8      ; save in temp register
@@ -24,6 +37,6 @@
               
               str     ra      ; save in referenced variable LSB
               sex     r2      ; make sure X = SP 
-              rtn             ; return to caller
+              rsub            ; return from subroutine
                 endp 
           

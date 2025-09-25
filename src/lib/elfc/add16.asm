@@ -5,6 +5,19 @@
 ; ***** R7 - pointer to expression  stack          *****
 ; ***** Numbers on expressin stack are LSB first   *****
 ; ******************************************************
+
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
               proc    add16
 
               sex     r7               ; point X to expression stack
@@ -19,6 +32,6 @@
               stxd                     ; store to MSB of arg2
               dec     r7               ; move R7 to just before arg2
               sex     r2               ; restore X to stack
-              rtn                      ; and return to caller
+              rsub                     ; return from subroutine
 
               endp

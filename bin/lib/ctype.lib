@@ -8,409 +8,104 @@
 :0050 81 81 81 81 81 81 81 81 81 81 81 81 81 81 a0 a0
 :0060 a0 a0 a0 a0 92 92 92 92 92 92 82 82 82 82 82 82
 :0070 82 82 82 82 82 82 82 82 82 82 82 82 82 82 a0 a0
-/escheck 008e 00
-\escheck 008f
-:0080 a0 a0 04 e2 9b 73 8b 73 87 ab 97 bb e2 d4 00 00
-=Cisalnum 0096
-:0090 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d4
-/epush16 00a0 00
-\epush16 00a1
-/epush16 00a5 00
-\epush16 00a6
-/lpush16 00aa 00
-\lpush16 00ab
-/and16 00af 00
-:00a0 00 00 00 03 d4 00 00 00 7f d4 00 00 00 00 d4 00
-\and16 00b0
-/add16 00b2 00
-\add16 00b3
-/deref8 00b5 00
-\deref8 00b6
-/epush16 00b8 00
-\epush16 00b9
-/and16 00bd 00
-\and16 00be
-:00b0 00 d4 00 00 d4 00 00 d4 00 00 00 0b d4 00 00 d4
-/epush16 00c0 00
-\epush16 00c1
-/ne16 00c5 00
-\ne16 00c6
-/dpop16 00c8 00
-\dpop16 00c9
-/escheck 00cc 00
-\escheck 00cd
-:00c0 00 00 00 00 d4 00 00 d4 00 00 e2 d4 00 00 60 72
-=Cisalpha 00d4
-/epush16 00de 00
-\epush16 00df
-:00d0 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d4 00 00
-/epush16 00e3 00
-\epush16 00e4
-/lpush16 00e8 00
-\lpush16 00e9
-/and16 00ed 00
-\and16 00ee
-:00e0 00 03 d4 00 00 00 7f d4 00 00 00 00 d4 00 00 d4
-/add16 00f0 00
-\add16 00f1
-/deref8 00f3 00
-\deref8 00f4
-/epush16 00f6 00
-\epush16 00f7
-/and16 00fb 00
-\and16 00fc
-/epush16 00fe 00
-\epush16 00ff
-:00f0 00 00 d4 00 00 d4 00 00 00 03 d4 00 00 d4 00 00
-/ne16 0103 00
-\ne16 0104
-/dpop16 0106 00
-\dpop16 0107
-/escheck 010a 00
-\escheck 010b
-:0100 00 00 d4 00 00 d4 00 00 e2 d4 00 00 60 72 ab f0
-=Ciscntrl 0112
-/epush16 011c 00
-\epush16 011d
-:0110 bb d5 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 03
-/epush16 0121 00
-\epush16 0122
-/lpush16 0126 00
-\lpush16 0127
-/and16 012b 00
-\and16 012c
-/add16 012e 00
-\add16 012f
-:0120 d4 00 00 00 7f d4 00 00 00 00 d4 00 00 d4 00 00
-/deref8 0131 00
-\deref8 0132
-/epush16 0134 00
-\epush16 0135
-/and16 0139 00
-\and16 013a
-/epush16 013c 00
-\epush16 013d
-:0130 d4 00 00 d4 00 00 00 04 d4 00 00 d4 00 00 00 00
-/ne16 0141 00
-\ne16 0142
-/dpop16 0144 00
-\dpop16 0145
-/escheck 0148 00
-\escheck 0149
-:0140 d4 00 00 d4 00 00 e2 d4 00 00 60 72 ab f0 bb d5
-=Cisdigit 0150
-/epush16 015a 00
-\epush16 015b
-/epush16 015f 00
-:0150 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 03 d4 00
-\epush16 0160
-/lpush16 0164 00
-\lpush16 0165
-/and16 0169 00
-\and16 016a
-/add16 016c 00
-\add16 016d
-/deref8 016f 00
-:0160 00 00 7f d4 00 00 00 00 d4 00 00 d4 00 00 d4 00
-\deref8 0170
-/epush16 0172 00
-\epush16 0173
-/and16 0177 00
-\and16 0178
-/epush16 017a 00
-\epush16 017b
-/ne16 017f 00
-:0170 00 d4 00 00 00 08 d4 00 00 d4 00 00 00 00 d4 00
-\ne16 0180
-/dpop16 0182 00
-\dpop16 0183
-/escheck 0186 00
-\escheck 0187
-=Cisgraph 018e
-:0180 00 d4 00 00 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b
-/epush16 0198 00
-\epush16 0199
-/epush16 019d 00
-\epush16 019e
-:0190 73 8b 73 87 ab 97 bb d4 00 00 00 03 d4 00 00 00
-/lpush16 01a2 00
-\lpush16 01a3
-/and16 01a7 00
-\and16 01a8
-/add16 01aa 00
-\add16 01ab
-/deref8 01ad 00
-\deref8 01ae
-:01a0 7f d4 00 00 00 00 d4 00 00 d4 00 00 d4 00 00 d4
-/epush16 01b0 00
-\epush16 01b1
-/and16 01b5 00
-\and16 01b6
-/epush16 01b8 00
-\epush16 01b9
-/ne16 01bd 00
-\ne16 01be
-:01b0 00 00 00 80 d4 00 00 d4 00 00 00 00 d4 00 00 d4
-/dpop16 01c0 00
-\dpop16 01c1
-/escheck 01c4 00
-\escheck 01c5
-=Cislower 01cc
-:01c0 00 00 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
-/epush16 01d6 00
-\epush16 01d7
-/epush16 01db 00
-\epush16 01dc
-:01d0 73 87 ab 97 bb d4 00 00 00 03 d4 00 00 00 7f d4
-/lpush16 01e0 00
-\lpush16 01e1
-/and16 01e5 00
-\and16 01e6
-/add16 01e8 00
-\add16 01e9
-/deref8 01eb 00
-\deref8 01ec
-/epush16 01ee 00
-\epush16 01ef
-:01e0 00 00 00 00 d4 00 00 d4 00 00 d4 00 00 d4 00 00
-/and16 01f3 00
-\and16 01f4
-/epush16 01f6 00
-\epush16 01f7
-/ne16 01fb 00
-\ne16 01fc
-/dpop16 01fe 00
-\dpop16 01ff
-:01f0 00 02 d4 00 00 d4 00 00 00 00 d4 00 00 d4 00 00
-/escheck 0202 00
-\escheck 0203
-=Cisprint 020a
-:0200 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87
-/lpush16 0214 00
-\lpush16 0215
-/epush16 0219 00
-\epush16 021a
-/eq16 021e 00
-\eq16 021f
-:0210 ab 97 bb d4 00 00 00 00 d4 00 00 00 20 d4 00 00
-/dget16 0221 00
-\dget16 0222
-/dpop16 022b 00
-\dpop16 022c
-/lpush16 022e 00
-\lpush16 022f
-:0220 d4 00 00 9a 52 8a f1 ca 02 40 d4 00 00 d4 00 00
-/esmove 0236 00
-\esmove 0237
-?auto_err 023b
-/dpush16 023e 00
-\dpush16 023f
-:0230 00 00 d4 01 8e d4 00 00 00 02 c3 00 00 d4 00 00
-/bool16 0241 00
-\bool16 0242
-/dpop16 0244 00
-\dpop16 0245
-/escheck 0248 00
-\escheck 0249
-:0240 d4 00 00 d4 00 00 e2 d4 00 00 60 72 ab f0 bb d5
-=Cispunct 0250
-/epush16 025a 00
-\epush16 025b
-/epush16 025f 00
-:0250 e2 9b 73 8b 73 87 ab 97 bb d4 00 00 00 03 d4 00
-\epush16 0260
-/lpush16 0264 00
-\lpush16 0265
-/and16 0269 00
-\and16 026a
-/add16 026c 00
-\add16 026d
-/deref8 026f 00
-:0260 00 00 7f d4 00 00 00 00 d4 00 00 d4 00 00 d4 00
-\deref8 0270
-/epush16 0272 00
-\epush16 0273
-/and16 0277 00
-\and16 0278
-/epush16 027a 00
-\epush16 027b
-/ne16 027f 00
-:0270 00 d4 00 00 00 20 d4 00 00 d4 00 00 00 00 d4 00
-\ne16 0280
-/dpop16 0282 00
-\dpop16 0283
-/escheck 0286 00
-\escheck 0287
-=Cisspace 028e
-:0280 00 d4 00 00 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b
-/epush16 0298 00
-\epush16 0299
-/epush16 029d 00
-\epush16 029e
-:0290 73 8b 73 87 ab 97 bb d4 00 00 00 03 d4 00 00 00
-/lpush16 02a2 00
-\lpush16 02a3
-/and16 02a7 00
-\and16 02a8
-/add16 02aa 00
-\add16 02ab
-/deref8 02ad 00
-\deref8 02ae
-:02a0 7f d4 00 00 00 00 d4 00 00 d4 00 00 d4 00 00 d4
-/epush16 02b0 00
-\epush16 02b1
-/and16 02b5 00
-\and16 02b6
-/epush16 02b8 00
-\epush16 02b9
-/ne16 02bd 00
-\ne16 02be
-:02b0 00 00 00 40 d4 00 00 d4 00 00 00 00 d4 00 00 d4
-/dpop16 02c0 00
-\dpop16 02c1
-/escheck 02c4 00
-\escheck 02c5
-=Cisupper 02cc
-:02c0 00 00 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
-/epush16 02d6 00
-\epush16 02d7
-/epush16 02db 00
-\epush16 02dc
-:02d0 73 87 ab 97 bb d4 00 00 00 03 d4 00 00 00 7f d4
-/lpush16 02e0 00
-\lpush16 02e1
-/and16 02e5 00
-\and16 02e6
-/add16 02e8 00
-\add16 02e9
-/deref8 02eb 00
-\deref8 02ec
-/epush16 02ee 00
-\epush16 02ef
-:02e0 00 00 00 00 d4 00 00 d4 00 00 d4 00 00 d4 00 00
-/and16 02f3 00
-\and16 02f4
-/epush16 02f6 00
-\epush16 02f7
-/ne16 02fb 00
-\ne16 02fc
-/dpop16 02fe 00
-\dpop16 02ff
-:02f0 00 01 d4 00 00 d4 00 00 00 00 d4 00 00 d4 00 00
-/escheck 0302 00
-\escheck 0303
-=Cisxdigit 030a
-:0300 e2 d4 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87
-/epush16 0314 00
-\epush16 0315
-/epush16 0319 00
-\epush16 031a
-/lpush16 031e 00
-\lpush16 031f
-:0310 ab 97 bb d4 00 00 00 03 d4 00 00 00 7f d4 00 00
-/and16 0323 00
-\and16 0324
-/add16 0326 00
-\add16 0327
-/deref8 0329 00
-\deref8 032a
-/epush16 032c 00
-\epush16 032d
-:0320 00 00 d4 00 00 d4 00 00 d4 00 00 d4 00 00 00 18
-/and16 0331 00
-\and16 0332
-/epush16 0334 00
-\epush16 0335
-/ne16 0339 00
-\ne16 033a
-/dpop16 033c 00
-\dpop16 033d
-:0330 d4 00 00 d4 00 00 00 00 d4 00 00 d4 00 00 e2 d4
-/escheck 0340 00
-\escheck 0341
-=Ctolower 0348
-:0340 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
-/lpush16 0352 00
-\lpush16 0353
-/esmove 035a 00
-\esmove 035b
-?auto_err 035f
-:0350 bb d4 00 00 00 00 d4 02 cc d4 00 00 00 02 c3 00
-/dpush16 0362 00
-\dpush16 0363
-/dpop16 0365 00
-\dpop16 0366
-/lpush16 036f 00
-:0360 00 d4 00 00 d4 00 00 9a 52 8a f1 c2 03 86 d4 00
-\lpush16 0370
-/epush16 0374 00
-\epush16 0375
-/sub16 0379 00
-\sub16 037a
-/epush16 037c 00
-\epush16 037d
-:0370 00 00 00 d4 00 00 00 41 d4 00 00 d4 00 00 00 61
-/add16 0381 00
-\add16 0382
-/lpush16 0387 00
-\lpush16 0388
-/dpop16 038c 00
-\dpop16 038d
-:0380 d4 00 00 c0 03 8b d4 00 00 00 00 d4 00 00 e2 d4
-/escheck 0390 00
-\escheck 0391
-=Ctoupper 0398
-:0390 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
-/lpush16 03a2 00
-\lpush16 03a3
-/esmove 03aa 00
-\esmove 03ab
-?auto_err 03af
-:03a0 bb d4 00 00 00 00 d4 01 cc d4 00 00 00 02 c3 00
-/dpush16 03b2 00
-\dpush16 03b3
-/dpop16 03b5 00
-\dpop16 03b6
-/lpush16 03bf 00
-:03b0 00 d4 00 00 d4 00 00 9a 52 8a f1 c2 03 d6 d4 00
-\lpush16 03c0
-/epush16 03c4 00
-\epush16 03c5
-/sub16 03c9 00
-\sub16 03ca
-/epush16 03cc 00
-\epush16 03cd
-:03c0 00 00 00 d4 00 00 00 61 d4 00 00 d4 00 00 00 41
-/add16 03d1 00
-\add16 03d2
-/lpush16 03d7 00
-\lpush16 03d8
-/dpop16 03dc 00
-\dpop16 03dd
-:03d0 d4 00 00 c0 03 db d4 00 00 00 00 d4 00 00 e2 d4
-/escheck 03e0 00
-\escheck 03e1
-:03e0 00 00 60 72 ab f0 bb d5
+:0080 a0 a0 04 e2 9b 73 8b 73 87 ab 97 bb e2 d9 06 c3
+?stk_err 0090
+=Cisalnum 0098
+:0090 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
+:00a0 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9
+:00b0 84 d9 7b d9 12 00 0b d9 a2 d9 12 00 00 d9 c6 d9
+?stk_err 00c5
+=Cisalpha 00cd
+:00c0 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73
+:00d0 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42
+:00e0 00 00 d9 a2 d9 84 d9 7b d9 12 00 03 d9 a2 d9 12
+?stk_err 00fa
+:00f0 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0
+=Ciscntrl 0102
+:0100 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9
+:0110 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12 00
+?stk_err 012f
+:0120 04 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00
+=Cisdigit 0137
+:0130 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb
+:0140 d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84
+:0150 d9 7b d9 12 00 08 d9 a2 d9 12 00 00 d9 c6 d9 09
+?stk_err 0164
+=Cisgraph 016c
+:0160 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
+:0170 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42 00
+:0180 00 d9 a2 d9 84 d9 7b d9 12 00 80 d9 a2 d9 12 00
+?stk_err 0199
+:0190 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb
+=Cislower 01a1
+:01a0 d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12
+:01b0 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12 00 02
+?stk_err 01ce
+:01c0 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00
+=Cisprint 01d6
+:01d0 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9
+:01e0 42 00 00 d9 12 00 20 d9 b7 d9 0f 9a 52 8a f1 ca
+:01f0 02 04 d9 09 d9 42 00 00 d4 01 6c d9 03 00 02 c3
+?auto_err 0200
+?stk_err 020c
+:0200 00 00 d9 0c d9 99 d9 09 e2 d9 06 c3 00 00 60 72
+=Cispunct 0214
+:0210 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00
+:0220 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9
+:0230 12 00 20 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06
+?stk_err 0241
+=Cisspace 0249
+:0240 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab
+:0250 97 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2
+:0260 d9 84 d9 7b d9 12 00 40 d9 a2 d9 12 00 00 d9 c6
+?stk_err 0276
+=Cisupper 027e
+:0270 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b
+:0280 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9
+:0290 42 00 00 d9 a2 d9 84 d9 7b d9 12 00 01 d9 a2 d9
+?stk_err 02ab
+:02a0 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab
+=Cisxdigit 02b3
+:02b0 f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03
+:02c0 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12
+:02d0 00 18 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3
+?stk_err 02e0
+=Ctolower 02e8
+:02e0 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
+?auto_err 02fd
+:02f0 bb d9 42 00 00 d4 02 7e d9 03 00 02 c3 00 00 d9
+:0300 0c d9 09 9a 52 8a f1 c2 03 1d d9 42 00 00 d9 12
+:0310 00 41 d9 87 d9 12 00 61 d9 84 c0 03 21 d9 42 00
+?stk_err 0327
+=Ctoupper 032f
+:0320 00 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2
+:0330 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 01 a1 d9
+?auto_err 0344
+:0340 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a f1 c2 03
+:0350 64 d9 42 00 00 d9 12 00 61 d9 87 d9 12 00 41 d9
+?stk_err 036e
+:0360 84 c0 03 68 d9 42 00 00 d9 09 e2 d9 06 c3 00 00
+:0370 60 72 ab f0 bb d5
 +0001
-+00a2
-+00e0
-+011e
-+015c
-+019a
-+01d8
-+0228
-^0233 8e
-v0234
-+025c
-+029a
-+02d8
-+0316
-^0357 cc
-v0358
-+036c
-+0384
-^03a7 cc
-v03a8
-+03bc
-+03d4
++00a3
++00d8
++010d
++0142
++0177
++01ac
++01f0
+^01f9 6c
+v01fa
++021f
++0254
++0289
++02be
+^02f6 7e
+v02f7
++0308
++031b
+^033d a1
+v033e
++034f
++0362
 }

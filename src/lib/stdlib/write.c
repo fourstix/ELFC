@@ -18,13 +18,13 @@ int write(int fd, void *buf, int n) {
     return EOF;
    }
      
-  asm("         call lget16     ; get the fildes variable ");
+  asm("         gosub s_lget16  ; get the fildes variable ");
   asm("           dw -2         ; from the local variable stack");           
   asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
-  asm("         call lget16     ; get the buffer argument ");
+  asm("         gosub s_lget16  ; get the buffer argument ");
   asm("           dw 2          ; get from argument stack");           
   asm("         copy ra, rf     ; copy argument pointer to buffer pointer");
-  asm("         call lget16     ; get the byte count argument ");
+  asm("         gosub s_lget16  ; get the byte count argument ");
   asm("           dw 4          ; get from argument stack");           
   asm("         copy ra, rc     ; copy argument value to counter");
   asm("         call O_WRITE    ; attempt to close the file");
@@ -33,7 +33,7 @@ int write(int fd, void *buf, int n) {
   asm("         phi  rc         ; set count to -1 ");
   asm("         plo  rc         ; set result in ra ");
   asm("rd_ok:   copy rc, ra     ; set count as return value ");
-  asm("         call lset16     ; set the local variable to the count ");
+  asm("         gosub s_lset16  ; set the local variable to the count ");
   asm("           dw -4         ; on the argument stack");           
 
   if (n_write == EOF) {

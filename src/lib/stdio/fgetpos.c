@@ -4,10 +4,11 @@
 
 
 #pragma             extrn Cerrno
+#pragma             extrn C_fildes
 
 
 int fgetpos(FILE *f, pos_t *pos) {
-  int fd;
+  int fildes;
   int hi;
   int lo;
   int result;
@@ -26,10 +27,12 @@ int fgetpos(FILE *f, pos_t *pos) {
   /* set initial values for local variables */
   hi = 0;
   lo = 0;
-  fd = f->fd;
   
-  asm("         call lget16     ; get the fd argument ");
-  asm("           dw -2          ; from argument stack");           
+  /* get system file descriptor */
+  fildes = _fildes(f->fd);
+  
+  asm("         gosub s_lget16  ; get the fd argument ");
+  asm("           dw -2         ; from argument stack");           
   asm("         copy ra, rd     ; copy fd to fildes register");
   asm("         ldi  0          ; set position hi byte to zero");
   asm("         phi rc          ; set hi byte for current position ");
@@ -50,13 +53,13 @@ int fgetpos(FILE *f, pos_t *pos) {
   asm("         ldi  $Ff        ; otherwise set result for error");
   asm("         phi  ra         ; set result for 0 or -1 ");
   asm("         plo  ra         ; set result in ra ");
-  asm("         call lset16     ; set the result ");
+  asm("         gosub s_lset16  ; set the result ");
   asm("           dw -8         ; in the local variable");           
   asm("         copy rd, ra     ; save high position word");
-  asm("         call lset16     ; set the hi word result ");
+  asm("         gosub s_lset16  ; set the hi word result ");
   asm("           dw -4         ; in the local variable");           
   asm("         copy rc, ra     ; save low position word");
-  asm("         call lset16     ; set the lo word result ");
+  asm("         gosub s_lset16  ; set the lo word result ");
   asm("           dw -6         ; in the local variable");           
   
   /* adjust for any character in pushback buffer from previous read*/

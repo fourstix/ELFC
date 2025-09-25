@@ -5,34 +5,47 @@
 ;
 ; registers used:
 ;   r8 - temporary value    
-;   r9 - pointer to variable in memory 
+;   rd - pointer to variable in memory 
 ;
-; usage:   CALL vinc16
+; usage:   GOSUB vinc16
 ;            dw  vaddr 
 ;
 ; note: static and global variable bytes are stored in 
 ;   the same order (LSB first) as auto variables on the
 ;   expression stack
 ;---------------------------------------------------------
+
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
               proc vinc16          
-            lda     r6    ; set up pointer to variable
-            phi     r9
-            lda     r6
-            plo     r9    ; r9 points to variable
+            lda     r3    ; set up pointer to variable
+            phi     rd
+            lda     r3
+            plo     rd    ; rd points to variable
             
-            lda     r9    ; get LSB of variable value
+            lda     rd    ; get LSB of variable value
             plo     r8    ; save in temp register
-            ldn     r9    ; get MSB of variable value
+            ldn     rd    ; get MSB of variable value
             phi     r8    ; save in temp register
             
             inc     r8    ; increment temp value
             
             ghi     r8    ; get MSB of incremented value
-            str     r9    ; save in MSB of variable
-            dec     r9    ; move back to LSB of variable
+            str     rd    ; save in MSB of variable
+            dec     rd    ; move back to LSB of variable
             glo     r8    ; get LSB of incremented value
-            str     r9    ; save in LSB of variable
+            str     rd    ; save in LSB of variable
             
             sex     r2    ; make sure X = SP 
-            rtn           ; return to caller
+            rsub          ; return from subroutine
               endp 

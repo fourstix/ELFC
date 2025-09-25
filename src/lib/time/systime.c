@@ -47,7 +47,7 @@ int systime(struct tm *tp) {
   asm("            dec   rc\n");
   asm("            lbnz  cpylp\n");
   asm("            load  ra, $0000             ; set RA to false\n");
-  asm("clkdone:    call  lstor16               ; store RA in rtc flag\n");
+  asm("clkdone:    gosub s_lset16              ; store RA in rtc flag\n");
   asm("              dw   -2\n");
     
   /* Set tm fields from buffer */
