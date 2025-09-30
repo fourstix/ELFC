@@ -313,7 +313,7 @@ Strftime Conversions
 <tr><td>%B</td><td>full month name</td></tr>
 <tr><td>%c</td><td>local date and time representation</td></tr>
 <tr><td>%d</td><td>day of month, as two digits with zero (01 to 31)</td></tr>
-<tr><td>%F</td><td>ISO date representation (YYYY-mm-dd)</td></tr>
+<tr><td>%F</td><td>ISO date representation (%Y-%m-%d)</td></tr>
 <tr><td>%H</td><td>hour (24-hour clock) as two digits with zero (00 to 23)</td></tr>
 <tr><td>%I</td><td>hour (12-hour clock) as two digits with zero (01 to 12)</td></tr>
 <tr><td>%j</td><td>day of year (001-366)</td></tr>

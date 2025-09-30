@@ -96,17 +96,36 @@ static node *primary(int *lv) {
 		//gendata();
 		//grw - add logic for jumping over inline strings
 		lab = label();
-		lab2 = label();
-		genjump(lab2);
-		genlab(lab);
-		k = 0;
-		while (STRLIT == Token) {
-			gendefs(Text, Value);
-			k += Value-2;
-			Token = scan();
-		}
-		gendefb(0);
-		genlab(lab2);
+		if (str_idx < MAXSTRTBL) {
+			/* set k to true for first string literal */
+			k = 1;
+			while (STRLIT == Token) {
+				if (k) {
+					addstr(lab, Text, Value);
+					/* set k to false to concatenate following string literals */
+					k = 0;					
+				} else {
+					concatstr(Text, Value);
+				}
+				Token = scan();
+			}
+		} else {
+			/* If string table is full, inline strings */
+			gen(";---- inline string (table full)");
+			lab2 = label();
+			genjump(lab2);
+			genlab(lab);
+			//grw - removed genalign
+			//k = 0;
+			while (STRLIT == Token) {
+				gendefs(Text, Value);
+				//grw - removed genalign
+				//k += Value-2;
+				Token = scan();
+			}
+			gendefb(0);
+			genlab(lab2);
+	  }
 		//grw - removed genalign
 		//genalign(k+1);
 		n = mkleaf(OP_LDLAB, lab);
@@ -380,6 +399,7 @@ static node *comp_size(void) {
 
 	utype = 0;
 	if (	CHAR == Token || INT == Token || VOID == Token ||
+		SCHAR == Token || UINT == Token ||
 		STRUCT == Token || UNION == Token ||
                 (IDENT == Token && (utype = usertype(Text)) != 0)
 	) {
@@ -388,7 +408,10 @@ static node *comp_size(void) {
 		}
 		else {
 			switch (Token) {
-			case CHAR:	k = CHARSIZE; break;
+				//grw - addes signed and unsigned types
+			case CHAR:	
+			case SCHAR: k = CHARSIZE; break;
+			case UINT:	
 			case INT:	k = INTSIZE; break;
 			case STRUCT:
 			case UNION:	k = primtype(Token, NULL);
@@ -543,15 +566,42 @@ static node *prefix(int *lv) {
 static node *cast(int *lv) {
 	int	t;
 	node	*n;
+	int sgn, unsgn;
 
 	if (LPAREN == Token) {
 		Token = scan();
-		if (	INT == Token || CHAR == Token || VOID == Token ||
-			STRUCT == Token || UNION == Token
-		) {
+		
+		if ( INT == Token || CHAR == Token || VOID == Token ||
+			UINT == Token || SCHAR == Token ||
+			STRUCT == Token || UNION == Token ) {
+						
 			t = primtype(Token, NULL);
 			Token = scan();
+		//grw - add support for signed and unsigned
+		} else if (UNSIGNED == Token) {
+			/* check next token for int or char */
+			Token = scan();
+			if (CHAR == Token) {
+				t = primtype(Token, NULL);
+				Token = scan();
+			} else {
+				t = primtype(UINT, NULL);
+				if (INT == Token)
+				  Token = scan();
+			} 
+		} else if (SIGNED == Token) {
+				/* check next token for int or char */
+				Token = scan();
+				if (CHAR == Token) {
+					t = primtype(SCHAR, NULL);
+					Token = scan();
+				} else {
+					t = primtype(INT, NULL);
+					if (INT == Token)
+					  Token = scan();
+				}
 		}
+		
 		else {
 			reject();
 			Token = LPAREN;
@@ -584,7 +634,8 @@ static node *cast(int *lv) {
 	}
 }
 
-int binop(int tok) {
+int binop(int tok, int p1, int p2) {
+	int unsgn;
 	switch(tok) {
 	case AMPER:	return OP_BINAND;
 	case CARET:	return OP_BINXOR;
@@ -595,13 +646,20 @@ int binop(int tok) {
 	case LSHIFT:	return OP_LSHIFT;
 	case LTEQ:	return OP_LTEQ;
 	case MINUS:	return OP_SUB;
-	case MOD:	return OP_MOD;
+	case MOD:	
+	  unsgn = unsgnop(p1, p2);
+		return unsgn ? OP_UMOD: OP_MOD;
 	case NOTEQ:	return OP_NOTEQ;
 	case PIPE:	return OP_BINIOR;
 	case PLUS:	return OP_PLUS;
-	case RSHIFT:	return OP_RSHIFT;
-	case SLASH:	return OP_DIV;
-	case STAR:	return OP_MUL;
+	case RSHIFT:
+	  return OP_RSHIFT;
+	case SLASH:
+	  unsgn = unsgnop(p1, p2);
+		return unsgn ? OP_UDIV : OP_DIV;
+	case STAR:
+	  unsgn = unsgnop(p1, p2);	
+	  return unsgn ? OP_UMUL : OP_MUL;
 	default:	fatal("internal: unknown binop");
 			return 0; /* notreached */
 	}
@@ -609,15 +667,15 @@ int binop(int tok) {
 
 node *mkop(int op, int p1, int p2, node *l, node *r) {
 	if (PLUS == op || MINUS == op) {
-		return mkbinop2(binop(op), p1, p2, l, r);
+		return mkbinop2(binop(op, p1, p2), p1, p2, l, r);
 	}
 	else if (EQUAL == op || NOTEQ == op || LESS == op ||
 		 GREATER == op || LTEQ == op || GTEQ == op)
 	{
-		return mkbinop1(binop(op), p1, l, r);
+		return mkbinop1(binop(op, p1, p2), p1, l, r);
 	}
 	else {
-		return mkbinop(binop(op), l, r);
+		return mkbinop(binop(op, p1, p2), l, r);
 	}
 }
 

@@ -68,14 +68,29 @@ static int initlist(char *name, int prim) {
 	//gendata();
 	genname(name);
 	if (STRLIT == Token) {
-		if (PCHAR != prim)
+		// if (PCHAR != prim)
+		if (!chartype(prim))
 			error("initializer type mismatch: %s", name);
-		gendefs(Text, Value);
+    //grw - update to allow concatenation of string literals
+		v = 0;
+		while (STRLIT == Token) {
+			gendefs(Text, Value);
+			v += Value;
+			Token = scan();
+		}
 		gendefb(0);
+
+		//grw - update to allow concatenation of string literals
+		//gendefs(Text, Value);
+		//gendefb(0);
+		
 		//grw - removed genalign
 		//genalign(Value-1);
-		Token = scan();
-		return Value-1;
+		
+		//grw - update to allow concatenation of string literals
+		//Token = scan();
+		//return Value-1;
+		return v-1;
 	}
 	lbrace();
 	while (Token != RBRACE) {
@@ -86,8 +101,13 @@ static int initlist(char *name, int prim) {
 				error("initializer out of range: %s", buf);
 			}
 			gendefb(v);
-		}
-		else {
+		} else if (PSCHAR == prim) {
+			if (v < -128 || v > 127) {
+				sprintf(buf, "%d", v);
+				error("initializer out of range: %s", buf);
+			}
+			gendefb(v);
+		} else {
 			gendefw(v);
 		}
 		n++;
@@ -107,9 +127,11 @@ static int initlist(char *name, int prim) {
 int primtype(int t, char *s) {
 	int	p, y;
 	char	sname[NAMELEN+1];
-
+  //grw - added signed and unsigned types
 	p = t == CHAR? PCHAR:
+	  t == SCHAR? PSCHAR:
 		t == INT? PINT:
+		t == UINT? PUINT:
 		t == STRUCT? PSTRUCT:
 		t == UNION? PUNION:
 		PVOID;
@@ -177,8 +199,9 @@ static int pmtrdecls(void) {
 			prim = PINT;
 		}
 		else {
+			//grw - added signed and unsigned types
 			if (	CHAR == Token || INT == Token ||
-				VOID == Token ||
+				SCHAR == Token || UINT == Token || VOID == Token ||
 				STRUCT == Token || UNION == Token ||
 				(IDENT == Token && utype != 0)
 			) {
@@ -295,7 +318,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			error(unsupp, NULL);
 		Token = scan();
 		*pval = constexpr();
-		if (PCHAR == *pprim)
+		if (PCHAR == *pprim || PSCHAR == *pprim)
 			*pval &= 0xff;
 		if (*pval && !inttype(*pprim))
 			error("non-zero pointer initialization", NULL);
@@ -400,12 +423,16 @@ static int localdecls(void) {
 	int	utype, prim, type, size, addr = 0, val, ini;
 	int	stat, extn;
 	int	pbase, rsize;
+  //grw -added signed and unsigned types
+	int sign, unsign;
 
 	Nli = 0;
 	utype = 0;
+	//grw - added signed and unsigned types
 	while ( AUTO == Token || EXTERN == Token || REGISTER == Token ||
 		STATIC == Token || VOLATILE == Token ||
 		INT == Token || CHAR == Token || VOID == Token ||
+		SIGNED == Token || UNSIGNED == Token ||
 		ENUM == Token ||
 		STRUCT == Token || UNION == Token ||
 		(IDENT == Token && (utype = usertype(Text)) != 0)
@@ -415,16 +442,27 @@ static int localdecls(void) {
 			continue;
 		}
 		extn = stat = 0;
+		//grw - added support for signed and unsiged types
+    sign = unsign = 0;
 		if (AUTO == Token || REGISTER == Token || STATIC == Token ||
-			VOLATILE == Token || EXTERN == Token
-		) {
+			VOLATILE == Token || EXTERN == Token || SIGNED == Token ||
+			UNSIGNED == Token) {
 			stat = STATIC == Token;
 			extn = EXTERN == Token;
+			sign = SIGNED == Token;
+			unsign = UNSIGNED == Token;
 			Token = scan();
 			if (	INT == Token || CHAR == Token ||
 				VOID == Token ||
 				STRUCT == Token || UNION == Token
 			) {
+				//grw - process sign or unsigned tokens here
+				if (INT == Token && unsign) {
+					Token = UINT;
+				} else if (CHAR == Token && sign) {
+					Token = SCHAR;
+				}
+				
 				prim = primtype(Token, NULL);
 				Token = scan();
 			}
@@ -432,7 +470,10 @@ static int localdecls(void) {
 				prim = Prims[utype];
 			}
 			else
-				prim = PINT;
+			  if (unsign) 
+					prim = PUINT;
+				else
+				  prim = PINT;
 		}
 		else if (utype) {
 			prim = Prims[utype];
@@ -621,7 +662,9 @@ void structdecl(int clss, int uniondecl) {
 			CMEMBER, 0, 0, NULL, 0);
 	Token = scan();
 	utype = 0;
+	//grw - added signed and unsigned types
 	while (	INT == Token || CHAR == Token || VOID == Token ||
+		UINT == Token || SCHAR == Token ||
 		STRUCT == Token || UNION == Token ||
 		(IDENT == Token && (utype = usertype(Text)) != 0)
 	) {
@@ -704,11 +747,15 @@ void typedecl(void) {
 
 void top(void) {
 	int	utype, prim, clss = CPUBLIC;
+	int sign = 0;
+	int unsign = 0;
 
 	switch (Token) {
 	case EXTERN:	clss = CEXTERN; Token = scan(); break;
 	case STATIC:	clss = CSTATIC; Token = scan(); break;
 	case VOLATILE:	Token = scan(); break;
+	case SIGNED:	sign = 1; Token = scan(); break;
+	case UNSIGNED: unsign = 1; Token = scan(); break;
 	}
 	switch (Token) {
 	case ENUM:
@@ -722,7 +769,21 @@ void top(void) {
 		structdecl(clss, UNION == Token);
 		break;
 	case CHAR:
+		if (sign)
+		  Token = SCHAR; 
+		prim = primtype(Token, NULL);
+		Token = scan();
+		decl(clss, prim, 0);
+		break;
+	
 	case INT:
+	  if (unsign)
+		  Token = UINT;
+		prim = primtype(Token, NULL);
+		Token = scan();
+		decl(clss, prim, 0);
+		break;
+
 	case VOID:
 		prim = primtype(Token, NULL);
 		Token = scan();
@@ -737,8 +798,16 @@ void top(void) {
 			decl(clss, PINT, 0);
 		break;
 	default:
+	  //grw - signed or unsigned keyword alone is a valid type
+		//grw - but signed and unsigned together is invalid
+	  if (sign && UNSIGNED != Token) {
+			decl(clss, PINT, 0);
+		} else if (unsign && SIGNED != Token) {
+			decl(clss, PUINT, 0);
+		} else {
 		error("type specifier expected at: %s", Text);
 		Token = synch(SEMI);
+	  } 
 		break;
 	}
 }
