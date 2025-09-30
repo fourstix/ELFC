@@ -6,7 +6,7 @@
 ; RC - Shift counter
 ; R7 - Pointer to expression stack      
 ; R8 - Temporary value
-; note: SOS is a 16-bit dividend, TOS is an 16-bit divisor 
+; note: SOS is a 16-bit base, TOS is an 16-bit shift value 
 ;---------------------------------------------------------
 
 ;*********************************************************

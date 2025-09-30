@@ -35,8 +35,8 @@
             
             ldn     rd    ; get variable value
             plo     r8    ; save in temp register
-            ldi     0     ; pad temp byte with zero
-            phi     r8    ; save in temp register
+            
+            ;---- no need to pad signed/unsigned rolls under 
             
             dec     r8    ; decrement temp value
             

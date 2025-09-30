@@ -48,8 +48,7 @@
             inc     r8      ; move ESP to LSB
             lda     r8      ; get LSB from stack
             str     rd      ; save as LSB for local variable
-            inc     rd      ; move to MSB 
-            ldi     0       ; pad MSB with zero
-            str     rd      
+            
+            ;---- don't pad MSB for signed/unsigned values
             rsub            ; return from subroutine
               endp 

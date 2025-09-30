@@ -25,9 +25,8 @@
                 proc pinc8
               ldn     ra      ; get variable referenced by pointer
               plo     r8      ; save in temp register
-              ldi     0       ; pad MSB with zero
-              phi     r8      ; save in temp register
               
+              ;---- no need to pad signed/unsigned rolls over               
               inc     r8      ; increment temp value
               
               glo     r8      ; get incremented value
