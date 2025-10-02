@@ -135,15 +135,15 @@ Version 3
 
 * Version 3 adds support for the `signed` and `unsigned` keywords.
 
-* Several compiler routines were re-written as subroutines for much faster performance.
+* Implement a subroutine scheme for frequently used routines in the ElfC library to improve performance.
 
 * Support for creating a string table in generated code was added to improve performance.
-
-* Calls to BIOS routines were replaced with inline assembly code to improve performance.
 
 * The stdlib defines the `size_t` type and the C library functions were updated ot use this type.  
 
 * The unsigned conversion `%u` is supported by the stdio printing and scanning functions.
+
+More information about Version 3, signed and unsigned types, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Stdlib Library
 --------------
@@ -410,8 +410,7 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
-* Implement signed and unsigned keywords.
-* Implement a subroutine scheme for frequently used routines in the ElfC library to improve performance.
+* Calls to BIOS routines were replaced with inline assembly code to improve performance.
 
 Future Goals
 -------------

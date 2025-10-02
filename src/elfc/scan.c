@@ -302,7 +302,7 @@ static int macro(char *name) {
 		sprintf(pbuf, "%d", Line);
 		playmac(pbuf);
 	} else if (!strcmp(name, "__FILE__")){
-		//grw - print file name as C string in source (double qyoted)
+		//grw - print file name as C string in source (double quoted)
 		sprintf(pbuf, "\"%s\"", File);
 		playmac(pbuf);
 	} else
@@ -569,10 +569,10 @@ static int scanpp(void) {
 								} else {
 									t = INT;
 								} // if else t UNSIGNED
-							} // if else INT || CHAR	
+							} // if else INT || CHAR
 						} else {
-							/* 
-							 * if next char not part of int or char keyword 
+							/*
+							 * if next char not part of int or char keyword
 							 * so put it back and assume (signed) integer or unsigned integer
 							 */
 							putback(c);
@@ -581,7 +581,7 @@ static int scanpp(void) {
 							} else {
 								t = INT;
 							} // if else t UNSIGNED
-						} //if else 'c' || 'i' 
+						} //if else 'c' || 'i'
 					} //if SIGNED || UNSIGNED
 					return t;
 				} // if keyword(Text)
