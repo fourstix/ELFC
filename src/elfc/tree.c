@@ -281,11 +281,11 @@ static void emittree1(node *a) {
 			commit();
 			genlab(a->args[0]);
 			break;
-	case OP_COMMA:	
+	case OP_COMMA:
 			emittree1(a->left);
 			//grw - pop result from expression on left side of comma
 			genpopd();
-			//grw - genpopd will eliminate a redundant push/pop then do a commit 
+			//grw - genpopd will eliminate a redundant push/pop then do a commit
 			//commit();
 			//grw - removed clear logic
 			//clear(0);
@@ -347,7 +347,7 @@ static void emittree1(node *a) {
 			gencall(a->args[0]);
 			genstack((a->args[1]) * BPW);
 			//grw - put the return value on the stack after call
-			genpushd(); 
+			genpushd();
 			break;
 	case OP_CALR:	emitargs(a->left);
 			commit();
@@ -363,7 +363,7 @@ static void emittree1(node *a) {
 			gencalr();
 			genstack((a->args[1]) * BPW);
 			//grw - put the return value on the stack after call
-			genpushd(); 
+			genpushd();
 			break;
 	case OP_ASSIGN: if (OP_IDENT == a->left->op) {
 				emittree1(a->right);

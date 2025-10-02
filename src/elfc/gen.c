@@ -50,12 +50,12 @@ void ngenraw(char *s, char *inst, int n) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, inst, n);
 }
-//grw - fuunction to output character 
+//grw - fuunction to output character
 void cgenraw(char *s, char ch) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, ch);
 }
-//grw - fuunction to output string 
+//grw - fuunction to output string
 void sgenraw(char *s, char *inst, char *s2) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, inst, s2);
@@ -175,7 +175,7 @@ void genname(char *name) {
 		//grw - fail if proc name is missing
 		if (pname == NULL)
 		  error("Proc Name is Null.", NULL);
-			
+
 	  if (!strcmp(gsym(name), pname)) {
 		ngen(";---- library entry point %s", pname, 0);
 		genlab(cgentrypt());
@@ -183,8 +183,8 @@ void genname(char *name) {
 		} else {
 		//grw - commit any queued jump before generating label
 		commit();
-		}		
-	}		
+		}
+	}
 	genraw(gsym(name));
 	genraw(":");
 	//grw - setup handler at the beggining of main
@@ -224,13 +224,13 @@ void commit(void) {
 	}
 	//grw - refactored Q_type to Q_jmp
 	//if (empty == Q_type) return;
-	
+
 	if (Q_jmp != jnone) {
 		cgjump(Q_dest);
 		Q_jmp = jnone;
 		return;
 	}
-	
+
 	if (Q_push != pnone) {
 		gen(";------ commit push");
 		cgpushd();
@@ -288,7 +288,7 @@ void queue_push() {
 void genaddr(int y) {
 	//grw - removed gentext
 	//gentext();
-	//grw - added commit 
+	//grw - added commit
 	commit();
 	if (CAUTO == Stcls[y])
 		cgldla(Vals[y]);
@@ -308,7 +308,7 @@ void genldlab(int id) {
 	//grw - remove queue
 	//gentext();
 	//queue(addr_label, id, NULL);
-	//grw - added commit 
+	//grw - added commit
 	commit();
 	cgldlab(id);
 }
@@ -317,7 +317,7 @@ void genlit(int v) {
 	//grw - remove queue
 	//gentext();
 	//queue(literal, v, NULL);
-	//grw - added commit 
+	//grw - added commit
 	commit();
 	cglit(v);
 }
@@ -446,7 +446,7 @@ int gensub(int p1, int p2, int swapped) {
 		else
 			cgunscale();
 	}
-	
+
 	return rp;
 }
 
@@ -556,7 +556,7 @@ void commit_bool(void) {
 
 void queue_bool(int op) {
   //grw  - trace
-	gen(";----- queue_bool");	
+	gen(";----- queue_bool");
 	//ngen(";----- queue_bool %s = %d", "op", op);
 	commit();
 	Q_bool = op;
@@ -660,11 +660,11 @@ void genbranch(int dest, int inv) {
 }
 
 void genlogbr(int dest, int inv) {
-	//grw - trace 
+	//grw - trace
 	gen(";----- genlogbr");
 	//ngen(";----- genlogbr %s = %d", "inv", inv);
 	//ngen(";----- genlogbr %s = %d", "Q_bool", Q_bool);
-	
+
 	if (normalize == Q_bool) {
 		if (inv)
 			cgbrfalse(dest, 0);
@@ -684,7 +684,7 @@ void genlogbr(int dest, int inv) {
 void genbrfalse(int dest) {
 	//grw - removed gentext
 	//gentext();
-	//grw - trace 
+	//grw - trace
 	gen(";----- genbrfalse");
 	if (Q_cmp != cnone) {
 		genbranch(dest, 0);
@@ -701,7 +701,7 @@ void genbrfalse(int dest) {
 void genbrtrue(int dest) {
 	//grw - removed gentext
 	//gentext();
-	//grw - trace 
+	//grw - trace
 	gen(";----- genbrtrue");
 	//ngen(";----- %s dest = %d", "genbrtrue", dest);
 	if (Q_cmp != cnone) {
@@ -717,13 +717,13 @@ void genbrtrue(int dest) {
 }
 
 void gensctrue(int dest) {
-	//grw - trace 
+	//grw - trace
 	gen(";----- gensctrue");
 	cgbrtrue(dest, 1);
 }
 
 void genscfalse(int dest) {
-	//grw - trace 
+	//grw - trace
 	gen(";----- gensctrue");
 	cgbrfalse(dest, 1);
 }
@@ -799,7 +799,7 @@ void genbss(char *name, int len, int statc) {
   //grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
-	
+
 	if (statc)
 		cglbss(name, (len + INTSIZE-1) / INTSIZE * INTSIZE);
 	else
@@ -854,7 +854,7 @@ void gendefs(char *s, int len) {
 	if (O_library)
 		commit();
 
-	cgdefs(s, len);	
+	cgdefs(s, len);
 }
 
 void gendefw(int v) {
@@ -1056,7 +1056,7 @@ void genrval(int *lv) {
 		else
 		  //grw - remove queue
 			//queue(static_word, Vals[lv[LVSYM]], NULL);
-			cgldsw(Vals[lv[LVSYM]]);			
+			cgldsw(Vals[lv[LVSYM]]);
 	}
 	else {
 		if (PCHAR == lv[LVPRIM])
@@ -1071,7 +1071,7 @@ void genrval(int *lv) {
 }
 
 //grw - added push data statement
-/* 
+/*
  * Push  the value in the accumulator register, RA
  * to the TOS of the expression stack
  */
@@ -1083,7 +1083,7 @@ void genpushd() {
 }
 
 //grw - added pop data statement
-/* 
+/*
  * Pop the value from the TOS of the expression stack
  * into the accumulator register, RA.
  */
@@ -1099,33 +1099,33 @@ void genpopd() {
 }
 
 //grw - added gen asm code statement
-/* 
+/*
  * Print a string literal directly into the ouptput file
  * as a line of assembly language text
  */
 void genasm(char * strlit) {
 	char  asmText[TEXTLEN-2];
 	char* p;
-	commit(); 
+	commit();
 	/* find double quote at beginning of string literal */
 	p = strchr(strlit, '"');
 	/* if found, skip over, else set ptr to beginning of string literal */
 	if (p)
-	  p++; 
-	else 
+	  p++;
+	else
 	  p = strlit;
-			
+
 	/* copy text into assembly buffer */
 	strcpy(asmText, p);
 
 	/* find the double quote at end of string literal */
 	p = strrchr(asmText, '"');
-	
+
 	/* replace double quote at end with null */
-	if (p) 
+	if (p)
 		*p = '\0';
-	
-	/* print the asm buffer text directly to file as a line */	
+
+	/* print the asm buffer text directly to file as a line */
 	if (NULL == Outfile) return;
-	fprintf(Outfile, "%s\n", asmText);	
+	fprintf(Outfile, "%s\n", asmText);
 }

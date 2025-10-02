@@ -52,6 +52,7 @@ void cgdefb(int v);
 void cgdefc(int c);
 void cgdefl(int v);
 void cgdefp(int v);
+void cgdefs(char *s, int len);
 void cgdefw(int v);
 void cgdiv(void);
 void cgentry(void);

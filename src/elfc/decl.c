@@ -63,7 +63,7 @@ static void enumdecl(int glob) {
 static int initlist(char *name, int prim) {
 	int	n = 0, v;
 	char	buf[30];
-	
+
 	//grw - removed gendata
 	//gendata();
 	genname(name);
@@ -161,7 +161,7 @@ static int pmtrdecls(void) {
 	if (RPAREN == Token)
 		return 0;
 	na = 0;
-	//grw - our stack frome does not include ret address nor frame address 
+	//grw - our stack frome does not include ret address nor frame address
 	//addr = 2*BPW;
 	addr = 0;
 	for (;;) {
@@ -256,7 +256,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	int	type = TVARIABLE;
 	int	ptrptr = 0;
 	char	*unsupp;
-	
+
 	unsupp = "unsupported typedef syntax";
 	if (STAR == Token) {
 		Token = scan();
