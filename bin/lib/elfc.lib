@@ -20,7 +20,9 @@
 }
 .big
 {vpush8
-:0000 43 b8 43 a8 e7 f8 00 73 48 73 e2 c0 21 00
+:0000 43 b8 43 a8 e7 43 c2 00 10 08 fe f8 ff cf f8 00
+:0010 73 48 73 e2 c0 21 00
++0007
 }
 .big
 {lstor16
@@ -30,7 +32,7 @@
 .big
 {lstor8
 :0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 87 a8
-:0010 97 b8 18 48 5d 1d f8 00 5d c0 21 00
+:0010 97 b8 18 48 5d c0 21 00
 }
 .big
 {linit16
@@ -251,8 +253,10 @@
 }
 .big
 {lpush8
-:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d e7 f8
-:0010 00 73 0d 73 e2 c0 21 00
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d e7 43
+:0010 c2 00 1a 0d fe f8 ff cf f8 00 73 0d 73 e2 c0 21
+:0020 00
++0011
 }
 .big
 {deref16
@@ -260,7 +264,9 @@
 }
 .big
 {deref8
-:0000 e7 60 47 ad 07 bd f8 00 73 4d 73 e2 c0 21 00
+:0000 e7 60 47 ad 07 bd 43 c2 00 11 0d fe f8 ff cf f8
+:0010 00 73 0d 73 e2 c0 21 00
++0008
 }
 .big
 {pstor16
@@ -292,11 +298,11 @@
 }
 .big
 {vinc8
-:0000 43 bd 43 ad 0d a8 f8 00 b8 18 88 5d e2 c0 21 00
+:0000 43 bd 43 ad 0d a8 18 88 5d e2 c0 21 00
 }
 .big
 {vdec8
-:0000 43 bd 43 ad 0d a8 f8 00 b8 28 88 5d e2 c0 21 00
+:0000 43 bd 43 ad 0d a8 28 88 5d e2 c0 21 00
 }
 .big
 {linc16
@@ -311,12 +317,12 @@
 .big
 {linc8
 :0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 0d a8
-:0010 f8 00 b8 18 88 5d e2 c0 21 00
+:0010 18 88 5d e2 c0 21 00
 }
 .big
 {ldec8
 :0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 0d a8
-:0010 f8 00 b8 28 88 5d e2 c0 21 00
+:0010 28 88 5d e2 c0 21 00
 }
 .big
 {lpinc16
@@ -350,11 +356,11 @@
 }
 .big
 {pinc8
-:0000 0a a8 f8 00 b8 18 88 5a e2 c0 21 00
+:0000 0a a8 18 88 5a e2 c0 21 00
 }
 .big
 {pdec8
-:0000 0a a8 f8 00 b8 28 88 5a e2 c0 21 00
+:0000 0a a8 28 88 5a e2 c0 21 00
 }
 .big
 {pincptr

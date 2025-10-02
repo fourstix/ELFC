@@ -1,7 +1,7 @@
 #define _ELFCLIB_
 #include <string.h>
 
-void *memchr(void *p, int c, int n) {
+void *memchr(void *p, int c, size_t n) {
 	char *q;
 	q = NULL;
 	

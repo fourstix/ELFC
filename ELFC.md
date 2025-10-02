@@ -50,17 +50,17 @@ Registers Used
 <tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R3</td><td>Program Instruction Pointer</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R3</td><td>Program Instruction and Subroutine Argument Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R4</td><td>SCRT Call Routine</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R5</td><td>SCRT Return Routine</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R6</td><td>SCRT Argument and Return Point</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R7</td><td>Expression Stack Pointer (ESP)</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>R8</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
-<tr><td>R9</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
+<tr><td>R9</td><td>Subroutine Pointer</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RA</td><td>Accumulator and Return Value</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RB</td><td>Caller Stack Frame Base Pointer</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RC</td><td>Counter</td><td>User</td><td>General Use</td></tr>
-<tr><td>RD</td><td>Destination Pointer, Data Value</td><td>User</td><td>General Use</td></tr>
+<tr><td>RD</td><td>Destination Pointer or Data Value</td><td>User</td><td>General Use</td></tr>
 <tr><td>RE.1</td><td>Baud Rate Byte</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>OS</td><td>General Use</td></tr>
 <tr><td>RF</td><td>Buffer Pointer</td><td>User</td><td>General Use</td></tr>
@@ -147,16 +147,16 @@ Print Conversions
 * The suppression operator `*` is supported.
 * The decimal precision is not supported.
 * The length modifiers h, l (el) and L are not supported. 
-* The `%d, %i, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
-* The %u, %f, %e, %E, %g and %G conversions are not supported.
+* The `%d, %i, %u, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
+* The %f, %e, %E, %g and %G conversions are not supported.
 
 Scan Conversions
 -----------------
 * The width specification is suppored.
 * The suppression operator `*` is supported.
-* The `%d, %i, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
+* The `%d, %i, %u, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
 * The charset operators `%[...]` and `%[^...]` are supported.
-* The %u, %f, %e, and %g conversions are not supported.
+* The %f, %e, and %g conversions are not supported.
 
 Unsupported Stdlib Functions
 ----------------------------

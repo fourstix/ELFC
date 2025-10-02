@@ -1,7 +1,7 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 
-void itou(int n, char *s) {
+void itou(unsigned int n, char *s) {
   if (s == NULL) return;
 
   asm("         gosub s_lget16  ; get the unsigned integer value to convert");

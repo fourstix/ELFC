@@ -113,11 +113,10 @@ extern int _fdtable[FD_MAX];
 #endif
 
 /* typedef's from stddef.h */
-typedef int size_t;
-typedef int ptrdiff_t;
-typedef int wchar_t;
-typedef int max_align_t;
-
+typedef unsigned int size_t;
+typedef unsigned int ptrdiff_t;
+typedef unsigned int wchar_t;
+typedef unsigned int max_align_t;
 
 typedef struct {
     int quot;       /* quotient */
@@ -130,18 +129,18 @@ int _fildes(int fd);
 void abort(void);
 void exit(int n);
 int atexit(int (*fn)());
-void* malloc(int size);
-void *calloc(int count, int size);
-void *realloc(void* p, int size);
+void* malloc(size_t size);
+void *calloc(size_t count, size_t size);
+void *realloc(void* p, size_t size);
 void free(void* p);
 int atoi(char *s);
 void itoa(int n, char *s);
 void itox(int n, char *s);
-void itou(int n, char *s);
+void itou(unsigned int n, char *s);
 int abs(int n);
 void div(int num, int denom, div_t *rp);
-void *bsearch(void *key, void *array, int count, int size, int (*cmp)());
-void qsort(void *list, int count, int size, int (*cmp)());
+void *bsearch(void *key, void *array, size_t count, size_t size, int (*cmp)());
+void qsort(void *list, size_t count, size_t size, int (*cmp)());
 int rand(void);
 void srand(int n);
 int min(int a, int b);
@@ -151,8 +150,8 @@ int max(int a, int b);
 int	 creat(char *path, int mode);
 int	 open(char *path, int flags);
 int	 close(int fd);
-int	 read(int fd, void *buf, int len);
-int	 write(int fd, void *buf, int len);
+int	 read(int fd, void *buf, size_t len);
+int	 write(int fd, void *buf, size_t len);
 int  unlink(char *path);
 int  lseek(int fd, int hi_off, int lo_off, int how);
 #endif

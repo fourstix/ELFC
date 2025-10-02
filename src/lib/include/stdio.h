@@ -133,8 +133,8 @@ int ungetc(int c, FILE *f);
 FILE *fdopen(int fd, int iomode);
 int fclose(FILE *f);
 FILE *fopen(char *path, char *mode);
-int fread(void *p, int size, int count, FILE *f);
-int fwrite(void *p, int size, int count, FILE *f);
+int fread(void *p, size_t size, size_t count, FILE *f);
+int fwrite(void *p, size_t size, size_t count, FILE *f);
 int fflush(FILE *f);
 
 /* print functions */

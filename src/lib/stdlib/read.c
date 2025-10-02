@@ -5,7 +5,7 @@
 #pragma             extrn Cerrno
 #pragma             extrn C_fildes
 
-int read(int fd, void *buf, int n) {
+int read(int fd, void *buf, size_t n) {
   int fildes;
   int n_read;
   

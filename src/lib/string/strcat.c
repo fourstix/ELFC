@@ -9,7 +9,13 @@ char *strcat(char *d, char *a) {
     asm("mend:    lda  rd         ; look for end of first string");
     asm("         lbnz mend       ; loop until terminator found");
     asm("         dec  rd         ; move to terminator and copy second string");
-    asm("         call f_strcpy   ; call bios strcpy function");
+    /* inline f_strcpy BIOS function  */
+    asm("scat:    lda    rf       ; copy the second string");
+    asm("         str    rd       ; into the destination");
+    asm("         lbz    sctdone  ; finish if copied null");
+    asm("         inc    rd       ; increment destination pointer");
+    asm("         lbr    scat     ; continue looping until done");
+    asm("sctdone:  ");         
   }
   return d;
 }

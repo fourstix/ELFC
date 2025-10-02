@@ -13,99 +13,99 @@
 =Cisalnum 0098
 :0090 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
 :00a0 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9
-:00b0 84 d9 7b d9 12 00 0b d9 a2 d9 12 00 00 d9 c6 d9
-?stk_err 00c5
-=Cisalpha 00cd
-:00c0 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73
-:00d0 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42
-:00e0 00 00 d9 a2 d9 84 d9 7b d9 12 00 03 d9 a2 d9 12
-?stk_err 00fa
-:00f0 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0
-=Ciscntrl 0102
-:0100 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9
-:0110 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12 00
-?stk_err 012f
-:0120 04 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00
-=Cisdigit 0137
-:0130 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb
-:0140 d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84
-:0150 d9 7b d9 12 00 08 d9 a2 d9 12 00 00 d9 c6 d9 09
-?stk_err 0164
-=Cisgraph 016c
-:0160 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
-:0170 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42 00
-:0180 00 d9 a2 d9 84 d9 7b d9 12 00 80 d9 a2 d9 12 00
-?stk_err 0199
-:0190 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb
-=Cislower 01a1
-:01a0 d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12
-:01b0 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12 00 02
-?stk_err 01ce
-:01c0 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00
-=Cisprint 01d6
-:01d0 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9
-:01e0 42 00 00 d9 12 00 20 d9 b7 d9 0f 9a 52 8a f1 ca
-:01f0 02 04 d9 09 d9 42 00 00 d4 01 6c d9 03 00 02 c3
-?auto_err 0200
-?stk_err 020c
-:0200 00 00 d9 0c d9 99 d9 09 e2 d9 06 c3 00 00 60 72
-=Cispunct 0214
-:0210 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00
-:0220 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9
-:0230 12 00 20 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06
-?stk_err 0241
-=Cisspace 0249
-:0240 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab
-:0250 97 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2
-:0260 d9 84 d9 7b d9 12 00 40 d9 a2 d9 12 00 00 d9 c6
-?stk_err 0276
-=Cisupper 027e
-:0270 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b
-:0280 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9
-:0290 42 00 00 d9 a2 d9 84 d9 7b d9 12 00 01 d9 a2 d9
-?stk_err 02ab
-:02a0 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab
-=Cisxdigit 02b3
-:02b0 f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03
-:02c0 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b d9 12
-:02d0 00 18 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3
-?stk_err 02e0
-=Ctolower 02e8
-:02e0 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97
-?auto_err 02fd
-:02f0 bb d9 42 00 00 d4 02 7e d9 03 00 02 c3 00 00 d9
-:0300 0c d9 09 9a 52 8a f1 c2 03 1d d9 42 00 00 d9 12
-:0310 00 41 d9 87 d9 12 00 61 d9 84 c0 03 21 d9 42 00
-?stk_err 0327
-=Ctoupper 032f
-:0320 00 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2
-:0330 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 01 a1 d9
-?auto_err 0344
-:0340 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a f1 c2 03
-:0350 64 d9 42 00 00 d9 12 00 61 d9 87 d9 12 00 41 d9
-?stk_err 036e
-:0360 84 c0 03 68 d9 42 00 00 d9 09 e2 d9 06 c3 00 00
-:0370 60 72 ab f0 bb d5
+:00b0 84 d9 7b 00 d9 12 00 0b d9 a2 d9 12 00 00 d9 c6
+?stk_err 00c6
+=Cisalpha 00ce
+:00c0 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b
+:00d0 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9
+:00e0 42 00 00 d9 a2 d9 84 d9 7b 00 d9 12 00 03 d9 a2
+?stk_err 00fc
+:00f0 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72
+=Ciscntrl 0104
+:0100 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 12 00
+:0110 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9 7b 00
+:0120 d9 12 00 04 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9
+?stk_err 0132
+=Cisdigit 013a
+:0130 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87
+:0140 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9
+:0150 a2 d9 84 d9 7b 00 d9 12 00 08 d9 a2 d9 12 00 00
+?stk_err 0168
+:0160 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
+=Cisgraph 0170
+:0170 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00
+:0180 7f d9 42 00 00 d9 a2 d9 84 d9 7b 00 d9 12 00 80
+?stk_err 019e
+:0190 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00
+=Cislower 01a6
+:01a0 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9
+:01b0 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9
+:01c0 7b 00 d9 12 00 02 d9 a2 d9 12 00 00 d9 c6 d9 09
+?stk_err 01d4
+=Cisprint 01dc
+:01d0 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
+:01e0 73 87 ab 97 bb d9 42 00 00 d9 12 00 20 d9 b7 d9
+:01f0 0f 9a 52 8a f1 ca 02 0a d9 09 d9 42 00 00 d4 01
+?auto_err 0206
+:0200 70 d9 03 00 02 c3 00 00 d9 0c d9 99 d9 09 e2 d9
+?stk_err 0212
+=Cispunct 021a
+:0210 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87
+:0220 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42 00 00 d9
+:0230 a2 d9 84 d9 7b 00 d9 12 00 20 d9 a2 d9 12 00 00
+?stk_err 0248
+:0240 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
+=Cisspace 0250
+:0250 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 03 d9 12 00
+:0260 7f d9 42 00 00 d9 a2 d9 84 d9 7b 00 d9 12 00 40
+?stk_err 027e
+:0270 d9 a2 d9 12 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00
+=Cisupper 0286
+:0280 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9
+:0290 12 00 03 d9 12 00 7f d9 42 00 00 d9 a2 d9 84 d9
+:02a0 7b 00 d9 12 00 01 d9 a2 d9 12 00 00 d9 c6 d9 09
+?stk_err 02b4
+=Cisxdigit 02bc
+:02b0 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
+:02c0 73 87 ab 97 bb d9 12 00 03 d9 12 00 7f d9 42 00
+:02d0 00 d9 a2 d9 84 d9 7b 00 d9 12 00 18 d9 a2 d9 12
+?stk_err 02ea
+:02e0 00 00 d9 c6 d9 09 e2 d9 06 c3 00 00 60 72 ab f0
+=Ctolower 02f2
+:02f0 bb d5 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4
+?auto_err 0307
+:0300 02 86 d9 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a
+:0310 f1 c2 03 27 d9 42 00 00 d9 12 00 41 d9 87 d9 12
+:0320 00 61 d9 84 c0 03 2b d9 42 00 00 d9 09 e2 d9 06
+?stk_err 0331
+=Ctoupper 0339
+:0330 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b 73 87 ab
+?auto_err 034e
+:0340 97 bb d9 42 00 00 d4 01 a6 d9 03 00 02 c3 00 00
+:0350 d9 0c d9 09 9a 52 8a f1 c2 03 6e d9 42 00 00 d9
+:0360 12 00 61 d9 87 d9 12 00 41 d9 84 c0 03 72 d9 42
+?stk_err 0378
+:0370 00 00 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
 +0001
 +00a3
-+00d8
-+010d
-+0142
-+0177
-+01ac
-+01f0
-^01f9 6c
-v01fa
-+021f
-+0254
-+0289
-+02be
-^02f6 7e
-v02f7
-+0308
-+031b
-^033d a1
-v033e
-+034f
-+0362
++00d9
++010f
++0145
++017b
++01b1
++01f6
+^01ff 70
+v0200
++0225
++025b
++0291
++02c7
+^0300 86
+v0301
++0312
++0325
+^0347 a6
+v0348
++0359
++036c
 }

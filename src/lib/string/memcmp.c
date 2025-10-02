@@ -1,5 +1,7 @@
+#define _ELFCLIB_
+#include <string.h>
 
-int memcmp(void *p1, void *p2, int n) {
+int memcmp(void *p1, void *p2, size_t n) {
   int  dif;
 	/* return value in case either string is null */
   dif = p1 - p2; 

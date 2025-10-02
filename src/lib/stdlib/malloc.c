@@ -1,7 +1,7 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 
-void* malloc(int size) {
+void* malloc(size_t size) {
   void *p;
   asm("         gosub s_lget16  ; set the size value to allocate");
   asm("           dw 0          ; get size from argument stack");           

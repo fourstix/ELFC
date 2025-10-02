@@ -1,7 +1,7 @@
+#define _ELFCLIB_
+#include <string.h>
 
-
-
-int strlen(char *s) {
+size_t strlen(char *s) {
 	int len = 0;
 	if (s) {
 		asm("         gosub s_lget16  ; set the string pointer");

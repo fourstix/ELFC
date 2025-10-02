@@ -1,5 +1,7 @@
+#define _ELFCLIB_
+#include <string.h>
 
- int strncmp(char *s1, char *s2, int n) {
+ int strncmp(char *s1, char *s2, size_t n) {
 	 int  dif;
 	 /* return value in case either string is null */
    dif = s1 - s2; 

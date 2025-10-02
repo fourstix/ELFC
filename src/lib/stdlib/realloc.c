@@ -9,10 +9,10 @@
 #pragma .link .library string.lib
 
 
-void *realloc(void* p, int size) {
-	void	*new;
-  int   osize;
-	int   n;
+void *realloc(void* p, size_t size) {
+	void	 *new;
+  size_t osize;
+	size_t n;
   
 	/* null is invalid, so give up */
 	if (p == NULL) return NULL;

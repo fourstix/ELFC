@@ -3,7 +3,7 @@
 
 #pragma           extrn Cmemcpy
  
-void *memmove(void *d, void *s, int n) {
+void *memmove(void *d, void *s, size_t n) {
 	char	*p;
 
 	if (d < s) return memcpy(d, s, n);

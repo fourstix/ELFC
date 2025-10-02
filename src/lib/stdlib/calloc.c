@@ -4,9 +4,9 @@
 /* define only extern procedures required */
 #pragma           extrn Cmalloc
 
-void *calloc(int count, int size) {
+void *calloc(size_t count, size_t size) {
 	void	*p, *m;
-  int   n;
+  size_t   n;
   
   n = count * size;
 

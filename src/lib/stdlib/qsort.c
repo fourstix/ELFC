@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 
-void qsort(void *list, int count, int size, int (*cmp)()) {
+void qsort(void *list, size_t count, size_t size, int (*cmp)()) {
 	int	gap, i, j, k, tmp;
 	char	*p, *x1, *x2;
 

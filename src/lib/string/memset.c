@@ -1,5 +1,7 @@
+#define _ELFCLIB_
+#include <string.h>
 
-void *memset(void *p, int c, int n) {
+void *memset(void *p, int c, size_t n) {
 	if (p) {
 		asm("         gosub s_lget16  ; set the destination pointer");
 		asm("           dw 0          ; from argument stack");      

@@ -220,38 +220,38 @@ v0024
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 :0010 d9 12 00 00 d9 42 00 00 d9 b7 d9 09 9a 52 8a f1
-:0020 ca 00 26 c0 00 2f d9 12 00 00 d9 09 c0 00 eb d9
-/Cisspace 0036 00
-\Cisspace 0037
-?auto_err 003d
-:0030 42 00 00 d9 7b d4 00 00 d9 03 00 02 c3 00 00 d9
-:0040 0c d9 09 9a 52 8a f1 c2 00 57 d9 42 00 00 d9 4e
-:0050 00 00 d9 09 c0 00 2f d9 42 00 00 d9 7b d9 12 00
-:0060 2b d9 b7 d9 09 9a 52 8a f1 ca 00 6f c0 00 79 d9
-:0070 42 00 00 d9 4e 00 00 d9 09 d9 45 00 00 8a af 9a
-:0080 bf e2 f8 00 ac bc ad 0f ff 2d ca 00 8f 1f 1d 4f
-:0090 ae ff 30 cb 00 9b ff 0a cb 00 af 8d f6 cb 00 ac
-:00a0 8c fb ff fc 01 ac 9c fb ff 7c 00 bc c0 00 dd 8e
-:00b0 ff 30 ae 8c fe ac a8 9c 7e bc b8 88 fe a8 98 7e
-:00c0 b8 88 fe a8 98 7e b8 88 52 8c f4 ac 98 52 9c 74
-:00d0 bc 8e 52 8c f4 ac 9c 7c 00 bc c0 00 8f 8c aa 9c
-:00e0 ba d9 48 ff fe d9 42 ff fe d9 09 d9 03 00 02 c3
-?auto_err 00f0
-?stk_err 00f6
-:00f0 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
+:0020 ca 00 26 c0 00 2f d9 12 00 00 d9 09 c0 00 ed d9
+/Cisspace 0037 00
+\Cisspace 0038
+?auto_err 003e
+:0030 42 00 00 d9 7b 00 d4 00 00 d9 03 00 02 c3 00 00
+:0040 d9 0c d9 09 9a 52 8a f1 c2 00 58 d9 42 00 00 d9
+:0050 4e 00 00 d9 09 c0 00 2f d9 42 00 00 d9 7b 00 d9
+:0060 12 00 2b d9 b7 d9 09 9a 52 8a f1 ca 00 71 c0 00
+:0070 7b d9 42 00 00 d9 4e 00 00 d9 09 d9 45 00 00 8a
+:0080 af 9a bf e2 f8 00 ac bc ad 0f ff 2d ca 00 91 1f
+:0090 1d 4f ae ff 30 cb 00 9d ff 0a cb 00 b1 8d f6 cb
+:00a0 00 ae 8c fb ff fc 01 ac 9c fb ff 7c 00 bc c0 00
+:00b0 df 8e ff 30 ae 8c fe ac a8 9c 7e bc b8 88 fe a8
+:00c0 98 7e b8 88 fe a8 98 7e b8 88 52 8c f4 ac 98 52
+:00d0 9c 74 bc 8e 52 8c f4 ac 9c 7c 00 bc c0 00 91 8c
+:00e0 aa 9c ba d9 48 ff fe d9 42 ff fe d9 09 d9 03 00
+?auto_err 00f2
+?stk_err 00f8
+:00f0 02 c3 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
 +0021
 +0024
 +002d
-+0048
-+0055
-+006a
-+006d
-+008b
-+0094
-+0099
-+009e
-+00ad
-+00db
++0049
++0056
++006c
++006f
++008d
++0096
++009b
++00a0
++00af
++00dd
 }
 .big
 {Ccalloc
@@ -351,7 +351,7 @@ v0024
 :0040 fc d9 42 00 02 d4 00 00 d9 03 00 02 c3 00 00 d9
 :0050 0c d9 3c ff fe d9 12 00 00 d9 b7 d9 09 9a 52 8a
 :0060 f1 ca 00 67 c0 00 70 d9 12 00 00 d9 09 c0 00 c1
-:0070 d9 42 00 02 d9 42 ff fc d9 ba d9 09 9a 52 8a f1
+:0070 d9 42 00 02 d9 42 ff fc d9 c9 d9 09 9a 52 8a f1
 :0080 ca 00 86 c0 00 8d d9 42 ff fc c0 00 91 d9 42 00
 :0090 02 d9 3c ff fa d9 09 d9 42 ff fa d9 42 00 00 d9
 /Cmemcpy 00a4 00
@@ -647,14 +647,14 @@ v0218
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff f0 c3 00 00
 :0010 d9 42 00 00 d9 3c ff f4 d9 09 d9 42 00 02 d9 12
 :0020 00 01 d9 b4 d9 3c ff fe d9 09 d9 42 ff fe d9 12
-:0030 00 00 d9 ba d9 09 9a 52 8a f1 ca 00 40 c0 01 d6
+:0030 00 00 d9 ba d9 09 9a 52 8a f1 ca 00 40 c0 01 d8
 :0040 c0 00 56 d9 42 ff fe d9 12 00 01 d9 b4 d9 3c ff
 :0050 fe d9 09 c0 00 2a d9 42 ff fe d9 3c ff fc d9 09
 :0060 d9 42 ff fc d9 42 00 02 d9 c0 d9 09 9a 52 8a f1
-:0070 ca 00 76 c0 01 d3 c0 00 86 d9 42 ff fc d9 4e ff
+:0070 ca 00 76 c0 01 d5 c0 00 86 d9 42 ff fc d9 4e ff
 :0080 fc d9 09 c0 00 60 d9 42 ff fc d9 42 ff fe d9 87
 :0090 d9 3c ff fa d9 09 d9 42 ff fa d9 12 00 00 d9 bd
-:00a0 d9 09 9a 52 8a f1 ca 00 ac c0 01 d0 c0 00 c2 d9
+:00a0 d9 09 9a 52 8a f1 ca 00 ac c0 01 d2 c0 00 c2 d9
 :00b0 42 ff fa d9 42 ff fe d9 87 d9 3c ff fa d9 09 c0
 :00c0 00 96 d9 42 ff fe d9 42 ff fa d9 84 d9 42 00 04
 :00d0 d9 8d d9 90 d9 42 ff f4 d9 84 d9 42 00 04 d9 42
@@ -662,22 +662,22 @@ v0218
 :00f0 d9 09 f8 fe a8 f8 00 b8 9a 58 18 8a 58 d4 00 00
 ?auto_err 0105
 :0100 d9 03 00 04 c3 00 00 d9 0c d9 12 00 00 d9 c3 d9
-:0110 09 9a 52 8a f1 ca 01 1b c0 01 1e c0 01 d0 d9 42
+:0110 09 9a 52 8a f1 ca 01 1b c0 01 1e c0 01 d2 d9 42
 :0120 00 04 d9 42 ff fa d9 8d d9 90 d9 42 ff f4 d9 84
 :0130 d9 3c ff f2 d9 09 d9 42 ff fe d9 42 ff fa d9 84
 :0140 d9 42 00 04 d9 8d d9 90 d9 42 ff f4 d9 84 d9 3c
 :0150 ff f0 d9 09 d9 12 00 00 d9 3c ff f8 d9 09 d9 42
 :0160 ff f8 d9 42 00 04 d9 c0 d9 09 9a 52 8a f1 ca 01
-:0170 74 c0 01 cd c0 01 84 d9 42 ff f8 d9 4e ff f8 d9
+:0170 74 c0 01 cf c0 01 84 d9 42 ff f8 d9 4e ff f8 d9
 :0180 09 c0 01 5e d9 42 ff f8 d9 42 ff f2 d9 84 d9 7b
-:0190 d9 3c ff f6 d9 09 d9 42 ff f8 d9 42 ff f2 d9 84
-:01a0 d9 42 ff f8 d9 42 ff f0 d9 84 d9 7b d9 81 d9 09
-:01b0 d9 60 d9 09 d9 42 ff f8 d9 42 ff f0 d9 84 d9 42
-:01c0 ff f6 d9 81 d9 09 d9 60 d9 09 c0 01 77 c0 00 af
-?auto_err 01db
-:01d0 c0 00 79 c0 00 43 d9 03 00 10 c3 00 00 e2 d9 06
-?stk_err 01e1
-:01e0 c3 00 00 60 72 ab f0 bb d5
+:0190 00 d9 3c ff f6 d9 09 d9 42 ff f8 d9 42 ff f2 d9
+:01a0 84 d9 42 ff f8 d9 42 ff f0 d9 84 d9 7b 00 d9 81
+:01b0 d9 09 d9 60 d9 09 d9 42 ff f8 d9 42 ff f0 d9 84
+:01c0 d9 42 ff f6 d9 81 d9 09 d9 60 d9 09 c0 01 77 c0
+?auto_err 01dd
+:01d0 00 af c0 00 79 c0 00 43 d9 03 00 10 c3 00 00 e2
+?stk_err 01e3
+:01e0 d9 06 c3 00 00 60 72 ab f0 bb d5
 +003b
 +003e
 +0041
@@ -699,10 +699,10 @@ v00f3
 +0172
 +0175
 +0182
-+01cb
-+01ce
-+01d1
-+01d4
++01cd
++01d0
++01d3
++01d6
 }
 .big
 {Crand
