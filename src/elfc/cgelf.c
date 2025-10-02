@@ -8,9 +8,6 @@
 #include "decl.h"
 #include "cgen.h"
 
-//arh - Add declaration of function from gen.c
-extern void queue_jmp(int val);
-
 int entry = 0;
 
 //void cgdata(void)	{ gen(".data"); }
@@ -72,36 +69,36 @@ void cglit(int v)	{
 //void cgclear(void)	{gen(";----- cgclear"); }
 //void cgclear2(void)	{gen(";----- cgclear2"); }
 //grw - added support for signed and unsigned
-void cgldgb(char *s, int sgn)	{gen(";----- cgldgb"); 
+void cgldgb(char *s, int sgn)	{gen(";----- cgldgb");
 	gen(" 				gosub s_vpush8");
-	sgen(" 				  %s %s", "dw", s); 
+	sgen(" 				  %s %s", "dw", s);
 	ngen(" 				  %s %d", "db", sgn); }
-void cgldgw(char *s)	{gen(";----- cgldgw"); 
+void cgldgw(char *s)	{gen(";----- cgldgw");
 	gen(" 				gosub s_vpush16");
 	sgen(" 				  %s %s", "dw", s); }
 //grw - added support for signed and unsigned
-void cgldlb(int n, int sgn)	{ gen(";----- cgldlb"); 
+void cgldlb(int n, int sgn)	{ gen(";----- cgldlb");
 	gen("          gosub s_lpush8        ; push value of local variable on ES");
-	ngen("          %s  %d  ;--- offset", "dw", n); 
+	ngen("          %s  %d  ;--- offset", "dw", n);
 	ngen(" 				  %s %d", "db", sgn); }
-void cgldlw(int n)	{ gen(";----- cgldlw"); 
-	gen("          gosub s_lpush16       ; push value of local variable on ES"); 
+void cgldlw(int n)	{ gen(";----- cgldlw");
+	gen("          gosub s_lpush16       ; push value of local variable on ES");
 	ngen("          %s  %d  ;--- offset", "dw", n); }
 //grw - added support for signed and unsigned
-void cgldsb(int n, int sgn)	{gen(";----- cgldsb"); 
+void cgldsb(int n, int sgn)	{gen(";----- cgldsb");
 	gen(" 				gosub s_vpush8");
-	lgen(" 				  %s %c%d", "dw", n); 
+	lgen(" 				  %s %c%d", "dw", n);
 	ngen(" 				  %s %d", "db", sgn); }
-void cgldsw(int n)	{gen(";----- cgldsw"); 	
+void cgldsw(int n)	{gen(";----- cgldsw");
 	gen(" 				gosub s_vpush16");
 	lgen(" 				  %s %c%d", "dw", n); }
-void cgldla(int n)	{gen(";----- cgldla"); 
-	gen("          gosub s_laddr16       ; push address of local variable on ES"); 
+void cgldla(int n)	{gen(";----- cgldla");
+	gen("          gosub s_laddr16       ; push address of local variable on ES");
 	ngen("          %s  %d  ;--- offset", "dw", n); }
-void cgldsa(int n)	{gen(";----- cgldsa"); 
+void cgldsa(int n)	{gen(";----- cgldsa");
 	gen(" 				gosub s_epush16");
 	lgen(" 				   %s %c%d", "dw", n); }
-void cgldga(char *s)	{gen(";----- cgldga"); 
+void cgldga(char *s)	{gen(";----- cgldga");
 	gen(" 				gosub s_epush16");
 	sgen(" 				  %s %s", "dw", s); }
 //grw - added support for signed and unsigned
@@ -110,7 +107,7 @@ void cgindb(int sgn)	{gen(";----- cgindb");
 	ngen(" 				  %s %d", "db", sgn); }
 void cgindw(void)	{gen(";----- cgindw");
 	gen(" 				gosub s_deref16"); }
-void cgldlab(int id)	{gen(";----- cgldlab"); 
+void cgldlab(int id)	{gen(";----- cgldlab");
 	gen(" 				gosub s_epush16");
   lgen(" 				  %s  %c%d", "dw", id); }
 
@@ -121,24 +118,24 @@ void cgpushlit(int n)	{gen(";----- cgpushlit");
 void cgpop2(void)	{gen(";----- cgpop2"); }
 void cgswap(void)	{gen(";----- cgswap");
 		gen("          gosub s_swap16				 ; swap TOS and SOS on Expression Stack\n"); }
-void cgand(void)	{gen(";----- cgand"); 
+void cgand(void)	{gen(";----- cgand");
 		gen("          gosub s_and16				 ; bitwise and TOS and SOS on Expression Stack\n"); }
-void cgxor(void)	{gen(";----- cgxor"); 
+void cgxor(void)	{gen(";----- cgxor");
 		gen("          gosub s_xor16				 ; bitwise xor TOS and SOS on Expression Stack\n"); }
-void cgior(void)	{gen(";----- cgior"); 
+void cgior(void)	{gen(";----- cgior");
     gen("          gosub s_or16	  			 ; bitwise or TOS and SOS on Expression Stack\n"); }
-void cgadd(void)	{gen(";----- cgadd"); 
+void cgadd(void)	{gen(";----- cgadd");
 		gen("          gosub s_add16				 ; add TOS and SOS on Expression Stack\n"); }
 //grw - added support for signed and unsgined
-void cgmul(int sgn)	{gen(";----- cgmul"); 
+void cgmul(int sgn)	{gen(";----- cgmul");
     /* Only normalize signed operands */
 		if (sgn)
       gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed multiply\n");
 		gen("          gosub s_mul16				 ; multiply SOS by TOS on Expression Stack\n"); }
-void cgsub(void)	{gen(";----- cgsub"); 
+void cgsub(void)	{gen(";----- cgsub");
     gen("          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack\n"); }
 //grw - added support for signed and unsgined
-void cgdiv(int sgn)	{gen(";----- cgdiv"); 
+void cgdiv(int sgn)	{gen(";----- cgdiv");
     /* Only normalize signed operands */
     if (sgn)
       gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed divide\n");
@@ -150,31 +147,31 @@ void cgmod(int sgn)	{gen(";----- cgmod");
       gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed divide\n");
     gen("          gosub s_div16				 ; divide SOS by TOS, the remainder is SOS modulo TOS\n");
 		gen("          gosub s_mod16				 ; replace TOS with remainder, SOS modulo TOS \n"); }
-void cgshl(void)	{gen(";----- cgshl"); 
+void cgshl(void)	{gen(";----- cgshl");
 		gen("          gosub s_shl16				 ; SOS shifted left by TOS on Expression Stack\n"); }
-void cgshr(void)	{gen(";----- cgshr"); 
+void cgshr(void)	{gen(";----- cgshr");
 		gen("          gosub s_shr16				 ; SOS shifted right by TOS on Expression Stack"); }
 
 void cgcmp(char *inst)	{ gen(";----- cgcmp"); }
-void cgeq()		{gen(";----- cgeq"); 
+void cgeq()		{gen(";----- cgeq");
 		gen("          gosub s_eq16				   ; compare TOS == SOS on Expression Stack\n"); }
-void cgne()		{gen(";----- cgne"); 
+void cgne()		{gen(";----- cgne");
 		gen("          gosub s_ne16				   ; compare TOS != SOS on Expression Stack\n"); }
 void cglt()		{gen(";----- cglt");
 		gen("          gosub s_lt16				   ; compare TOS < SOS on Expression Stack\n"); }
-void cggt()		{gen(";----- cggt"); 
+void cggt()		{gen(";----- cggt");
 		gen("          gosub s_gt16				   ; compare TOS > SOS on Expression Stack\n"); }
-void cgle()		{gen(";----- cgle"); 
+void cgle()		{gen(";----- cgle");
 		gen("          gosub s_lte16				 ; compare TOS <= SOS on Expression Stack\n"); }
-void cgge()		{gen(";----- cgge"); 
+void cgge()		{gen(";----- cgge");
 		gen("          gosub s_gte16				 ; compare TOS >= SOS on Expression Stack\n"); }
 void cgult()	{gen(";----- cgult");
 		gen("          gosub s_ult16				 ; unsigned compare TOS < SOS on Expression Stack\n"); }
-void cgugt()	{gen(";----- cgugt"); 
+void cgugt()	{gen(";----- cgugt");
 		gen("          gosub s_ugt16				 ; unsigned compare TOS > SOS on Expression Stack\n"); }
-void cgule()	{gen(";----- cgule"); 
+void cgule()	{gen(";----- cgule");
 		gen("          gosub s_ule16				 ; unsigned compare TOS <= SOS on Expression Stack\n"); }
-void cguge()	{gen(";----- cguge"); 
+void cguge()	{gen(";----- cguge");
 		gen("          gosub s_uge16				 ; unsigned compare TOS >= SOS on Expression Stack\n"); }
 
 
@@ -183,7 +180,7 @@ void cgbrcond(char *i, int n)	{ int lab;
 				  lab = label();
 					//grw - removed cgsynthesis logic
 					//grw - consume queued cmp value before lable generation
-					Q_cmp = cnone;					
+					Q_cmp = cnone;
 					gen(" 				 gosub s_dpop16        ; get result from expression stack");
 					gen(" 				 ghi   ra            ; get MSB from result");
 					gen(" 				 str   r2            ; save in M(X)");
@@ -207,14 +204,14 @@ void cgbrugt(int n)		{gen(";----- cgbrugt"); cgugt(); cgbrcond("lbnz", n); }
 void cgbrule(int n)		{gen(";----- cgbrule"); cgule(); cgbrcond("lbnz", n); }
 void cgbruge(int n)		{gen(";----- cgbruge"); cguge(); cgbrcond("lbnz", n); }
 
-void cgneg(void)	{gen(";----- cgneg"); 
+void cgneg(void)	{gen(";----- cgneg");
 		gen("          gosub s_neg16				 ; negate TOS on Expression Stack\n"); }
-void cgnot(void)	{gen(";----- cgnot"); 
+void cgnot(void)	{gen(";----- cgnot");
 		gen("          gosub s_inv16				 ; bitwise invert TOS on Expression Stack\n"); }
-void cglognot(void)	{gen(";----- cglognot"); 
+void cglognot(void)	{gen(";----- cglognot");
 		gen("          gosub s_not16				 ; logical not TOS on Expression Stack\n"); }
 
-void cgscale(void)	{gen(";----- cgscale"); 
+void cgscale(void)	{gen(";----- cgscale");
 	gen(" 				gosub s_scltos2");}
 void cgscale2(void)	{gen(";----- cgscale2");
 	gen(" 				gosub s_sclsos2");}
@@ -225,7 +222,7 @@ void cgscaleby(int v)	{
 	gen(";----- cgscaleby");
  	if (v == 1)
 		return;   /* no scale required */
-	else if (v == 2) { 
+	else if (v == 2) {
 		gen(" 				gosub s_scltos2");  /* scale by shifting */
 	}	else if (v == 4) {
 		gen(" 				gosub s_scltos4");  /* scale by shifting twice */
@@ -241,18 +238,18 @@ void cgscale2by(int v){
 	gen(";----- cgscale2by");
 	if (v == 1)
 	 return;   /* no scale required */
-	else if (v == 2) { 
+	else if (v == 2) {
 	 gen(" 				gosub s_sclsos2");  /* scale by shifting */
  }	else if (v == 4) {
 	 gen(" 				gosub s_sclsos4");  /* scale by shifting twice */
 	} else { /* scale by multiplication */
-	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");  
+	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");
 	 gen(" 				gosub s_epush16        ; put size on stack");
 	 ngen(" 				  %s %d", "dw", v);
 	 //grw - added support for signed and unsigned
 	 /* gen("        gosub s_mdsgn16			   ; Removed this once unsigned supported?\n"); */
 	 gen("        gosub s_mul16				   ; multiply offset by size\n");
-	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");  
+	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");
 	}
 }
 
@@ -260,7 +257,7 @@ void cgunscaleby(int v)	{
 	gen(";----- cgunscaleby");
 	if (v == 1)
 	 return;   /* no unscale required */
-	else if (v == 1) { 
+	else if (v == 1) {
 	 gen(" 				gosub s_unscl2");  /* unscale by shifting */
  }	else if (v == 4) {
 	 gen(" 				gosub s_unscl4");  /* unscale by shifting */
@@ -275,50 +272,50 @@ void cgunscaleby(int v)	{
 
 void cgbool(void)	{gen(";----- cgbool");
 	gen(" 				  gosub s_bool16");}
-				
+
 //grw - increment functions
 void cgldinc(void)	{gen(";----- cgldinc");
 	gen(" 				 gosub s_psave        ; save pointer to pointer from stack for postfix"); }
-	
-void cginc1pi(int v)	{gen(";----- cginc1pi");  	
+
+void cginc1pi(int v)	{gen(";----- cginc1pi");
 	gen(" 				 gosub s_psave        ; get pointer to pointer from stack for prefix");
 	gen(" 				 gosub s_pincptr      ; increment pointer referenced by pointer");
 	ngen("          %s  %d  ;--- size", "dw", v); }
 
-void cgdec1pi(int v)	{gen(";----- cgdec1pi"); 
+void cgdec1pi(int v)	{gen(";----- cgdec1pi");
 	gen(" 				 gosub s_psave        ; get pointer to pointer from stack for prefix");
 	gen(" 				 gosub s_pdecptr      ; decrement pointer referenced by pointer");
 	ngen("          %s  %d  ;--- size", "dw", v); }
 
-void cginc2pi(int v)	{gen(";----- cginc2pi"); 
+void cginc2pi(int v)	{gen(";----- cginc2pi");
 	gen(" 				 gosub s_pincptr      ; increment pointer referenced by saved pointer");
 	ngen("          %s  %d  ;--- size", "dw", v); }
-	
-void cgdec2pi(int v)	{gen(";----- cgdec2pi"); 
+
+void cgdec2pi(int v)	{gen(";----- cgdec2pi");
 	gen(" 				 gosub s_pdecptr      ; decrement pointer referenced by saved pointer");
 	ngen("          %s  %d  ;--- size", "dw", v); }
 
-void cgincpl(int a, int v)	{gen(";----- cgincpl"); 
-	gen("          gosub s_lpinc16      ; increment local pointer to 2-byte value"); 
+void cgincpl(int a, int v)	{gen(";----- cgincpl");
+	gen("          gosub s_lpinc16      ; increment local pointer to 2-byte value");
 	ngen("          %s  %d  ;--- offset", "dw", a);
 	ngen("          %s  %d  ;--- size", "dw", v); }
 
-void cgdecpl(int a, int v)	{gen(";----- cgdecpl"); 
-	gen("          gosub s_lpdec16      ; decrement local pointer to 2-byte value"); 
+void cgdecpl(int a, int v)	{gen(";----- cgdecpl");
+	gen("          gosub s_lpdec16      ; decrement local pointer to 2-byte value");
 	ngen("          %s  %d  ;--- offset", "dw", a);
 	ngen("          %s  %d  ;--- size", "dw", v); }
 
-void cgincps(int a, int v)	{gen(";----- cgincps"); 
+void cgincps(int a, int v)	{gen(";----- cgincps");
 	gen(" 				 gosub s_vpinc16       ; increment static pointer to 2-byte value");
 	lgen(" 				  %s %c%d  ;--- address", "dw", a);
 	ngen("          %s  %d  ;--- size", "dw", v); }
-	
-void cgdecps(int a, int v)	{gen(";----- cgdecps"); 
+
+void cgdecps(int a, int v)	{gen(";----- cgdecps");
 	gen(" 				 gosub s_vpdec16       ; decrement static pointer to 2-byte value");
 	lgen(" 				  %s %c%d  ;--- address", "dw", a);
 	ngen("          %s  %d  ;--- size", "dw", v); }
-	
-void cgincpg(char *s, int v)	{gen(";----- cgincpg"); 
+
+void cgincpg(char *s, int v)	{gen(";----- cgincpg");
 	gen(" 				 gosub s_vpinc16       ; increment global pointer to 2-byte value");
 	sgen(" 				  %s %s  ;--- address", "dw", s);
 	ngen("          %s  %d  ;--- size", "dw", v); }
@@ -336,71 +333,71 @@ void cgdec1iw(void)	{gen(";----- cgdec1iw");
 	gen(" 				 gosub s_psave        ; save pointer from stack");
 	gen("          gosub s_pdec16       ; decrement variable referenced by saved pointer"); }
 
-void cginc2iw(void)	{gen(";----- cginc2iw");  
+void cginc2iw(void)	{gen(";----- cginc2iw");
 	gen("          gosub s_pinc16       ; increment variable referenced by saved pointer"); }
-	
-void cgdec2iw(void)	{gen(";----- cgdec2iw"); 
+
+void cgdec2iw(void)	{gen(";----- cgdec2iw");
 	gen("          gosub s_pdec16       ; decrement variable referenced by saved pointer"); }
 
-void cginclw(int a)	{gen(";----- cginclw"); 
-	gen("          gosub s_linc16       ; increment local variable"); 
+void cginclw(int a)	{gen(";----- cginclw");
+	gen("          gosub s_linc16       ; increment local variable");
 	ngen("          %s  %d  ;--- offset", "dw", a); }
 
-void cgdeclw(int a)	{gen(";----- cgdeclw"); 
-	gen("          gosub s_ldec16       ; decrement local variable"); 
+void cgdeclw(int a)	{gen(";----- cgdeclw");
+	gen("          gosub s_ldec16       ; decrement local variable");
 	ngen("          %s  %d  ;--- offset", "dw", a); }
 
-void cgincsw(int a)	{gen(";----- cgincsw"); 
+void cgincsw(int a)	{gen(";----- cgincsw");
 	gen(" 				 gosub s_vinc16       ; increment static variable");
 	lgen(" 				  %s %c%d", "dw", a); }
-	
-void cgdecsw(int a)	{gen(";----- cgdecsw"); 
+
+void cgdecsw(int a)	{gen(";----- cgdecsw");
 	gen(" 				 gosub s_vdec16       ; increment static variable");
 	lgen(" 				  %s %c%d", "dw", a); }
 
-void cgincgw(char *s)	{gen(";----- cgincgw"); 
+void cgincgw(char *s)	{gen(";----- cgincgw");
 	gen(" 				 gosub s_vinc16       ; increment global variable");
 	sgen(" 				  %s %s", "dw", s); }
-	
-void cgdecgw(char *s)	{gen(";----- cgdecgw"); 
+
+void cgdecgw(char *s)	{gen(";----- cgdecgw");
 	gen(" 				 gosub s_vdec16       ; decrement global variable");
 	sgen(" 				  %s %s", "dw", s); }
 
 void cginc1ib(void)	{gen(";----- cginc1ib");
 	gen(" 				 gosub s_psave        ; save pointer from stack");
 	gen("          gosub s_pinc8        ; increment variable referenced by saved pointer"); }
-	
+
 void cgdec1ib(void)	{gen(";----- cgdec1ib");
 	gen(" 				 gosub s_psave        ; save pointer from stack");
 	gen("          gosub s_pdec8        ; decrement variable referenced by saved pointer"); }
-	
+
 void cginc2ib(void)	{gen(";----- cginc2ib");
 	gen("          gosub s_pinc8        ; increment variable referenced by saved pointer"); }
-	
-void cgdec2ib(void)	{gen(";----- cgdec2ib"); 
+
+void cgdec2ib(void)	{gen(";----- cgdec2ib");
 	gen("          gosub s_pdec8        ; decrement variable referenced by saved pointer"); }
 
-void cginclb(int a)	{gen(";----- cginclb"); 
-	gen("          gosub s_linc8        ; increment local variable"); 
+void cginclb(int a)	{gen(";----- cginclb");
+	gen("          gosub s_linc8        ; increment local variable");
 	ngen("          %s  %d  ;--- offset", "dw", a); }
-	
-void cgdeclb(int a)	{gen(";----- cgdeclb"); 
-	gen("          gosub s_ldec8        ; decrement local variable"); 
+
+void cgdeclb(int a)	{gen(";----- cgdeclb");
+	gen("          gosub s_ldec8        ; decrement local variable");
 	ngen("          %s  %d  ;--- offset", "dw", a); }
-	
-void cgincsb(int a)	{gen(";----- cgincsb"); 
+
+void cgincsb(int a)	{gen(";----- cgincsb");
 	gen(" 				 gosub s_vinc8        ; increment static variable");
 	lgen(" 				  %s %c%d", "dw", a); }
-	
-void cgdecsb(int a)	{gen(";----- cgdecsb"); 
+
+void cgdecsb(int a)	{gen(";----- cgdecsb");
 	gen(" 				 gosub s_vdec8        ; decrement static variable");
 	lgen(" 				  %s %c%d", "dw", a); }
-	
-void cgincgb(char *s)	{gen(";----- cgincgb"); 
+
+void cgincgb(char *s)	{gen(";----- cgincgb");
 	gen(" 				 gosub s_vinc8        ; increment global variable");
 	sgen(" 				  %s %s", "dw", s); }
-	
-void cgdecgb(char *s)	{gen(";----- cgdecgb"); 
+
+void cgdecgb(char *s)	{gen(";----- cgdecgb");
 	gen(" 				 gosub s_vdec8        ; decrement global variable");
 	sgen(" 				  %s %s", "dw", s); }
 
@@ -409,7 +406,7 @@ void cgbr(char *how, int n, int sc) {
 			gen(";----- cgbr");
 			if (sc)
 				gen(" 				 gosub s_dget16       ; test result on expression stack for short circuit");
-			else	
+			else
 		    gen(" 				 gosub s_dpop16       ; get result from expression stack");
 			gen(" 				 ghi   ra            ; get MSB from result");
  			gen(" 				 str   r2            ; save in M(X)");
@@ -426,41 +423,41 @@ void cgbrfalse(int n, int sc)	{gen(";----- cgbrfalse"); cgbr("lbz", n, sc); }
 void cgjump(int n)	{gen(";----- cgjump"); lgen(" 				  %s\t%c%d", "lbr", n); }
 
 void cgldswtch(int n)	{gen(";----- cgldswtch"); }
-void cgcalswtch(void)	{gen(";----- cgcalswtch"); 
+void cgcalswtch(void)	{gen(";----- cgcalswtch");
 			gen("          gosub s_dpop16   	   ; get switch value from expression stack"); }
 void cgcase(int v, int l)
 			{gen(";----- cgcase");
 			ngen("%s  ra, $%04x  ;----- look for match with case value", "match", v);
 			lgen("%s  %c%d", "lbz", l); }
 
-void cgpopptr(void)	{gen(";----- cgpopptr"); 
-	gen("          gosub s_swap16				 ; swap TOS and SOS on Expression Stack"); 
+void cgpopptr(void)	{gen(";----- cgpopptr");
+	gen("          gosub s_swap16				 ; swap TOS and SOS on Expression Stack");
 	gen("          gosub s_dpop16   	   ; get pointer from expression stack"); }
-void cgstorib(void)	{gen(";----- cgstorib"); 
+void cgstorib(void)	{gen(";----- cgstorib");
 	gen("          gosub s_pstor8       ; store value from ES in pointer variable"); }
-void cgstoriw(void)	{gen(";----- cgstoriw"); 
+void cgstoriw(void)	{gen(";----- cgstoriw");
 	gen("          gosub s_pstor16       ; store value from ES in pointer variable"); }
-void cgstorlb(int n)	{gen(";----- cgstorlb"); 
-	gen("          gosub s_lstor8       ; store value from ES in local variable"); 
+void cgstorlb(int n)	{gen(";----- cgstorlb");
+	gen("          gosub s_lstor8       ; store value from ES in local variable");
 	ngen("          %s  %d  ;--- offset", "dw", n); }
-void cgstorlw(int n)	{gen(";----- cgstorlw"); 
-	gen("          gosub s_lstor16      ; store value from ES in local variable"); 
+void cgstorlw(int n)	{gen(";----- cgstorlw");
+	gen("          gosub s_lstor16      ; store value from ES in local variable");
 	ngen("          %s  %d  ;--- offset", "dw", n); }
-void cgstorsb(int n)	{gen(";----- cgstorsb"); 
+void cgstorsb(int n)	{gen(";----- cgstorsb");
 	gen(" 				 gosub s_vstor8       ; store value from ES in static variable");
 	lgen(" 				  %s %c%d", "dw", n); }
 void cgstorsw(int n)	{gen(";----- cgstorsw");
 	gen(" 				 gosub s_vstor16      ; store value from ES in static variable");
 	lgen(" 				  %s %c%d", "dw", n); }
-void cgstorgb(char *s)	{gen(";----- cgstorgb"); 
+void cgstorgb(char *s)	{gen(";----- cgstorgb");
 	gen(" 				 gosub s_vstor8       ; store value from ES in global variable");
 	sgen(" 				  %s %s", "dw", s); }
 void cgstorgw(char *s)	{gen(";----- cgstorgw");
 	gen(" 				 gosub s_vstor16      ; store value from ES in global variable");
 	sgen(" 				  %s %s", "dw", s); }
 
-void cginitlw(int v, int a)	{gen(";----- cginitlw"); 
-	gen("          gosub s_linit16         ; put value in local variable on ES"); 
+void cginitlw(int v, int a)	{gen(";----- cginitlw");
+	gen("          gosub s_linit16         ; put value in local variable on ES");
 	ngen("          %s  %d  ;--- offset", "dw", a);
 	ngen("          %s  %d  ;--- init value", "dw", v); }
 
@@ -472,15 +469,15 @@ void cgcalr(int n)	{gen(";----- cgcalr");
 	gen("          str  r8   		  ; put function address MSB in call address");
 	gen("          inc  r8   		  ; move call address pointer to LSB");
 	gen("          glo  ra   		  ; get function address LSB from function pointer");
-	gen("          str  r8   		  ; put function address LSB in call address");	
+	gen("          str  r8   		  ; put function address LSB in call address");
 	sgenraw("%s  %s", "          sep", "r4    ; call function address loaded from function pointer");
 	genlab(n);
 	ngen("%s\t 0, 0  ;----- function address from fp", "db", 0);
  }
 
  void cgstack(int n)	{gen(";----- cgstack");
- 	gen("          gosub s_esmove				 ; move pointer for Expression Stack"); 
- 	ngen("          %s  %d  ;--- offset", "dw", n); 
+ 	gen("          gosub s_esmove				 ; move pointer for Expression Stack");
+ 	ngen("          %s  %d  ;--- offset", "dw", n);
  	gen("          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables"); }
 
  void cgentry(void)	{
@@ -533,13 +530,13 @@ void cgdefs(char *s, int len) {
 	int in_str = 0;
 	int start = 1;
 	char c;
-	
+
 	//grw - don't output empty string (len includes quotes, so 2 or less is empty string)
 	if (len < 3)
 	  return;
-	
+
 	genraw("  db ");
-	
+
 	for (i=1; i<len-1; i++) {
 		c = s[i];
 		if (isprint(c) && c != '\'') {

@@ -128,7 +128,7 @@ void	match(int t, char *what);
 //char	*newfilename(char *name, int sfx);
 char	*newfilename(char *name, char* sfx);
 int	next(void);
-//grw - added ngenraw 
+//grw - added ngenraw
 void ngenraw(char *s, char *inst, int n);
 void	ngen(char *s, char *inst, int n);
 void	ngen2(char *s, char *inst, int n, int a);
@@ -143,6 +143,8 @@ int	primtype(int t, char *s);
 void	program(char *name, FILE *in, FILE *out, char *def);
 void	putback(int t);
 void	queue_cmp(int op);
+//arh - Add declaration of function from gen.c
+void queue_jmp(int val);
 void	rbrace(void);
 void	rbrack(void);
 void	reject(void);
