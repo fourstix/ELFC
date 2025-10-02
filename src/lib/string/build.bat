@@ -20,11 +20,12 @@
 ..\elfc -L strspn.c
 ..\elfc -L strstr.c
 ..\elfc -L strtok.c
+..\elfc -L reverse.c
 
 
 type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg  > string.lib
 type strcat.prg strchr.prg strcmp.prg strcpy.prg strcspn.prg strdup.prg >> string.lib
 type strerror.prg strlen.prg strncat.prg strncmp.prg strncpy.prg strlcpy.prg >> string.lib
-type strpbrk.prg strrchr.prg strspn.prg strstr.prg strtok.prg >> string.lib
+type strpbrk.prg strrchr.prg strspn.prg strstr.prg strtok.prg reverse.prg >> string.lib
 
 copy string.lib ..\lib\string.lib

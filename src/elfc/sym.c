@@ -306,13 +306,15 @@ int objsize(int prim, int type, int size) {
 	int	k = 0, sp;
 
 	sp = prim & STCMASK;
-	if (PINT == prim)
+	if (PINT == prim || PUINT == prim)
 		k = INTSIZE;
-	else if (PCHAR == prim)
+	else if (PCHAR == prim || PSCHAR == prim)
 		k = CHARSIZE;
-	else if (INTPTR == prim || CHARPTR == prim || VOIDPTR == prim)
+	else if (INTPTR == prim || CHARPTR == prim || UINTPTR == prim 
+		|| SCHARPTR == prim ||VOIDPTR == prim)
 		k = PTRSIZE;
-	else if (INTPP == prim || CHARPP == prim || VOIDPP == prim)
+	else if (INTPP == prim || CHARPP == prim || UINTPP == prim || 
+		SCHARPP == prim || VOIDPP == prim)
 		k = PTRSIZE;
 	else if (STCPTR == sp || STCPP == sp)
 		k = PTRSIZE;
@@ -338,14 +340,21 @@ static char *typename(int p) {
 	case UNIPTR:	return "UNIO*";
 	case UNIPP:	return "UNIO**";
 	}
+	//grw - added support for signed and unsigned
 	return	PINT    == p? "INT":
 		PCHAR   == p? "CHAR":
+		PSCHAR   == p? "SCHAR":
+ 	  PUINT    == p? "UINT":
 		INTPTR  == p? "INT*":
 		CHARPTR == p? "CHAR*":
+		UINTPTR  == p? "UINT*":
+		SCHARPTR == p? "SCHAR*":
 		VOIDPTR == p? "VOID*":
 		FUNPTR  == p? "FUN*":
 		INTPP   == p? "INT**":
 		CHARPP  == p? "CHAR**":
+		UINTPP   == p? "UINT**":
+		SCHARPP  == p? "SCHAR**":
 		VOIDPP  == p? "VOID**":
 		PVOID   == p? "VOID": "n/a";
 }

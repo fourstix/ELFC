@@ -20,4 +20,5 @@
              extrn Cstrspn
              extrn Cstrstr
              extrn Cstrtok
+             extrn Creverse
              

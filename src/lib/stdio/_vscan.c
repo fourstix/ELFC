@@ -217,6 +217,12 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 				if (!noasg) p = *varg++;
 				if (scannum(p, 0, len)) na++;
 				break;
+			case 'u':
+				//grw - vargs go up not down
+				//if (!noasg) p = *varg--;
+				if (!noasg) p = *varg++;
+				if (scannum(p, 10, len)) na++;
+				break;	
 			case 'n':
 				//grw - vargs go up not down
 				//if (!noasg) p = *varg--;

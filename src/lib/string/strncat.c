@@ -1,13 +1,15 @@
+#define _ELFCLIB_
+#include <string.h>
 
-char *strncat(char *d, char *a, int n) {
+char *strncat(char *d, char *a, size_t n) {
   if (d && a) {
-    asm("         call lget16     ; set the destination pointer");
+    asm("         gosub s_lget16  ; set the destination pointer");
     asm("           dw 0          ; from argument stack");      
     asm("         copy ra, rd     ; put destination pointer into rd");        
-    asm("         call lget16     ; set the source pointer");
+    asm("         gosub s_lget16  ; set the source pointer");
     asm("           dw 2          ; from argument stack");             
     asm("         copy ra, rf     ; put source pointer into rf"); 
-		asm("         call lget16     ; set the count");
+		asm("         gosub s_lget16  ; set the count");
 		asm("           dw 4          ; from argument stack");             
 		asm("         copy ra, rc     ; put counter into rc"); 
     asm("mend:    lda  rd         ; look for end of first string");

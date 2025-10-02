@@ -30,6 +30,9 @@ void init(void) {
 	Q_push = pnone;
 	Q_cmp = cnone;
 	Q_bool = bnone;
+	
+	//grw - added string table
+	str_idx = 0;
 
 	addglob("", 0, 0, 0, 0, 0, NULL, 0);
 	addglob("__SUBC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
@@ -113,7 +116,7 @@ int eofcheck(void) {
 }
 
 int inttype(int p) {
-	return PINT == p || PCHAR == p;
+	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p;
 }
 
 int comptype(int p) {
@@ -124,4 +127,20 @@ int comptype(int p) {
 void notvoid(int p) {
 	if (PVOID == p)
 		error("void value in expression", NULL);
+}
+
+int chartype(int p) {
+	return PCHAR == p || PSCHAR == p;
+}
+
+/* returns 1 if signed, 0 if unsigned */
+int signtype(int p) {
+	/* only chararacter and unsigned integer are signed */
+	return PCHAR != p && PUINT != p;
+}
+
+/* returns 1 if an unsgined opertor should be used */
+int unsgnop(int p1, int p2) {
+	/* unsigned op if either argument is an unsigned type */
+	return (p1 == PUINT || p2 == PUINT || p1 == PCHAR || p2 == PCHAR);
 }

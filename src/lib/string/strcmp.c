@@ -3,10 +3,10 @@ int strcmp(char *s1, char *s2) {
   dif = s1 - s2; /* in case either string is null */
   
   if (s1 && s2) {
-    asm("         call lget16     ; set the first string pointer");
+    asm("         gosub s_lget16  ; set the first string pointer");
     asm("           dw 0          ; from argument stack");      
     asm("         copy ra, rf     ; put s1 pointer into rf");        
-    asm("         call lget16     ; set the second string pointer");
+    asm("         gosub s_lget16  ; set the second string pointer");
     asm("           dw 2          ; from argument stack");             
     asm("         copy ra, rd     ; put s2 pointer into rd");
     asm("cmp:     lda     rd      ; get next byte in s2");
@@ -25,7 +25,7 @@ int strcmp(char *s1, char *s2) {
     asm("         lsnf            ; skip two bytes if positive");
     asm("         ldi  $FF        ; signed byte for negative");
     asm("         phi  ra         ; put sign extension into ra");
-    asm("         call lset16     ; set the return value");
+    asm("         gosub s_lset16  ; set the return value");
     asm("           dw -2         ; in the argument stack");
   }             
   return dif;

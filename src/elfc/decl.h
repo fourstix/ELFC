@@ -61,7 +61,8 @@ void	gendefb(int v);
 void	gendefp(int v);
 void	gendefs(char *s, int len);
 void	gendefw(int v);
-void	gendiv(int swap);
+//grw - added support for signed and unsigned
+void	gendiv(int sgn);
 void	genentry(void);
 void	genexit(void);
 void	geninc(int *lv, int inc, int pre);
@@ -74,8 +75,9 @@ void	genlit(int v);
 void	genln(char *s);
 void	genlocinit(void);
 void	genlognot(void);
-void	genmod(int swap);
-void	genmul(void);
+//grw - added support for signed and unsigned
+void	genmod(int sgn);
+void	genmul(int sgn);
 void	genname(char *name);
 void	genneg(void);
 void	gennot(void);
@@ -89,8 +91,11 @@ void	genrval(int *lv);
 void	genscale(void);
 void	genscale2(void);
 void	genscaleby(int v);
-void	genshl(int swap);
-void	genshr(int swap);
+//grw - removed swap argument
+//void	genshl(int swap);
+//void	genshr(int swap);
+void	genshl(void);
+void	genshr(void);
 void	genstack(int n);
 void	genstore(int *lv);
 int	gensub(int p1, int p2, int swap);
@@ -165,3 +170,14 @@ void cgenraw(char *s, char ch);
 void sgenraw(char *s, char *inst, char *s2);
 //grw - added function for assembly statement outputs
 void genasm(char *strlit);
+
+//grw - function to add string to string table
+void addstr(int label, char *text, int len);
+//grw - concatenate a string to previous string entry
+void concatstr(char *text, int len);
+//grw - function to write out strings
+void genstrtbl(void);
+//grw - function for character type
+int	chartype(int p);
+//grw - function for signed or unsigned type
+int	signtype(int p);

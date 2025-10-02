@@ -56,7 +56,7 @@ int _fdinit(void) {
   }
   
   /* set up fd format */
-  asm("         call lget16     ; get the fildes buffer pointer");
+  asm("         gosub s_lget16  ; get the fildes buffer pointer");
   asm("           dw -2         ; get pointer from argument stack");           
   asm("         copy ra, rf     ; copy fildes pointer to buffer pointer");
   asm("         copy ra, rd     ; copy fildes pointer to dta pointer");

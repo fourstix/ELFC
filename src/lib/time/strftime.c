@@ -99,11 +99,12 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'e':
           pt = _conv(t->tm_mday, "%2d", pt, ptlim);
           continue;
+*/
 
         case 'F':
           pt = _fmt("%Y-%m-%d", t, pt, ptlim);
           continue;
-*/
+
         case 'H':
           pt = _conv(t->tm_hour, "%02d", pt, ptlim);
           continue;
@@ -137,8 +138,12 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
           
 */
-        case 'p':
+        case 'P':
           pt = _add((t->tm_hour >= 12) ? "PM" : "AM", pt, ptlim);
+          continue;
+
+        case 'p':
+          pt = _add((t->tm_hour >= 12) ? "pm" : "am", pt, ptlim);
           continue;
 /*          
         case 'R':

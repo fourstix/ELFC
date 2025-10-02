@@ -5,10 +5,10 @@ char *strchr(char *s, int c) {
   char *p;
   p = NULL;
   if (s) {
-    asm("         call lget16     ; set the source pointer");
+    asm("         gosub s_lget16  ; set the source pointer");
     asm("           dw 0          ; from argument stack");             
     asm("         copy ra, rf     ; put source pointer into rf");
-    asm("         call lget16     ; set the search character");
+    asm("         gosub s_lget16  ; set the search character");
     asm("           dw 2          ; from argument stack");             
     asm("         glo  ra         ; put character value into M(x)");  
     asm("         str  r2         ; for comparisons");
@@ -18,7 +18,7 @@ char *strchr(char *s, int c) {
     asm("         lbnz loop       ; loop until found or terminator");
     asm("         dec  rf         ; move RF back to found character");
     asm("         copy  rf, ra    ; copy pointer to found character");
-    asm("         call lset16     ; set the return value");
+    asm("         gosub s_lset16  ; set the return value");
     asm("           dw -2         ; in the argument stack");   
     asm("notfnd:  adi  0          ; clear DF after arithmetic");
   }

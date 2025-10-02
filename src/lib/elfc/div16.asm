@@ -1,32 +1,61 @@
 #include      ../include/ops_c.inc
 
-              proc    div16
+;---------------------------------------------------------
+; Divide 2 signed 16-bit numbers on expression stack 
+; inputs:
+;  TOS - divisor
+;  SOS - dividend
+;  RA.0 - sign difference byte 
+; registers:
+;  RD - divisor (TOS)
+;  RA - dividend (SOS)
+;  RC - temporary register
+;  R8 - temporary register
+;  RF - quotient register
+;  RE.0 - sign difference
+; returns:
+;  TOS - quotient of 16-bit division (SOS)/(TOS)
+;  RA  - remainder 
+; ******************************************************
 
-              extrn   mdnorm16
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
 
-              sex     r7
+
+                proc    div16
+              glo     ra              ; get sign byte from ra
+              plo     re              ; save sign difference for later
+              sex     r7              ; set X to expression stack
               irx
               ldxa
               plo     rd
               ldxa
               phi     rd
               ldxa
-              plo     rc
+              plo     ra
               ldx
-              phi     rc
-              sex     r2
-              call    mdnorm16
-              plo     re
+              phi     ra
+              sex     r2              ; set X back to system stack
               glo     rd
               lbnz    div16_1
               ghi     rd
               lbnz    div16_1
-              sex     r7
+              sex     r7              ; if divisor zero, set result to zero for error
               ldi     0
               stxd
               stxd
               sex     r2
-              rtn
+              rsub                    ; return from subroutine
+              
 div16_1:      ldi     0
               phi     rf
               plo     rf
@@ -69,26 +98,26 @@ divrt:        sex     r7
               glo     rf
               stxd
               sex     r2
-              rtn
-divgo:        glo     rc
-              plo     r9
-              ghi     rc
-              phi     r9
+              rsub                    ; return from subroutine
+divgo:        glo     ra
+              plo     rc
+              ghi     ra
+              phi     rc
               glo     rd
               str     r2
-              glo     rc
+              glo     ra
               sm
-              plo     rc
+              plo     ra
               ghi     rd
               str     r2
-              ghi     rc
+              ghi     ra
               smb
-              phi     rc
+              phi     ra
               lbdf    divyes
-              glo     r9
-              plo     rc
-              ghi     r9
-              phi     rc
+              glo     rc
+              plo     ra
+              ghi     rc
+              phi     ra
               lbr     divno
 divyes:       glo     r8
               str     r2

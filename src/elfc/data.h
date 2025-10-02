@@ -90,3 +90,10 @@ extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action
 extern_ int	O_library;
+
+//grw - create string table
+//grw - TODO convert this to array of structure
+extern_ int	str_lab[MAXSTRTBL];
+extern_ char *str_text[MAXSTRTBL];
+extern_ int	str_len[MAXSTRTBL];
+extern_ int str_idx;

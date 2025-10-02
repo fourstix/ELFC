@@ -5,9 +5,22 @@
 ; SOS of the expression stack
 ; R7 - expression stack pointer    
 ; R8 - operand pointer
-; usage:   CALL sclsos4
+; usage:   GOSUB sclsos4
 ; returns: offset at SOS scaled by 4 on expression stack
 ;---------------------------------------------------------
+
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
             proc    sclsos4
           copy    r7, r8    ; set up operand pointer
           inc     r8        ; move to LSB of TOS
@@ -30,5 +43,5 @@
           glo     re        ; get shifted LSB from scratch register
           str     r8        ; update LSB on stack
           sex     r2        ; make sure X = SP
-          rtn               ; and return to caller
+          rsub              ; return from subroutine
             endp

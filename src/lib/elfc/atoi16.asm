@@ -1,28 +1,45 @@
 #include      ../include/ops_c.inc
 
-; ****************************************
-; ***** Convert ASCII to integer     *****
-; ***** RF - Pointer to ASCII number *****
-; ***** Returns: RC - 16-bit integer *****
-; ****************************************
-              proc    atoi16
+;---------------------------------------------------------
+; Convert ASCII string to integer
+; registers used:
+;   RF - Pointer to Buffer with ASCII number string
+;   RD - Sign flag for negative values
+;   R8 - Temporary values
+; returns:
+;   RC - Converted 16-bit integer value
+;---------------------------------------------------------
 
+;*********************************************************
+;  This subroutine should only be invoked via the GOSUB
+;  opcode and not through the SCRT CALL opcode.  
+;  It should return via the RSUB opcode, and not the 
+;  SCRT RTN or RETURN opcodes.
+;*********************************************************
+; Subroutine Registers:
+;  R9 is the Subroutine Instruction Pointer
+;  R3 is the argument pointer and return vector for RSUB
+;  R2 is the system stack pointer (SP)
+;*********************************************************
+
+                proc    atoi16              
+              sex     r2               ; make sure X = SP
               ldi     0                ; zero result
               plo     rc
               phi     rc
-              plo     r9               ; and negative flag
+              plo     rd               ; and negative flag
               ldn     rf               ; get first byte
               smi     '-'              ; is it negative sign
               lbnz    atoi_0_1         ; jump if not
               inc     rf               ; move past negative
-              inc     r9               ; set flag for negative number
+              inc     rd               ; set flag for negative number
 atoi_0_1:     lda     rf               ; get next byte of input
               plo     re               ; set aside
               smi     '0'              ; see if below below numbers
               lbnf    atoi_no          ; done if so
               smi     10               ; see if character is above numbers
               lbnf    atoi_0_2         ; jump if actual numeral
-atoi_no:      glo     r9               ; recover sign flag
+atoi_no:      glo     rd               ; recover sign flag
               shr                      ; shift it into DF
               lbnf    atoi_rt          ; jump if number is positive
               glo     rc               ; 2's comp. the number
@@ -33,7 +50,7 @@ atoi_no:      glo     r9               ; recover sign flag
               xri     0ffh
               adci    0
               phi     rc
-atoi_rt:      rtn                      ; return to caller
+atoi_rt:      rsub                     ; return from subroutine
 atoi_0_2:     glo     re               ; retrieve character
               smi     '0'              ; convert to binary number
               plo     re               ; set it aside

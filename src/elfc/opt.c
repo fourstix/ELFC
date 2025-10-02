@@ -97,9 +97,9 @@ static node *reduce(node *n) {
 		return n->left;
 	if (OP_SUB == op && cl && 0 == vl)			/* 0-x -> -x */
 		return mkunop(OP_NEG, n->right);
-	if (OP_MUL == op && cl && 0 == vl)			/* 0*x -> 0 */
+	if ((OP_MUL == op) && cl && 0 == vl)			/* 0*x -> 0 */
 		return mkleaf(OP_LIT, 0);
-	if (OP_MUL == op && cr && 0 == vr)			/* x*0 -> 0 */
+	if ((OP_MUL == op) && cr && 0 == vr)			/* x*0 -> 0 */
 		return mkleaf(OP_LIT, 0);
 	if (OP_DIV == op) {				   /* x/2^n -> x>>n */
 		lim = BPW * 8 - 1;

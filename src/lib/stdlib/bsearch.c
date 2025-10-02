@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-void *bsearch(void *key, void *array, int count, int size, int (*cmp)()) {
+void *bsearch(void *key, void *array, size_t count, size_t size, int (*cmp)()) {
 	void	*p, *end;
 	int	r, r2, delta;
 

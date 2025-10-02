@@ -10,7 +10,7 @@
 #ifndef _ELFCLIB_
 #pragma .link .library ctype.lib
 #pragma .link .requires Cctype
-#pragma #include include/stdlib.inc
+#pragma #include include/ctype.inc
 #endif
 
 int	isalnum(int c);

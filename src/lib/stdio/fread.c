@@ -7,7 +7,7 @@
 #pragma             extrn Cread
 #pragma             extrn Cerrno
 
-int _fread(void *p, int size, FILE *f) {
+int _fread(void *p, size_t size, FILE *f) {
 	int	total;
 	int nc;
 	char ch;
@@ -49,10 +49,10 @@ int _fread(void *p, int size, FILE *f) {
 	}
 }	
 
-int fread(void *p, int size, int count, FILE *f) {
+size_t fread(void *p, size_t size, size_t count, FILE *f) {
 	int	k;
 
 	if ((k = _fread(p, size * count, f)) < 0)
-		return EOF;
+		return 0;
 	return k / size;
 }

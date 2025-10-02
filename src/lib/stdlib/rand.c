@@ -14,5 +14,5 @@ int rand(void) {
 }
 
 void srand(int n) {
-	_seed = n? n & 0xffff: 57005;
+	_seed = n ? n & 0xffff: 57005;
 }

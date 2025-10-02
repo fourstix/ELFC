@@ -18,7 +18,7 @@ int	close(int fd) {
     return EOF;
   }
   
-  asm("         call lget16     ; get the fildes variable ");
+  asm("         gosub s_lget16  ; get the fildes variable ");
   asm("           dw -2         ; get from local stack");           
   asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
   asm("         call O_CLOSE    ; attempt to close the file");
@@ -27,7 +27,7 @@ int	close(int fd) {
   asm("         ldi  $Ff        ; otherwise set result for error");
   asm("         phi  ra         ; set result for 0 or -1 ");
   asm("         plo  ra         ; set result in ra ");
-  asm("         call lset16     ; set the result value ");
+  asm("         gosub s_lset16  ; set the result value ");
   asm("           dw -4         ; in the local variable on the stack");           
 
   /* if close failed, set errno */

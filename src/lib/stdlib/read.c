@@ -5,7 +5,7 @@
 #pragma             extrn Cerrno
 #pragma             extrn C_fildes
 
-int read(int fd, void *buf, int n) {
+int read(int fd, void *buf, size_t n) {
   int fildes;
   int n_read;
   
@@ -18,13 +18,13 @@ int read(int fd, void *buf, int n) {
     return EOF;
    }
      
-  asm("         call lget16     ; get the flldes variable ");
+  asm("         gosub s_lget16  ; get the flldes variable ");
   asm("           dw -2         ; from local variable stack");           
   asm("         copy ra, rd     ; copy fd pointer to buffer pointer");
-  asm("         call lget16     ; get the buffer argument ");
+  asm("         gosub s_lget16  ; get the buffer argument ");
   asm("           dw 2          ; get from argument stack");           
   asm("         copy ra, rf     ; copy argument pointer to buffer pointer");
-  asm("         call lget16     ; get the byte count argument ");
+  asm("         gosub s_lget16  ; get the byte count argument ");
   asm("           dw 4          ; get from argument stack");           
   asm("         copy ra, rc     ; copy argument value to counter");
   asm("         call O_READ     ; attempt to close the file");
@@ -33,7 +33,7 @@ int read(int fd, void *buf, int n) {
   asm("         phi  rc         ; set count to -1 ");
   asm("         plo  rc         ; in rc for return value ");
   asm("rd_ok:   copy rc, ra     ; set count as return value ");
-  asm("         call lset16     ; set the local variable to the count ");
+  asm("         gosub s_lset16  ; set the local variable to the count ");
   asm("           dw -4         ; on the argument stack");           
 
   if (n_read == EOF) {

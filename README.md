@@ -130,6 +130,21 @@ Compiler Option Changes
 
 More information about `-L` Library option can be found on the [ELFC Detailed Information](ELFC.md) page.
 
+Version 3
+----------
+
+* Version 3 adds support for the `signed` and `unsigned` keywords.
+
+* Several compiler routines were re-written as subroutines for much faster performance.
+
+* Support for creating a string table in generated code was added to improve performance.
+
+* Calls to BIOS routines were replaced with inline assembly code to improve performance.
+
+* The stdlib defines the `size_t` type and the C library functions were updated ot use this type.  
+
+* The unsigned conversion `%u` is supported by the stdio printing and scanning functions.
+
 Stdlib Library
 --------------
 **The following functions are supported in the ElfC stdlib C library.**
@@ -148,16 +163,16 @@ Stdlib Library
 
 **Memory Allocation**
 
-* void \*malloc(int size);
-* void \*calloc(int count, int size);
-* void \*realloc(void \*p, int size);
+* void \*malloc(size_t size);
+* void \*calloc(size_t count, size_t size);
+* void \*realloc(void \*p, size_t size);
 * void free(void\* p);
 
 **Number Conversion**
 * int atoi(char \*s);
 * void itoa(int n, char \*s);
 * void itox(int n, char \*s);
-* void itou(int n, char \*s);
+* void itou(unsigned int n, char \*s);
 
 *Note: `itox` and `itou` are functions for hexadecimal and unsigned integer conversion.*
 
@@ -165,8 +180,8 @@ Stdlib Library
 
 * int abs(int n);
 * void div(int num, int denom, div_t *rp);
-* void \*bsearch(void \*key, void \*array, int count, int size, int (\*cmp)());
-* void qsort(void \*list, int count, int size, int (\*cmp)());
+* void \*bsearch(void \*key, void \*array, size_t count, size_t size, int (\*cmp)());
+* void qsort(void \*list, size_t count, size_t size, int (\*cmp)());
 * int rand(void);
 * void srand(int n);
 * int min(int a, int b);
@@ -179,8 +194,8 @@ Stdlib Library
 * int	 creat(char \*path, int mode);
 * int	 open(char \*path, int flags);
 * int	 close(int fd);
-* int	 read(int fd, void \*buf, int len);
-* int	 write(int fd, void *\buf, int len);
+* int	 read(int fd, void \*buf, size_t len);
+* int	 write(int fd, void *\buf, size_t len);
 * int  unlink(char \*path);
 * int  lseek(int fd, int hi_off, int lo_off, int how);
 
@@ -217,8 +232,8 @@ Stdio Library
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
 * FILE \*fopen(char \*path, char \*mode);
-* int fread(void \*p, int size, int count, FILE \*f);
-* int fwrite(void \*p, int size, int count, FILE \*f);
+* size_t fread(void \*p, size_t size, size_t count, FILE \*f);
+* size_t fwrite(void \*p, size_t size, size_t count, FILE \*f);
 * int fflush(FILE \*f);  
 
 *Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP (No Operation) function*
@@ -276,11 +291,11 @@ String Library
 
 **Memory Functions**
 
-* void \*memchr(void \*p, int c, int n);
-* int memcmp(void \*p1, void \*p2, int n);
-* void \*memcpy(void \*d, void \*s, int n);
-* void \*memmove(void \*d, void \*s, int n);
-* void \*memset(void \*p, int c, int n);
+* void \*memchr(void \*p, int c, size_t n);
+* int memcmp(void \*p1, void \*p2, size_t n);
+* void \*memcpy(void \*d, void \*s, size_t n);
+* void \*memmove(void \*d, void \*s, size_t n);
+* void \*memset(void \*p, int c, size_t n);
 
 **String Functions**
 
@@ -288,17 +303,17 @@ String Library
 * char \*strchr(char \*s, int c);
 * int strcmp(char \*s1, char \*s2);
 * char \*strcpy(char \*d, char \*s);
-* int strcspn(char \*s, char \*set);
+* size_t strcspn(char \*s, char \*set);
 * char \*strdup(char \*s);
 * char \*strerror(int err);
-* int strlen(char \*s);
-* char \*strncat(char \*d, char \*a, int n);
-* int strncmp(char \*s1, char \*s2, int n);
-* char \*strncpy(char \*d, char \*s, int n);
-* char \*strlcpy(char \*d, char \*s, int n);
+* size_t strlen(char \*s);
+* char \*strncat(char \*d, char \*a, size_t n);
+* int strncmp(char \*s1, char \*s2, size_t n);
+* char \*strncpy(char \*d, char \*s, size_t n);
+* size_t strlcpy(char \*d, char \*s, size_t n);
 * char \*strpbrk(char \*s, char \*set);
 * char \*strrchr(char \*s, int c);
-* int strspn(char \*s, char \*set);
+* size_t strspn(char \*s, char \*set);
 * char \*strstr(char \*s1, char \*s2);
 * char \*strtok(char \*s, char \*sep);
 
@@ -412,11 +427,10 @@ Differences Between SubC and Full C89
 -------------------------------------
 
 *  The following keywords are not recognized:
-   `const`, `double`, `float`, `goto`, `long`, `short`,
-   `signed`, `unsigned`.
+   `const`, `double`, `float`, `goto`, `long`, `short`.
 
-*  There are only two primitive data types: the signed `int` and
-   the unsigned `char`; there are also void pointers, and there
+*  There are four primitive data types: signed and unsigned `int` and
+   signed and unsigned `char`; there are also void pointers, and there
    is limited support for `int(*)()` (pointers to functions
    of type int).
 
@@ -430,8 +444,7 @@ Differences Between SubC and Full C89
 
 *  There are no `const` variables.
 
-*  There are no unsigned integers, long integers, or signed
-   chars.
+*  There are no long integers.
 
 *  Struct/union declarations must be separate from the
    declarations of struct/union objects, i.e.
@@ -440,9 +453,9 @@ Differences Between SubC and Full C89
 *  Struct/union declarations must be global (struct and union
    objects may be declared locally, though).
 
-*  A struct/union cannot be passed as an argument to a function, nor can a function return
-   a struct/union value.  However, a *pointer* to struct/union can be passed as an argument to a 
-   function and a pointer to a struct/union may be returned by a function. 
+*  A struct/union cannot be passed as an argument to a function, nor can
+   a function return a struct/union value.  However, a *pointer* to struct/union
+   can be passed as an argument to a function and a pointer to a struct/union may be returned by a function. 
 
 *  There is no support for bit fields.
 

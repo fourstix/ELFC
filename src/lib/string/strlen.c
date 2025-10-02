@@ -1,10 +1,10 @@
+#define _ELFCLIB_
+#include <string.h>
 
-
-
-int strlen(char *s) {
+size_t strlen(char *s) {
 	int len = 0;
 	if (s) {
-		asm("         call lget16     ; set the string pointer");
+		asm("         gosub s_lget16  ; set the string pointer");
 		asm("           dw 0          ; from argument stack");             
 	  asm("         copy ra, rf     ; put source pointer into rf");
 		asm("         ldi  0          ; clear counter");
@@ -15,7 +15,7 @@ int strlen(char *s) {
 		asm("         inc  rc         ; increment count");
 		asm("         lbr  loop       ; and keep looking for terminator");
     asm("done:    copy rc, ra     ; move count to return variable");
-		asm("         call lset16     ; set the return value");
+		asm("         gosub s_lset16  ; set the return value");
 		asm("           dw -2         ; in the argument stack"); 
 	}
 	/*

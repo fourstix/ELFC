@@ -1,22 +1,27 @@
 #include      ../include/ops_c.inc
 
-; *****************************************************************
-; ***** Compute Modulo of top two numbers on expression stack *****
-; ***** R7 - pointer to expression stack                      *****
-; *****************************************************************
-              proc    mod16
+;---------------------------------------------------------
+; Compute the Modulo of top two numbers on expression stack
+; by replacing their division quotient value with the
+; remainder value on the TOS 
+; registers:
+;  R7 - pointer to expression stack                      
+;  RA - remainder from previous division operation
+;  TOS - quotation to be discarded
+; result:
+;  TOS - remainder (modulo value)
+;---------------------------------------------------------
 
-              extrn   div16
+                proc    mod16
 
-              call    div16            ; perform division
-              inc     r7               ; Remove division result
-              inc     r7
-              ghi     rc               ; div16 leaves remainder in RC
-              str     r7               ; so store it on expression stack
-              dec     r7
-              glo     rc
-              str     r7
-              dec     r7
-              rtn                      ; then return to caller
+              sex     r7              ; set X to expression stack
+              irx                     ; Remove division result
+              irx     
+              ghi     ra              ; div16 leaves remainder in RA
+              stxd                    ; so store it on expression stack
+              glo     ra              
+              stxd   
+              sex     r2              ; set X back to system stack
+              rsub                    ; return from subroutine
 
-              endp
+                endp

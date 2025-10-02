@@ -28,7 +28,7 @@ void exit(int n) {
   /* free the memory for the line buffer */
   if (_lbuf) free(_lbuf);
 
-  asm("         call  lget16      ; set error return code for exit");
+  asm("         gosub s_lget16    ; set error return code for exit");
   asm("           dw  0           ; get return value from argument stack");
   asm("         clc               ; clear DF for exit");
   asm("         lbr   Elfexit     ; exit immediately from program");

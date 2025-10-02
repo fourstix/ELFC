@@ -8,6 +8,9 @@
 #include "decl.h"
 
 #define	MAXBARS	100
+/*
+#define DEBUG 
+*/
 
 int	Level = 0;
 char	Bars[MAXBARS];
@@ -76,7 +79,7 @@ node *mkbinop2(int op, int n1, int n2, node *left, node *right) {
 	return mknode(op, 2, a, left, right);
 }
 
-#ifdef debug
+#ifdef DEBUG
 
 static void dumpleaf(char *s, int n) {
 	printf("%s %d\n", s, n);
@@ -185,7 +188,7 @@ void dumptree(node *a) {
 	}
 }
 
-#endif /* debug */
+#endif /* DEBUG */
 
 void emitcond(node *a, int ex) {
 
@@ -214,7 +217,7 @@ void emitargs(node *a) {
 
 static void emittree1(node *a) {
 	int	lv[LV];
-	int	ptr;
+	int	unsgn;
 	if (NULL == a) return;
 	switch (a->op) {
 	case OP_IDENT:	/* ignore */ break;
@@ -299,16 +302,17 @@ static void emittree1(node *a) {
 	case OP_GTEQ:	emittree1(a->left);
 			emittree1(a->right);
 			commit();
-			ptr = !inttype(a->args[0]);
+			//grw - added support for signed and unsigned
+			unsgn = !inttype(a->args[0]) || unsgnop(a->args[0], a->args[1]);
 			switch(a->op) {
 			case OP_EQUAL:	queue_cmp(equal); break;
 			case OP_NOTEQ:	queue_cmp(not_equal); break;
-			case OP_LESS:	queue_cmp(ptr? below: less); break;
-			case OP_GREATER:queue_cmp(ptr? above: greater); break;
-			case OP_LTEQ:	queue_cmp(ptr? below_equal:
+			case OP_LESS:	queue_cmp(unsgn? below: less); break;
+			case OP_GREATER:queue_cmp(unsgn? above: greater); break;
+			case OP_LTEQ:	queue_cmp(unsgn? below_equal:
 						less_equal);
 					break;
-			case OP_GTEQ:	queue_cmp(ptr? above_equal:
+			case OP_GTEQ:	queue_cmp(unsgn? above_equal:
 						greater_equal);
 			}
 			break;
@@ -322,18 +326,19 @@ static void emittree1(node *a) {
 	case OP_MUL:	/* fallthru */
 	case OP_SUB:	/* fallthru */
 	case OP_PLUS:	/* fallthru */
-	case OP_ADD:	emittree1(a->left);
+	case OP_ADD: unsgn = unsgnop(a->args[0], a->args[1]);	
+	    emittree1(a->left);
 			emittree1(a->right);
 			commit();
 			switch(a->op) {
-			case OP_LSHIFT:	genshl(1); break;
-			case OP_RSHIFT:	genshr(1); break;
-			case OP_DIV:	gendiv(1); break;
-			case OP_MOD:	genmod(1); break;
+			case OP_LSHIFT:	genshl(); break;
+			case OP_RSHIFT:	genshr(); break;
+			case OP_DIV:	gendiv(!unsgn); break;
+			case OP_MOD:	genmod(!unsgn); break;
 			case OP_BINAND:	genand(); break;
 			case OP_BINIOR:	genior(); break;
 			case OP_BINXOR:	genxor(); break;
-			case OP_MUL:	genmul(); break;
+			case OP_MUL:	genmul(!unsgn); break;
 			case OP_ADD:	genadd(PINT, PINT, 1); break;
 			case OP_PLUS:	genadd(a->args[0], a->args[1], 1);
 					break;
@@ -384,7 +389,9 @@ static void emittree1(node *a) {
 }
 
 void emittree(node *a) {
-	/* dumptree(a); */
+#ifdef DEBUG
+	dumptree(a); 
+#endif	
 	a = optimize(a);
 	emittree1(a);
 }

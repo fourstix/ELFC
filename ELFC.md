@@ -5,15 +5,33 @@ Types Supported
 
 <table>
 <tr><th>Keyword</th><th>Name</th><th>Description</th><th>Minimum</th><th>Maximum</th></tr>
-<tr><td>char</td><td>Character</td><td>8-bit unsigned</td><td>0</td><td>255</td></tr>
-<tr><td>int</td><td>Integer</td><td>16-bit signed</td><td>-32767</td><td>32767</td></tr>
+<tr><td>char</td><td rowspan="2">Character</td><td rowspan="2">8-bit unsigned</td><td rowspan="2">0</td><td rowspan="2">255</td></tr>
+<tr><td>unsigned char</td></tr>
+<tr><td>signed char</td><td>Signed Character</td><td>8-bit signed</td><td>-127</td><td>127</td></tr>
+<tr><td>int</td><td rowspan="3">Signed Integer</td><td rowspan="3">16-bit signed</td><td rowspan="3">-32767</td><td rowspan="3">32767</td></tr>
+<tr><td>signed int</td></tr>
+<tr><td>signed</td></tr>
+<tr><td>unsigned int</td><td rowspan="2">Unsigned Integer</td><td  rowspan="2">16-bit unsigned</td><td  rowspan="2">0</td><td  rowspan="2">65535</td></tr>
+<tr><td>unsigned</td></tr>
 <tr><td>void</td><td>Void</td><td>No Value</td><td>0</td><td>0</td></tr>
-<tr><td>int *</td><td rowspan="3">Pointer</td><td rowspan="3">16-bit unsigned</td><td rowspan="3">0</td><td rowspan="3">65535</td></tr>
-<tr><td>char *</td></tr>
-<tr><td>void *</td></tr>
-<tr><td>int **</td><td rowspan="3">Pointer to a Pointer</td><td rowspan="3">16-bit unsigned</td><td rowspan="3">0</td><td rowspan="3">65535</td></tr>
-<tr><td>char **</td></tr>
-<tr><td>void **</td></tr>
+<tr><td>int *</td><td rowspan="5">Pointer to Integer</td><td rowspan="5">16-bit unsigned</td><td rowspan="5">0</td><td rowspan="5">65535</td></tr>
+<tr><td>signed int *</td></tr>
+<tr><td>signed *</td></tr>
+<tr><td>unsigned int *</td></tr>
+<tr><td>unsigned *</td></tr>
+<tr><td>char *</td><td rowspan="3">Pointer to Character</td><td rowspan="3">16-bit unsigned</td><td rowspan="3">0</td><td rowspan="3">65535</td></tr>
+<tr><td>unsigned char *</td></tr>
+<tr><td>signed char *</td></tr>
+<tr><td>void *</td><td>Pointer to Void</td><td>16-bit unsigned</td><td>0</td><td>65535</td></tr>
+<tr><td>int **</td><td rowspan="5">Pointer to a Pointer to Integer</td><td rowspan="5">16-bit unsigned</td><td rowspan="5">0</td><td rowspan="5">65535</td></tr>
+<tr><td>signed int **</td></tr>
+<tr><td>signed **</td></tr>
+<tr><td>unsigned int **</td></tr>
+<tr><td>unsigned **</td></tr>
+<tr><td>char **</td><td rowspan="3">Pointer to a Pointer to Character</td><td rowspan="3">16-bit unsigned</td><td rowspan="3">0</td><td rowspan="3">65535</td></tr>
+<tr><td>unsigned char **</td></tr>
+<tr><td>signed char **</td></tr>
+<tr><td>void **</td><td>Pointer to a Pointer to Void</td><td>16-bit unsigned</td><td>0</td><td>65535</td></tr>
 <tr><td>int(*)()</td><td>Pointer to a Function</td><td>16-bit unsigned</td><td>0</td><td>65535</td></tr>
 </table>
 
@@ -32,17 +50,17 @@ Registers Used
 <tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R3</td><td>Program Instruction Pointer</td><td>OS</td><td>Reserved</td></tr>
+<tr><td>R3</td><td>Program Instruction and Subroutine Argument Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R4</td><td>SCRT Call Routine</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R5</td><td>SCRT Return Routine</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R6</td><td>SCRT Argument and Return Point</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R7</td><td>Expression Stack Pointer (ESP)</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>R8</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
-<tr><td>R9</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
+<tr><td>R9</td><td>Subroutine Pointer</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RA</td><td>Accumulator and Return Value</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RB</td><td>Caller Stack Frame Base Pointer</td><td>ElfC</td><td>Reserved</td></tr>
 <tr><td>RC</td><td>Counter</td><td>User</td><td>General Use</td></tr>
-<tr><td>RD</td><td>Destination Pointer, Data Value</td><td>User</td><td>General Use</td></tr>
+<tr><td>RD</td><td>Destination Pointer or Data Value</td><td>User</td><td>General Use</td></tr>
 <tr><td>RE.1</td><td>Baud Rate Byte</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>OS</td><td>General Use</td></tr>
 <tr><td>RF</td><td>Buffer Pointer</td><td>User</td><td>General Use</td></tr>
@@ -129,16 +147,16 @@ Print Conversions
 * The suppression operator `*` is supported.
 * The decimal precision is not supported.
 * The length modifiers h, l (el) and L are not supported. 
-* The `%d, %i, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
-* The %u, %f, %e, %E, %g and %G conversions are not supported.
+* The `%d, %i, %u, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
+* The %f, %e, %E, %g and %G conversions are not supported.
 
 Scan Conversions
 -----------------
 * The width specification is suppored.
 * The suppression operator `*` is supported.
-* The `%d, %i, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
+* The `%d, %i, %u, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
 * The charset operators `%[...]` and `%[^...]` are supported.
-* The %u, %f, %e, and %g conversions are not supported.
+* The %f, %e, and %g conversions are not supported.
 
 Unsupported Stdlib Functions
 ----------------------------
@@ -295,12 +313,14 @@ Strftime Conversions
 <tr><td>%B</td><td>full month name</td></tr>
 <tr><td>%c</td><td>local date and time representation</td></tr>
 <tr><td>%d</td><td>day of month, as two digits with zero (01 to 31)</td></tr>
+<tr><td>%F</td><td>ISO date representation (%Y-%m-%d)</td></tr>
 <tr><td>%H</td><td>hour (24-hour clock) as two digits with zero (00 to 23)</td></tr>
 <tr><td>%I</td><td>hour (12-hour clock) as two digits with zero (01 to 12)</td></tr>
 <tr><td>%j</td><td>day of year (001-366)</td></tr>
 <tr><td>%m</td><td>month (01 to 12)</td></tr>
 <tr><td>%M</td><td>minute (00 to 59)</td></tr>
-<tr><td>%p</td><td>AM or PM</td></tr>
+<tr><td>%P</td><td>AM or PM</td></tr>
+<tr><td>%p</td><td>am or pm</td></tr>
 <tr><td>%S</td><td>second (00 to 60)</td></tr>
 <tr><td>%U</td><td>week number of the year, Sunday as first day of week (00 to 53)</td></tr>
 <tr><td>%w</td><td>weekday (0 to 6, Sunday is 0)</td></tr>

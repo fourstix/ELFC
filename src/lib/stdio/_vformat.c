@@ -14,6 +14,7 @@
 #pragma             extrn Cputs
 #pragma             extrn Cputch
 #pragma             extrn Citoa
+#pragma             extrn Citou
 #pragma             extrn Cabs
 #pragma             extrn Cmemcpy
 #pragma             extrn Citox
@@ -256,6 +257,17 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				*sgnch = 0;
 				na++;
 				break;
+			case 'u':
+				p = sbuf;
+				itou((unsigned)*varg++, p);
+				//grw - length is always six with no padding required
+				//len = BPW*2+2;
+				//*pad = '0';
+				//grw - unsigned type
+				*sgnch = 0;
+				na++;
+				break;
+	
 			case 'x':
 			case 'X':
 				k = 'X' == fmt[-1]? -16: 16;
@@ -265,6 +277,7 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				*sgnch = 0;
 				na++;
 				break;
+
 			default:
 			  //grw - implement a smaller buffer
 				sbuf[0] = fmt[-1];

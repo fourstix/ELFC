@@ -1,17 +1,19 @@
+#define _ELFCLIB_
+#include <string.h>
 
- int strncmp(char *s1, char *s2, int n) {
+ int strncmp(char *s1, char *s2, size_t n) {
 	 int  dif;
 	 /* return value in case either string is null */
    dif = s1 - s2; 
    
    if (s1 && s2) {
-     asm("         call lget16     ; set the first string pointer");
+     asm("         gosub s_lget16  ; set the first string pointer");
      asm("           dw 0          ; from argument stack");      
      asm("         copy ra, rf     ; put s1 pointer into rf");        
-     asm("         call lget16     ; set the second string pointer");
+     asm("         gosub s_lget16  ; set the second string pointer");
      asm("           dw 2          ; from argument stack");             
      asm("         copy ra, rd     ; put s2 pointer into rd"); 
-		 asm("         call lget16     ; set the counter");
+		 asm("         gosub s_lget16  ; set the counter");
      asm("           dw 4          ; from argument stack");      
      asm("         copy ra, rc     ; put counter into rc");        
 		 asm("loop:    lda  rf         ; get byte from first string");
@@ -40,7 +42,7 @@
      asm("         lsnf            ; skip two bytes if positive");
      asm("         ldi  $FF        ; signed byte for negative");
      asm("         phi  ra         ; put sign extension into ra");
-     asm("done:    call lset16     ; set the return value");
+     asm("done:    gosub s_lset16  ; set the return value");
      asm("           dw -2         ; in the argument stack");
 		 asm("         adi      0      ; clear DF after arithmetic");
    }             

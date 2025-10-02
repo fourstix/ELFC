@@ -54,7 +54,8 @@ void cgdefl(int v);
 void cgdefp(int v);
 void cgdefs(char *s, int len);
 void cgdefw(int v);
-void cgdiv(void);
+//grw - added support for signed and unsgined
+void cgdiv(int sgn);
 void cgentry(void);
 void cgeq(void);
 void cgexit(void);
@@ -76,22 +77,26 @@ void cgincpl(int a, int v);
 void cgincps(int a, int v);
 void cgincsb(int a);
 void cgincsw(int a);
-void cgindb(void);
+//grw - added support for signed and unsigned
+void cgindb(int sgn);
 void cgindw(void);
 void cginitlw(int v, int a);
 void cgior(void);
 void cgjump(int n);
 void cglbss(char *s, int z);
 void cgldga(char *s);
-void cgldgb(char *s);
+//grw - added support for signed and unsigned
+void cgldgb(char *s, int sgn);
 void cgldgw(char *s);
 void cgldinc(void);
 void cgldla(int n);
 void cgldlab(int id);
-void cgldlb(int n);
+//grw - added support for signed and unsigned
+void cgldlb(int n, int sgn);
 void cgldlw(int n);
 void cgldsa(int n);
-void cgldsb(int n);
+//grw - added support for signed and unsigned
+void cgldsb(int n, int sgn);
 void cgldsw(int n);
 void cgldswtch(int n);
 void cgle(void);
@@ -99,8 +104,10 @@ void cglit(int v);
 int  cgload2(void);
 void cglognot(void);
 void cglt(void);
-void cgmod(void);
-void cgmul(void);
+//grw - added support for signed and unsgined
+void cgmod(int sgn);
+//grw - added support for signed and unsgined
+void cgmul(int sgn);
 void cgne(void);
 void cgneg(void);
 void cgnot(void);

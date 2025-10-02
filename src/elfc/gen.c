@@ -342,41 +342,44 @@ void genxor(void) {
 	cgxor();
 }
 
-void genshl(int swapped) {
+void genshl() {
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 from logic
 	//if (cgload2() || !swapped) cgswap();
-	if (!swapped) cgswap();
+	//if (!swapped) cgswap();
 	cgshl();
 }
 
-void genshr(int swapped) {
+void genshr() {
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
-	if (!swapped) cgswap();
 	cgshr();
 }
 
+//grw - added support for signd and unsgined
 static int ptr(int p) {
 	int	sp;
 
 	sp = p & STCMASK;
 	return INTPTR == p || INTPP == p ||
+	  UINTPTR == p || UINTPP == p ||
 		CHARPTR == p || CHARPP == p ||
+		SCHARPTR == p || SCHARPP == p ||
 		VOIDPTR == p || VOIDPP == p ||
 		STCPTR == sp || STCPP == sp ||
 		UNIPTR == sp || UNIPP == sp ||
 		FUNPTR == p;
 }
-
+//grw - added support for signd and unsgined
 static int needscale(int p) {
 	int	sp;
 
 	sp = p & STCMASK;
 	return INTPTR == p || INTPP == p || CHARPP == p || VOIDPP == p ||
+		UINTPTR == p || UINTPP == p || SCHARPP == p || 
 		STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp;
 }
 
@@ -450,30 +453,32 @@ int gensub(int p1, int p2, int swapped) {
 	return rp;
 }
 
-void genmul(void) {
+void genmul(int sgn) {
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 from logic
 	//cgload2();
-	cgmul();
+	//if (!swapped) cgswap();
+
+  cgmul(sgn);
 }
 
-void gendiv(int swapped) {
+void gendiv(int sgn) {
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
-	if (!swapped) cgswap();
-	cgdiv();
+	//if (!swapped) cgswap();
+	cgdiv(sgn);
 }
 
-void genmod(int swapped) {
+void genmod(int sgn) {
 	//grw - removed gentext
 	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
-	if (!swapped) cgswap();
-	cgmod();
+	//if (!swapped) cgswap();
+	cgmod(sgn);
 }
 
 static void binopchk(int op, int p1, int p2) {
@@ -574,8 +579,10 @@ void genind(int p) {
 	//grw - removed gentext
 	//gentext();
 	commit();
-	if (PCHAR == p)
-		cgindb();
+	//grw - added support for signed and unsigned
+	//if (PCHAR == p)
+	if (chartype(p))
+		cgindb(signtype(p));
 	else
 		cgindw();
 }
@@ -757,6 +764,8 @@ void genexit(void) {
 	//grw - removed gentext
 	//gentext();
 	cgexit();
+	/* write out string table after code */
+	genstrtbl();
 }
 
 void genpush(void) {
@@ -929,7 +938,10 @@ void geninc(int *lv, int inc, int pre) {
 		genincptr(lv, inc, pre);
 		return;
 	}
-	b = PCHAR == lv[LVPRIM];
+	//grw - added support for signed and unsigned
+	//b = PCHAR == lv[LVPRIM];
+	b = chartype(lv[LVPRIM]);
+
 	/* will duplicate move to aux register in (*char)++ */
 	commit();
 	if (!y && !pre) cgldinc();
@@ -1003,26 +1015,34 @@ void genstore(int *lv) {
 	//gentext();
 	if (!lv[LVSYM]) {
 		cgpopptr();
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 			cgstorib();
 		else
 			cgstoriw();
 
 	}
 	else if (CAUTO == Stcls[lv[LVSYM]]) {
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 			cgstorlb(Vals[lv[LVSYM]]);
 		else
 			cgstorlw(Vals[lv[LVSYM]]);
 	}
 	else if (CLSTATC == Stcls[lv[LVSYM]]) {
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 			cgstorsb(Vals[lv[LVSYM]]);
 		else
 			cgstorsw(Vals[lv[LVSYM]]);
 	}
 	else {
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 			cgstorgb(gsym(Names[lv[LVSYM]]));
 		else
 			cgstorgw(gsym(Names[lv[LVSYM]]));
@@ -1039,30 +1059,37 @@ void genrval(int *lv) {
 		genind(lv[LVPRIM]);
 	}
 	else if (CAUTO == Stcls[lv[LVSYM]]) {
-		if (PCHAR == lv[LVPRIM])
+		//grw - add support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 		  //grw - remove queue
 			//queue(auto_byte, Vals[lv[LVSYM]], NULL);
-			cgldlb(Vals[lv[LVSYM]]);
+			//grw - add support for signed and unsigned
+			cgldlb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
 		else
 		  //grw - remove queue
 			//queue(auto_word, Vals[lv[LVSYM]], NULL);
 			cgldlw(Vals[lv[LVSYM]]);
 	}
 	else if (CLSTATC == Stcls[lv[LVSYM]]) {
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 		  //grw - remove queue
 			//queue(static_byte, Vals[lv[LVSYM]], NULL);
-			cgldsb(Vals[lv[LVSYM]]);
+			cgldsb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
 		else
 		  //grw - remove queue
 			//queue(static_word, Vals[lv[LVSYM]], NULL);
 			cgldsw(Vals[lv[LVSYM]]);
 	}
 	else {
-		if (PCHAR == lv[LVPRIM])
+		//grw - added support for signed and unsigned
+		//if (PCHAR == lv[LVPRIM])
+		if (chartype(lv[LVPRIM]))
 		  //grw - remove queue
 			//queue(globl_byte, 0, Names[lv[LVSYM]]);
-			cgldgb(gsym(Names[lv[LVSYM]]));
+			cgldgb(gsym(Names[lv[LVSYM]]), signtype(lv[LVPRIM]));
 		else
 			//grw -remove queue
 			//queue(globl_word, 0, Names[lv[LVSYM]]);
@@ -1129,3 +1156,88 @@ void genasm(char * strlit) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, "%s\n", asmText);
 }
+
+//grw - added string table
+
+/* 
+ * Add a string to the string table
+ */
+void addstr(int label, char *text, int len) {
+	char *ptext;
+	
+	//grw - create duplicate to text string from parser
+	//grw - don't use strdup since C string literals may have embedded nulls
+	
+	if (len > 0) {
+	  ptext = malloc(len);
+		if (ptext) 
+		  memcpy(ptext, text, len);
+		else 		//grw - if we ran out of memory, exit immediately
+		  fatal("Unable to add string to table.");			
+	} else 
+	  ptext = 0;
+
+		str_lab[str_idx] = label;
+		str_text[str_idx] = ptext;
+		str_len[str_idx] = len;
+		str_idx++;
+}
+
+
+/* 
+ * concatenate a string to the previous string in the string table
+ */
+ void concatstr(char *text, int len) {
+	 int  prev_idx;
+	 char *prev_txt, *new_txt;
+	 int  prev_len, new_len;
+
+	 //grw - no need to concat empty string (Len includes quotes)
+	 if (len > 2) {		 
+	   prev_idx = str_idx - 1;
+     prev_txt = str_text[prev_idx];
+	   prev_len = str_len[prev_idx];
+	   new_len  = prev_len + len - 2;
+		 //grw - expand storage to hold new text
+		 new_txt  = realloc(prev_txt, new_len);
+		 if (new_txt) {
+		   //grw - copy new text after end of old text, skipping quotes in middle
+		   memcpy(new_txt+prev_len-1, text+1, len-1);
+		   //grw - set previous string to concatenated text string			 
+		   str_text[prev_idx] = new_txt;
+			 str_len[prev_idx] = new_len;
+		 } else {
+			 /* if we ran out of memory, exit with error */
+			 fatal("Unable to concatenate literal strings");
+		 }
+	 } 
+ }
+
+ /* 
+  * Write out strings from the string table
+  */
+ void genstrtbl(void) {
+	 int i;
+	 int lab;
+	 char *txt;
+	 int len;
+	 
+	 genraw("\n;----- string table\n");
+	 for (i = 0; i < str_idx; i++) {
+		 lab = str_lab[i];
+		 txt = str_text[i];
+		 len = str_len[i];
+		 
+		 /* write out each string in string table */
+		 genlab(lab);
+		 gendefs(txt, len);
+		 gendefb(0);
+		 
+		 /* free the memory for the string */
+		 free(txt);	 
+	 }
+	 /* reset the string table */
+	 str_idx = 0;
+ }
+
+ 
