@@ -35,16 +35,13 @@ static node *fold2(node *n) {
 				return n;
 			v = vl - vr;
 			break;
-	case OP_UMUL:		
 	case OP_MUL:	v = vl * vr;
 			if (v / vl != vr) return n;
 			if ((v & (Opt_sum_lim-1)) != v) return n;
 			break;
-	case OP_UDIV:		
 	case OP_DIV:	if (0 == vr) return n;
 			v = vl / vr;
 			break;
-	case OP_UMOD:		
 	case OP_MOD:	if (0 == vr) return n;
 			v = vl % vr;
 			break;
@@ -100,11 +97,11 @@ static node *reduce(node *n) {
 		return n->left;
 	if (OP_SUB == op && cl && 0 == vl)			/* 0-x -> -x */
 		return mkunop(OP_NEG, n->right);
-	if ((OP_MUL == op || OP_UMUL == op) && cl && 0 == vl)			/* 0*x -> 0 */
+	if ((OP_MUL == op) && cl && 0 == vl)			/* 0*x -> 0 */
 		return mkleaf(OP_LIT, 0);
-	if ((OP_MUL == op || OP_UMUL == op) && cr && 0 == vr)			/* x*0 -> 0 */
+	if ((OP_MUL == op) && cr && 0 == vr)			/* x*0 -> 0 */
 		return mkleaf(OP_LIT, 0);
-	if (OP_DIV == op || OP_UDIV == op) {				   /* x/2^n -> x>>n */
+	if (OP_DIV == op) {				   /* x/2^n -> x>>n */
 		lim = BPW * 8 - 1;
 		for (k=1,i=0; i<lim; i++, k<<=1) {
 			if (cr && k == vr) {
@@ -150,7 +147,7 @@ node *reorder_ops(node *n) {
 		  n->left->left &&
 		  OP_IDENT == n->left->left->op))
 		&&
-		(OP_ADD == op || OP_PLUS == op || OP_MUL == op || OP_UMUL == op ||
+		(OP_ADD == op || OP_PLUS == op || OP_MUL == op ||
 		 OP_BINAND == op || OP_BINIOR == op || OP_BINXOR == op ||
 		 OP_EQUAL == op || OP_NOTEQ == op)
 	) {

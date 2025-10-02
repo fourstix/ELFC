@@ -566,42 +566,17 @@ static node *prefix(int *lv) {
 static node *cast(int *lv) {
 	int	t;
 	node	*n;
-	int sgn, unsgn;
 
 	if (LPAREN == Token) {
 		Token = scan();
 		
+		//grw - added signed and unsigned types
 		if ( INT == Token || CHAR == Token || VOID == Token ||
 			UINT == Token || SCHAR == Token ||
-			STRUCT == Token || UNION == Token ) {
-						
+			STRUCT == Token || UNION == Token ) {				
 			t = primtype(Token, NULL);
 			Token = scan();
-		//grw - add support for signed and unsigned
-		} else if (UNSIGNED == Token) {
-			/* check next token for int or char */
-			Token = scan();
-			if (CHAR == Token) {
-				t = primtype(Token, NULL);
-				Token = scan();
-			} else {
-				t = primtype(UINT, NULL);
-				if (INT == Token)
-				  Token = scan();
-			} 
-		} else if (SIGNED == Token) {
-				/* check next token for int or char */
-				Token = scan();
-				if (CHAR == Token) {
-					t = primtype(SCHAR, NULL);
-					Token = scan();
-				} else {
-					t = primtype(INT, NULL);
-					if (INT == Token)
-					  Token = scan();
-				}
 		}
-		
 		else {
 			reject();
 			Token = LPAREN;
@@ -635,7 +610,6 @@ static node *cast(int *lv) {
 }
 
 int binop(int tok, int p1, int p2) {
-	int unsgn;
 	switch(tok) {
 	case AMPER:	return OP_BINAND;
 	case CARET:	return OP_BINXOR;
@@ -646,20 +620,13 @@ int binop(int tok, int p1, int p2) {
 	case LSHIFT:	return OP_LSHIFT;
 	case LTEQ:	return OP_LTEQ;
 	case MINUS:	return OP_SUB;
-	case MOD:	
-	  unsgn = unsgnop(p1, p2);
-		return unsgn ? OP_UMOD: OP_MOD;
+	case MOD:		return OP_MOD;
 	case NOTEQ:	return OP_NOTEQ;
 	case PIPE:	return OP_BINIOR;
 	case PLUS:	return OP_PLUS;
-	case RSHIFT:
-	  return OP_RSHIFT;
-	case SLASH:
-	  unsgn = unsgnop(p1, p2);
-		return unsgn ? OP_UDIV : OP_DIV;
-	case STAR:
-	  unsgn = unsgnop(p1, p2);	
-	  return unsgn ? OP_UMUL : OP_MUL;
+	case RSHIFT: return OP_RSHIFT;
+	case SLASH: return OP_DIV;
+	case STAR: return OP_MUL;
 	default:	fatal("internal: unknown binop");
 			return 0; /* notreached */
 	}

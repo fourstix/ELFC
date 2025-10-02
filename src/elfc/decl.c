@@ -240,7 +240,7 @@ int pointerto(int prim) {
 	int	y;
 
 	if (CHARPP == prim || INTPP == prim || VOIDPP == prim ||
-	    FUNPTR == prim ||
+	    SCHARPP == prim || UINTPP == prim ||FUNPTR == prim ||
 	    (prim & STCMASK) == STCPP || (prim & STCMASK) == UNIPP
 	)
 		error("too many levels of indirection", NULL);
@@ -252,10 +252,14 @@ int pointerto(int prim) {
 	case UNIPTR:	return UNIPP | y;
 	}
 	return PINT == prim? INTPTR:
+	  PUINT == prim? UINTPTR:
 		PCHAR == prim? CHARPTR:
+		PSCHAR == prim? SCHARPTR:
 		PVOID == prim? VOIDPTR:
 		INTPTR == prim? INTPP:
-		CHARPTR == prim? CHARPP: VOIDPP;
+		UINTPTR == prim? UINTPP:
+		CHARPTR == prim? CHARPP:
+		SCHARPTR == prim? SCHARPP: VOIDPP;
 }
 
 /*
@@ -423,8 +427,6 @@ static int localdecls(void) {
 	int	utype, prim, type, size, addr = 0, val, ini;
 	int	stat, extn;
 	int	pbase, rsize;
-  //grw -added signed and unsigned types
-	int sign, unsign;
 
 	Nli = 0;
 	utype = 0;
@@ -432,7 +434,7 @@ static int localdecls(void) {
 	while ( AUTO == Token || EXTERN == Token || REGISTER == Token ||
 		STATIC == Token || VOLATILE == Token ||
 		INT == Token || CHAR == Token || VOID == Token ||
-		SIGNED == Token || UNSIGNED == Token ||
+		SCHAR == Token || UINT == Token ||
 		ENUM == Token ||
 		STRUCT == Token || UNION == Token ||
 		(IDENT == Token && (utype = usertype(Text)) != 0)
@@ -442,27 +444,18 @@ static int localdecls(void) {
 			continue;
 		}
 		extn = stat = 0;
-		//grw - added support for signed and unsiged types
-    sign = unsign = 0;
 		if (AUTO == Token || REGISTER == Token || STATIC == Token ||
-			VOLATILE == Token || EXTERN == Token || SIGNED == Token ||
-			UNSIGNED == Token) {
+			VOLATILE == Token || EXTERN == Token ) {
 			stat = STATIC == Token;
 			extn = EXTERN == Token;
-			sign = SIGNED == Token;
-			unsign = UNSIGNED == Token;
 			Token = scan();
+
 			if (	INT == Token || CHAR == Token ||
+				//grw - added signed and unsigned types
+        SCHAR == Token || UINT == Token ||
 				VOID == Token ||
 				STRUCT == Token || UNION == Token
-			) {
-				//grw - process sign or unsigned tokens here
-				if (INT == Token && unsign) {
-					Token = UINT;
-				} else if (CHAR == Token && sign) {
-					Token = SCHAR;
-				}
-				
+			) {					
 				prim = primtype(Token, NULL);
 				Token = scan();
 			}
@@ -470,10 +463,7 @@ static int localdecls(void) {
 				prim = Prims[utype];
 			}
 			else
-			  if (unsign) 
-					prim = PUINT;
-				else
-				  prim = PINT;
+  		  prim = PINT;
 		}
 		else if (utype) {
 			prim = Prims[utype];
@@ -723,6 +713,7 @@ void typedecl(void) {
 		decl(CTYPE, Prims[utype], utype);
 	}
 	else {
+		//grw - TODO update this for signed and unsigned
 		prim = primtype(Token, NULL);
 		Token = scan();
 		decl(CTYPE, prim, 0);
@@ -747,15 +738,11 @@ void typedecl(void) {
 
 void top(void) {
 	int	utype, prim, clss = CPUBLIC;
-	int sign = 0;
-	int unsign = 0;
 
 	switch (Token) {
 	case EXTERN:	clss = CEXTERN; Token = scan(); break;
 	case STATIC:	clss = CSTATIC; Token = scan(); break;
 	case VOLATILE:	Token = scan(); break;
-	case SIGNED:	sign = 1; Token = scan(); break;
-	case UNSIGNED: unsign = 1; Token = scan(); break;
 	}
 	switch (Token) {
 	case ENUM:
@@ -768,27 +755,17 @@ void top(void) {
 	case UNION:
 		structdecl(clss, UNION == Token);
 		break;
-	case CHAR:
-		if (sign)
-		  Token = SCHAR; 
-		prim = primtype(Token, NULL);
-		Token = scan();
-		decl(clss, prim, 0);
-		break;
 	
+	case CHAR:
 	case INT:
-	  if (unsign)
-		  Token = UINT;
-		prim = primtype(Token, NULL);
-		Token = scan();
-		decl(clss, prim, 0);
-		break;
-
+	case SCHAR:
+	case UINT:
 	case VOID:
 		prim = primtype(Token, NULL);
 		Token = scan();
 		decl(clss, prim, 0);
 		break;
+
 	case IDENT:
 		if ((utype = usertype(Text)) != 0) {
 			Token = scan();
@@ -798,16 +775,8 @@ void top(void) {
 			decl(clss, PINT, 0);
 		break;
 	default:
-	  //grw - signed or unsigned keyword alone is a valid type
-		//grw - but signed and unsigned together is invalid
-	  if (sign && UNSIGNED != Token) {
-			decl(clss, PINT, 0);
-		} else if (unsign && SIGNED != Token) {
-			decl(clss, PUINT, 0);
-		} else {
 		error("type specifier expected at: %s", Text);
 		Token = synch(SEMI);
-	  } 
 		break;
 	}
 }

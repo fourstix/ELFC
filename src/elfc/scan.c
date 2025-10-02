@@ -310,7 +310,7 @@ static int macro(char *name) {
 }
 
 static int scanpp(void) {
-	int	c, t;
+	int	c, t, peek;
 
 	if (Rejected != -1) {
 		t = Rejected;
@@ -539,8 +539,51 @@ static int scanpp(void) {
 				Value = scanident(c, Text, TEXTLEN);
 				if (Expandmac && macro(Text))
 					break;
-				if ((t = keyword(Text)) != 0)
+				if ((t = keyword(Text)) != 0) {
+					/* if signed or unsigned peek ahead to determine token */
+					if (SIGNED == t || UNSIGNED == t) {
+						/* get next non-whitespace char */
+						c = skip();
+						if ('c' == c || 'i' == c) {
+							/* check to see if next token is int or char */
+							Value = scanident(c, Text, TEXTLEN);
+							peek = keyword(Text);
+							/* only int or char are compound tokens */
+							if (INT == peek || CHAR == peek) {
+								if (SIGNED == t && CHAR == peek) {
+									t = SCHAR;
+								} else if (UNSIGNED == t && INT == peek) {
+									t = UINT;
+								} else {
+									t = peek;
+								} //if else t && peek
+							} else {
+								/* put back any non-keyword token as ident */
+								if (0 == peek)
+								  Token = IDENT;
+								reject();
+								/* assume (signed) integer or unsigned integer */
+								if (UNSIGNED == t) {
+									t = UINT;
+								} else {
+									t = INT;
+								} // if else t UNSIGNED
+							} // if else INT || CHAR	
+						} else {
+							/* 
+							 * if next char not part of int or char keyword 
+							 * so put it back and assume (signed) integer or unsigned integer
+							 */
+							putback(c);
+							if (UNSIGNED == t) {
+								t = UINT;
+							} else {
+								t = INT;
+							} // if else t UNSIGNED
+						} //if else 'c' || 'i' 
+					} //if SIGNED || UNSIGNED
 					return t;
+				} // if keyword(Text)
 				return IDENT;
 			}
 			else {
