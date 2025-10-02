@@ -290,21 +290,22 @@ static int keyword(char *s) {
 
 static int macro(char *name) {
 	int	y;
-	char *p;
-	int  size;
+  //arh - p, size unused
+	//char *p;
+	//int  size;
 
 	y = findmac(name);
 	if (!y || Types[y] != TMACRO)
 		return 0;
 	if (!strcmp(name, "__LINE__")) {
-		//grw - print line number as raw number in source 
+		//grw - print line number as raw number in source
 		sprintf(pbuf, "%d", Line);
 		playmac(pbuf);
 	} else if (!strcmp(name, "__FILE__")){
 		//grw - print file name as C string in source (double qyoted)
-		sprintf(pbuf, "\"%s\"", File);	
+		sprintf(pbuf, "\"%s\"", File);
 		playmac(pbuf);
-	} else 
+	} else
 	  playmac(Mtext[y]);
 	return 1;
 }

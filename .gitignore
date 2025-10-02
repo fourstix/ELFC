@@ -1,0 +1,30 @@
+# Compiled binaries and object files
+*.o
+*.obj
+*.exe
+*.out
+*.bin
+*.dll
+*.so
+*.dylib
+
+# Build directories
+build/
+bin/
+obj/
+Debug/
+Release/
+
+# Temporary files
+*~
+*.bak
+*.swp
+*.tmp
+
+# IDE-specific files
+.vscode/
+.idea/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb

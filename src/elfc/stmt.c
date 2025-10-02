@@ -19,7 +19,7 @@ static void stmt(void);
  *	| stmt stmt_list
  */
 
-void compound(int lbr) {	
+void compound(int lbr) {
 	if (lbr) Token = scan();
 	while (RBRACE != Token) {
 		if (eofcheck()) return;
@@ -127,7 +127,7 @@ static void for_stmt(void) {
 		//grw - removed clear logic
 		//clear(1);
 		//grw - clean up expression stack after init clause
-		genpopd();   
+		genpopd();
 	}
 	semi();
 	genlab(ls);
@@ -143,7 +143,7 @@ static void for_stmt(void) {
 	if (Token != RPAREN) {
 		rexpr();
 		//grw - clean up expression stack after inc clause
-		genpopd();   
+		genpopd();
 	}
 	//grw - removed clear logic
 	//clear(1);
@@ -155,7 +155,7 @@ static void for_stmt(void) {
 	genlab(lb);
 	Bsp--;
 	Csp--;
-	
+
 	//grw - trace
 	gen(";----- end for");
 }
@@ -207,8 +207,8 @@ static void asm_stmt(void) {
 	if (STRLIT == Token) {
 		genasm(Text);
 		Token = scan();
-	}	else 
-	  error("asm statement requires string literal", NULL);	
+	}	else
+	  error("asm statement requires string literal", NULL);
 	//grw - removed clear logic
 	//clear(1);
 	rparen();
@@ -397,7 +397,7 @@ static void stmt(void) {
 
 	switch (Token) {
 	//grw -- added asm statement
-	case ASM:	asm_stmt(); break;  	
+	case ASM:	asm_stmt(); break;
 	case BREAK:	break_stmt(); break;
 	case CONTINUE:	continue_stmt(); break;
 	case DO:	do_stmt(); break;
@@ -411,7 +411,7 @@ static void stmt(void) {
 	case DEFAULT:	wrong_ctx(DEFAULT); break;
 	case CASE:	wrong_ctx(CASE); break;
 	//grw - added logic to get result from expression stack
-	//grw - genpopd will eliminate a redundant push/pop then do a commit 
+	//grw - genpopd will eliminate a redundant push/pop then do a commit
 	default:	expr(lv, 0); semi(); genpopd(); break;
 	//default:	expr(lv, 0); semi(); genpopd(); commit(); break;
 

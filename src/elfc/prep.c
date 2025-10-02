@@ -136,7 +136,7 @@ static void p_else(void) {
 		Ifdefstk[Isp-1] = P_ELSE;
 	else
 		error("'#else' without matching '#ifdef'", NULL);
-		
+
 }
 
 static void endif(void) {
@@ -185,10 +185,10 @@ static void junkln(void) {
 /* function to emit line to assembly file */
 static void emitln(void) {
 		char	buf[TEXTLEN+1];
-		getln(buf, TEXTLEN-1); 
+		getln(buf, TEXTLEN-1);
 		genraw("\n");  //grw - make sure text is on its own line
 		genraw(buf);
-		genraw("\n"); 
+		genraw("\n");
 		Line++;
 }
 

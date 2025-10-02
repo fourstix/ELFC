@@ -351,7 +351,7 @@ static node *postfix(int *lv) {
 			//genpushd();
 			break;
 		case INCR:
-		case DECR: 
+		case DECR:
 			if (lv[LVADDR]) {
 				if (INCR == Token)
 					n = mkunop2(OP_POSTINC, lv[LVPRIM],
@@ -749,7 +749,7 @@ static node *cond2(int *lv, int op) {
 	int	lab = 0;
 	node	*n, *n2 = NULL;
 	int	tv = 1;
-	
+
 	n = op == LOGOR? cond2(lv, LOGAND): binexpr(lv);
 	while (Token == op) {
 		if (!lab) lab = label();

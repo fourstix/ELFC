@@ -38,15 +38,15 @@ void init(void) {
 	addglob("__SUBC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	if (!strcmp(OS, "DOS"))
 		addglob("__dos", 0, TMACRO, 0, 0, 0, globname(""), 0);
-	//grw - added macro def for Elf/OS 
+	//grw - added macro def for Elf/OS
 	else if (!strcmp(OS, "Elf/OS"))
-			addglob("__elfos", 0, TMACRO, 0, 0, 0, globname(""), 0);	
+			addglob("__elfos", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	else
 		addglob("__unix", 0, TMACRO, 0, 0, 0, globname(""), 0);
-		
+
 	//grw - add predefined macros for line number and file name
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
-	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);	
+	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	Infile = stdin;
 	File = "(stdin)";
 	Basefile = NULL;

@@ -118,7 +118,7 @@ char *galloc(int k, int align) {
 
 char *globname(char *s) {
 	char	*p;
-	
+
 	p = galloc(strlen(s)+1, 0);
 	strcpy(p, s);
 	return p;

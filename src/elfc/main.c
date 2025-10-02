@@ -23,8 +23,8 @@ void cleanup(void) {
     //grw - use extensions for Asm/02 and Link/02
 		//remove(newfilename(Basefile, 's'));
 		//remove(newfilename(Basefile, 'o'));
-    remove(newfilename(Basefile, "asm")); 
-		remove(newfilename(Basefile, "prg")); 
+    remove(newfilename(Basefile, "asm"));
+		remove(newfilename(Basefile, "prg"));
 
 	}
 }
@@ -53,7 +53,7 @@ char *newfilename(char *file, char* sfx) {
 		p++;
 		*p = 0;
   } /* if */
-	
+
 	strcat(ofile, sfx);
 	return ofile;
 }
@@ -86,7 +86,7 @@ static void compile(char *file, char *def) {
 	if (file) {
     //grw change logic to support extension
 		//ofile = newfilename(file, 's');
-    ofile = newfilename(file, "asm");  
+    ofile = newfilename(file, "asm");
 		if ((in = fopen(file, "r")) == NULL)
 			cmderror("no such file: %s", file);
 		if (!O_testonly) {
@@ -129,7 +129,7 @@ static void collect(char *file, int temp) {
 static void assemble(char *file, char *path) {
 	char	*ofile;
 	char	cmd[TEXTLEN+1];
-  
+
   //grw - Asm/02 specifies object name
 	//file = newfilename(file, 's');
 	//if (O_componly && O_outfile)
@@ -155,6 +155,8 @@ static void assemble(char *file, char *path) {
 	//}
 }
 
+//arh - unused function concat
+#if 0
 static int concat(int k, char *buf, char *s) {
 	int	n;
 
@@ -165,21 +167,22 @@ static int concat(int k, char *buf, char *s) {
 	strcat(buf, s);
 	return k + n + 1;
 }
-
-//grw need to pass filename to Link/02 
+#endif
+//grw need to pass filename to Link/02
 //static void link(void) {
 static void link(char *fname, char *path) {
-	int	i, k;
+  //arh - i,k not used
+  	//int	i, k;
 	char	cmd[TEXTLEN+2];
   //grw - cmd2 not used
 	//char	cmd2[TEXTLEN+2];
 	char	*ofile;
-  //grw - add binary file name 
+  //grw - add binary file name
   char	*binfile;
   //grw - initialize of file to output file name
-  ofile = newfilename(fname, "prg");  
+  ofile = newfilename(fname, "prg");
   binfile = newfilename(fname, "elfos");
-  //grw - rewrote logic for Link/02 
+  //grw - rewrote logic for Link/02
 	//ofile = O_outfile? O_outfile: AOUTNAME;
 	//if (strlen(ofile) + strlen(LDCMD) + strlen(SCCDIR)*2 >= TEXTLEN)
 	//	cmderror("linker command too long", NULL);
@@ -193,12 +196,12 @@ static void link(char *fname, char *path) {
 	//if (O_verbose > 1) printf("%s\n", cmd2);
 	//if (system(cmd2))
 	//	cmderror("linker invocation failed", NULL);
-    
+
   if (strlen(O_outfile) + 6 + strlen(ofile) + strlen(LDCMD) + strlen(SYSLIBC) + strlen(binfile) + strlen(path) >= TEXTLEN)
 	 	cmderror("linker command too long", NULL);
-    
+
   sprintf(cmd, LDCMD, path, path, path, ofile);
-  
+
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
     strcat(cmd, " -o ");
@@ -206,16 +209,16 @@ static void link(char *fname, char *path) {
   } else {
     strcat(cmd, " -o ");
     strcat(cmd, binfile);
-    
+
   }
-  
+
   //grw - added no c libs option
   if (O_clibs)
-    strcat(cmd, SYSLIBC);  
-  else 
+    strcat(cmd, SYSLIBC);
+  else
      strcat(cmd, ELFLIBC);
-  
-  //grw - simplified logic to not remove files 
+
+  //grw - simplified logic to not remove files
 	//if (O_verbose > 2) printf("rm ");
 	//for (i=0; i<Nf; i++) {
 	//	if (Temp[i]) {
@@ -233,7 +236,7 @@ static void usage(void) {
   //grw
 	//printf("Usage: scc [-h] [-ctvNSV] [-d opt] [-o file] [-D macro[=text]]"
 	//	" file [...]\n");
-  printf("Usage: elfc [-h] [-ctvLNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");  
+  printf("Usage: elfc [-h] [-ctvLNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -296,7 +299,7 @@ int main(int argc, char *argv[]) {
   //grw - determine path for invoking assembler and linker
   char *ppath;
   char *tpath;
-  
+
 	def = NULL;
 	O_debug = 0;
 	O_verbose = 0;
@@ -306,7 +309,7 @@ int main(int argc, char *argv[]) {
   //grw - added no c libs option
 	O_clibs = 1;
 	O_outfile = "";
-  //grw - added library option 
+  //grw - added library option
   O_library = 0;
 
   //grw - determine file path from command string that invoked elfc
@@ -320,9 +323,9 @@ int main(int argc, char *argv[]) {
         break;
     ppath = tpath;
     //grw - move past matching string
-    tpath += 4;    
-  }  
-  
+    tpath += 4;
+  }
+
   if (ppath != NULL) {
     //grw - terminate string at end of path to elfc
     *ppath = '\0';
@@ -330,7 +333,7 @@ int main(int argc, char *argv[]) {
     //grw - if elfc not found, set file path string to empty
     Fpath = "";
   }
-      
+
 	for (i=1; i<argc; i++) {
 		if (*argv[i] != '-') break;
 		if (!strcmp(argv[i], "-")) {
@@ -370,7 +373,7 @@ int main(int argc, char *argv[]) {
       case 'N':
         //grw - don't link stdlib and stdio
 				O_clibs = 0;
-				break;  
+				break;
 			case 'S':
 				O_componly = O_asmonly = 1;
 				break;
@@ -392,7 +395,7 @@ int main(int argc, char *argv[]) {
 		if (filetype(argv[i]) == 'c') {
 			compile(argv[i], def);
       //grw - set name for linker
-      fname = argv[i]; 
+      fname = argv[i];
 			if (Errors && !O_testonly)
 				cmderror("compilation stopped", NULL);
 			if (!O_asmonly && !O_testonly)
@@ -401,7 +404,7 @@ int main(int argc, char *argv[]) {
 		}
 		else if (filetype(argv[i]) == 's') {
       //grw - set name for linker
-      fname = argv[i]; 
+      fname = argv[i];
 
 			if (!O_testonly) assemble(argv[i++], Fpath);
 		}

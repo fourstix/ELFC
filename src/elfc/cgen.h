@@ -52,6 +52,7 @@ void cgdefb(int v);
 void cgdefc(int c);
 void cgdefl(int v);
 void cgdefp(int v);
+void cgdefs(char *s, int len);
 void cgdefw(int v);
 //grw - added support for signed and unsgined
 void cgdiv(int sgn);
