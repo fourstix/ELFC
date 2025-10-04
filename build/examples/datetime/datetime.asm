@@ -3,8 +3,7 @@
 ; SubC Copyright 2012-2025 by Nils Holm
 ; -------------------------------------------------------------------
 #include include/ops_c.inc
-#include include/bios.inc
-#include include/kernel.inc
+#include include/os_api.inc
 #include include/elfc.inc
 
 	           proc datetime
@@ -35,42 +34,33 @@ Cmain:
 	          push  rb				 		 ; save current BP (base pointer)
 	          copy  r7, rb			 	 ; set BP to current ES location
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  -4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;----- begin stmt ------
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Cnow
 	;----- cgstorgw
-	 				 call vstor16       ; store value from ES in global variable
+	 				 gosub s_vstor16      ; store value from ES in global variable
 	 				  dw Ctp
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L3
-	;----- cgjump
-	 				  lbr	L3
-
-L2:
-  db 'EDT'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L3:
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw -300
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw  L2
 	;----- cgcall
 	          call  Ctimezone
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -78,163 +68,145 @@ L3:
 	;----- end stmt ------
 	;----- begin stmt ------
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgcall
 	          call  Csystime
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgstorlw
-	          call  lstor16      ; store value from ES in local variable
+	          gosub s_lstor16      ; store value from ES in local variable
 	          dw  -2  ;--- offset
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L5
-	;----- cgjump
-	 				  lbr	L5
-
-L4:
-  db '%02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L5:
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 10
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1900
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 6
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 8
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 2
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 4
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L4
+	 				gosub s_epush16
+	 				  dw  L3
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  14  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L7
-	;----- cgjump
-	 				  lbr	L7
-
-L6:
-  db 'Day of week: %d  Day of Year: %d', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L7:
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 14
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 12
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L6
+	 				gosub s_epush16
+	 				  dw  L4
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -243,257 +215,176 @@ L7:
 	;----- begin stmt ------
 	;----- begin if
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 16
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- genbrfalse
 	;----- cgbrfalse
 	;----- cgbr
-	 				 call  dpop16        ; get result from expression stack
+	 				 gosub s_dpop16       ; get result from expression stack
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
 	 				 or                  ; D = MSB | LSB
-	 				 lbz	L8           ; check for branch
+	 				 lbz	L5           ; check for branch
 	;----- begin stmt ------
-	;---- queue lbr L10
-	;----- cgjump
-	 				  lbr	L10
-
-L9:
-  db 'Daylight Savings Time.', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L10:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L9
+	 				gosub s_epush16
+	 				  dw  L6
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
-	;---- queue lbr L11
+	;---- queue lbr L7
 	;----- cgjump
-	 				  lbr	L11
+	 				  lbr	L7
 
-L8:
+L5:
 	;----- begin stmt ------
-	;---- queue lbr L13
-	;----- cgjump
-	 				  lbr	L13
-
-L12:
-  db 'Standard Time.', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L13:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L12
+	 				gosub s_epush16
+	 				  dw  L8
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 
-L11:
+L7:
 	;----- end if
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L15
-	;----- cgjump
-	 				  lbr	L15
-
-L14:
-  db 'Source: %s', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L15:
-	;---- queue lbr L19
-	;----- cgjump
-	 				  lbr	L19
-
-L18:
-  db 'RTC'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L19:
-	;---- queue lbr L21
-	;----- cgjump
-	 				  lbr	L21
-
-L20:
-  db 'Kernel'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L21:
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -2  ;--- offset
 	;----- genbrfalse
 	;----- cgbrfalse
 	;----- cgbr
-	 				 call  dpop16        ; get result from expression stack
+	 				 gosub s_dpop16       ; get result from expression stack
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
 	 				 or                  ; D = MSB | LSB
-	 				 lbz	L16           ; check for branch
+	 				 lbz	L10           ; check for branch
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L18
-	;---- queue lbr L17
+	 				gosub s_epush16
+	 				  dw  L12
+	;---- queue lbr L11
 	;----- cgjump
-	 				  lbr	L17
+	 				  lbr	L11
 
-L16:
+L10:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L20
+	 				gosub s_epush16
+	 				  dw  L13
 
-L17:
+L11:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L14
+	 				gosub s_epush16
+	 				  dw  L9
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L23
-	;----- cgjump
-	 				  lbr	L23
-
-L22:
-  db 'Ascii %s'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L23:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgcall
 	          call  Casctime
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L22
+	 				gosub s_epush16
+	 				  dw  L14
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L25
-	;----- cgjump
-	 				  lbr	L25
-
-L24:
-  db 'CStime: %s'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L25:
 	;----- cgcall
 	          call  Ccstime
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L24
+	 				gosub s_epush16
+	 				  dw  L15
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L27
-	;----- cgjump
-	 				  lbr	L27
-
-L26:
-  db '%A %Y-%m-%d %H:%M:%S %Z'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L27:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L26
+	 				gosub s_epush16
+	 				  dw  L16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 64
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Ctbuf
 	;----- cgcall
 	          call  Cstrftime
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  8  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L29
-	;----- cgjump
-	 				  lbr	L29
-
-L28:
-  db 'Local time: %s', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L29:
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Ctbuf
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L28
+	 				gosub s_epush16
+	 				  dw  L17
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -501,223 +392,187 @@ L29:
 	;----- end stmt ------
 	;----- begin stmt ------
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgcall
 	          call  Cutctime
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L31
-	;----- cgjump
-	 				  lbr	L31
-
-L30:
-  db 'GMT: %02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L31:
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 10
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1900
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 6
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 8
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 2
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 4
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L30
+	 				gosub s_epush16
+	 				  dw  L18
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  14  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L33
-	;----- cgjump
-	 				  lbr	L33
-
-L32:
-  db 'GMT Day of week: %d  GMT Day of Year: %d DST: %d', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L33:
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 16
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 14
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 12
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgindw
-	 				call deref16
+	 				gosub s_deref16
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L32
+	 				gosub s_epush16
+	 				  dw  L19
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  8  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L35
-	;----- cgjump
-	 				  lbr	L35
-
-L34:
-  db '%A %Y-%m-%d %H:%M:%S Z'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L35:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ctp
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L34
+	 				gosub s_epush16
+	 				  dw  L20
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 64
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Ctbuf
 	;----- cgcall
 	          call  Cstrftime
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  8  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L37
-	;----- cgjump
-	 				  lbr	L37
-
-L36:
-  db 'GMT time: %s', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L37:
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Ctbuf
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L36
+	 				gosub s_epush16
+	 				  dw  L21
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -726,14 +581,81 @@ L37:
 
 L1:
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;----- cgexit
 	          sex   r2            ; make sure X = SP
-	          call  escheck       ; check for expression stack creep
+	          gosub s_stkchk      ; check for expression stack creep
+	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
 	          pop   rb				 		 ; restore BP (base pointer)
 
-	          rtn	  			 	     ; return to caller
+	          rtn    			 	     ; return to caller
+
+;----- string table
+
+L2:
+  db 'EDT'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L3:
+  db '%02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L4:
+  db 'Day of week: %d  Day of Year: %d', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L6:
+  db 'Daylight Savings Time.', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L8:
+  db 'Standard Time.', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L9:
+  db 'Source: %s', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L12:
+  db 'RTC'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L13:
+  db 'Kernel'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L14:
+  db 'Ascii %s'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L15:
+  db 'CStime: %s'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L16:
+  db '%A %Y-%m-%d %H:%M:%S %Z'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L17:
+  db 'Local time: %s', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L18:
+  db 'GMT: %02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L19:
+  db 'GMT Day of week: %d  GMT Day of Year: %d DST: %d', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L20:
+  db '%A %Y-%m-%d %H:%M:%S Z'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L21:
+  db 'GMT time: %s', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
 	;---- cgpostlude
 	             endp

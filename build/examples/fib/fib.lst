@@ -3,603 +3,584 @@
 [00003]                   ; SubC Copyright 2012-2025 by Nils Holm
 [00004]                   ; -------------------------------------------------------------------
 <00000>                   #include include/ops_c.inc
-<00001>                   .op "PUSH","N","9$1 73 8$1 73"
-<00002>                   .op "POP","N","60 72 A$1 F0 B$1"
-<00003>                   .op "MOV","NR","9$2 B$1 8$2 A$1"
-<00004>                   .op "MOV","NW","F8 H2 B$1 F8 L2 A$1"
-<00005>                   .op "CALL","W","D4 H1 L1"
-<00006>                   .op "RTN","","D5"
-<00007>                   .op "CLC","","FC 00"
-<00008>                   .op "STC","","FF 00"
-<00009>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
-<00010>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
-<00011>                   .op "RETURN","","D5"
-<00012>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
-<00013>                   .op "BRKPT","","79 D1"
-<00000>                   #include include/bios.inc
-<00001>                   ; *******************************************************************
-<00002>                   ; *** This software is copyright 2006 by Michael H Riley          ***
-<00003>                   ; *** You have permission to use, modify, copy, and distribute    ***
-<00004>                   ; *** this software so long as this copyright notice is retained. ***
-<00005>                   ; *** This software may not be used in commercial applications    ***
-<00006>                   ; *** without express written permission from the author.         ***
-<00007>                   ; *******************************************************************
-<00008>                   
-<00011>                   #endif
-<00012>                   
-<00013>                   ; Define address for standard BIOS vectors
-<00014>                   #ifndef BIOS
-<00015>                   #define BIOS 0ff00h
-<00016>                   #endif
-<00017>                   
-<00018>                   ; Define address for extended BIOS vectors
-<00019>                   #ifndef EBIOS
-<00020>                   #define EBIOS 0f800h
-<00021>                   #endif
-<00022>                   
-<00023>                   #ifndef _TASM_
-<00024> 0000:             scall:      equ  r4                    ; register for SCALL
-<00025> 0000:             sret:       equ  r5                    ; register for SRET
-<00026>                   
-<00027> 0000:             call:       equ  0ffe0h                ; depricated
-<00028> 0000:             ret:        equ  0fff1h                ; depricated
-<00029>                   #endif
-<00030>                   
-<00031> 0000:             f_boot:     equ  (BIOS+00h)            ; boot from ide device
-<00032> 0000:             f_type:     equ  (BIOS+03h)            ; type 1 character to console
-<00033> 0000:             f_read:     equ  (BIOS+06h)            ; read 1 character from console
-<00034> 0000:             f_msg:      equ  (BIOS+09h)            ; type asciiz string to console
-<00035> 0000:             f_typex:    equ  (BIOS+0ch)            ; depricated, just returns now
-<00036> 0000:             f_input:    equ  (BIOS+0fh)            ; read asciiz from console
-<00037> 0000:             f_strcmp:   equ  (BIOS+12h)            ; compare 2 strings
-<00038> 0000:             f_ltrim:    equ  (BIOS+15h)            ; trim leading spaces
-<00039> 0000:             f_strcpy:   equ  (BIOS+18h)            ; copy an asciiz string
-<00040> 0000:             f_memcpy:   equ  (BIOS+1bh)            ; copy memory
-<00041> 0000:             f_wrtsec:   equ  (BIOS+1eh)            ; write floppy sector (depricated)
-<00042> 0000:             f_rdsec:    equ  (BIOS+21h)            ; read floppy sector (depricated)
-<00043> 0000:             f_seek0:    equ  (BIOS+24h)            ; floppy seek to track 0 (depricated)
-<00044> 0000:             f_seek:     equ  (BIOS+27h)            ; floopy track seek (depricated)
-<00045> 0000:             f_drive:    equ  (BIOS+2ah)            ; select floppy drive (depricated)
-<00046> 0000:             f_setbd:    equ  (BIOS+2dh)            ; set console baud rate
-<00047> 0000:             f_mul16:    equ  (BIOS+30h)            ; 16-bit multiply
-<00048> 0000:             f_div16:    equ  (BIOS+33h)            ; 16-bit division
-<00049> 0000:             f_idereset: equ  (BIOS+36h)            ; reset ide device
-<00050> 0000:             f_idewrite: equ  (BIOS+39h)            ; write ide sector
-<00051> 0000:             f_ideread:  equ  (BIOS+3ch)            ; read ide sector
-<00052> 0000:             f_initcall: equ  (BIOS+3fh)            ; initialize R4 and R5
-<00053> 0000:             f_bootide:  equ  (BIOS+42h)            ; boot from ide device
-<00054> 0000:             f_hexin:    equ  (BIOS+45h)            ; convert ascii number to hex
-<00055> 0000:             f_hexout2:  equ  (BIOS+48h)            ; convert hex to 2-digit ascii
-<00056> 0000:             f_hexout4:  equ  (BIOS+4bh)            ; convert hex to 4-digit ascii
-<00057> 0000:             f_tty:      equ  (BIOS+4eh)            ; type character to console
-<00058> 0000:             f_mover:    equ  (BIOS+51h)            ; program relocator
-<00059> 0000:             f_minimon:  equ  (BIOS+54h)            ; mini monitor
-<00060> 0000:             f_freemem:  equ  (BIOS+57h)            ; determine memory size
-<00061> 0000:             F_isnum:    equ  (BIOS+5ah)            ; determine if D is numeric
-<00062> 0000:             f_atoi:     equ  (BIOS+5dh)            ; convert ascii to integer
-<00063> 0000:             f_uintout:  equ  (BIOS+60h)            ; convert unsigned integer to ascii
-<00064> 0000:             f_intout:   equ  (BIOS+63h)            ; convert signed integer to ascii
-<00065> 0000:             f_inmsg:    equ  (BIOS+66h)            ; type in-line message
-<00066> 0000:             f_inputl:   equ  (BIOS+69h)            ; read limited line from console
-<00067> 0000:             f_brktest:  equ  (BIOS+6ch)            ; check for serial break
-<00068> 0000:             f_findtkn:  equ  (BIOS+6fh)            ; find token in a token table
-<00069> 0000:             f_isalpha:  equ  (BIOS+72h)            ; determine if D is alphabetic
-<00070> 0000:             f_ishex:    equ  (BIOS+75h)            ; determine if D is hexadecimal
-<00071> 0000:             f_isalnum:  equ  (BIOS+78h)            ; determine if D is alpha or numeric
-<00072> 0000:             f_idnum:    equ  (BIOS+7bh)            ; determine type of ascii number
-<00073> 0000:             f_isterm:   equ  (BIOS+7eh)            ; determine if D is a termination char
-<00074> 0000:             f_getdev:   equ  (BIOS+81h)            ; get supported devices
-<00075>                   
-<00076> 0000:             f_version:  equ  (BIOS+0f9h)           ; 3 bytes holding bios version number
-<00077>                   
-<00078>                   ; "Extended" BIOS vectors
-<00079>                   
-<00080> 0000:             f_bread:    equ  (EBIOS+00h)        ; read from onboard serial port
-<00081> 0000:             f_btype:    equ  (EBIOS+03h)        ; write to onboard serial port
-<00082> 0000:             f_btest:    equ  (EBIOS+06h)        ; test onboard serial port
-<00083> 0000:             f_utype:    equ  (EBIOS+09h)        ; write to disk board UART
-<00084> 0000:             f_uread:    equ  (EBIOS+0ch)        ; read from disk board UART
-<00085> 0000:             f_utest:    equ  (EBIOS+0fh)        ; test disk board UART
-<00086> 0000:             f_usetbd:   equ  (EBIOS+12h)        ; set disk board UART baud rate and format
-<00087> 0000:             f_gettod:   equ  (EBIOS+15h)        ; read time of day clock
-<00088> 0000:             f_settod:   equ  (EBIOS+18h)        ; set time of day clock
-<00089> 0000:             f_rdnvr:    equ  (EBIOS+1bh)        ; read non volatile RAM
-<00090> 0000:             f_wrnvr:    equ  (EBIOS+1eh)        ; write non volatile RAM
-<00091> 0000:             f_idesize:  equ  (EBIOS+21h)        ; return size of attached IDE drive(s)
-<00092> 0000:             f_ideid:    equ  (EBIOS+24h)        ; return device data for IDE drive(s)
-<00093> 0000:             f_tmtoas:   equ  (EBIOS+2ah)        ; time to ASCII string
-<00094> 0000:             f_dttoas:   equ  (EBIOS+27h)        ; date to ASCII string
-<00095> 0000:             f_rtctest:  equ  (EBIOS+2dh)        ; test size and presence of RTC/NVR
-<00096> 0000:             f_astodt:   equ  (EBIOS+30h)        ; convert ASCII string to date
-<00097> 0000:             f_astotm:   equ  (EBIOS+33h)        ; convert ASCII string to time
-<00000>                   #include include/kernel.inc
-<00001> 0000:             O_CLDBOOT:    equ    0300h             ; jump to cold boot routine
-<00002> 0000:             O_WRMBOOT:    equ    0303h             ; jump to warm boot routine
-<00003> 0000:             O_OPEN:       equ    0306h             ; open a file
-<00004> 0000:             O_READ:       equ    0309h             ; read from file
-<00005> 0000:             O_WRITE:      equ    030ch             ; write to file
-<00006> 0000:             O_SEEK:       equ    030fh             ; seek to file position
-<00007> 0000:             O_CLOSE:      equ    0312h             ; close file
-<00008> 0000:             O_OPENDIR:    equ    0315h             ; open dir as a file
-<00009> 0000:             O_DELETE:     equ    0318h             ; delete a file
-<00010> 0000:             O_RENAME:     equ    031bh             ; rename a file
-<00011> 0000:             O_EXEC:       equ    031eh             ; execute an external program
-<00012> 0000:             O_MKDIR:      equ    0321h             ; make directory
-<00013> 0000:             O_CHDIR:      equ    0324h             ; change directory
-<00014> 0000:             O_RMDIR:      equ    0327h             ; remove directory
-<00015> 0000:             O_RDLUMP:     equ    032Ah             ; read LAT entry
-<00016> 0000:             O_RDLUMP32:   equ    040fh             ; read 32-bit LAT entry
-<00017> 0000:             O_WRLUMP:     equ    032Dh             ; write LAT entry
-<00018> 0000:             O_WRLUMP32:   equ    0421h             ; write LAT entry
-<00019> 0000:             O_TYPE:       equ    0330h             ; passthrough for console output
-<00020> 0000:             O_MSG:        equ    0333h             ; passthrough for console output
-<00021> 0000:             O_READKEY:    equ    0336h             ; passthrough for console input
-<00022> 0000:             O_INPUT:      equ    0339h             ; passthrough for console input
-<00023> 0000:             O_PRTSTAT:    equ    033ch             ; printer status
-<00024> 0000:             O_PRINT:      equ    033fh             ; output to printer
-<00025> 0000:             O_EXECBIN:    equ    0342h             ; execute from default directory
-<00026> 0000:             O_SETDEF:     equ    0345h             ; set/get default directory
-<00027> 0000:             O_KINIT:      equ    0348h             ; reserved - do not use!!!
-<00028> 0000:             O_INMSG:      equ    034bh             ; passthrough for console output
-<00029> 0000:             O_GETDEV:     equ    034eh             ; passthrough to f_getdef
-<00030> 0000:             O_GETTOD:     equ    0351h             ; passthrough to f_gettod
-<00031> 0000:             O_SETTOD:     equ    0354h             ; passthrough to f_settod
-<00032> 0000:             O_INPUTL:     equ    0357h             ; passthrough to f_inputl
-<00033> 0000:             O_BOOT:       equ    035ah             ; passthrough to f_boot
-<00034> 0000:             O_SETBD:      equ    0360h             ; passthrough to f_setbd
-<00035> 0000:             O_INITCALL:   equ    0363h             ; passthrough to f_initcall
-<00036> 0000:             O_BRKTEST:    equ    0366h             ; passthrough to f_brktest
-<00037> 0000:             O_DEVCTRL:    equ    0369h             ; Hook for device control drivers
-<00038> 0000:             O_ALLOC:      equ    036ch             ; passthrough to alloc
-<00039> 0000:             O_DEALLOC:    equ    036fh             ; passthrough to dealloc
-<00040> 0000:             O_TERMCTRL:   equ    0372h             ; Hook for terminal control drivers
-<00041> 0000:             O_NBREAD:     equ    0375h             ; passthrough to f_nbread
-<00042> 0000:             O_MEMBTRL:    equ    0378h             ; Hook for memory control drivers
-<00043> 0000:             O_LMPTOSEC:   equ    0409h             ; convert lump to sector
-<00044> 0000:             O_SECTOLMP:   equ    040ch             ; convert sector to lump
-<00045> 0000:             O_DIRENT:     equ    037Bh             ; get dirent for a file
-<00046> 0000:             O_RELSEC:     equ    0418h             ; find relative sector
-<00047> 0000:             O_TRUNC:      equ    046ah             ; Truncate file
-<00048> 0000:             O_VIDEO:      equ    0456h             ; video driver hook
-<00049> 0000:             D_IDERESET:   equ    0444h             ; passthrough to f_idereset
-<00050> 0000:             D_IDEREAD:    equ    0447h             ; passthrough to f_ideread
-<00051> 0000:             D_IDEWRITE:   equ    044Ah             ; passthrough to f_idewrite
-<00052> 0000:             D_REAPHEAP:   equ    044Dh             ; calls heap reaper to clean non-permanent heap blocks
-<00053> 0000:             D_SAVESYS:    equ    0459h             ; save system sector
-<00054> 0000:             D_DELCHAIN:   equ    0453h             ; delete an AU chain
-<00055> 0000:             D_ALLOCAU:    equ    045eh             ; allocate an AU
-<00056> 0000:             D_FREEDIRENT: equ    046dh             ; allocate a DIRENT
-<00057> 0000:             I_SERVE:      equ    03f6h             ; address of interrupt chain head
-<00058> 0000:             V_IVEC:       equ    03fdh             ; interrupt head
-<00059> 0000:             V_DVEC:       equ    036ah             ; device head
-<00060> 0000:             K_SYS_DTA:    equ    0100h             ; system sector DTA
-<00061> 0000:             K_VER:        equ    0400h             ; kernel version number
-<00062> 0000:             K_BUILD:      equ    0403h             ; kernel build number
-<00063> 0000:             K_BMONTH:     equ    0405h             ; kernel build month
-<00064> 0000:             K_BDAY:       equ    0406h             ; kernel build day
-<00065> 0000:             K_BYEAR:      equ    0407h             ; kernel build month
-<00066> 0000:             K_LASTSEC:    equ    042bh             ; sector currently in sys DTA
-<00067> 0000:             K_CWD_LUMP:   equ    0436h             ; lump for current directory
-<00068> 0000:             K_EXEC_AU:    equ    043Eh             ; executable starting AU
-<00069> 0000:             K_HIMEM:      equ    0442h             ; high memory pointer
-<00070> 0000:             K_LOWMEM:     equ    0465h             ; lowest memory heap can use
-<00071> 0000:             K_RETVAL:     equ    0467h             ; D on program exit
-<00072> 0000:             K_HEAP:       equ    0468h             ; heap pointer
-<00073> 0000:             K_CLKFREQ:    equ    0470h             ; system clock frequency
-<00074> 0000:             K_MONTH:      equ    0475h             ; date/time
-<00075> 0000:             K_DAY:        equ    0476h
-<00076> 0000:             K_YEAR:       equ    0477h
-<00077> 0000:             K_HOUR:       equ    0478h
-<00078> 0000:             K_MINUTE:     equ    0479h
-<00079> 0000:             K_SECOND:     equ    047ah
-<00080> 0000:             K_SECDEN:     equ    047bh
-<00081> 0000:             K_SECNUM:     equ    047dh
-<00082>                   
-<00083>                   
+<00001>                   ;------------------------------------------------------
+<00002>                   ; ElfC Asm/02 Opcodes
+<00003>                   ;------------------------------------------------------
+<00004>                   
+<00005>                   .op "PUSH","N","9$1 73 8$1 73"
+<00006>                   .op "POP","N","60 72 A$1 F0 B$1"
+<00007>                   .op "CALL","W","D4 H1 L1"
+<00008>                   .op "RTN","","D5"
+<00009>                   .op "CLC","","FC 00"
+<00010>                   .op "STC","","FF 00"
+<00011>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
+<00012>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
+<00013>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
+<00014>                   .op "BRKPT","","79 D1"
+<00015>                   .op "ADDR16","NR","8$2 52 8$1 F4 A$1 9$2 52 9$1 74 B$1"
+<00016>                   .op "SUBR16","NR","8$2 52 8$1 F7 A$1 9$2 52 9$1 77 B$1"
+<00017>                   .op "GOSUB","W","D9 L1"
+<00018>                   .op "RSUB","","C0 21 00"
+<00019>                   
+<00020>                   ;------------------- end ops_c.inc --------------------
+<00000>                   #include include/os_api.inc
+<00001>                   ;--------------------------------------------------------------------
+<00002>                   ; Elf/OS and Mini/DOS Kernel API
+<00003>                   ;--------------------------------------------------------------------
+<00004>                   
+<00005> 0000:             O_OPEN:       equ    0306h             ; open a file
+<00006> 0000:             O_READ:       equ    0309h             ; read from file
+<00007> 0000:             O_WRITE:      equ    030ch             ; write to file
+<00008> 0000:             O_SEEK:       equ    030fh             ; seek to file position
+<00009> 0000:             O_CLOSE:      equ    0312h             ; close file
+<00010> 0000:             O_DELETE:     equ    0318h             ; delete a file
+<00011> 0000:             O_RENAME:     equ    031bh             ; rename a file
+<00012> 0000:             O_TYPE:       equ    0330h             ; console character output
+<00013> 0000:             O_MSG:        equ    0333h             ; console string output
+<00014> 0000:             O_READKEY:    equ    0336h             ; console character input
+<00015> 0000:             O_INPUT:      equ    0339h             ; console string input
+<00016> 0000:             O_INMSG:      equ    034bh             ; console inline messae output
+<00017> 0000:             O_GETDEV:     equ    034eh             ; get device information
+<00018> 0000:             O_GETTOD:     equ    0351h             ; get time of day
+<00019> 0000:             O_ALLOC:      equ    036ch             ; alloc memory block
+<00020> 0000:             O_DEALLOC:    equ    036fh             ; dealloc memory block
+<00021>                   
+<00022>                   ;--------------------------------------------------------------------
+<00023>                   ; Elf/OS and Mini/DOS Data Locations
+<00024>                   ;--------------------------------------------------------------------
+<00025>                   
+<00026> 0000:             K_KEYBUF:     equ    0080h             ; input key buffer
+<00027> 0000:             K_MONTH:      equ    0475h             ; date/time information
+<00028>                   
+<00029>                   ;-------------------------- end os_api.inc --------------------------
 <00000>                   #include include/elfc.inc
-<00001>                   ;-------------------------------------------------------------------------------
-<00002>                   ; elfc - a library for basic c language functions
-<00003>                   ;-------------------------------------------------------------------------------
-<00004> 0000:                       extrn   epush16
-<00005> 0000:                       extrn   epush8
-<00006> 0000:                       extrn   dpop16
-<00007> 0000:                       extrn   abs16
-<00008> 0000:                       extrn   add16
-<00009> 0000:                       extrn   and16
-<00010> 0000:                       extrn   atoi16
-<00011> 0000:                       extrn   div16
-<00012> 0000:                       extrn   eq16
-<00013> 0000:                     	extrn   false16
-<00014> 0000:                     	extrn   gt16
-<00015> 0000:                     	extrn   gte16
-<00016> 0000:                     	extrn   itoa16
-<00017> 0000:                     	extrn   lfsrshift
-<00018> 0000:                     	extrn   lt16
-<00019> 0000:                     	extrn   lte16
-<00020> 0000:                     	extrn   mdnorm16
-<00021> 0000:                     	extrn   mod16
-<00022> 0000:                     	extrn   mul16
-<00023> 0000:                     	extrn   ne16
-<00024> 0000:                     	extrn   neg16
-<00025> 0000:                     	extrn   or16
-<00026> 0000:                     	extrn   rnd16
-<00027> 0000:                     	extrn   sgn16
-<00028> 0000:                     	extrn   sub16
-<00029> 0000:                     	extrn   tobcd16
-<00030> 0000:                     	extrn   true16
-<00031> 0000:                     	extrn   xor16
-<00032> 0000:                       extrn   not16
-<00033> 0000:                       extrn   bool16
-<00034> 0000:                       extrn   inv16
-<00035> 0000:                       extrn   shl16
-<00036> 0000:                       extrn   shr16
-<00037> 0000:                       extrn   vpush16
-<00038> 0000:                       extrn   vpop16
-<00039> 0000:                       extrn   vpush8
-<00040> 0000:                       extrn   dpush16
-<00041> 0000:                       extrn   dpush8
-<00042> 0000:                       extrn   esmove
-<00043> 0000:                       extrn   linit16
-<00044> 0000:                       extrn   lstor16
-<00045> 0000:                       extrn   lstor8
-<00046> 0000:                       extrn   vstor16
-<00047> 0000:                       extrn   vstor8
-<00048> 0000:                       extrn   swap16
-<00049> 0000:                       extrn   dget16
-<00050> 0000:                       extrn   lpush16
-<00051> 0000:                       extrn   lpush8
-<00052> 0000:                       extrn   deref16
-<00053> 0000:                       extrn   deref8
-<00054> 0000:                       extrn   laddr16
-<00055> 0000:                       extrn   pstor16
-<00056> 0000:                       extrn   pstor8
-<00057> 0000:                       extrn   scltos2
-<00058> 0000:                       extrn   sclsos2
-<00059> 0000:                       extrn   unscl2
-<00060> 0000:                       extrn   vinc16
-<00061> 0000:                       extrn   vdec16
-<00062> 0000:                       extrn   vinc8
-<00063> 0000:                       extrn   vdec8
-<00064> 0000:                       extrn   linc16
-<00065> 0000:                       extrn   ldec16
-<00066> 0000:                       extrn   linc8
-<00067> 0000:                       extrn   ldec8
-<00068> 0000:                       extrn   lpinc16
-<00069> 0000:                       extrn   lpdec16
-<00070> 0000:                       extrn   vpinc16
-<00071> 0000:                       extrn   vpdec16
-<00072> 0000:                       extrn   psave
-<00073> 0000:                       extrn   pinc16
-<00074> 0000:                       extrn   pdec16
-<00075> 0000:                       extrn   pinc8
-<00076> 0000:                       extrn   pdec8
-<00077> 0000:                       extrn   pincptr
-<00078> 0000:                       extrn   pdecptr
-<00079> 0000:                       extrn   escheck
-<00080> 0000:                       extrn   ugt16
-<00081> 0000:                     	extrn   uge16
-<00082> 0000:                       extrn   ult16
-<00083> 0000:                     	extrn   ule16
-<00084> 0000:                       extrn   scltos4
-<00085> 0000:                       extrn   sclsos4
-<00086> 0000:                       extrn   unscl4
-<00087> 0000:                       extrn   lget16
-<00088> 0000:                       extrn   lget8
-<00089> 0000:                       extrn   lset16
-<00090>                   
-<00091>                   ;-------------------------------------------------------------------------------
-<00092>                   ; crt0 - Elf/OS c start-up library
-<00093>                   ;-------------------------------------------------------------------------------
-<00094> 0000:                       extrn   auto_err
-[00009]                   
-[00010] 0000:             	           proc fib
-[00011]                   
-[00012] 0000:                         extrn C_init
-[00013]                   
-[00014] 0000:                         extrn C_fdinit
-[00015]                   
-[00016] 0000:                         extrn C_fdtable
-[00017]                   
-[00018] 0000:                         extrn C_fildes
-[00019]                   
-[00020] 0000:                         extrn Cabort
-[00021]                   
-[00022] 0000:                         extrn Cabs
-[00023]                   
-[00024] 0000:                         extrn Catexit
-[00025]                   
-[00026] 0000:                         extrn Cexit
-[00027]                   
-[00028] 0000:                         extrn Cmalloc
-[00029]                   
-[00030] 0000:                         extrn Ccalloc
-[00031]                   
-[00032] 0000:                         extrn Crealloc
-[00033]                   
-[00034] 0000:                         extrn Cfree
-[00035]                   
-[00036] 0000:                         extrn Catoi
-[00037]                   
-[00038] 0000:                         extrn Citoa
-[00039]                   
-[00040] 0000:                         extrn Citox
-[00041]                   
-[00042] 0000:                         extrn Citou
-[00043]                   
-[00044] 0000:                         extrn Cdiv
-[00045]                   
-[00046] 0000:                         extrn Cbsearch
-[00047]                   
-[00048] 0000:                         extrn Cqsort
-[00049]                   
-[00050] 0000:                         extrn Crand
-[00051]                   
-[00052] 0000:                         extrn Csrand
+<00001>                   ;----------------------------------
+<00002>                   ; ElfC - crt0 subroutine vectors
+<00003>                   ;----------------------------------
+<00004>                   
+<00005>                   #define SUBTBL   $2100
+<00006> 0000:             s_return:  equ  SUBTBL
+<00007>                   
+<00008> 0000:             s_esmove:  equ  (SUBTBL + $03)
+<00009> 0000:             s_stkchk:  equ  (SUBTBL + $06)
+<00010> 0000:             s_dpop16:  equ  (SUBTBL + $09)
+<00011> 0000:             s_dpush16: equ  (SUBTBL + $0C)
+<00012> 0000:             s_dget16:  equ  (SUBTBL + $0F)
+<00013> 0000:             s_epush16: equ  (SUBTBL + $12)
+<00014> 0000:             s_vpop16:  equ  (SUBTBL + $15)
+<00015> 0000:             s_vpush8:  equ  (SUBTBL + $18)
+<00016> 0000:             s_vpush16: equ  (SUBTBL + $1B)
+<00017> 0000:             s_vstor8:  equ  (SUBTBL + $1E)
+<00018> 0000:             s_vstor16: equ  (SUBTBL + $21)
+<00019> 0000:             s_vinc8:   equ  (SUBTBL + $24)
+<00020> 0000:             s_vinc16:  equ  (SUBTBL + $27)
+<00021> 0000:             s_vdec8:   equ  (SUBTBL + $2A)
+<00022> 0000:             s_vdec16:  equ  (SUBTBL + $2D)
+<00023> 0000:             s_vpinc16: equ  (SUBTBL + $30)
+<00024> 0000:             s_vpdec16: equ  (SUBTBL + $33)
+<00025> 0000:             s_linit16: equ  (SUBTBL + $36)
+<00026> 0000:             s_lstor8:  equ  (SUBTBL + $39)
+<00027> 0000:             s_lstor16: equ  (SUBTBL + $3C)
+<00028> 0000:             s_lpush8:  equ  (SUBTBL + $3F)
+<00029> 0000:             s_lpush16: equ  (SUBTBL + $42)
+<00030> 0000:             s_lget16:  equ  (SUBTBL + $45)
+<00031> 0000:             s_lset16:  equ  (SUBTBL + $48)
+<00032> 0000:             s_linc8:   equ  (SUBTBL + $4B)
+<00033> 0000:             s_linc16:  equ  (SUBTBL + $4E)
+<00034> 0000:             s_ldec8:   equ  (SUBTBL + $51)
+<00035> 0000:             s_ldec16:  equ  (SUBTBL + $54)
+<00036> 0000:             s_lpinc16: equ  (SUBTBL + $57)
+<00037> 0000:             s_lpdec16: equ  (SUBTBL + $5A)
+<00038> 0000:             s_psave:   equ  (SUBTBL + $5D)
+<00039> 0000:             s_pstor8:  equ  (SUBTBL + $60)
+<00040> 0000:             s_pstor16: equ  (SUBTBL + $63)
+<00041> 0000:             s_pinc8:   equ  (SUBTBL + $66)
+<00042> 0000:             s_pinc16:  equ  (SUBTBL + $69)
+<00043> 0000:             s_pdec8:   equ  (SUBTBL + $6C)
+<00044> 0000:             s_pdec16:  equ  (SUBTBL + $6F)
+<00045> 0000:             s_pincptr: equ  (SUBTBL + $72)
+<00046> 0000:             s_pdecptr: equ  (SUBTBL + $75)
+<00047> 0000:             s_laddr16: equ  (SUBTBL + $78)
+<00048> 0000:             s_deref8:  equ  (SUBTBL + $7B)
+<00049> 0000:             s_deref16: equ  (SUBTBL + $7E)
+<00050> 0000:             s_swap16:  equ  (SUBTBL + $81)
+<00051> 0000:             s_add16:   equ  (SUBTBL + $84)
+<00052> 0000:             s_sub16:   equ  (SUBTBL + $87)
+<00053> 0000:             s_neg16:   equ  (SUBTBL + $8A)
+<00054> 0000:             s_mdsgn16: equ  (SUBTBL + $8D)
+<00055> 0000:             s_mul16:   equ  (SUBTBL + $90)
+<00056> 0000:             s_div16:   equ  (SUBTBL + $93)
+<00057> 0000:             s_mod16:   equ  (SUBTBL + $96)
+<00058> 0000:             s_bool16:  equ  (SUBTBL + $99)
+<00059> 0000:             s_true16:  equ  (SUBTBL + $9C)
+<00060> 0000:             s_false16: equ  (SUBTBL + $9F)
+<00061> 0000:             s_and16:   equ  (SUBTBL + $A2)
+<00062> 0000:             s_or16:    equ  (SUBTBL + $A5)
+<00063> 0000:             s_xor16:   equ  (SUBTBL + $A8)
+<00064> 0000:             s_not16:   equ  (SUBTBL + $AB)
+<00065> 0000:             s_inv16:   equ  (SUBTBL + $AE)
+<00066> 0000:             s_shl16:   equ  (SUBTBL + $B1)
+<00067> 0000:             s_shr16:   equ  (SUBTBL + $B4)
+<00068> 0000:             s_eq16:    equ  (SUBTBL + $B7)
+<00069> 0000:             s_gt16:    equ  (SUBTBL + $BA)
+<00070> 0000:             s_gte16:   equ  (SUBTBL + $BD)
+<00071> 0000:             s_lt16:    equ  (SUBTBL + $C0)
+<00072> 0000:             s_lte16:   equ  (SUBTBL + $C3)
+<00073> 0000:             s_ne16:    equ  (SUBTBL + $C6)
+<00074> 0000:             s_ugt16:   equ  (SUBTBL + $C9)
+<00075> 0000:             s_uge16:   equ  (SUBTBL + $CC)
+<00076> 0000:             s_ult16:   equ  (SUBTBL + $CF)
+<00077> 0000:             s_ule16:   equ  (SUBTBL + $D2)
+<00078> 0000:             s_scltos2: equ  (SUBTBL + $D5)
+<00079> 0000:             s_scltos4: equ  (SUBTBL + $D8)
+<00080> 0000:             s_sclsos2: equ  (SUBTBL + $DB)
+<00081> 0000:             s_sclsos4: equ  (SUBTBL + $DE)
+<00082> 0000:             s_unscl2:  equ  (SUBTBL + $E1)
+<00083> 0000:             s_unscl4:  equ  (SUBTBL + $E4)
+<00084>                   
+<00085>                   ;----------------------------------
+<00086>                   ; ElfC crt0 - error vectors
+<00087>                   ;----------------------------------
+<00088>                   
+<00089> 0000:                       extrn   auto_err
+<00090> 0000:                       extrn   stk_err
+<00091>                   
+<00092>                   ;---------- end elfc.inc ----------
+[00008]                   
+[00009] 0000:             	           proc fib
+[00010]                   
+<00000>                   #include include/stdlib.inc
+<00001> 0000:                          extrn C_init
+<00002> 0000:                          extrn C_fdinit
+<00003> 0000:                          extrn C_fdtable
+<00004> 0000:                          extrn C_fildes
+<00005> 0000:                          extrn Cabort
+<00006> 0000:                          extrn Cabs
+<00007> 0000:                          extrn Catexit
+<00008> 0000:                          extrn Cexit
+<00009> 0000:                          extrn Cmalloc
+<00010> 0000:                          extrn Ccalloc
+<00011> 0000:                          extrn Crealloc
+<00012> 0000:                          extrn Cfree
+<00013> 0000:                          extrn Catoi
+<00014> 0000:                          extrn Citoa
+<00015> 0000:                          extrn Citox
+<00016> 0000:                          extrn Citou
+<00017> 0000:                          extrn Cdiv
+<00018> 0000:                          extrn Cbsearch
+<00019> 0000:                          extrn Cqsort
+<00020> 0000:                          extrn Crand
+<00021> 0000:                          extrn Csrand
+<00022> 0000:                          extrn Ccreat
+<00023> 0000:                          extrn Copen
+<00024> 0000:                          extrn Cclose
+<00025> 0000:                          extrn Cread
+<00026> 0000:                          extrn Cwrite
+<00027> 0000:                          extrn Clseek
+<00028> 0000:                          extrn Cunlink
+<00029> 0000:                          extrn Crename
+<00030> 0000:                          extrn Cmin
+<00031> 0000:                          extrn Cmax
+[00012]                   
+<00000>                   #include include/stdio.inc
+<00001> 0000:                          extrn Cstdin
+<00002> 0000:                          extrn Cstdout
+<00003> 0000:                          extrn Cstderr
+<00004> 0000:                          extrn Cputs
+<00005> 0000:                          extrn Cputstr
+<00006> 0000:                          extrn Cgets
+<00007> 0000:                          extrn Cputch
+<00008> 0000:                          extrn Cgetch
+<00009> 0000:                          extrn Cputchar
+<00010> 0000:                          extrn Cgetchar
+<00011> 0000:                          extrn Cfdopen
+<00012> 0000:                          extrn Cfclose
+<00013> 0000:                          extrn Cfopen
+<00014> 0000:                          extrn Cferror
+<00015> 0000:                          extrn Cfeof
+<00016> 0000:                          extrn Cclearerr
+<00017> 0000:                          extrn Cfgetc
+<00018> 0000:                          extrn Cfputc
+<00019> 0000:                          extrn Cfgets
+<00020> 0000:                          extrn Cfputs
+<00021> 0000:                          extrn Cungetc
+<00022> 0000:                          extrn Cfread
+<00023> 0000:                          extrn Cfwrite
+<00024> 0000:                          extrn Cfflush
+<00025> 0000:                          extrn Cfprintf
+<00026> 0000:                          extrn Ckprintf
+<00027> 0000:                          extrn Cprintf
+<00028> 0000:                          extrn Csprintf
+<00029> 0000:                          extrn Cvfprintf
+<00030> 0000:                          extrn Cvprintf
+<00031> 0000:                          extrn Cvsprintf
+<00032> 0000:                          extrn Cfscanf
+<00033> 0000:                          extrn Cscanf
+<00034> 0000:                          extrn Csscanf
+<00035> 0000:                          extrn Cfgetpos
+<00036> 0000:                          extrn Cfsetpos
+<00037> 0000:                          extrn Cfseek
+<00038> 0000:                          extrn Cftell
+<00039> 0000:                          extrn Cperror
+<00040> 0000:                          extrn Crewind
+<00041> 0000:                          extrn Cremove
+<00042> 0000:                          extrn Ctmpnam
+<00043> 0000:                          extrn Ctmpfile
+<00044> 0000:                          extrn Cfileno
+[00014]                   	;----- cgpublic
+[00015] 0000:             	              public Cfib
+[00016]                   Cfib:	;---- cgentry
+[00017] 0000: e2          	          sex   r2   				 ; make sure X = SP
+[00018] 0001: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
+[00019] 0005: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
+[00020]                   	;----- begin stmt ------
+[00021]                   	;----- begin if
+[00022]                   	;----- cglit
+[00023] 0009: d9 12       	 				gosub s_epush16
+[00024] 000b: 00 00       	 				  dw 0
+[00025]                   	;----- cgldlw
+[00026] 000d: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00027] 000f: 00 00       	          dw  0  ;--- offset
+[00028]                   	;----- queue_cmp
+[00029]                   	;----- commit_cmp
+[00030]                   	;----- cgeq
+[00031] 0011: d9 b7       	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
+[00032]                   
+[00033]                   	;----- gensctrue
+[00034]                   	;----- cgbrtrue
+[00035]                   	;----- cgbr
+[00036] 0013: d9 0f       	 				 gosub s_dget16       ; test result on expression stack for short circuit
+[00037] 0015: 9a          	 				 ghi   ra            ; get MSB from result
+[00038] 0016: 52          	 				 str   r2            ; save in M(X)
+[00039] 0017: 8a          	 				 glo   ra            ; get LSB from result
+[00040] 0018: f1          	 				 or                  ; D = MSB | LSB
+[00041] 0019: ca 00 28    	 				 lbnz	L2           ; check for branch
+[00042] 001c: d9 09       	 				 gosub s_dpop16       ; remove short circuited value from expression stack
+[00043]                   	;----- cglit
+[00044] 001e: d9 12       	 				gosub s_epush16
+[00045] 0020: 00 01       	 				  dw 1
+[00046]                   	;----- cgldlw
+[00047] 0022: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00048] 0024: 00 00       	          dw  0  ;--- offset
+[00049]                   	;----- queue_cmp
+[00050]                   	;----- commit_cmp
+[00051]                   	;----- cgeq
+[00052] 0026: d9 b7       	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
 [00053]                   
-[00054] 0000:                         extrn Ccreat
-[00055]                   
-[00056] 0000:                         extrn Copen
-[00057]                   
-[00058] 0000:                         extrn Cclose
-[00059]                   
-[00060] 0000:                         extrn Cread
-[00061]                   
-[00062] 0000:                         extrn Cwrite
-[00063]                   
-[00064] 0000:                         extrn Clseek
-[00065]                   
-[00066] 0000:                         extrn Cunlink
-[00067]                   
-[00068] 0000:                         extrn Crename
-[00069]                   
-[00070] 0000:                         extrn Cmin
-[00071]                   
-[00072] 0000:                         extrn Cmax
-[00073]                   
-[00074] 0000:                         extrn Cstdin
-[00075]                   
-[00076] 0000:                         extrn Cstdout
-[00077]                   
-[00078] 0000:                         extrn Cstderr
-[00079]                   
-[00080] 0000:                         extrn Cputs
-[00081]                   
-[00082] 0000:                         extrn Cputstr
-[00083]                   
-[00084] 0000:                         extrn Cgets
-[00085]                   
-[00086] 0000:                         extrn Cputch
-[00087]                   
-[00088] 0000:                         extrn Cgetch
-[00089]                   
-[00090] 0000:                         extrn Cputchar
-[00091]                   
-[00092] 0000:                         extrn Cgetchar
-[00093]                   
-[00094] 0000:                         extrn Cfdopen
-[00095]                   
-[00096] 0000:                         extrn Cfclose
+[00054]                   
+[00055]                   L2:
+[00056]                   	;----- queue_bool
+[00057]                   	;----- genbrfalse
+[00058]                   	;----- genlogbr
+[00059]                   	;----- cgbrfalse
+[00060]                   	;----- cgbr
+[00061] 0028: d9 09       	 				 gosub s_dpop16       ; get result from expression stack
+[00062] 002a: 9a          	 				 ghi   ra            ; get MSB from result
+[00063] 002b: 52          	 				 str   r2            ; save in M(X)
+[00064] 002c: 8a          	 				 glo   ra            ; get LSB from result
+[00065] 002d: f1          	 				 or                  ; D = MSB | LSB
+[00066] 002e: c2 00 3d    	 				 lbz	L3           ; check for branch
+[00067]                   	;----- begin stmt ------
+[00068]                   	;----- begin stmt ------
+[00069]                   	;----- begin return
+[00070]                   	;----- cgldlw
+[00071] 0031: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00072] 0033: 00 00       	          dw  0  ;--- offset
+[00073]                   	;----- cgpopd
+[00074] 0035: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00075]                   	;---- queue lbr L1
+[00076]                   	;----- end return
+[00077]                   	;----- end stmt ------
+[00078]                   	;----- end stmt ------
+[00079]                   	;----- cgjump
+[00080] 0037: c0 00 70    	 				  lbr	L1
+[00081]                   	;---- queue lbr L4
+[00082]                   	;----- cgjump
+[00083] 003a: c0 00 70    	 				  lbr	L4
+[00084]                   
+[00085]                   L3:
+[00086]                   	;----- begin stmt ------
+[00087]                   	;----- begin stmt ------
+[00088]                   	;----- begin return
+[00089]                   	;----- cgldlw
+[00090] 003d: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00091] 003f: 00 00       	          dw  0  ;--- offset
+[00092]                   	;----- cglit
+[00093] 0041: d9 12       	 				gosub s_epush16
+[00094] 0043: 00 01       	 				  dw 1
+[00095]                   	;----- cgsub
+[00096] 0045: d9 87       	          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack
 [00097]                   
-[00098] 0000:                         extrn Cfopen
-[00099]                   
-[00100] 0000:                         extrn Cferror
-[00101]                   
-[00102] 0000:                         extrn Cfeof
-[00103]                   
-[00104] 0000:                         extrn Cclearerr
-[00105]                   
-[00106] 0000:                         extrn Cfgetc
-[00107]                   
-[00108] 0000:                         extrn Cfputc
-[00109]                   
-[00110] 0000:                         extrn Cfgets
-[00111]                   
-[00112] 0000:                         extrn Cfputs
-[00113]                   
-[00114] 0000:                         extrn Cungetc
-[00115]                   
-[00116] 0000:                         extrn Cfread
-[00117]                   
-[00118] 0000:                         extrn Cfwrite
-[00119]                   
-[00120] 0000:                         extrn Cfflush
-[00121]                   
-[00122] 0000:                         extrn Cfprintf
-[00123]                   
-[00124] 0000:                         extrn Ckprintf
-[00125]                   
-[00126] 0000:                         extrn Cprintf
-[00127]                   
-[00128] 0000:                         extrn Csprintf
+[00098]                   	;----- cgcall
+[00099] 0047: d4 00 00    	          call  Cfib
+[00100]                   	;----- cgstack
+[00101] 004a: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00102] 004c: 00 02       	          dw  2  ;--- offset
+[00103] 004e: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00104]                   	;---- queue dpush
+[00105]                   	;------ commit push
+[00106]                   	;----- cgpushd
+[00107] 0051: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00108]                   	;----- cgldlw
+[00109] 0053: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00110] 0055: 00 00       	          dw  0  ;--- offset
+[00111]                   	;----- cglit
+[00112] 0057: d9 12       	 				gosub s_epush16
+[00113] 0059: 00 02       	 				  dw 2
+[00114]                   	;----- cgsub
+[00115] 005b: d9 87       	          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack
+[00116]                   
+[00117]                   	;----- cgcall
+[00118] 005d: d4 00 00    	          call  Cfib
+[00119]                   	;----- cgstack
+[00120] 0060: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00121] 0062: 00 02       	          dw  2  ;--- offset
+[00122] 0064: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00123]                   	;---- queue dpush
+[00124]                   	;------ commit push
+[00125]                   	;----- cgpushd
+[00126] 0067: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00127]                   	;----- cgadd
+[00128] 0069: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 [00129]                   
-[00130] 0000:                         extrn Cvfprintf
-[00131]                   
-[00132] 0000:                         extrn Cvprintf
-[00133]                   
-[00134] 0000:                         extrn Cvsprintf
-[00135]                   
-[00136] 0000:                         extrn Cfscanf
-[00137]                   
-[00138] 0000:                         extrn Cscanf
-[00139]                   
-[00140] 0000:                         extrn Csscanf
-[00141]                   
-[00142] 0000:                         extrn Cfgetpos
-[00143]                   
-[00144] 0000:                         extrn Cfsetpos
-[00145]                   
-[00146] 0000:                         extrn Cfseek
-[00147]                   
-[00148] 0000:                         extrn Cftell
-[00149]                   
-[00150] 0000:                         extrn Cperror
-[00151]                   
-[00152] 0000:                         extrn Crewind
-[00153]                   
-[00154] 0000:                         extrn Cremove
-[00155]                   
-[00156] 0000:                         extrn Ctmpnam
-[00157]                   
-[00158] 0000:                         extrn Ctmpfile
-[00159]                   
-[00160] 0000:                         extrn Cfileno
-[00161]                   	;----- cgpublic
-[00162] 0000:             	              public Cfib
-[00163]                   Cfib:	;---- cgentry
-[00164] 0000: e2          	          sex   r2   				 ; make sure X = SP
-[00165] 0001: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
-[00166] 0005: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
-[00167]                   	;----- begin stmt ------
-[00168]                   	;----- begin if
-[00169]                   	;----- cglit
-[00170] 0009: d4 00 00    	 				call epush16
-[00171] 000c: 00 00       	 				  dw 0
-[00172]                   	;----- cgldlw
-[00173] 000e: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00174] 0011: 00 00       	          dw  0  ;--- offset
-[00175]                   	;----- queue_cmp
-[00176]                   	;----- commit_cmp
-[00177]                   	;----- cgeq
-[00178] 0013: d4 00 00    	          call  eq16				   ; compare TOS == SOS on Expression Stack
-[00179]                   
-[00180]                   	;----- gensctrue
-[00181]                   	;----- cgbrtrue
-[00182]                   	;----- cgbr
-[00183] 0016: d4 00 00    	 				 call  dget16        ; test result on expression stack for short circuit
-[00184] 0019: 9a          	 				 ghi   ra            ; get MSB from result
-[00185] 001a: 52          	 				 str   r2            ; save in M(X)
-[00186] 001b: 8a          	 				 glo   ra            ; get LSB from result
-[00187] 001c: f1          	 				 or                  ; D = MSB | LSB
-[00188] 001d: ca 00 30    	 				 lbnz	L2           ; check for branch
-[00189] 0020: d4 00 00    	 				 call  dpop16        ; remove short circuited value from expression stack
-[00190]                   	;----- cglit
-[00191] 0023: d4 00 00    	 				call epush16
-[00192] 0026: 00 01       	 				  dw 1
-[00193]                   	;----- cgldlw
-[00194] 0028: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00195] 002b: 00 00       	          dw  0  ;--- offset
-[00196]                   	;----- queue_cmp
-[00197]                   	;----- commit_cmp
-[00198]                   	;----- cgeq
-[00199] 002d: d4 00 00    	          call  eq16				   ; compare TOS == SOS on Expression Stack
-[00200]                   
-[00201]                   
-[00202]                   L2:
-[00203]                   	;----- queue_bool
-[00204]                   	;----- genbrfalse
-[00205]                   	;----- genlogbr
-[00206]                   	;----- cgbrfalse
-[00207]                   	;----- cgbr
-[00208] 0030: d4 00 00    	 				 call  dpop16        ; get result from expression stack
-[00209] 0033: 9a          	 				 ghi   ra            ; get MSB from result
-[00210] 0034: 52          	 				 str   r2            ; save in M(X)
-[00211] 0035: 8a          	 				 glo   ra            ; get LSB from result
-[00212] 0036: f1          	 				 or                  ; D = MSB | LSB
-[00213] 0037: c2 00 48    	 				 lbz	L3           ; check for branch
-[00214]                   	;----- begin stmt ------
-[00215]                   	;----- begin stmt ------
-[00216]                   	;----- begin return
-[00217]                   	;----- cgldlw
-[00218] 003a: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00219] 003d: 00 00       	          dw  0  ;--- offset
-[00220]                   	;----- cgpopd
-[00221] 003f: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00222]                   	;---- queue lbr L1
-[00223]                   	;----- end return
-[00224]                   	;----- end stmt ------
-[00225]                   	;----- end stmt ------
-[00226]                   	;----- cgjump
-[00227] 0042: c0 00 87    	 				  lbr	L1
-[00228]                   	;---- queue lbr L4
-[00229]                   	;----- cgjump
-[00230] 0045: c0 00 87    	 				  lbr	L4
-[00231]                   
-[00232]                   L3:
-[00233]                   	;----- begin stmt ------
-[00234]                   	;----- begin stmt ------
-[00235]                   	;----- begin return
-[00236]                   	;----- cgldlw
-[00237] 0048: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00238] 004b: 00 00       	          dw  0  ;--- offset
-[00239]                   	;----- cglit
-[00240] 004d: d4 00 00    	 				call epush16
-[00241] 0050: 00 01       	 				  dw 1
-[00242]                   	;----- cgsub
-[00243] 0052: d4 00 00    	          call  sub16				 ; subtract TOS from SOS on Expression Stack
-[00244]                   
-[00245]                   	;----- cgcall
-[00246] 0055: d4 00 00    	          call  Cfib
-[00247]                   	;----- cgstack
-[00248] 0058: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00249] 005b: 00 02       	          dw  2  ;--- offset
-[00250] 005d: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00251]                   	;---- queue dpush
-[00252]                   	;------ commit push
-[00253]                   	;----- cgpushd
-[00254] 0060: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00255]                   	;----- cgldlw
-[00256] 0063: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00257] 0066: 00 00       	          dw  0  ;--- offset
-[00258]                   	;----- cglit
-[00259] 0068: d4 00 00    	 				call epush16
-[00260] 006b: 00 02       	 				  dw 2
-[00261]                   	;----- cgsub
-[00262] 006d: d4 00 00    	          call  sub16				 ; subtract TOS from SOS on Expression Stack
-[00263]                   
-[00264]                   	;----- cgcall
-[00265] 0070: d4 00 00    	          call  Cfib
-[00266]                   	;----- cgstack
-[00267] 0073: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00268] 0076: 00 02       	          dw  2  ;--- offset
-[00269] 0078: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00270]                   	;---- queue dpush
-[00271]                   	;------ commit push
-[00272]                   	;----- cgpushd
-[00273] 007b: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00274]                   	;----- cgadd
-[00275] 007e: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00276]                   
-[00277]                   	;----- cgpopd
-[00278] 0081: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00279]                   	;---- queue lbr L1
-[00280]                   	;----- end return
-[00281]                   	;----- end stmt ------
-[00282]                   	;----- end stmt ------
-[00283]                   	;----- cgjump
-[00284] 0084: c0 00 87    	 				  lbr	L1
-[00285]                   
-[00286]                   L4:
-[00287]                   	;----- end if
-[00288]                   	;----- end stmt ------
-[00289]                   
-[00290]                   L1:
-[00291]                   	;----- cgexit
-[00292] 0087: e2          	          sex   r2            ; make sure X = SP
-[00293] 0088: d4 00 00    	          call  escheck       ; check for expression stack creep
-[00294] 008b: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
+[00130]                   	;----- cgpopd
+[00131] 006b: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00132]                   	;---- queue lbr L1
+[00133]                   	;----- end return
+[00134]                   	;----- end stmt ------
+[00135]                   	;----- end stmt ------
+[00136]                   	;----- cgjump
+[00137] 006d: c0 00 70    	 				  lbr	L1
+[00138]                   
+[00139]                   L4:
+[00140]                   	;----- end if
+[00141]                   	;----- end stmt ------
+[00142]                   
+[00143]                   L1:
+[00144]                   	;----- cgexit
+[00145] 0070: e2          	          sex   r2            ; make sure X = SP
+[00146] 0071: d9 06       	          gosub s_stkchk      ; check for expression stack creep
+[00147] 0073: c3 00 00    	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
+[00148] 0076: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
               bb 
-[00295]                   
-[00296] 0090: d5          	          rtn	  			 	     ; return to caller
-[00297]                   	;----- cgpublic
-[00298] 0091:             	              public Cmain
-[00299]                   Cmain:
-[00300]                     ;----- cgsetup
-[00303]                   #endif
-[00304]                   	;---- cgentry
-[00305] 0091: e2          	          sex   r2   				 ; make sure X = SP
-[00306] 0092: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
-[00307] 0096: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
-[00308]                   	;----- cgstack
-[00309] 009a: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00310] 009d: ff fc       	          dw  -4  ;--- offset
-[00311] 009f: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00312]                   	;----- begin stmt ------
-[00313]                   	;---- queue lbr L7
-[00314]                   	;----- cgjump
-[00315] 00a2: c0 00 c3    	 				  lbr	L7
-[00316]                   
-[00317]                   L6:
-[00318] 00a5: 46 69 72 73   db 'First ten Fibonacci numbers:', 10    ;----- cgdefs
+[00149]                   
+[00150] 007b: d5          	          rtn    			 	     ; return to caller
+[00151]                   
+[00152]                   ;----- string table
+[00153]                   	;----- cgpublic
+[00154] 007c:             	              public Cmain
+[00155]                   Cmain:
+[00156]                     ;----- cgsetup
+[00159]                   #endif
+[00160]                   	;---- cgentry
+[00161] 007c: e2          	          sex   r2   				 ; make sure X = SP
+[00162] 007d: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
+[00163] 0081: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
+[00164]                   	;----- cgstack
+[00165] 0085: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00166] 0087: ff fc       	          dw  -4  ;--- offset
+[00167] 0089: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00168]                   	;----- begin stmt ------
+[00169]                   	;----- cgldlab
+[00170] 008c: d9 12       	 				gosub s_epush16
+[00171] 008e: 01 43       	 				  dw  L6
+[00172]                   	;----- cgcall
+[00173] 0090: d4 00 00    	          call  Cprintf
+[00174]                   	;----- cgstack
+[00175] 0093: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00176] 0095: 00 02       	          dw  2  ;--- offset
+[00177] 0097: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00178]                   	;---- queue dpush
+[00179]                   	;----- push + pop data not required, data remains unchanged in RA
+[00180]                   	;----- end stmt ------
+[00181]                   	;----- begin stmt ------
+[00182]                   	;----- begin for
+[00183]                   	;----- cglit
+[00184] 009a: d9 12       	 				gosub s_epush16
+[00185] 009c: 00 00       	 				  dw 0
+[00186]                   	;----- cgstorlw
+[00187] 009e: d9 3c       	          gosub s_lstor16      ; store value from ES in local variable
+[00188] 00a0: ff fe       	          dw  -2  ;--- offset
+[00189]                   	;----- cgpopd
+[00190] 00a2: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00191]                   
+[00192]                   L7:
+[00193]                   	;----- cgldlw
+[00194] 00a4: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00195] 00a6: ff fe       	          dw  -2  ;--- offset
+[00196]                   	;----- cglit
+[00197] 00a8: d9 12       	 				gosub s_epush16
+[00198] 00aa: 00 0a       	 				  dw 10
+[00199]                   	;----- queue_cmp
+[00200]                   	;----- genbrfalse
+[00201]                   	;----- genbranch
+[00202]                   	;----- cgbrlt
+[00203]                   	;----- cglt
+[00204] 00ac: d9 c0       	          gosub s_lt16				   ; compare TOS < SOS on Expression Stack
+[00205]                   
+[00206]                   	;----- cgbrcond
+[00207] 00ae: d9 09       	 				 gosub s_dpop16        ; get result from expression stack
+[00208] 00b0: 9a          	 				 ghi   ra            ; get MSB from result
+[00209] 00b1: 52          	 				 str   r2            ; save in M(X)
+[00210] 00b2: 8a          	 				 glo   ra            ; get LSB from result
+[00211] 00b3: f1          	 				 or                  ; D = MSB | LSB
+[00212] 00b4: ca 00 ba    	lbnz	L11
+[00213] 00b7: c0 01 2a    	lbr	L9
+[00214]                   
+[00215]                   L11:
+[00216]                   	;---- queue lbr L8
+[00217]                   	;----- cgjump
+[00218] 00ba: c0 00 ca    	 				  lbr	L8
+[00219]                   
+[00220]                   L10:
+[00221]                   	;----- cgldlw
+[00222] 00bd: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00223] 00bf: ff fe       	          dw  -2  ;--- offset
+[00224]                   	;----- cginclw
+[00225] 00c1: d9 4e       	          gosub s_linc16       ; increment local variable
+[00226] 00c3: ff fe       	          dw  -2  ;--- offset
+[00227]                   	;----- cgpopd
+[00228] 00c5: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00229]                   	;---- queue lbr L7
+[00230]                   	;----- cgjump
+[00231] 00c7: c0 00 a4    	 				  lbr	L7
+[00232]                   
+[00233]                   L8:
+[00234]                   	;----- begin stmt ------
+[00235]                   	;----- begin stmt ------
+[00236]                   	;----- cgldlw
+[00237] 00ca: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00238] 00cc: ff fe       	          dw  -2  ;--- offset
+[00239]                   	;----- cgcall
+[00240] 00ce: d4 00 00    	          call  Cfib
+[00241]                   	;----- cgstack
+[00242] 00d1: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00243] 00d3: 00 02       	          dw  2  ;--- offset
+[00244] 00d5: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00245]                   	;---- queue dpush
+[00246]                   	;------ commit push
+[00247]                   	;----- cgpushd
+[00248] 00d8: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00249]                   	;----- cgstorlw
+[00250] 00da: d9 3c       	          gosub s_lstor16      ; store value from ES in local variable
+[00251] 00dc: ff fc       	          dw  -4  ;--- offset
+[00252]                   	;----- cgpopd
+[00253] 00de: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00254]                   	;----- end stmt ------
+[00255]                   	;----- begin stmt ------
+[00256]                   	;----- cgldlw
+[00257] 00e0: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00258] 00e2: ff fc       	          dw  -4  ;--- offset
+[00259]                   	;----- cgldlab
+[00260] 00e4: d9 12       	 				gosub s_epush16
+[00261] 00e6: 01 61       	 				  dw  L12
+[00262]                   	;----- cgcall
+[00263] 00e8: d4 00 00    	          call  Cprintf
+[00264]                   	;----- cgstack
+[00265] 00eb: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00266] 00ed: 00 04       	          dw  4  ;--- offset
+[00267] 00ef: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00268]                   	;---- queue dpush
+[00269]                   	;----- push + pop data not required, data remains unchanged in RA
+[00270]                   	;----- end stmt ------
+[00271]                   	;----- begin stmt ------
+[00272]                   	;----- begin if
+[00273]                   	;----- cglit
+[00274] 00f2: d9 12       	 				gosub s_epush16
+[00275] 00f4: 00 09       	 				  dw 9
+[00276]                   	;----- cgldlw
+[00277] 00f6: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00278] 00f8: ff fe       	          dw  -2  ;--- offset
+[00279]                   	;----- queue_cmp
+[00280]                   	;----- genbrfalse
+[00281]                   	;----- genbranch
+[00282]                   	;----- cgbreq
+[00283]                   	;----- cgeq
+[00284] 00fa: d9 b7       	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
+[00285]                   
+[00286]                   	;----- cgbrcond
+[00287] 00fc: d9 09       	 				 gosub s_dpop16        ; get result from expression stack
+[00288] 00fe: 9a          	 				 ghi   ra            ; get MSB from result
+[00289] 00ff: 52          	 				 str   r2            ; save in M(X)
+[00290] 0100: 8a          	 				 glo   ra            ; get LSB from result
+[00291] 0101: f1          	 				 or                  ; D = MSB | LSB
+[00292] 0102: ca 01 08    	lbnz	L14
+[00293] 0105: c0 01 19    	lbr	L13
+[00294]                   
+[00295]                   L14:
+[00296]                   	;----- begin stmt ------
+[00297]                   	;----- cgldlab
+[00298] 0108: d9 12       	 				gosub s_epush16
+[00299] 010a: 01 64       	 				  dw  L15
+[00300]                   	;----- cgcall
+[00301] 010c: d4 00 00    	          call  Cprintf
+[00302]                   	;----- cgstack
+[00303] 010f: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00304] 0111: 00 02       	          dw  2  ;--- offset
+[00305] 0113: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00306]                   	;---- queue dpush
+[00307]                   	;----- push + pop data not required, data remains unchanged in RA
+[00308]                   	;----- end stmt ------
+[00309]                   	;---- queue lbr L16
+[00310]                   	;----- cgjump
+[00311] 0116: c0 01 27    	 				  lbr	L16
+[00312]                   
+[00313]                   L13:
+[00314]                   	;----- begin stmt ------
+[00315]                   	;----- cgldlab
+[00316] 0119: d9 12       	 				gosub s_epush16
+[00317] 011b: 01 66       	 				  dw  L17
+[00318]                   	;----- cgcall
+[00319] 011d: d4 00 00    	          call  Cprintf
+[00320]                   	;----- cgstack
+[00321] 0120: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00322] 0122: 00 02       	          dw  2  ;--- offset
+[00323] 0124: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00324]                   	;---- queue dpush
+[00325]                   	;----- push + pop data not required, data remains unchanged in RA
+[00326]                   	;----- end stmt ------
+[00327]                   
+[00328]                   L16:
+[00329]                   	;----- end if
+[00330]                   	;----- end stmt ------
+[00331]                   	;----- end stmt ------
+[00332]                   	;---- queue lbr L10
+[00333]                   	;----- cgjump
+[00334] 0127: c0 00 bd    	 				  lbr	L10
+[00335]                   
+[00336]                   L9:
+[00337]                   	;----- end for
+[00338]                   	;----- end stmt ------
+[00339]                   	;----- begin stmt ------
+[00340]                   	;----- begin return
+[00341]                   	;----- cgldlw
+[00342] 012a: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00343] 012c: ff fc       	          dw  -4  ;--- offset
+[00344]                   	;----- cgpopd
+[00345] 012e: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00346]                   	;---- queue lbr L5
+[00347]                   	;----- end return
+[00348]                   	;----- end stmt ------
+[00349]                   	;---- lbr L5 falls through
+[00350]                   
+[00351]                   L5:
+[00352]                   	;----- cgstack
+[00353] 0130: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00354] 0132: 00 04       	          dw  4  ;--- offset
+[00355] 0134: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00356]                   	;----- cgexit
+[00357] 0137: e2          	          sex   r2            ; make sure X = SP
+[00358] 0138: d9 06       	          gosub s_stkchk      ; check for expression stack creep
+[00359] 013a: c3 00 00    	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
+[00360] 013d: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
+              bb 
+[00361]                   
+[00362] 0142: d5          	          rtn    			 	     ; return to caller
+[00363]                   
+[00364]                   ;----- string table
+[00365]                   
+[00366]                   L6:
+[00367] 0143: 46 69 72 73   db 'First ten Fibonacci numbers:', 10    ;----- cgdefs
               74 20 74 65 
               6e 20 46 69 
               62 6f 6e 61 
@@ -607,229 +588,18 @@
               6e 75 6d 62 
               65 72 73 3a 
               0a 
-[00319] 00c2: 00          	db	$00    ;----- cgdefb
-[00320]                   
-[00321]                   L7:
-[00322]                   	;----- cgldlab
-[00323] 00c3: d4 00 00    	 				call epush16
-[00324] 00c6: 00 a5       	 				  dw  L6
-[00325]                   	;----- cgcall
-[00326] 00c8: d4 00 00    	          call  Cprintf
-[00327]                   	;----- cgstack
-[00328] 00cb: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00329] 00ce: 00 02       	          dw  2  ;--- offset
-[00330] 00d0: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00331]                   	;---- queue dpush
-[00332]                   	;----- push + pop data not required, data remains unchanged in RA
-[00333]                   	;----- end stmt ------
-[00334]                   	;----- begin stmt ------
-[00335]                   	;----- begin for
-[00336]                   	;----- cglit
-[00337] 00d3: d4 00 00    	 				call epush16
-[00338] 00d6: 00 00       	 				  dw 0
-[00339]                   	;----- cgstorlw
-[00340] 00d8: d4 00 00    	          call  lstor16      ; store value from ES in local variable
-[00341] 00db: ff fe       	          dw  -2  ;--- offset
-[00342]                   	;----- cgpopd
-[00343] 00dd: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00344]                   
-[00345]                   L8:
-[00346]                   	;----- cgldlw
-[00347] 00e0: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00348] 00e3: ff fe       	          dw  -2  ;--- offset
-[00349]                   	;----- cglit
-[00350] 00e5: d4 00 00    	 				call epush16
-[00351] 00e8: 00 0a       	 				  dw 10
-[00352]                   	;----- queue_cmp
-[00353]                   	;----- genbrfalse
-[00354]                   	;----- genbranch
-[00355]                   	;----- cgbrlt
-[00356]                   	;----- cglt
-[00357] 00ea: d4 00 00    	          call  lt16				   ; compare TOS < SOS on Expression Stack
-[00358]                   
-[00359]                   	;----- cgbrcond
-[00360] 00ed: d4 00 00    	 				 call  dpop16        ; get result from expression stack
-[00361] 00f0: 9a          	 				 ghi   ra            ; get MSB from result
-[00362] 00f1: 52          	 				 str   r2            ; save in M(X)
-[00363] 00f2: 8a          	 				 glo   ra            ; get LSB from result
-[00364] 00f3: f1          	 				 or                  ; D = MSB | LSB
-[00365] 00f4: ca 00 fa    	lbnz	L12
-[00366] 00f7: c0 01 8e    	lbr	L10
-[00367]                   
-[00368]                   L12:
-[00369]                   	;---- queue lbr L9
-[00370]                   	;----- cgjump
-[00371] 00fa: c0 01 0d    	 				  lbr	L9
-[00372]                   
-[00373]                   L11:
-[00374]                   	;----- cgldlw
-[00375] 00fd: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00376] 0100: ff fe       	          dw  -2  ;--- offset
-[00377]                   	;----- cginclw
-[00378] 0102: d4 00 00    	          call  linc16       ; increment local variable
-[00379] 0105: ff fe       	          dw  -2  ;--- offset
-[00380]                   	;----- cgpopd
-[00381] 0107: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00382]                   	;---- queue lbr L8
-[00383]                   	;----- cgjump
-[00384] 010a: c0 00 e0    	 				  lbr	L8
-[00385]                   
-[00386]                   L9:
-[00387]                   	;----- begin stmt ------
-[00388]                   	;----- begin stmt ------
-[00389]                   	;----- cgldlw
-[00390] 010d: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00391] 0110: ff fe       	          dw  -2  ;--- offset
-[00392]                   	;----- cgcall
-[00393] 0112: d4 00 00    	          call  Cfib
-[00394]                   	;----- cgstack
-[00395] 0115: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00396] 0118: 00 02       	          dw  2  ;--- offset
-[00397] 011a: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00398]                   	;---- queue dpush
-[00399]                   	;------ commit push
-[00400]                   	;----- cgpushd
-[00401] 011d: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00402]                   	;----- cgstorlw
-[00403] 0120: d4 00 00    	          call  lstor16      ; store value from ES in local variable
-[00404] 0123: ff fc       	          dw  -4  ;--- offset
-[00405]                   	;----- cgpopd
-[00406] 0125: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00407]                   	;----- end stmt ------
-[00408]                   	;----- begin stmt ------
-[00409]                   	;---- queue lbr L14
-[00410]                   	;----- cgjump
-[00411] 0128: c0 01 2e    	 				  lbr	L14
-[00412]                   
-[00413]                   L13:
-[00414] 012b: 25 64         db '%d'    ;----- cgdefs
-[00415] 012d: 00          	db	$00    ;----- cgdefb
-[00416]                   
-[00417]                   L14:
-[00418]                   	;----- cgldlw
-[00419] 012e: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00420] 0131: ff fc       	          dw  -4  ;--- offset
-[00421]                   	;----- cgldlab
-[00422] 0133: d4 00 00    	 				call epush16
-[00423] 0136: 01 2b       	 				  dw  L13
-[00424]                   	;----- cgcall
-[00425] 0138: d4 00 00    	          call  Cprintf
-[00426]                   	;----- cgstack
-[00427] 013b: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00428] 013e: 00 04       	          dw  4  ;--- offset
-[00429] 0140: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00430]                   	;---- queue dpush
-[00431]                   	;----- push + pop data not required, data remains unchanged in RA
-[00432]                   	;----- end stmt ------
-[00433]                   	;----- begin stmt ------
-[00434]                   	;----- begin if
-[00435]                   	;----- cglit
-[00436] 0143: d4 00 00    	 				call epush16
-[00437] 0146: 00 09       	 				  dw 9
-[00438]                   	;----- cgldlw
-[00439] 0148: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00440] 014b: ff fe       	          dw  -2  ;--- offset
-[00441]                   	;----- queue_cmp
-[00442]                   	;----- genbrfalse
-[00443]                   	;----- genbranch
-[00444]                   	;----- cgbreq
-[00445]                   	;----- cgeq
-[00446] 014d: d4 00 00    	          call  eq16				   ; compare TOS == SOS on Expression Stack
-[00447]                   
-[00448]                   	;----- cgbrcond
-[00449] 0150: d4 00 00    	 				 call  dpop16        ; get result from expression stack
-[00450] 0153: 9a          	 				 ghi   ra            ; get MSB from result
-[00451] 0154: 52          	 				 str   r2            ; save in M(X)
-[00452] 0155: 8a          	 				 glo   ra            ; get LSB from result
-[00453] 0156: f1          	 				 or                  ; D = MSB | LSB
-[00454] 0157: ca 01 5d    	lbnz	L16
-[00455] 015a: c0 01 75    	lbr	L15
-[00456]                   
-[00457]                   L16:
-[00458]                   	;----- begin stmt ------
-[00459]                   	;---- queue lbr L18
-[00460]                   	;----- cgjump
-[00461] 015d: c0 01 62    	 				  lbr	L18
-[00462]                   
-[00463]                   L17:
-[00464] 0160: 0a            db 10    ;----- cgdefs
-[00465] 0161: 00          	db	$00    ;----- cgdefb
-[00466]                   
-[00467]                   L18:
-[00468]                   	;----- cgldlab
-[00469] 0162: d4 00 00    	 				call epush16
-[00470] 0165: 01 60       	 				  dw  L17
-[00471]                   	;----- cgcall
-[00472] 0167: d4 00 00    	          call  Cprintf
-[00473]                   	;----- cgstack
-[00474] 016a: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00475] 016d: 00 02       	          dw  2  ;--- offset
-[00476] 016f: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00477]                   	;---- queue dpush
-[00478]                   	;----- push + pop data not required, data remains unchanged in RA
-[00479]                   	;----- end stmt ------
-[00480]                   	;---- queue lbr L19
-[00481]                   	;----- cgjump
-[00482] 0172: c0 01 8b    	 				  lbr	L19
-[00483]                   
-[00484]                   L15:
-[00485]                   	;----- begin stmt ------
-[00486]                   	;---- queue lbr L21
-[00487]                   	;----- cgjump
-[00488] 0175: c0 01 7b    	 				  lbr	L21
-[00489]                   
-[00490]                   L20:
-[00491] 0178: 2c 20         db ', '    ;----- cgdefs
-[00492] 017a: 00          	db	$00    ;----- cgdefb
-[00493]                   
-[00494]                   L21:
-[00495]                   	;----- cgldlab
-[00496] 017b: d4 00 00    	 				call epush16
-[00497] 017e: 01 78       	 				  dw  L20
-[00498]                   	;----- cgcall
-[00499] 0180: d4 00 00    	          call  Cprintf
-[00500]                   	;----- cgstack
-[00501] 0183: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00502] 0186: 00 02       	          dw  2  ;--- offset
-[00503] 0188: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00504]                   	;---- queue dpush
-[00505]                   	;----- push + pop data not required, data remains unchanged in RA
-[00506]                   	;----- end stmt ------
-[00507]                   
-[00508]                   L19:
-[00509]                   	;----- end if
-[00510]                   	;----- end stmt ------
-[00511]                   	;----- end stmt ------
-[00512]                   	;---- queue lbr L11
-[00513]                   	;----- cgjump
-[00514] 018b: c0 00 fd    	 				  lbr	L11
-[00515]                   
-[00516]                   L10:
-[00517]                   	;----- end for
-[00518]                   	;----- end stmt ------
-[00519]                   	;----- begin stmt ------
-[00520]                   	;----- begin return
-[00521]                   	;----- cgldlw
-[00522] 018e: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00523] 0191: ff fc       	          dw  -4  ;--- offset
-[00524]                   	;----- cgpopd
-[00525] 0193: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00526]                   	;---- queue lbr L5
-[00527]                   	;----- end return
-[00528]                   	;----- end stmt ------
-[00529]                   	;---- lbr L5 falls through
-[00530]                   
-[00531]                   L5:
-[00532]                   	;----- cgstack
-[00533] 0196: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00534] 0199: 00 04       	          dw  4  ;--- offset
-[00535] 019b: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00536]                   	;----- cgexit
-[00537] 019e: e2          	          sex   r2            ; make sure X = SP
-[00538] 019f: d4 00 00    	          call  escheck       ; check for expression stack creep
-[00539] 01a2: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
-              bb 
-[00540]                   
-[00541] 01a7: d5          	          rtn	  			 	     ; return to caller
-[00542]                   	;---- cgpostlude
-[00543] 01a8:             	             endp
+[00368] 0160: 00          	db	$00    ;----- cgdefb
+[00369]                   
+[00370]                   L12:
+[00371] 0161: 25 64         db '%d'    ;----- cgdefs
+[00372] 0163: 00          	db	$00    ;----- cgdefb
+[00373]                   
+[00374]                   L15:
+[00375] 0164: 0a            db 10    ;----- cgdefs
+[00376] 0165: 00          	db	$00    ;----- cgdefb
+[00377]                   
+[00378]                   L17:
+[00379] 0166: 2c 20         db ', '    ;----- cgdefs
+[00380] 0168: 00          	db	$00    ;----- cgdefb
+[00381]                   	;---- cgpostlude
+[00382] 0169:             	             endp
