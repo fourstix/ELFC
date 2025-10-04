@@ -30,7 +30,7 @@ void init(void) {
 	Q_push = pnone;
 	Q_cmp = cnone;
 	Q_bool = bnone;
-	
+
 	//grw - added string table
 	str_idx = 0;
 

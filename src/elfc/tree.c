@@ -9,7 +9,7 @@
 
 #define	MAXBARS	100
 /*
-#define DEBUG 
+#define DEBUG
 */
 
 int	Level = 0;
@@ -165,12 +165,16 @@ void dumptree(node *a) {
 	case OP_SCALEBY:dumpunop1("scaleby", a); break;
 	case OP_ADD:	dumpbinop("x+y (int,int)", a); break;
 	case OP_PLUS:	dumpbinop2("x+y", a); break;
-	case OP_MUL:	dumpbinop("x*y", a); break;
+	//grw -added support for signed and unsgined
+	case OP_MUL: dumpbinop("x*y", a); break;
+	case OP_UMUL: dumpbinop("ux*uy", a); break;
 	case OP_SUB:	dumpbinop("x-y", a); break;
 	case OP_BINAND:	dumpbinop("x&y", a); break;
 	case OP_BINIOR:	dumpbinop("x|y", a); break;
 	case OP_BINXOR:	dumpbinop("x^y", a); break;
-	case OP_DIV:	dumpbinop("x/y", a); break;
+  //grw -added support for signed and unsgined
+	case OP_DIV: dumpbinop("x/y", a); break;
+	case OP_UDIV: dumpbinop("ux/uy", a); break;
 	case OP_EQUAL:	dumpbinop("x==y", a); break;
 	case OP_GLUE:	dumpbinop("glue", a); break;
 	case OP_COMMA:	dumpbinop("x,y", a); break;
@@ -180,6 +184,12 @@ void dumptree(node *a) {
 	case OP_LSHIFT:	dumpbinop("x<<y", a); break;
 	case OP_LTEQ:	dumpbinop("x<=y", a); break;
 	case OP_MOD:	dumpbinop("x%y", a); break;
+	//grw -added support for signed and unsgined
+	case OP_ABV: dumpbinop("ux>uy", a); break;
+	case OP_ABVEQ: dumpbinop("ux>=uy", a); break;
+	case OP_BLW: dumpbinop("ux<uy", a); break;
+	case OP_BLWQ: dumpbinop("ux<=uy", a); break;
+	case OP_MOD:	dumpbinop("ux%uy", a); break;
 	case OP_NOTEQ:	dumpbinop("x!=y", a); break;
 	case OP_RSHIFT:	dumpbinop("x>>y", a); break;
 	case OP_ASSIGN:	dumpbinop2("x=y", a); break;
@@ -217,7 +227,7 @@ void emitargs(node *a) {
 
 static void emittree1(node *a) {
 	int	lv[LV];
-	int	unsgn;
+	int	ptr;
 	if (NULL == a) return;
 	switch (a->op) {
 	case OP_IDENT:	/* ignore */ break;
@@ -302,47 +312,58 @@ static void emittree1(node *a) {
 	case OP_GTEQ:	emittree1(a->left);
 			emittree1(a->right);
 			commit();
-			//grw - added support for signed and unsigned
-			unsgn = !inttype(a->args[0]) || unsgnop(a->args[0], a->args[1]);
+			ptr = !inttype(a->args[0]);
 			switch(a->op) {
 			case OP_EQUAL:	queue_cmp(equal); break;
 			case OP_NOTEQ:	queue_cmp(not_equal); break;
-			case OP_LESS:	queue_cmp(unsgn? below: less); break;
-			case OP_GREATER:queue_cmp(unsgn? above: greater); break;
-			case OP_LTEQ:	queue_cmp(unsgn? below_equal:
-						less_equal);
-					break;
-			case OP_GTEQ:	queue_cmp(unsgn? above_equal:
-						greater_equal);
+			case OP_LESS:	queue_cmp(ptr? below: less); break;
+			case OP_GREATER:queue_cmp(ptr? above: greater); break;
+			case OP_LTEQ:	queue_cmp(ptr? below_equal: less_equal);
+					  break;
+			case OP_GTEQ:	queue_cmp(ptr? above_equal: greater_equal);
+						break;
+			//grw - added support for signed and unsigned
+			case OP_BLW: queue_cmp(below); break;
+			case OP_ABV: queue_cmp(above); break;
+			case OP_BLWEQ: queue_cmp(below_equal); break;
+			case OP_ABVEQ: queue_cmp(above_equal); break;
 			}
 			break;
 	case OP_MOD:	/* fallthru */
+	case OP_UMOD:	/* fallthru */
 	case OP_LSHIFT:	/* fallthru */
 	case OP_RSHIFT:	/* fallthru */
 	case OP_DIV:	/* fallthru */
+	case OP_UDIV:	/* fallthru */
 	case OP_BINAND:	/* fallthru */
 	case OP_BINIOR:	/* fallthru */
 	case OP_BINXOR:	/* fallthru */
 	case OP_MUL:	/* fallthru */
+	case OP_UMUL:	/* fallthru */
 	case OP_SUB:	/* fallthru */
 	case OP_PLUS:	/* fallthru */
-	case OP_ADD: unsgn = unsgnop(a->args[0], a->args[1]);	
-	    emittree1(a->left);
+	case OP_ADD: emittree1(a->left);
 			emittree1(a->right);
 			commit();
 			switch(a->op) {
 			case OP_LSHIFT:	genshl(); break;
 			case OP_RSHIFT:	genshr(); break;
-			case OP_DIV:	gendiv(!unsgn); break;
-			case OP_MOD:	genmod(!unsgn); break;
+			//grw - added support for signed and unsigned
+			case OP_DIV:	gendiv(1); break;
+			case OP_UDIV:	gendiv(0); break;
+			case OP_MOD:	genmod(1); break;
+			case OP_UMOD:	genmod(0); break;
 			case OP_BINAND:	genand(); break;
 			case OP_BINIOR:	genior(); break;
 			case OP_BINXOR:	genxor(); break;
-			case OP_MUL:	genmul(!unsgn); break;
+			//grw - added support for signed and unsigned
+			case OP_MUL:	genmul(1); break;
+			case OP_UMUL:	genmul(0); break;
 			case OP_ADD:	genadd(PINT, PINT, 1); break;
 			case OP_PLUS:	genadd(a->args[0], a->args[1], 1);
 					break;
-			case OP_SUB:	gensub(a->args[0], a->args[1], 1);						break;
+			case OP_SUB:	gensub(a->args[0], a->args[1], 1);
+					break;
 			}
 			break;
 	case OP_CALL:	emitargs(a->left);
@@ -390,8 +411,8 @@ static void emittree1(node *a) {
 
 void emittree(node *a) {
 #ifdef DEBUG
-	dumptree(a); 
-#endif	
+	dumptree(a);
+#endif
 	a = optimize(a);
 	emittree1(a);
 }

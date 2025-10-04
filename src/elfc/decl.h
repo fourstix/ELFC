@@ -183,3 +183,5 @@ void genstrtbl(void);
 int	chartype(int p);
 //grw - function for signed or unsigned type
 int	signtype(int p);
+//grw - function for signed or unsigned operand
+int unsgnop(int p1, int p2);
