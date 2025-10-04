@@ -98,7 +98,7 @@ int newloc(void) {
 #ifdef __SUBC__
  #define PTR_INT_CAST	(int)
 #else
- #define PTR_INT_CAST	(int) (long long)
+ #define PTR_INT_CAST	(int) (long)
 #endif
 
 char *galloc(int k, int align) {
@@ -119,7 +119,7 @@ char *galloc(int k, int align) {
 char *globname(char *s) {
 	char	*p;
 
-	p = galloc((int)strlen(s)+1, 0);
+	p = galloc(strlen(s)+1, 0);
 	strcpy(p, s);
 	return p;
 }
@@ -127,7 +127,7 @@ char *globname(char *s) {
 char *locname(char *s) {
 	int	p, k;
 
-	k = (int)(strlen(s) + 1);
+	k = strlen(s) + 1;
 	if (Nbot + k >= Ntop)
 		fatal("out of space for symbol names");
 	Ntop -= k;
