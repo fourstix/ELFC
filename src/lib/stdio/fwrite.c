@@ -14,8 +14,8 @@ int _fwrite(void *p, size_t size, FILE *f) {
 	if ((f->iom & _FWRITE) == 0) return 0;
 	if (f->iom & _FERROR) return 0;
 	f->last = _FWRITE;
-	
-	if (f->mode == _IONBF || f->mode == _IOTMP) {	
+
+	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		if ((k = write(f->fd, p, size)) != size) {
 			f->iom |= _FERROR;
 			errno = EIO;
@@ -40,8 +40,7 @@ int _fwrite(void *p, size_t size, FILE *f) {
   return k;
 }
 
-
-size_t fwrite(void *p, int size_t, int size_t, FILE *f) {
+size_t fwrite(void *p, size_t size, size_t count, FILE *f) {
 	int	k;
 
 	if ((k = _fwrite(p, size * count, f)) < 0)
