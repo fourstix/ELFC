@@ -1,32 +1,18 @@
-# Define macros for common values
-CC = cl
-CFLAGS = /W3 /Zi /D_CRT_SECURE_NO_WARNINGS /nologo
-LFLAGS = /nologo
+CC=	cl
 
-# Define the target executable
-TARGET = elfc.exe
+FILES=	cgelf.c decl.c error.c expr.c gen.c main.c misc.c \
+	prep.c opt.c scan.c stmt.c sym.c tree.c
 
-# Define the source files
-SOURCES = cgelf.c decl.c error.c expr.c gen.c main.c misc.c \
-	modpath.c prep.c opt.c scan.c stmt.c sym.c tree.c
+OBJS=	cgelf.obj decl.obj error.obj expr.obj gen.obj main.obj misc.obj \
+	prep.obj opt.obj scan.obj stmt.obj sym.obj tree.obj
 
-# Define the object files (derived from source files)
-OBJECTS = $(SOURCES:.c=.obj)
+all:	elfc 
 
-# Rule to build the executable
-$(TARGET): $(OBJECTS)
-	$(CC) $(LFLAGS) $(OBJECTS) /Fe$(TARGET)
+elfc:	$(FILES)
+	$(CC) -o elfc $(FILES)
 
-# Rule to compile C source files into object files
-.c.obj:
-	$(CC) $(CFLAGS) /c $<
-
-# Define header file dependencies
-$(OBJECTS):	data.h decl.h defs.h prec.h
+$(FILES):	data.h decl.h defs.h prec.h
 gen.c:		cgen.h
-modpath.c:  modpath.h
-main.c:     modpath.h
 
-# Rule to clean up generated files
 clean:
-	del /q $(OBJECTS) $(TARGET) *.pdb
+	del *.obj *.exe

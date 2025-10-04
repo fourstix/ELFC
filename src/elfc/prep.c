@@ -17,7 +17,7 @@ int getln(char *buf, int max) {
 	int	k;
 
 	if (fgets(buf, max, Infile) == NULL) return 0;
-	k = (int)strlen(buf);
+	k = strlen(buf);
 	if (k) buf[--k] = 0;
 	if (k && '\r' == buf[k-1]) buf[--k] = 0;
 	return k;
@@ -71,7 +71,7 @@ static void include(void) {
 		c = '>';
 	//grw - change SCCDIR to Fpath to use path from command string
 	//k = getln(file, TEXTLEN-strlen(SCCDIR)-9);
-	k = getln(file, (int)(TEXTLEN-strlen(Fpath)-9));
+	k = getln(file, TEXTLEN-strlen(Fpath)-9);
 	Line++;
 	if (!k || file[k-1] != c)
 		error("missing delimiter in '#include'", NULL);
