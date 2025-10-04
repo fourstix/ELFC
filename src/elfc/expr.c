@@ -617,11 +617,11 @@ int binop(int tok, int p1, int p2) {
 	case AMPER:	return OP_BINAND;
 	case CARET:	return OP_BINXOR;
 	case EQUAL:	return OP_EQUAL;
-	case GREATER:	return OP_GREATER;
-	case GTEQ:	return OP_GTEQ;
-	case LESS:	return OP_LESS;
+	case GREATER:	return unsgn ? OP_ABV : OP_GREATER;
+	case GTEQ:	return unsgn ? OP_ABVEQ : OP_GTEQ;
+	case LESS:	return unsgn ? OP_BLW : OP_LESS;
 	case LSHIFT:	return OP_LSHIFT;
-	case LTEQ:	return OP_LTEQ;
+	case LTEQ:	return unsgn ? OP_BLWEQ : OP_LTEQ;
 	case MINUS:	return OP_SUB;
 	case MOD:		return unsgn ? OP_UMOD : OP_MOD;
 	case NOTEQ:	return OP_NOTEQ;
