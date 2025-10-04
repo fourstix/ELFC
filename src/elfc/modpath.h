@@ -7,7 +7,7 @@
 #include <linux/limits.h>
 #define MAXPATH     PATH_MAX
 #elif defined(_WIN32)
-#define MAXPATH     MAX_PATH
+#define MAXPATH     240
 #endif
 
 extern void get_module_path(char *path_buf, size_t size);
