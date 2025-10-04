@@ -41,7 +41,7 @@ char *newfilename(char *file, int sfx) {
 */
 
 char *newfilename(char *file, char *sfx) {
-    int len = strlen(file) + strlen(file) + 1;
+    int len = (int)(strlen(file) + strlen(file) + 1);
     char *ofile = malloc(len);
     char *p;
     if (ofile == NULL) return NULL;
@@ -61,7 +61,7 @@ char *newfilename(char *file, char *sfx) {
 static int filetype(char *file) {
     int k;
 
-    k = strlen(file);
+    k = (int)(strlen(file));
     if ('.' == file[k - 2]) return file[k - 1];
     return 0;
 }
@@ -241,7 +241,7 @@ static char *nextarg(int argc, char *argv[], int *pi, int *pj) {
         exit(EXIT_FAILURE);
     }
     s = argv[++*pi];
-    *pj = strlen(s) - 1;
+    *pj = (int)(strlen(s) - 1);
     return s;
 }
 

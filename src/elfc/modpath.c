@@ -46,7 +46,7 @@ void get_module_path(char *path_buf, size_t size) {
         perror("readlink");
     }
 #elif defined(_WIN32)
-    if (GetModuleFileName(NULL, path_buf, size) != 0) {
+    if (GetModuleFileName(NULL, path_buf, (DWORD)size) != 0) {
         trim_filename_from_path(path_buf);
     } else {
         fprintf(stderr, "Error getting module file name.\n");
