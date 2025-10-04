@@ -35,13 +35,18 @@ static node *fold2(node *n) {
 				return n;
 			v = vl - vr;
 			break;
+	//grw - added support for signed and unsigned
+	case OP_UMUL:  /* falls through */
 	case OP_MUL:	v = vl * vr;
 			if (v / vl != vr) return n;
 			if ((v & (Opt_sum_lim-1)) != v) return n;
 			break;
+	//grw - added support for signed and unsigned
+	case OP_UDIV: /* falls through */
 	case OP_DIV:	if (0 == vr) return n;
 			v = vl / vr;
 			break;
+	case OP_UMOD: /* falls through */
 	case OP_MOD:	if (0 == vr) return n;
 			v = vl % vr;
 			break;
@@ -97,11 +102,12 @@ static node *reduce(node *n) {
 		return n->left;
 	if (OP_SUB == op && cl && 0 == vl)			/* 0-x -> -x */
 		return mkunop(OP_NEG, n->right);
-	if ((OP_MUL == op) && cl && 0 == vl)			/* 0*x -> 0 */
+	//grw - added support for signed and unsigned
+	if ((OP_MUL == op || OP_UMUL == op) && cl && 0 == vl)			/* 0*x -> 0 */
 		return mkleaf(OP_LIT, 0);
-	if ((OP_MUL == op) && cr && 0 == vr)			/* x*0 -> 0 */
+	if ((OP_MUL == op || OP_UMUL == op) && cr && 0 == vr)			/* x*0 -> 0 */
 		return mkleaf(OP_LIT, 0);
-	if (OP_DIV == op) {				   /* x/2^n -> x>>n */
+	if (OP_DIV == op || OP_UDIV == op) {				   /* x/2^n -> x>>n */
 		lim = BPW * 8 - 1;
 		for (k=1,i=0; i<lim; i++, k<<=1) {
 			if (cr && k == vr) {

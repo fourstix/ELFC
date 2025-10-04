@@ -10,12 +10,6 @@
 
 int entry = 0;
 
-//void cgdata(void)	{ gen(".data"); }
-//void cgtext(void)	{ gen(".text"); }
-//void cgprelude(void)	{ }
-//void cgpostlude(void)	{ }
-//void cgpublic(char *s)	{ ngen(".globl\t%s", s, 0); }
-
 //grw - removed gendata and gentext functions
 //void cgdata(void)	{gen(";----- cgdata");}
 //void cgtext(void)	{gen(";----- cgtext"); }
@@ -34,7 +28,6 @@ void cgprelude()	{
 		entry = label();
 		queue_jmp(entry);
 	}
-		/* moved prelude code to crt0 module */
 }
 
 void cgpostlude(void)	{ gen(";---- cgpostlude");
@@ -129,23 +122,30 @@ void cgadd(void)	{gen(";----- cgadd");
 void cgmul(int sgn)	{gen(";----- cgmul");
     /* Only normalize signed operands */
 		if (sgn)
-      gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed multiply\n");
-		gen("          gosub s_mul16				 ; multiply SOS by TOS on Expression Stack\n"); }
+      gen("          gosub s_mdsgn16			 ; prepare RA for signed multiply");
+		else
+			gen("          load  ra, 0	         ; prepare RA for unsigned multiply");
+
+		gen("          gosub s_mul16				 ; multiply SOS by TOS on Expression Stack"); }
 void cgsub(void)	{gen(";----- cgsub");
-    gen("          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack\n"); }
+    gen("          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack"); }
 //grw - added support for signed and unsgined
 void cgdiv(int sgn)	{gen(";----- cgdiv");
     /* Only normalize signed operands */
     if (sgn)
-      gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed divide\n");
-		gen("          gosub s_div16				 ; divide SOS by TOS on Expression Stack\n"); }
+      gen("          gosub s_mdsgn16			 ; prepare RA for signed divide");
+		else
+	    gen("          load  ra, 0	         ; prepare RA for unsigned divide");
+		gen("          gosub s_div16				 ; divide SOS by TOS on Expression Stack"); }
 //grw - added support for signed and unsgined
 void cgmod(int sgn)	{gen(";----- cgmod");
     /* Only normalize signed operands */
     if (sgn)
-      gen("          gosub s_mdsgn16			 ; prepare SOS by TOS for signed divide\n");
-    gen("          gosub s_div16				 ; divide SOS by TOS, the remainder is SOS modulo TOS\n");
-		gen("          gosub s_mod16				 ; replace TOS with remainder, SOS modulo TOS \n"); }
+      gen("          gosub s_mdsgn16			 ; prepare RA for signed modulus");
+		else
+		  gen("          load  ra, 0	         ; prepare RA for unsigned modulus");
+    gen("          gosub s_div16				 ; divide SOS by TOS, the remainder is SOS modulo TOS");
+		gen("          gosub s_mod16				 ; replace TOS with remainder, SOS modulo TOS"); }
 void cgshl(void)	{gen(";----- cgshl");
 		gen("          gosub s_shl16				 ; SOS shifted left by TOS on Expression Stack\n"); }
 void cgshr(void)	{gen(";----- cgshr");
@@ -229,7 +229,7 @@ void cgscaleby(int v)	{
 		gen(" 				gosub s_epush16       ; put size on stack");
 		ngen(" 				  %s %d", "dw", v);
 		//grw - added support for signed and unsigned
-		/* gen("         gosub s_mdsgn16			  ; Removed this once unsigned supported?\n"); */
+		gen("         load  ra, 0	         ; prepare RA for unsigned divide\n");
 		gen("         gosub s_mul16				  ; multiply offset by size\n");
 	}
 }
@@ -247,6 +247,7 @@ void cgscale2by(int v){
 	 ngen(" 				  %s %d", "dw", v);
 	 //grw - added support for signed and unsigned
 	 /* gen("        gosub s_mdsgn16			   ; Removed this once unsigned supported?\n"); */
+	 gen("        load  ra, 0	           ; prepare RA for unsigned divide\n");
 	 gen("        gosub s_mul16				   ; multiply offset by size\n");
 	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");
 	}
@@ -265,7 +266,8 @@ void cgunscaleby(int v)	{
  	 ngen(" 				  %s %d", "dw", v);
 	 //grw - added support for signed and unsigned
 	 /* gen("        gosub s_mdsgn16			   ; Removed this once unsigned supported?\n"); */
- 	 gen("        gosub s_div16				   ; divide difference by size\n");
+	 gen("        load  ra, 0	           ; prepare RA for unsigned divide\n");
+	 gen("        gosub s_div16				   ; divide difference by size\n");
 	}
 }
 

@@ -50,12 +50,12 @@ void ngenraw(char *s, char *inst, int n) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, inst, n);
 }
-//grw - fuunction to output character
+//grw - function to output character
 void cgenraw(char *s, char ch) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, ch);
 }
-//grw - fuunction to output string
+//grw - function to output string
 void sgenraw(char *s, char *inst, char *s2) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, inst, s2);
@@ -277,7 +277,6 @@ void queue_jmp(int val) {
 	Q_dest = val;
 }
 
-
 void queue_push() {
 	commit();
 	//grw - trace
@@ -379,7 +378,7 @@ static int needscale(int p) {
 
 	sp = p & STCMASK;
 	return INTPTR == p || INTPP == p || CHARPP == p || VOIDPP == p ||
-		UINTPTR == p || UINTPP == p || SCHARPP == p || 
+		UINTPTR == p || UINTPP == p || SCHARPP == p ||
 		STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp;
 }
 
@@ -1159,22 +1158,22 @@ void genasm(char * strlit) {
 
 //grw - added string table
 
-/* 
+/*
  * Add a string to the string table
  */
 void addstr(int label, char *text, int len) {
 	char *ptext;
-	
+
 	//grw - create duplicate to text string from parser
 	//grw - don't use strdup since C string literals may have embedded nulls
-	
+
 	if (len > 0) {
 	  ptext = malloc(len);
-		if (ptext) 
+		if (ptext)
 		  memcpy(ptext, text, len);
 		else 		//grw - if we ran out of memory, exit immediately
-		  fatal("Unable to add string to table.");			
-	} else 
+		  fatal("Unable to add string to table.");
+	} else
 	  ptext = 0;
 
 		str_lab[str_idx] = label;
@@ -1184,7 +1183,7 @@ void addstr(int label, char *text, int len) {
 }
 
 
-/* 
+/*
  * concatenate a string to the previous string in the string table
  */
  void concatstr(char *text, int len) {
@@ -1193,7 +1192,7 @@ void addstr(int label, char *text, int len) {
 	 int  prev_len, new_len;
 
 	 //grw - no need to concat empty string (Len includes quotes)
-	 if (len > 2) {		 
+	 if (len > 2) {
 	   prev_idx = str_idx - 1;
      prev_txt = str_text[prev_idx];
 	   prev_len = str_len[prev_idx];
@@ -1203,17 +1202,17 @@ void addstr(int label, char *text, int len) {
 		 if (new_txt) {
 		   //grw - copy new text after end of old text, skipping quotes in middle
 		   memcpy(new_txt+prev_len-1, text+1, len-1);
-		   //grw - set previous string to concatenated text string			 
+		   //grw - set previous string to concatenated text string
 		   str_text[prev_idx] = new_txt;
 			 str_len[prev_idx] = new_len;
 		 } else {
 			 /* if we ran out of memory, exit with error */
 			 fatal("Unable to concatenate literal strings");
 		 }
-	 } 
+	 }
  }
 
- /* 
+ /*
   * Write out strings from the string table
   */
  void genstrtbl(void) {
@@ -1221,23 +1220,21 @@ void addstr(int label, char *text, int len) {
 	 int lab;
 	 char *txt;
 	 int len;
-	 
+
 	 genraw("\n;----- string table\n");
 	 for (i = 0; i < str_idx; i++) {
 		 lab = str_lab[i];
 		 txt = str_text[i];
 		 len = str_len[i];
-		 
+
 		 /* write out each string in string table */
 		 genlab(lab);
 		 gendefs(txt, len);
 		 gendefb(0);
-		 
+
 		 /* free the memory for the string */
-		 free(txt);	 
+		 free(txt);
 	 }
 	 /* reset the string table */
 	 str_idx = 0;
  }
-
- 
