@@ -27,8 +27,7 @@ void cgprelude()	{
 	genraw("; SubC Copyright 2012-2025 by Nils Holm\n");
 	genraw("; -------------------------------------------------------------------\n");
 	sgenraw("#include %sinclude/%s\n", Fpath, "ops_c.inc");
-	sgenraw("#include %sinclude/%s\n", Fpath, "bios.inc");
-	sgenraw("#include %sinclude/%s\n", Fpath, "kernel.inc");
+	sgenraw("#include %sinclude/%s\n", Fpath, "os_api.inc");
 	sgenraw("#include %sinclude/%s\n\n", Fpath, "elfc.inc");
 	sgen("           %s %s", "proc", pname);
   if (O_library) {
@@ -489,7 +488,7 @@ void cgcalr(int n)	{gen(";----- cgcalr");
  void cgexit(void)	{
  	gen(";----- cgexit");
  	gen("          sex   r2            ; make sure X = SP");
- 	gen("          gosub s_stkchk        ; check for expression stack creep");
+ 	gen("          gosub s_stkchk      ; check for expression stack creep");
 	gen("          lbdf  stk_err			 ; exit immediately when stack creep error occurs");
  	gen("          pop   rb				 		 ; restore BP (base pointer)\n");
  	gen("          rtn    			 	     ; return to caller"); }

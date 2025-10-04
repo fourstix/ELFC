@@ -4,17 +4,13 @@
 ;---------------------------------------------------------
 
 #include ../include/ops_c.inc
-
-#define  KEYBUF  $0080
-
-O_INMSG:      equ    $034b             ; passthrough for console output
-
+#include ../include/os_api.inc
 
           public es_min
           public auto_err
           public stk_err
           public Elfexit
-                
+
           ;----- elfc subroutines
           extrn   epush16
           extrn   dpop16
@@ -93,8 +89,8 @@ O_INMSG:      equ    $034b             ; passthrough for console output
           extrn   lget16
           extrn   lset16
 
-          
-          ;----- C routines 
+
+          ;----- C routines
           extrn  Cmain
           extrn  C_init
 
@@ -126,11 +122,11 @@ Elfstart: push   r6            ; save original return address on stack
           ghi    rf           ; push address of argv[] as second argument
           stxd                ; push MSB of argv[] onto expression stack
           glo    rf           ; push LSB of argv[] onto expression stack
-          stxd  
+          stxd
           ldi    0            ; argc is an int, so pad bye with 0
           stxd                ; push MSB or int argc
           ldn    rd           ; push arg count as LSB of first argument
-          stxd 
+          stxd
           sex   r2            ; set X = SP for call to main
           call  Cmain				  ; call the main procedure
           clc                 ; clear DF for return to Elf/OS
@@ -144,7 +140,7 @@ Elfexit:  load   rf, ostack   ; get original SP
           sex    2            ; make sure X = SP for return
           pop    r6           ; restore original return
           glo    ra						; get byte value for return
-          return              ; return to Elf/OS
+          rtn                 ; return to Elf/OS
 
 ;----- error handling for when expression stack exhausted
 auto_err: call O_INMSG        ; print error msg
@@ -152,29 +148,29 @@ auto_err: call O_INMSG        ; print error msg
           load   ra, -1       ; set error value for return
           stc                 ; set DF for error return
           lbr Elfexit         ; exit to Elf/OS
-      
+
 ;----- error handling for when expression stack exhausted
 stk_err:  call O_INMSG        ; print error msg
             db 'Stack Creep Error',10,13,0
           load   ra, -1       ; set error value for return
           stc                 ; set DF for error return
-          lbr Elfexit         ; exit to Elf/OS          
-          
+          lbr Elfexit         ; exit to Elf/OS
+
 argvload: load  rd, m_argc    ; load argc pointer
-          load  rf, m_argv    ; load argv pointer 
-          load  rc, $00       ; set counter 
-          load  r8, KEYBUF    ; set pointer to key buffer
+          load  rf, m_argv    ; load argv pointer
+          load  rc, $00       ; set counter
+          load  r8, K_KEYBUF  ; set pointer to key buffer
 sk_sp:    lda   r8            ; get byte from cmd string
           lbz   argvdone      ; end of arg string
           smi   ' '           ; check for space
           lbz   sk_sp         ; skip over leading spaces
-          
+
           dec   r8            ; move back to first char in argument
           glo  r8             ; put argument address in arg slot
           str   rf            ; C variables are stored LSB first, then MSB
           inc   rf
           ghi   r8            ; C variables are LSB first, then MSB
-          str   rf 
+          str   rf
           inc   rf
           inc   rc            ; increment arg counter
 sk_ns:    lda   r8            ; skip over non-spaces
@@ -185,28 +181,28 @@ sk_ns:    lda   r8            ; skip over non-spaces
           ldi   0
           str   r8            ; put zero after arg
           inc   r8            ; move back to next char
-          glo   rc            
+          glo   rc
           smi   8             ; up to 8 args
           lbnz  sk_sp         ; if not at max, keep going
-                     
+
 argvdone: glo   rc            ; get argument count
-          str   rd            ; save arg count in variable      
-          return 
-          
+          str   rd            ; save arg count in variable
+          rtn
+
           org (($-1)|255)+1   ; align subroutine table to page boundary
-         
+
 s_return:   sep r3            ; return from subroutine
 dispatch:   lda r3            ; jump in page to inline byte address
             plo r9
             ;----- subroutine vectors
 s_esmove:   lbr esmove
-s_stkchk:   lbr stkchk          
-s_dpop16:   lbr dpop16    
+s_stkchk:   lbr stkchk
+s_dpop16:   lbr dpop16
 s_dpush16:  lbr dpush16
-s_dget16:   lbr dget16  
+s_dget16:   lbr dget16
 s_epush16:  lbr epush16
-s_vpop16:   lbr vpop16  
-s_vpush8:   lbr vpush8 
+s_vpop16:   lbr vpop16
+s_vpush8:   lbr vpush8
 s_vpush16:  lbr vpush16
 s_vstor8:   lbr vstor8
 s_vstor16:  lbr vstor16
@@ -216,7 +212,7 @@ s_vdec8:    lbr vdec8
 s_vdec16:   lbr vdec16
 s_vpinc16:  lbr vpinc16
 s_vpdec16:  lbr vpdec16
-s_linit16:  lbr linit16 
+s_linit16:  lbr linit16
 s_lstor8:   lbr lstor8
 s_lstor16:  lbr lstor16
 s_lpush8:   lbr lpush8
@@ -227,7 +223,7 @@ s_linc8:    lbr linc8
 s_linc16:   lbr linc16
 s_ldec8:    lbr ldec8
 s_ldec16:   lbr ldec16
-s_lpinc16:  lbr lpinc16  
+s_lpinc16:  lbr lpinc16
 s_lpdec16:  lbr lpdec16
 s_psave:    lbr psave
 s_pstor8:   lbr pstor8
@@ -276,23 +272,6 @@ s_sclsos4:  lbr sclsos4
 s_unscl2:   lbr unscl2
 s_unscl4:   lbr unscl4
 
-;-----------------  Example
-;         
-;         move16:
-;            lbr _move16
-;            ... ; repeat for each routine
-;         
-;         _move16:
-;            ... ; routine code
-;            lbr return. ; return to caller
-;         
-;         In program code:
-;         
-;            sep r9
-;            db move16.   ; routine selector
-;            dw Cnow.  ; additional argument
-;----------------- 
-          
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP
 ;------------------------ C Program Stack ---------------------------

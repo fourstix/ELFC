@@ -1,14 +1,15 @@
-;-------------------------------------------------------------------------------
-; crt0 - Elf/OS c start-up library - subroutine vectors
-;-------------------------------------------------------------------------------
+;----------------------------------
+; ElfC - crt0 subroutine vectors
+;----------------------------------
+
 #define SUBTBL   $2100
 s_return:  equ  SUBTBL
 
 s_esmove:  equ  (SUBTBL + $03)
-s_stkchk:  equ  (SUBTBL + $06)          
-s_dpop16:  equ  (SUBTBL + $09)    
+s_stkchk:  equ  (SUBTBL + $06)
+s_dpop16:  equ  (SUBTBL + $09)
 s_dpush16: equ  (SUBTBL + $0C)
-s_dget16:  equ  (SUBTBL + $0F)  
+s_dget16:  equ  (SUBTBL + $0F)
 s_epush16: equ  (SUBTBL + $12)
 s_vpop16:  equ  (SUBTBL + $15)
 s_vpush8:  equ  (SUBTBL + $18)
@@ -24,9 +25,9 @@ s_vpdec16: equ  (SUBTBL + $33)
 s_linit16: equ  (SUBTBL + $36)
 s_lstor8:  equ  (SUBTBL + $39)
 s_lstor16: equ  (SUBTBL + $3C)
-s_lpush8:  equ  (SUBTBL + $3F)  
-s_lpush16: equ  (SUBTBL + $42) 
-s_lget16:  equ  (SUBTBL + $45) 
+s_lpush8:  equ  (SUBTBL + $3F)
+s_lpush16: equ  (SUBTBL + $42)
+s_lget16:  equ  (SUBTBL + $45)
 s_lset16:  equ  (SUBTBL + $48)
 s_linc8:   equ  (SUBTBL + $4B)
 s_linc16:  equ  (SUBTBL + $4E)
@@ -44,8 +45,8 @@ s_pdec16:  equ  (SUBTBL + $6F)
 s_pincptr: equ  (SUBTBL + $72)
 s_pdecptr: equ  (SUBTBL + $75)
 s_laddr16: equ  (SUBTBL + $78)
-s_deref8:  equ  (SUBTBL + $7B) 
-s_deref16: equ  (SUBTBL + $7E)  
+s_deref8:  equ  (SUBTBL + $7B)
+s_deref16: equ  (SUBTBL + $7E)
 s_swap16:  equ  (SUBTBL + $81)
 s_add16:   equ  (SUBTBL + $84)
 s_sub16:   equ  (SUBTBL + $87)
@@ -79,16 +80,13 @@ s_scltos4: equ  (SUBTBL + $D8)
 s_sclsos2: equ  (SUBTBL + $DB)
 s_sclsos4: equ  (SUBTBL + $DE)
 s_unscl2:  equ  (SUBTBL + $E1)
-s_unscl4:  equ  (SUBTBL + $E3)
+s_unscl4:  equ  (SUBTBL + $E4)
 
+;----------------------------------
+; ElfC crt0 - error vectors
+;----------------------------------
 
-
-
-
-
-
-;-------------------------------------------------------------------------------
-; crt0 - Elf/OS c start-up library - error vectors
-;-------------------------------------------------------------------------------
           extrn   auto_err
           extrn   stk_err
+
+;---------- end elfc.inc ----------

@@ -18,11 +18,11 @@
 
 #ifndef EOF
 #define  EOF  (-1)
-#endif 
+#endif
 
 #ifndef NULL
 #define  NULL (void*)0
-#endif 
+#endif
 
 #ifndef FOPEN_MAX
 #define FOPEN_MAX	7
@@ -30,7 +30,7 @@
 
 #ifndef FILEMANE_MAX
 #define FILENAME_MAX	128
-#endif 
+#endif
 
 #ifndef TMP_MAX
 #define TMP_MAX		64
@@ -98,7 +98,7 @@ extern FILE	*stdin, *stdout, *stderr;
 
 #ifndef SEEK_SET
 #define SEEK_SET	0
-#endif 
+#endif
 
 #ifndef SEEK_CUR
 #define SEEK_CUR	1
@@ -106,7 +106,7 @@ extern FILE	*stdin, *stdout, *stderr;
 
 #ifndef SEEK_END
 #define SEEK_END	2
-#endif 
+#endif
 
 typedef struct {
     int hi;       /* position hi address word */
@@ -133,8 +133,8 @@ int ungetc(int c, FILE *f);
 FILE *fdopen(int fd, int iomode);
 int fclose(FILE *f);
 FILE *fopen(char *path, char *mode);
-int fread(void *p, size_t size, size_t count, FILE *f);
-int fwrite(void *p, size_t size, size_t count, FILE *f);
+size_t fread(void *p, size_t size, size_t count, FILE *f);
+size_t fwrite(void *p, size_t size, size_t count, FILE *f);
 int fflush(FILE *f);
 
 /* print functions */
