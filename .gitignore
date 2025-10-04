@@ -6,11 +6,13 @@
 *.dll
 *.so
 *.dylib
+*.sym
 
 # Build directories
 obj/
 Debug/
 Release/
+src/elfc/build
 
 # Temporary files
 *~

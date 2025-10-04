@@ -8,6 +8,7 @@
  #include "data.h"
 #undef extern_
 #include "decl.h"
+#include "modpath.h"
 
 static void cmderror(char *s, char *a) {
   //grw
@@ -142,7 +143,7 @@ static void assemble(char *file, char *path) {
 
 	if (strlen(ofile) + strlen(ASCMD) >= TEXTLEN)
 		cmderror("assembler command too long", NULL);
-	sprintf(cmd, ASCMD, path, ofile);
+	sprintf(cmd, ASCMD, path, path, ofile);
   //grw
 	//if (O_verbose > 1) printf("%s\n", cmd);
   if (O_verbose > 0) printf("%s\n", cmd);
@@ -264,14 +265,13 @@ static int dbgopt(int argc, char *argv[], int *pi, int *pj) {
 	exit(EXIT_FAILURE);
 }
 
+static char exe_path[MAXPATH];
+
 int main(int argc, char *argv[]) {
 	int	i, j;
 	char	*def;
-  //grw need to pase file name to Asm/02 and Link/02
-  char  *fname = "";
-  //grw - determine path for invoking assembler and linker
-  char *ppath;
-  char *tpath;
+    //grw need to pase file name to Asm/02 and Link/02
+    char  *fname = "";
 
 	def = NULL;
 	O_debug = 0;
@@ -279,33 +279,15 @@ int main(int argc, char *argv[]) {
 	O_componly = 0;
 	O_asmonly = 0;
 	O_testonly = 0;
-  //grw - added no c libs option
+    //grw - added no c libs option
 	O_clibs = 1;
 	O_outfile = "";
-  //grw - added library option
-  O_library = 0;
+    //grw - added library option
+    O_library = 0;
 
-  //grw - determine file path from command string that invoked elfc
-  Fpath = argv[0];
-  ppath = NULL;
-  tpath = Fpath;
-  //grw - search for last occurrence of elfc in string
-  while (1) {
-    tpath = strstr(tpath, "elfc");
-    if (tpath == NULL)
-        break;
-    ppath = tpath;
-    //grw - move past matching string
-    tpath += 4;
-  }
-
-  if (ppath != NULL) {
-    //grw - terminate string at end of path to elfc
-    *ppath = '\0';
-  } else {
-    //grw - if elfc not found, set file path string to empty
-    Fpath = "";
-  }
+	//arh - Get absolute path of executable to locate files and tools
+	get_module_path(exe_path, MAXPATH);
+	Fpath = exe_path;
 
 	for (i=1; i<argc; i++) {
 		if (*argv[i] != '-') break;
@@ -326,7 +308,7 @@ int main(int argc, char *argv[]) {
 				longusage();
 				exit(EXIT_SUCCESS);
 			case 'o':
-        //grw need to add -o O_outfile to linker command
+				//grw need to add -o O_outfile to linker command
 				O_outfile = nextarg(argc, argv, &i, &j);
 				break;
 			case 't':
@@ -342,9 +324,9 @@ int main(int argc, char *argv[]) {
       case 'L':
 				O_library = 1;
 				break;
-			//grw - added no c lib option
+				//grw - added no c lib option
       case 'N':
-        //grw - don't link stdlib and stdio
+				//grw - don't link stdlib and stdio
 				O_clibs = 0;
 				break;
 			case 'S':
@@ -367,8 +349,8 @@ int main(int argc, char *argv[]) {
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
 			compile(argv[i], def);
-      //grw - set name for linker
-      fname = argv[i];
+			//grw - set name for linker
+			fname = argv[i];
 			if (Errors && !O_testonly)
 				cmderror("compilation stopped", NULL);
 			if (!O_asmonly && !O_testonly)
@@ -376,8 +358,8 @@ int main(int argc, char *argv[]) {
 			i++;
 		}
 		else if (filetype(argv[i]) == 's') {
-      //grw - set name for linker
-      fname = argv[i];
+			//grw - set name for linker
+			fname = argv[i];
 
 			if (!O_testonly) assemble(argv[i++], Fpath);
 		}
@@ -387,8 +369,8 @@ int main(int argc, char *argv[]) {
 			collect(argv[i++], 0);
 		}
 	}
-  //grw - pass name to linker
+	//grw - pass name to linker
 	//if (!O_componly && !O_testonly) link();
-  if (!O_componly && !O_testonly && !O_library) link(fname, Fpath);
+	if (!O_componly && !O_testonly && !O_library) link(fname, Fpath);
 	return EXIT_SUCCESS;
 }

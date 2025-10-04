@@ -3,161 +3,14 @@
 ; SubC Copyright 2012-2025 by Nils Holm
 ; -------------------------------------------------------------------
 #include include/ops_c.inc
-#include include/bios.inc
-#include include/kernel.inc
+#include include/os_api.inc
 #include include/elfc.inc
 
 	           proc fib
 
-            extrn C_init
+#include include/stdlib.inc
 
-            extrn C_fdinit
-
-            extrn C_fdtable
-
-            extrn C_fildes
-
-            extrn Cabort
-
-            extrn Cabs
-
-            extrn Catexit      
-
-            extrn Cexit            
-
-            extrn Cmalloc
-
-            extrn Ccalloc 
-
-            extrn Crealloc
-
-            extrn Cfree  
-
-            extrn Catoi 
-
-            extrn Citoa           
-
-            extrn Citox
-
-            extrn Citou           
-
-            extrn Cdiv 
-
-            extrn Cbsearch              
-
-            extrn Cqsort
-
-            extrn Crand
-
-            extrn Csrand
-
-            extrn Ccreat
-
-            extrn Copen
-
-            extrn Cclose
-
-            extrn Cread
-
-            extrn Cwrite
-
-            extrn Clseek
-
-            extrn Cunlink
-
-            extrn Crename
-
-            extrn Cmin
-
-            extrn Cmax
-
-            extrn Cstdin
-
-            extrn Cstdout
-
-            extrn Cstderr
-
-            extrn Cputs
-
-            extrn Cputstr
-
-            extrn Cgets
-
-            extrn Cputch
-
-            extrn Cgetch
-
-            extrn Cputchar
-
-            extrn Cgetchar
-
-            extrn Cfdopen
-
-            extrn Cfclose
-
-            extrn Cfopen
-
-            extrn Cferror
-
-            extrn Cfeof
-
-            extrn Cclearerr
-
-            extrn Cfgetc
-
-            extrn Cfputc
-
-            extrn Cfgets
-
-            extrn Cfputs
-
-            extrn Cungetc
-
-            extrn Cfread
-
-            extrn Cfwrite
-
-            extrn Cfflush
-
-            extrn Cfprintf
-
-            extrn Ckprintf
-
-            extrn Cprintf
-
-            extrn Csprintf
-
-            extrn Cvfprintf
-
-            extrn Cvprintf
-
-            extrn Cvsprintf
-
-            extrn Cfscanf
-
-            extrn Cscanf
-
-            extrn Csscanf
-
-            extrn Cfgetpos
-
-            extrn Cfsetpos
-
-            extrn Cfseek
-
-            extrn Cftell
-
-            extrn Cperror
-
-            extrn Crewind
-
-            extrn Cremove
-
-            extrn Ctmpnam
-
-            extrn Ctmpfile
-
-            extrn Cfileno
+#include include/stdio.inc
 	;----- cgpublic
 	              public Cfib
 Cfib:	;---- cgentry
@@ -167,36 +20,36 @@ Cfib:	;---- cgentry
 	;----- begin stmt ------
 	;----- begin if
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 0
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  0  ;--- offset
 	;----- queue_cmp
 	;----- commit_cmp
 	;----- cgeq
-	          call  eq16				   ; compare TOS == SOS on Expression Stack
+	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
 
 	;----- gensctrue
 	;----- cgbrtrue
 	;----- cgbr
-	 				 call  dget16        ; test result on expression stack for short circuit
+	 				 gosub s_dget16       ; test result on expression stack for short circuit
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
 	 				 or                  ; D = MSB | LSB
 	 				 lbnz	L2           ; check for branch
-	 				 call  dpop16        ; remove short circuited value from expression stack
+	 				 gosub s_dpop16       ; remove short circuited value from expression stack
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  0  ;--- offset
 	;----- queue_cmp
 	;----- commit_cmp
 	;----- cgeq
-	          call  eq16				   ; compare TOS == SOS on Expression Stack
+	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
 
 
 L2:
@@ -205,7 +58,7 @@ L2:
 	;----- genlogbr
 	;----- cgbrfalse
 	;----- cgbr
-	 				 call  dpop16        ; get result from expression stack
+	 				 gosub s_dpop16       ; get result from expression stack
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
@@ -215,10 +68,10 @@ L2:
 	;----- begin stmt ------
 	;----- begin return
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  0  ;--- offset
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;---- queue lbr L1
 	;----- end return
 	;----- end stmt ------
@@ -234,48 +87,48 @@ L3:
 	;----- begin stmt ------
 	;----- begin return
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  0  ;--- offset
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 1
 	;----- cgsub
-	          call  sub16				 ; subtract TOS from SOS on Expression Stack
+	          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack
 
 	;----- cgcall
 	          call  Cfib
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  0  ;--- offset
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 2
 	;----- cgsub
-	          call  sub16				 ; subtract TOS from SOS on Expression Stack
+	          gosub s_sub16				 ; subtract TOS from SOS on Expression Stack
 
 	;----- cgcall
 	          call  Cfib
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgadd
-	          call  add16				 ; add TOS and SOS on Expression Stack
+	          gosub s_add16				 ; add TOS and SOS on Expression Stack
 
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;---- queue lbr L1
 	;----- end return
 	;----- end stmt ------
@@ -290,10 +143,13 @@ L4:
 L1:
 	;----- cgexit
 	          sex   r2            ; make sure X = SP
-	          call  escheck       ; check for expression stack creep
+	          gosub s_stkchk      ; check for expression stack creep
+	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
 	          pop   rb				 		 ; restore BP (base pointer)
 
-	          rtn	  			 	     ; return to caller
+	          rtn    			 	     ; return to caller
+
+;----- string table
 	;----- cgpublic
 	              public Cmain
 Cmain:
@@ -306,26 +162,17 @@ Cmain:
 	          push  rb				 		 ; save current BP (base pointer)
 	          copy  r7, rb			 	 ; set BP to current ES location
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  -4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;----- begin stmt ------
-	;---- queue lbr L7
-	;----- cgjump
-	 				  lbr	L7
-
-L6:
-  db 'First ten Fibonacci numbers:', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L7:
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw  L6
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -334,97 +181,88 @@ L7:
 	;----- begin stmt ------
 	;----- begin for
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 0
 	;----- cgstorlw
-	          call  lstor16      ; store value from ES in local variable
+	          gosub s_lstor16      ; store value from ES in local variable
 	          dw  -2  ;--- offset
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 
-L8:
+L7:
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -2  ;--- offset
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 10
 	;----- queue_cmp
 	;----- genbrfalse
 	;----- genbranch
 	;----- cgbrlt
 	;----- cglt
-	          call  lt16				   ; compare TOS < SOS on Expression Stack
+	          gosub s_lt16				   ; compare TOS < SOS on Expression Stack
 
 	;----- cgbrcond
-	 				 call  dpop16        ; get result from expression stack
+	 				 gosub s_dpop16        ; get result from expression stack
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
 	 				 or                  ; D = MSB | LSB
-	lbnz	L12
-	lbr	L10
-
-L12:
-	;---- queue lbr L9
-	;----- cgjump
-	 				  lbr	L9
+	lbnz	L11
+	lbr	L9
 
 L11:
-	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
-	          dw  -2  ;--- offset
-	;----- cginclw
-	          call  linc16       ; increment local variable
-	          dw  -2  ;--- offset
-	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
 	;---- queue lbr L8
 	;----- cgjump
 	 				  lbr	L8
 
-L9:
+L10:
+	;----- cgldlw
+	          gosub s_lpush16       ; push value of local variable on ES
+	          dw  -2  ;--- offset
+	;----- cginclw
+	          gosub s_linc16       ; increment local variable
+	          dw  -2  ;--- offset
+	;----- cgpopd
+	          gosub s_dpop16   		 ; get result from expression stack
+	;---- queue lbr L7
+	;----- cgjump
+	 				  lbr	L7
+
+L8:
 	;----- begin stmt ------
 	;----- begin stmt ------
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -2  ;--- offset
 	;----- cgcall
 	          call  Cfib
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;------ commit push
 	;----- cgpushd
-	          call  dpush16   		 ; put result on expression stack
+	          gosub s_dpush16   	 ; put result on expression stack
 	;----- cgstorlw
-	          call  lstor16      ; store value from ES in local variable
+	          gosub s_lstor16      ; store value from ES in local variable
 	          dw  -4  ;--- offset
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L14
-	;----- cgjump
-	 				  lbr	L14
-
-L13:
-  db '%d'    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L14:
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -4  ;--- offset
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L13
+	 				gosub s_epush16
+	 				  dw  L12
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -433,96 +271,78 @@ L14:
 	;----- begin stmt ------
 	;----- begin if
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 9
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -2  ;--- offset
 	;----- queue_cmp
 	;----- genbrfalse
 	;----- genbranch
 	;----- cgbreq
 	;----- cgeq
-	          call  eq16				   ; compare TOS == SOS on Expression Stack
+	          gosub s_eq16				   ; compare TOS == SOS on Expression Stack
 
 	;----- cgbrcond
-	 				 call  dpop16        ; get result from expression stack
+	 				 gosub s_dpop16        ; get result from expression stack
 	 				 ghi   ra            ; get MSB from result
 	 				 str   r2            ; save in M(X)
 	 				 glo   ra            ; get LSB from result
 	 				 or                  ; D = MSB | LSB
-	lbnz	L16
-	lbr	L15
+	lbnz	L14
+	lbr	L13
 
-L16:
+L14:
 	;----- begin stmt ------
-	;---- queue lbr L18
-	;----- cgjump
-	 				  lbr	L18
-
-L17:
-  db 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L18:
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
+	 				  dw  L15
+	;----- cgcall
+	          call  Cprintf
+	;----- cgstack
+	          gosub s_esmove				 ; move pointer for Expression Stack
+	          dw  2  ;--- offset
+	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+	;---- queue dpush
+	;----- push + pop data not required, data remains unchanged in RA
+	;----- end stmt ------
+	;---- queue lbr L16
+	;----- cgjump
+	 				  lbr	L16
+
+L13:
+	;----- begin stmt ------
+	;----- cgldlab
+	 				gosub s_epush16
 	 				  dw  L17
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
-	          dw  2  ;--- offset
-	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-	;---- queue dpush
-	;----- push + pop data not required, data remains unchanged in RA
-	;----- end stmt ------
-	;---- queue lbr L19
-	;----- cgjump
-	 				  lbr	L19
-
-L15:
-	;----- begin stmt ------
-	;---- queue lbr L21
-	;----- cgjump
-	 				  lbr	L21
-
-L20:
-  db ', '    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L21:
-	;----- cgldlab
-	 				call epush16
-	 				  dw  L20
-	;----- cgcall
-	          call  Cprintf
-	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 
-L19:
+L16:
 	;----- end if
 	;----- end stmt ------
 	;----- end stmt ------
-	;---- queue lbr L11
+	;---- queue lbr L10
 	;----- cgjump
-	 				  lbr	L11
+	 				  lbr	L10
 
-L10:
+L9:
 	;----- end for
 	;----- end stmt ------
 	;----- begin stmt ------
 	;----- begin return
 	;----- cgldlw
-	          call  lpush16       ; push value of local variable on ES
+	          gosub s_lpush16       ; push value of local variable on ES
 	          dw  -4  ;--- offset
 	;----- cgpopd
-	          call  dpop16   		 ; get result from expression stack
+	          gosub s_dpop16   		 ; get result from expression stack
 	;---- queue lbr L5
 	;----- end return
 	;----- end stmt ------
@@ -530,14 +350,33 @@ L10:
 
 L5:
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;----- cgexit
 	          sex   r2            ; make sure X = SP
-	          call  escheck       ; check for expression stack creep
+	          gosub s_stkchk      ; check for expression stack creep
+	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
 	          pop   rb				 		 ; restore BP (base pointer)
 
-	          rtn	  			 	     ; return to caller
+	          rtn    			 	     ; return to caller
+
+;----- string table
+
+L6:
+  db 'First ten Fibonacci numbers:', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L12:
+  db '%d'    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L15:
+  db 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L17:
+  db ', '    ;----- cgdefs
+	db	$00    ;----- cgdefb
 	;---- cgpostlude
 	             endp

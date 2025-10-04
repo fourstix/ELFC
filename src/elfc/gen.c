@@ -55,7 +55,7 @@ void cgenraw(char *s, char ch) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, ch);
 }
-//grw - fuunction to output string
+//grw - function to output string
 void sgenraw(char *s, char *inst, char *s2) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, s, inst, s2);

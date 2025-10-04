@@ -3,161 +3,14 @@
 ; SubC Copyright 2012-2025 by Nils Holm
 ; -------------------------------------------------------------------
 #include include/ops_c.inc
-#include include/bios.inc
-#include include/kernel.inc
+#include include/os_api.inc
 #include include/elfc.inc
 
 	           proc printfmt
 
-            extrn C_init
+#include include/stdlib.inc
 
-            extrn C_fdinit
-
-            extrn C_fdtable
-
-            extrn C_fildes
-
-            extrn Cabort
-
-            extrn Cabs
-
-            extrn Catexit      
-
-            extrn Cexit            
-
-            extrn Cmalloc
-
-            extrn Ccalloc 
-
-            extrn Crealloc
-
-            extrn Cfree  
-
-            extrn Catoi 
-
-            extrn Citoa           
-
-            extrn Citox
-
-            extrn Citou           
-
-            extrn Cdiv 
-
-            extrn Cbsearch              
-
-            extrn Cqsort
-
-            extrn Crand
-
-            extrn Csrand
-
-            extrn Ccreat
-
-            extrn Copen
-
-            extrn Cclose
-
-            extrn Cread
-
-            extrn Cwrite
-
-            extrn Clseek
-
-            extrn Cunlink
-
-            extrn Crename
-
-            extrn Cmin
-
-            extrn Cmax
-
-            extrn Cstdin
-
-            extrn Cstdout
-
-            extrn Cstderr
-
-            extrn Cputs
-
-            extrn Cputstr
-
-            extrn Cgets
-
-            extrn Cputch
-
-            extrn Cgetch
-
-            extrn Cputchar
-
-            extrn Cgetchar
-
-            extrn Cfdopen
-
-            extrn Cfclose
-
-            extrn Cfopen
-
-            extrn Cferror
-
-            extrn Cfeof
-
-            extrn Cclearerr
-
-            extrn Cfgetc
-
-            extrn Cfputc
-
-            extrn Cfgets
-
-            extrn Cfputs
-
-            extrn Cungetc
-
-            extrn Cfread
-
-            extrn Cfwrite
-
-            extrn Cfflush
-
-            extrn Cfprintf
-
-            extrn Ckprintf
-
-            extrn Cprintf
-
-            extrn Csprintf
-
-            extrn Cvfprintf
-
-            extrn Cvprintf
-
-            extrn Cvsprintf
-
-            extrn Cfscanf
-
-            extrn Cscanf
-
-            extrn Csscanf
-
-            extrn Cfgetpos
-
-            extrn Cfsetpos
-
-            extrn Cfseek
-
-            extrn Cftell
-
-            extrn Cperror
-
-            extrn Crewind
-
-            extrn Cremove
-
-            extrn Ctmpnam
-
-            extrn Ctmpfile
-
-            extrn Cfileno
+#include include/stdio.inc
 	;----- cgpublic
 	              public Ci
 Ci:	db	$32, $00  ;----- cgdefw LSB first, MSB second
@@ -180,457 +33,305 @@ Cmain:
 	          push  rb				 		 ; save current BP (base pointer)
 	          copy  r7, rb			 	 ; set BP to current ES location
 	;----- begin stmt ------
-	;---- queue lbr L3
-	;----- cgjump
-	 				  lbr	L3
-
-L2:
-  db 'Int formats:', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L3:
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw  L2
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L5
-	;----- cgjump
-	 				  lbr	L5
-
-L4:
-  db 'plain: _%d_%d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L5:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
+	 				  dw  L3
+	;----- cgcall
+	          call  Cprintf
+	;----- cgstack
+	          gosub s_esmove				 ; move pointer for Expression Stack
+	          dw  6  ;--- offset
+	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+	;---- queue dpush
+	;----- push + pop data not required, data remains unchanged in RA
+	;----- end stmt ------
+	;----- begin stmt ------
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Cj
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Ci
+	;----- cgldlab
+	 				gosub s_epush16
 	 				  dw  L4
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L7
-	;----- cgjump
-	 				  lbr	L7
-
-L6:
-  db '+ flag: _%+d_%+d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L7:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
+	 				  dw  L5
+	;----- cgcall
+	          call  Cprintf
+	;----- cgstack
+	          gosub s_esmove				 ; move pointer for Expression Stack
+	          dw  6  ;--- offset
+	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+	;---- queue dpush
+	;----- push + pop data not required, data remains unchanged in RA
+	;----- end stmt ------
+	;----- begin stmt ------
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Cj
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Ci
+	;----- cgldlab
+	 				gosub s_epush16
 	 				  dw  L6
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L9
-	;----- cgjump
-	 				  lbr	L9
-
-L8:
-  db 'size 4: _%4d_%4d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L9:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
+	 				  dw  L7
+	;----- cgcall
+	          call  Cprintf
+	;----- cgstack
+	          gosub s_esmove				 ; move pointer for Expression Stack
+	          dw  6  ;--- offset
+	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+	;---- queue dpush
+	;----- push + pop data not required, data remains unchanged in RA
+	;----- end stmt ------
+	;----- begin stmt ------
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Cj
+	;----- cgldgw
+	 				gosub s_vpush16
+	 				  dw Ci
+	;----- cgldlab
+	 				gosub s_epush16
 	 				  dw  L8
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L11
-	;----- cgjump
-	 				  lbr	L11
-
-L10:
-  db '04 flag: _%04d_%04d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L11:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
+	 				  dw  L9
+	;----- cgcall
+	          call  Cprintf
+	;----- cgstack
+	          gosub s_esmove				 ; move pointer for Expression Stack
+	          dw  6  ;--- offset
+	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+	;---- queue dpush
+	;----- push + pop data not required, data remains unchanged in RA
+	;----- end stmt ------
+	;----- begin stmt ------
+	;----- cglit
+	 				gosub s_epush16
+	 				  dw 3
+	;----- cgldlab
+	 				gosub s_epush16
 	 				  dw  L10
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
-	          dw  6  ;--- offset
-	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-	;---- queue dpush
-	;----- push + pop data not required, data remains unchanged in RA
-	;----- end stmt ------
-	;----- begin stmt ------
-	;---- queue lbr L13
-	;----- cgjump
-	 				  lbr	L13
-
-L12:
-  db '-4 flag: _%-4d_%-4d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L13:
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Cj
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Ci
-	;----- cgldlab
-	 				call epush16
-	 				  dw  L12
-	;----- cgcall
-	          call  Cprintf
-	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
-	          dw  6  ;--- offset
-	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-	;---- queue dpush
-	;----- push + pop data not required, data remains unchanged in RA
-	;----- end stmt ------
-	;----- begin stmt ------
-	;---- queue lbr L15
-	;----- cgjump
-	 				  lbr	L15
-
-L14:
-  db ' 4 flag: _% 4d_% 4d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L15:
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Cj
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Ci
-	;----- cgldlab
-	 				call epush16
-	 				  dw  L14
-	;----- cgcall
-	          call  Cprintf
-	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
-	          dw  6  ;--- offset
-	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-	;---- queue dpush
-	;----- push + pop data not required, data remains unchanged in RA
-	;----- end stmt ------
-	;----- begin stmt ------
-	;---- queue lbr L17
-	;----- cgjump
-	 				  lbr	L17
-
-L16:
-  db '+04: _%+04d_%+04d_', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L17:
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Cj
-	;----- cgldgw
-	 				call vpush16
-	 				  dw Ci
-	;----- cgldlab
-	 				call epush16
-	 				  dw  L16
-	;----- cgcall
-	          call  Cprintf
-	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
-	          dw  6  ;--- offset
-	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-	;---- queue dpush
-	;----- push + pop data not required, data remains unchanged in RA
-	;----- end stmt ------
-	;----- begin stmt ------
-	;---- queue lbr L19
-	;----- cgjump
-	 				  lbr	L19
-
-L18:
-  db 'Int 06:%06i!', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L19:
-	;----- cglit
-	 				call epush16
-	 				  dw 3
-	;----- cgldlab
-	 				call epush16
-	 				  dw  L18
-	;----- cgcall
-	          call  Cprintf
-	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  4  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L21
-	;----- cgjump
-	 				  lbr	L21
-
-L20:
-  db 'Pointer %p and string %s', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L21:
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Cstr
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Cstr
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L20
+	 				gosub s_epush16
+	 				  dw  L11
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L23
-	;----- cgjump
-	 				  lbr	L23
-
-L22:
-  db 'Character %c %c', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L23:
 	;----- cgldga
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw Cstr
 	;----- cgindb
-	 				call deref8
+	 				gosub s_deref8
+	 				  db 0
 	;----- cglit
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw 113
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L22
+	 				gosub s_epush16
+	 				  dw  L12
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L25
-	;----- cgjump
-	 				  lbr	L25
-
-L24:
-  db 'Hex %x %X', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L25:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L24
+	 				gosub s_epush16
+	 				  dw  L13
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L27
-	;----- cgjump
-	 				  lbr	L27
-
-L26:
-  db 'Alt Hex: %#x %#X', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L27:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L26
+	 				gosub s_epush16
+	 				  dw  L14
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L29
-	;----- cgjump
-	 				  lbr	L29
-
-L28:
-  db 'Octal %o %o', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L29:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L28
+	 				gosub s_epush16
+	 				  dw  L15
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L31
-	;----- cgjump
-	 				  lbr	L31
-
-L30:
-  db 'Alt Octal %#o %#o', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L31:
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Cj
 	;----- cgldgw
-	 				call vpush16
+	 				gosub s_vpush16
 	 				  dw Ci
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L30
+	 				gosub s_epush16
+	 				  dw  L16
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  6  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L33
-	;----- cgjump
-	 				  lbr	L33
-
-L32:
-  db 'Number characters written so far: %n', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L33:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L32
+	 				gosub s_epush16
+	 				  dw  L17
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
 	;----- push + pop data not required, data remains unchanged in RA
 	;----- end stmt ------
 	;----- begin stmt ------
-	;---- queue lbr L35
-	;----- cgjump
-	 				  lbr	L35
-
-L34:
-  db 'Escape for %% sign', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L35:
 	;----- cgldlab
-	 				call epush16
-	 				  dw  L34
+	 				gosub s_epush16
+	 				  dw  L18
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -640,9 +341,80 @@ L35:
 L1:
 	;----- cgexit
 	          sex   r2            ; make sure X = SP
-	          call  escheck       ; check for expression stack creep
+	          gosub s_stkchk      ; check for expression stack creep
+	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
 	          pop   rb				 		 ; restore BP (base pointer)
 
-	          rtn	  			 	     ; return to caller
+	          rtn    			 	     ; return to caller
+
+;----- string table
+
+L2:
+  db 'Int formats:', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L3:
+  db 'plain: _%d_%d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L4:
+  db '+ flag: _%+d_%+d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L5:
+  db 'size 4: _%4d_%4d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L6:
+  db '04 flag: _%04d_%04d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L7:
+  db '-4 flag: _%-4d_%-4d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L8:
+  db ' 4 flag: _% 4d_% 4d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L9:
+  db '+04: _%+04d_%+04d_', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L10:
+  db 'Int 06:%06i!', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L11:
+  db 'Pointer %p and string %s', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L12:
+  db 'Character %c %c', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L13:
+  db 'Hex %x %X', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L14:
+  db 'Alt Hex: %#x %#X', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L15:
+  db 'Octal %o %o', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L16:
+  db 'Alt Octal %#o %#o', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L17:
+  db 'Number characters written so far: %n', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
+
+L18:
+  db 'Escape for %% sign', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
 	;---- cgpostlude
 	             endp

@@ -58,7 +58,7 @@ int chrpos(char *s, int c) {
 	char	*p;
 
 	p = strchr(s, c);
-	return p? p-s: -1;
+	return (int)(p? p-s: -1);
 }
 
 void copyname(char *name, char *s) {

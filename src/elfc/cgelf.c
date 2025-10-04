@@ -570,9 +570,9 @@ void cgdefs(char *s, int len) {
 
 /* create a procedure name as the file name without extension */
 char *procname(char *bfile) {
-	int   len;
-	char *ofile;
-	char *p;
+	size_t len;
+	char  *ofile;
+	char  *p;
 
 	if (bfile == NULL) return NULL;
 

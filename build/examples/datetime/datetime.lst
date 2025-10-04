@@ -3,297 +3,152 @@
 [00003]                   ; SubC Copyright 2012-2025 by Nils Holm
 [00004]                   ; -------------------------------------------------------------------
 <00000>                   #include include/ops_c.inc
-<00001>                   .op "PUSH","N","9$1 73 8$1 73"
-<00002>                   .op "POP","N","60 72 A$1 F0 B$1"
-<00003>                   .op "MOV","NR","9$2 B$1 8$2 A$1"
-<00004>                   .op "MOV","NW","F8 H2 B$1 F8 L2 A$1"
-<00005>                   .op "CALL","W","D4 H1 L1"
-<00006>                   .op "RTN","","D5"
-<00007>                   .op "CLC","","FC 00"
-<00008>                   .op "STC","","FF 00"
-<00009>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
-<00010>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
-<00011>                   .op "RETURN","","D5"
-<00012>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
-<00013>                   .op "BRKPT","","79 D1"
-<00014>                   .op "ADDR16","NR","8$2 52 8$1 F4 A$1 9$2 52 9$1 74 B$1"
-<00015>                   .op "SUBR16","NR","8$2 52 8$1 F7 A$1 9$2 52 9$1 77 B$1"
-<00000>                   #include include/bios.inc
-<00001>                   ; *******************************************************************
-<00002>                   ; *** This software is copyright 2006 by Michael H Riley          ***
-<00003>                   ; *** You have permission to use, modify, copy, and distribute    ***
-<00004>                   ; *** this software so long as this copyright notice is retained. ***
-<00005>                   ; *** This software may not be used in commercial applications    ***
-<00006>                   ; *** without express written permission from the author.         ***
-<00007>                   ; *******************************************************************
-<00008>                   
-<00011>                   #endif
-<00012>                   
-<00013>                   ; Define address for standard BIOS vectors
-<00014>                   #ifndef BIOS
-<00015>                   #define BIOS 0ff00h
-<00016>                   #endif
-<00017>                   
-<00018>                   ; Define address for extended BIOS vectors
-<00019>                   #ifndef EBIOS
-<00020>                   #define EBIOS 0f800h
-<00021>                   #endif
-<00022>                   
-<00023>                   #ifndef _TASM_
-<00024> 0000:             scall:      equ  r4                    ; register for SCALL
-<00025> 0000:             sret:       equ  r5                    ; register for SRET
-<00026>                   
-<00027> 0000:             call:       equ  0ffe0h                ; depricated
-<00028> 0000:             ret:        equ  0fff1h                ; depricated
-<00029>                   #endif
-<00030>                   
-<00031> 0000:             f_boot:     equ  (BIOS+00h)            ; boot from ide device
-<00032> 0000:             f_type:     equ  (BIOS+03h)            ; type 1 character to console
-<00033> 0000:             f_read:     equ  (BIOS+06h)            ; read 1 character from console
-<00034> 0000:             f_msg:      equ  (BIOS+09h)            ; type asciiz string to console
-<00035> 0000:             f_typex:    equ  (BIOS+0ch)            ; depricated, just returns now
-<00036> 0000:             f_input:    equ  (BIOS+0fh)            ; read asciiz from console
-<00037> 0000:             f_strcmp:   equ  (BIOS+12h)            ; compare 2 strings
-<00038> 0000:             f_ltrim:    equ  (BIOS+15h)            ; trim leading spaces
-<00039> 0000:             f_strcpy:   equ  (BIOS+18h)            ; copy an asciiz string
-<00040> 0000:             f_memcpy:   equ  (BIOS+1bh)            ; copy memory
-<00041> 0000:             f_wrtsec:   equ  (BIOS+1eh)            ; write floppy sector (depricated)
-<00042> 0000:             f_rdsec:    equ  (BIOS+21h)            ; read floppy sector (depricated)
-<00043> 0000:             f_seek0:    equ  (BIOS+24h)            ; floppy seek to track 0 (depricated)
-<00044> 0000:             f_seek:     equ  (BIOS+27h)            ; floopy track seek (depricated)
-<00045> 0000:             f_drive:    equ  (BIOS+2ah)            ; select floppy drive (depricated)
-<00046> 0000:             f_setbd:    equ  (BIOS+2dh)            ; set console baud rate
-<00047> 0000:             f_mul16:    equ  (BIOS+30h)            ; 16-bit multiply
-<00048> 0000:             f_div16:    equ  (BIOS+33h)            ; 16-bit division
-<00049> 0000:             f_idereset: equ  (BIOS+36h)            ; reset ide device
-<00050> 0000:             f_idewrite: equ  (BIOS+39h)            ; write ide sector
-<00051> 0000:             f_ideread:  equ  (BIOS+3ch)            ; read ide sector
-<00052> 0000:             f_initcall: equ  (BIOS+3fh)            ; initialize R4 and R5
-<00053> 0000:             f_bootide:  equ  (BIOS+42h)            ; boot from ide device
-<00054> 0000:             f_hexin:    equ  (BIOS+45h)            ; convert ascii number to hex
-<00055> 0000:             f_hexout2:  equ  (BIOS+48h)            ; convert hex to 2-digit ascii
-<00056> 0000:             f_hexout4:  equ  (BIOS+4bh)            ; convert hex to 4-digit ascii
-<00057> 0000:             f_tty:      equ  (BIOS+4eh)            ; type character to console
-<00058> 0000:             f_mover:    equ  (BIOS+51h)            ; program relocator
-<00059> 0000:             f_minimon:  equ  (BIOS+54h)            ; mini monitor
-<00060> 0000:             f_freemem:  equ  (BIOS+57h)            ; determine memory size
-<00061> 0000:             F_isnum:    equ  (BIOS+5ah)            ; determine if D is numeric
-<00062> 0000:             f_atoi:     equ  (BIOS+5dh)            ; convert ascii to integer
-<00063> 0000:             f_uintout:  equ  (BIOS+60h)            ; convert unsigned integer to ascii
-<00064> 0000:             f_intout:   equ  (BIOS+63h)            ; convert signed integer to ascii
-<00065> 0000:             f_inmsg:    equ  (BIOS+66h)            ; type in-line message
-<00066> 0000:             f_inputl:   equ  (BIOS+69h)            ; read limited line from console
-<00067> 0000:             f_brktest:  equ  (BIOS+6ch)            ; check for serial break
-<00068> 0000:             f_findtkn:  equ  (BIOS+6fh)            ; find token in a token table
-<00069> 0000:             f_isalpha:  equ  (BIOS+72h)            ; determine if D is alphabetic
-<00070> 0000:             f_ishex:    equ  (BIOS+75h)            ; determine if D is hexadecimal
-<00071> 0000:             f_isalnum:  equ  (BIOS+78h)            ; determine if D is alpha or numeric
-<00072> 0000:             f_idnum:    equ  (BIOS+7bh)            ; determine type of ascii number
-<00073> 0000:             f_isterm:   equ  (BIOS+7eh)            ; determine if D is a termination char
-<00074> 0000:             f_getdev:   equ  (BIOS+81h)            ; get supported devices
-<00075>                   
-<00076> 0000:             f_version:  equ  (BIOS+0f9h)           ; 3 bytes holding bios version number
-<00077>                   
-<00078>                   ; "Extended" BIOS vectors
-<00079>                   
-<00080> 0000:             f_bread:    equ  (EBIOS+00h)        ; read from onboard serial port
-<00081> 0000:             f_btype:    equ  (EBIOS+03h)        ; write to onboard serial port
-<00082> 0000:             f_btest:    equ  (EBIOS+06h)        ; test onboard serial port
-<00083> 0000:             f_utype:    equ  (EBIOS+09h)        ; write to disk board UART
-<00084> 0000:             f_uread:    equ  (EBIOS+0ch)        ; read from disk board UART
-<00085> 0000:             f_utest:    equ  (EBIOS+0fh)        ; test disk board UART
-<00086> 0000:             f_usetbd:   equ  (EBIOS+12h)        ; set disk board UART baud rate and format
-<00087> 0000:             f_gettod:   equ  (EBIOS+15h)        ; read time of day clock
-<00088> 0000:             f_settod:   equ  (EBIOS+18h)        ; set time of day clock
-<00089> 0000:             f_rdnvr:    equ  (EBIOS+1bh)        ; read non volatile RAM
-<00090> 0000:             f_wrnvr:    equ  (EBIOS+1eh)        ; write non volatile RAM
-<00091> 0000:             f_idesize:  equ  (EBIOS+21h)        ; return size of attached IDE drive(s)
-<00092> 0000:             f_ideid:    equ  (EBIOS+24h)        ; return device data for IDE drive(s)
-<00093> 0000:             f_tmtoas:   equ  (EBIOS+2ah)        ; time to ASCII string
-<00094> 0000:             f_dttoas:   equ  (EBIOS+27h)        ; date to ASCII string
-<00095> 0000:             f_rtctest:  equ  (EBIOS+2dh)        ; test size and presence of RTC/NVR
-<00096> 0000:             f_astodt:   equ  (EBIOS+30h)        ; convert ASCII string to date
-<00097> 0000:             f_astotm:   equ  (EBIOS+33h)        ; convert ASCII string to time
-<00000>                   #include include/kernel.inc
-<00001> 0000:             O_CLDBOOT:    equ    0300h             ; jump to cold boot routine
-<00002> 0000:             O_WRMBOOT:    equ    0303h             ; jump to warm boot routine
-<00003> 0000:             O_OPEN:       equ    0306h             ; open a file
-<00004> 0000:             O_READ:       equ    0309h             ; read from file
-<00005> 0000:             O_WRITE:      equ    030ch             ; write to file
-<00006> 0000:             O_SEEK:       equ    030fh             ; seek to file position
-<00007> 0000:             O_CLOSE:      equ    0312h             ; close file
-<00008> 0000:             O_OPENDIR:    equ    0315h             ; open dir as a file
-<00009> 0000:             O_DELETE:     equ    0318h             ; delete a file
-<00010> 0000:             O_RENAME:     equ    031bh             ; rename a file
-<00011> 0000:             O_EXEC:       equ    031eh             ; execute an external program
-<00012> 0000:             O_MKDIR:      equ    0321h             ; make directory
-<00013> 0000:             O_CHDIR:      equ    0324h             ; change directory
-<00014> 0000:             O_RMDIR:      equ    0327h             ; remove directory
-<00015> 0000:             O_RDLUMP:     equ    032Ah             ; read LAT entry
-<00016> 0000:             O_RDLUMP32:   equ    040fh             ; read 32-bit LAT entry
-<00017> 0000:             O_WRLUMP:     equ    032Dh             ; write LAT entry
-<00018> 0000:             O_WRLUMP32:   equ    0421h             ; write LAT entry
-<00019> 0000:             O_TYPE:       equ    0330h             ; passthrough for console output
-<00020> 0000:             O_MSG:        equ    0333h             ; passthrough for console output
-<00021> 0000:             O_READKEY:    equ    0336h             ; passthrough for console input
-<00022> 0000:             O_INPUT:      equ    0339h             ; passthrough for console input
-<00023> 0000:             O_PRTSTAT:    equ    033ch             ; printer status
-<00024> 0000:             O_PRINT:      equ    033fh             ; output to printer
-<00025> 0000:             O_EXECBIN:    equ    0342h             ; execute from default directory
-<00026> 0000:             O_SETDEF:     equ    0345h             ; set/get default directory
-<00027> 0000:             O_KINIT:      equ    0348h             ; reserved - do not use!!!
-<00028> 0000:             O_INMSG:      equ    034bh             ; passthrough for console output
-<00029> 0000:             O_GETDEV:     equ    034eh             ; passthrough to f_getdef
-<00030> 0000:             O_GETTOD:     equ    0351h             ; passthrough to f_gettod
-<00031> 0000:             O_SETTOD:     equ    0354h             ; passthrough to f_settod
-<00032> 0000:             O_INPUTL:     equ    0357h             ; passthrough to f_inputl
-<00033> 0000:             O_BOOT:       equ    035ah             ; passthrough to f_boot
-<00034> 0000:             O_SETBD:      equ    0360h             ; passthrough to f_setbd
-<00035> 0000:             O_INITCALL:   equ    0363h             ; passthrough to f_initcall
-<00036> 0000:             O_BRKTEST:    equ    0366h             ; passthrough to f_brktest
-<00037> 0000:             O_DEVCTRL:    equ    0369h             ; Hook for device control drivers
-<00038> 0000:             O_ALLOC:      equ    036ch             ; passthrough to alloc
-<00039> 0000:             O_DEALLOC:    equ    036fh             ; passthrough to dealloc
-<00040> 0000:             O_TERMCTRL:   equ    0372h             ; Hook for terminal control drivers
-<00041> 0000:             O_NBREAD:     equ    0375h             ; passthrough to f_nbread
-<00042> 0000:             O_MEMBTRL:    equ    0378h             ; Hook for memory control drivers
-<00043> 0000:             O_LMPTOSEC:   equ    0409h             ; convert lump to sector
-<00044> 0000:             O_SECTOLMP:   equ    040ch             ; convert sector to lump
-<00045> 0000:             O_DIRENT:     equ    037Bh             ; get dirent for a file
-<00046> 0000:             O_RELSEC:     equ    0418h             ; find relative sector
-<00047> 0000:             O_TRUNC:      equ    046ah             ; Truncate file
-<00048> 0000:             O_VIDEO:      equ    0456h             ; video driver hook
-<00049> 0000:             D_IDERESET:   equ    0444h             ; passthrough to f_idereset
-<00050> 0000:             D_IDEREAD:    equ    0447h             ; passthrough to f_ideread
-<00051> 0000:             D_IDEWRITE:   equ    044Ah             ; passthrough to f_idewrite
-<00052> 0000:             D_REAPHEAP:   equ    044Dh             ; calls heap reaper to clean non-permanent heap blocks
-<00053> 0000:             D_SAVESYS:    equ    0459h             ; save system sector
-<00054> 0000:             D_DELCHAIN:   equ    0453h             ; delete an AU chain
-<00055> 0000:             D_ALLOCAU:    equ    045eh             ; allocate an AU
-<00056> 0000:             D_FREEDIRENT: equ    046dh             ; allocate a DIRENT
-<00057> 0000:             I_SERVE:      equ    03f6h             ; address of interrupt chain head
-<00058> 0000:             V_IVEC:       equ    03fdh             ; interrupt head
-<00059> 0000:             V_DVEC:       equ    036ah             ; device head
-<00060> 0000:             K_SYS_DTA:    equ    0100h             ; system sector DTA
-<00061> 0000:             K_VER:        equ    0400h             ; kernel version number
-<00062> 0000:             K_BUILD:      equ    0403h             ; kernel build number
-<00063> 0000:             K_BMONTH:     equ    0405h             ; kernel build month
-<00064> 0000:             K_BDAY:       equ    0406h             ; kernel build day
-<00065> 0000:             K_BYEAR:      equ    0407h             ; kernel build month
-<00066> 0000:             K_LASTSEC:    equ    042bh             ; sector currently in sys DTA
-<00067> 0000:             K_CWD_LUMP:   equ    0436h             ; lump for current directory
-<00068> 0000:             K_EXEC_AU:    equ    043Eh             ; executable starting AU
-<00069> 0000:             K_HIMEM:      equ    0442h             ; high memory pointer
-<00070> 0000:             K_LOWMEM:     equ    0465h             ; lowest memory heap can use
-<00071> 0000:             K_RETVAL:     equ    0467h             ; D on program exit
-<00072> 0000:             K_HEAP:       equ    0468h             ; heap pointer
-<00073> 0000:             K_CLKFREQ:    equ    0470h             ; system clock frequency
-<00074> 0000:             K_MONTH:      equ    0475h             ; date/time
-<00075> 0000:             K_DAY:        equ    0476h
-<00076> 0000:             K_YEAR:       equ    0477h
-<00077> 0000:             K_HOUR:       equ    0478h
-<00078> 0000:             K_MINUTE:     equ    0479h
-<00079> 0000:             K_SECOND:     equ    047ah
-<00080> 0000:             K_SECDEN:     equ    047bh
-<00081> 0000:             K_SECNUM:     equ    047dh
-<00082>                   
-<00083>                   
+<00001>                   ;------------------------------------------------------
+<00002>                   ; ElfC Asm/02 Opcodes
+<00003>                   ;------------------------------------------------------
+<00004>                   
+<00005>                   .op "PUSH","N","9$1 73 8$1 73"
+<00006>                   .op "POP","N","60 72 A$1 F0 B$1"
+<00007>                   .op "CALL","W","D4 H1 L1"
+<00008>                   .op "RTN","","D5"
+<00009>                   .op "CLC","","FC 00"
+<00010>                   .op "STC","","FF 00"
+<00011>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
+<00012>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
+<00013>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
+<00014>                   .op "BRKPT","","79 D1"
+<00015>                   .op "ADDR16","NR","8$2 52 8$1 F4 A$1 9$2 52 9$1 74 B$1"
+<00016>                   .op "SUBR16","NR","8$2 52 8$1 F7 A$1 9$2 52 9$1 77 B$1"
+<00017>                   .op "GOSUB","W","D9 L1"
+<00018>                   .op "RSUB","","C0 21 00"
+<00019>                   
+<00020>                   ;------------------- end ops_c.inc --------------------
+<00000>                   #include include/os_api.inc
+<00001>                   ;--------------------------------------------------------------------
+<00002>                   ; Elf/OS and Mini/DOS Kernel API
+<00003>                   ;--------------------------------------------------------------------
+<00004>                   
+<00005> 0000:             O_OPEN:       equ    0306h             ; open a file
+<00006> 0000:             O_READ:       equ    0309h             ; read from file
+<00007> 0000:             O_WRITE:      equ    030ch             ; write to file
+<00008> 0000:             O_SEEK:       equ    030fh             ; seek to file position
+<00009> 0000:             O_CLOSE:      equ    0312h             ; close file
+<00010> 0000:             O_DELETE:     equ    0318h             ; delete a file
+<00011> 0000:             O_RENAME:     equ    031bh             ; rename a file
+<00012> 0000:             O_TYPE:       equ    0330h             ; console character output
+<00013> 0000:             O_MSG:        equ    0333h             ; console string output
+<00014> 0000:             O_READKEY:    equ    0336h             ; console character input
+<00015> 0000:             O_INPUT:      equ    0339h             ; console string input
+<00016> 0000:             O_INMSG:      equ    034bh             ; console inline messae output
+<00017> 0000:             O_GETDEV:     equ    034eh             ; get device information
+<00018> 0000:             O_GETTOD:     equ    0351h             ; get time of day
+<00019> 0000:             O_ALLOC:      equ    036ch             ; alloc memory block
+<00020> 0000:             O_DEALLOC:    equ    036fh             ; dealloc memory block
+<00021>                   
+<00022>                   ;--------------------------------------------------------------------
+<00023>                   ; Elf/OS and Mini/DOS Data Locations
+<00024>                   ;--------------------------------------------------------------------
+<00025>                   
+<00026> 0000:             K_KEYBUF:     equ    0080h             ; input key buffer
+<00027> 0000:             K_MONTH:      equ    0475h             ; date/time information
+<00028>                   
+<00029>                   ;-------------------------- end os_api.inc --------------------------
 <00000>                   #include include/elfc.inc
-<00001>                   ;-------------------------------------------------------------------------------
-<00002>                   ; elfc - a library for basic c language functions
-<00003>                   ;-------------------------------------------------------------------------------
-<00004> 0000:                       extrn   epush16
-<00005> 0000:                       extrn   epush8
-<00006> 0000:                       extrn   dpop16
-<00007> 0000:                       extrn   abs16
-<00008> 0000:                       extrn   add16
-<00009> 0000:                       extrn   and16
-<00010> 0000:                       extrn   atoi16
-<00011> 0000:                       extrn   div16
-<00012> 0000:                       extrn   eq16
-<00013> 0000:                     	extrn   false16
-<00014> 0000:                     	extrn   gt16
-<00015> 0000:                     	extrn   gte16
-<00016> 0000:                     	extrn   itoa16
-<00017> 0000:                     	extrn   lt16
-<00018> 0000:                     	extrn   lte16
-<00019> 0000:                     	extrn   mdnorm16
-<00020> 0000:                     	extrn   mod16
-<00021> 0000:                     	extrn   mul16
-<00022> 0000:                     	extrn   ne16
-<00023> 0000:                     	extrn   neg16
-<00024> 0000:                     	extrn   or16
-<00025> 0000:                     	extrn   sgn16
-<00026> 0000:                     	extrn   sub16
-<00027> 0000:                     	extrn   tobcd16
-<00028> 0000:                     	extrn   true16
-<00029> 0000:                     	extrn   xor16
-<00030> 0000:                       extrn   not16
-<00031> 0000:                       extrn   bool16
-<00032> 0000:                       extrn   inv16
-<00033> 0000:                       extrn   shl16
-<00034> 0000:                       extrn   shr16
-<00035> 0000:                       extrn   vpush16
-<00036> 0000:                       extrn   vpop16
-<00037> 0000:                       extrn   vpush8
-<00038> 0000:                       extrn   dpush16
-<00039> 0000:                       extrn   dpush8
-<00040> 0000:                       extrn   esmove
-<00041> 0000:                       extrn   linit16
-<00042> 0000:                       extrn   lstor16
-<00043> 0000:                       extrn   lstor8
-<00044> 0000:                       extrn   vstor16
-<00045> 0000:                       extrn   vstor8
-<00046> 0000:                       extrn   swap16
-<00047> 0000:                       extrn   dget16
-<00048> 0000:                       extrn   lpush16
-<00049> 0000:                       extrn   lpush8
-<00050> 0000:                       extrn   deref16
-<00051> 0000:                       extrn   deref8
-<00052> 0000:                       extrn   laddr16
-<00053> 0000:                       extrn   pstor16
-<00054> 0000:                       extrn   pstor8
-<00055> 0000:                       extrn   scltos2
-<00056> 0000:                       extrn   sclsos2
-<00057> 0000:                       extrn   unscl2
-<00058> 0000:                       extrn   vinc16
-<00059> 0000:                       extrn   vdec16
-<00060> 0000:                       extrn   vinc8
-<00061> 0000:                       extrn   vdec8
-<00062> 0000:                       extrn   linc16
-<00063> 0000:                       extrn   ldec16
-<00064> 0000:                       extrn   linc8
-<00065> 0000:                       extrn   ldec8
-<00066> 0000:                       extrn   lpinc16
-<00067> 0000:                       extrn   lpdec16
-<00068> 0000:                       extrn   vpinc16
-<00069> 0000:                       extrn   vpdec16
-<00070> 0000:                       extrn   psave
-<00071> 0000:                       extrn   pinc16
-<00072> 0000:                       extrn   pdec16
-<00073> 0000:                       extrn   pinc8
-<00074> 0000:                       extrn   pdec8
-<00075> 0000:                       extrn   pincptr
-<00076> 0000:                       extrn   pdecptr
-<00077> 0000:                       extrn   escheck
-<00078> 0000:                       extrn   ugt16
-<00079> 0000:                     	extrn   uge16
-<00080> 0000:                       extrn   ult16
-<00081> 0000:                     	extrn   ule16
-<00082> 0000:                       extrn   scltos4
-<00083> 0000:                       extrn   sclsos4
-<00084> 0000:                       extrn   unscl4
-<00085> 0000:                       extrn   lget16
-<00086> 0000:                       extrn   lget8
-<00087> 0000:                       extrn   lset16
+<00001>                   ;----------------------------------
+<00002>                   ; ElfC - crt0 subroutine vectors
+<00003>                   ;----------------------------------
+<00004>                   
+<00005>                   #define SUBTBL   $2100
+<00006> 0000:             s_return:  equ  SUBTBL
+<00007>                   
+<00008> 0000:             s_esmove:  equ  (SUBTBL + $03)
+<00009> 0000:             s_stkchk:  equ  (SUBTBL + $06)
+<00010> 0000:             s_dpop16:  equ  (SUBTBL + $09)
+<00011> 0000:             s_dpush16: equ  (SUBTBL + $0C)
+<00012> 0000:             s_dget16:  equ  (SUBTBL + $0F)
+<00013> 0000:             s_epush16: equ  (SUBTBL + $12)
+<00014> 0000:             s_vpop16:  equ  (SUBTBL + $15)
+<00015> 0000:             s_vpush8:  equ  (SUBTBL + $18)
+<00016> 0000:             s_vpush16: equ  (SUBTBL + $1B)
+<00017> 0000:             s_vstor8:  equ  (SUBTBL + $1E)
+<00018> 0000:             s_vstor16: equ  (SUBTBL + $21)
+<00019> 0000:             s_vinc8:   equ  (SUBTBL + $24)
+<00020> 0000:             s_vinc16:  equ  (SUBTBL + $27)
+<00021> 0000:             s_vdec8:   equ  (SUBTBL + $2A)
+<00022> 0000:             s_vdec16:  equ  (SUBTBL + $2D)
+<00023> 0000:             s_vpinc16: equ  (SUBTBL + $30)
+<00024> 0000:             s_vpdec16: equ  (SUBTBL + $33)
+<00025> 0000:             s_linit16: equ  (SUBTBL + $36)
+<00026> 0000:             s_lstor8:  equ  (SUBTBL + $39)
+<00027> 0000:             s_lstor16: equ  (SUBTBL + $3C)
+<00028> 0000:             s_lpush8:  equ  (SUBTBL + $3F)
+<00029> 0000:             s_lpush16: equ  (SUBTBL + $42)
+<00030> 0000:             s_lget16:  equ  (SUBTBL + $45)
+<00031> 0000:             s_lset16:  equ  (SUBTBL + $48)
+<00032> 0000:             s_linc8:   equ  (SUBTBL + $4B)
+<00033> 0000:             s_linc16:  equ  (SUBTBL + $4E)
+<00034> 0000:             s_ldec8:   equ  (SUBTBL + $51)
+<00035> 0000:             s_ldec16:  equ  (SUBTBL + $54)
+<00036> 0000:             s_lpinc16: equ  (SUBTBL + $57)
+<00037> 0000:             s_lpdec16: equ  (SUBTBL + $5A)
+<00038> 0000:             s_psave:   equ  (SUBTBL + $5D)
+<00039> 0000:             s_pstor8:  equ  (SUBTBL + $60)
+<00040> 0000:             s_pstor16: equ  (SUBTBL + $63)
+<00041> 0000:             s_pinc8:   equ  (SUBTBL + $66)
+<00042> 0000:             s_pinc16:  equ  (SUBTBL + $69)
+<00043> 0000:             s_pdec8:   equ  (SUBTBL + $6C)
+<00044> 0000:             s_pdec16:  equ  (SUBTBL + $6F)
+<00045> 0000:             s_pincptr: equ  (SUBTBL + $72)
+<00046> 0000:             s_pdecptr: equ  (SUBTBL + $75)
+<00047> 0000:             s_laddr16: equ  (SUBTBL + $78)
+<00048> 0000:             s_deref8:  equ  (SUBTBL + $7B)
+<00049> 0000:             s_deref16: equ  (SUBTBL + $7E)
+<00050> 0000:             s_swap16:  equ  (SUBTBL + $81)
+<00051> 0000:             s_add16:   equ  (SUBTBL + $84)
+<00052> 0000:             s_sub16:   equ  (SUBTBL + $87)
+<00053> 0000:             s_neg16:   equ  (SUBTBL + $8A)
+<00054> 0000:             s_mdsgn16: equ  (SUBTBL + $8D)
+<00055> 0000:             s_mul16:   equ  (SUBTBL + $90)
+<00056> 0000:             s_div16:   equ  (SUBTBL + $93)
+<00057> 0000:             s_mod16:   equ  (SUBTBL + $96)
+<00058> 0000:             s_bool16:  equ  (SUBTBL + $99)
+<00059> 0000:             s_true16:  equ  (SUBTBL + $9C)
+<00060> 0000:             s_false16: equ  (SUBTBL + $9F)
+<00061> 0000:             s_and16:   equ  (SUBTBL + $A2)
+<00062> 0000:             s_or16:    equ  (SUBTBL + $A5)
+<00063> 0000:             s_xor16:   equ  (SUBTBL + $A8)
+<00064> 0000:             s_not16:   equ  (SUBTBL + $AB)
+<00065> 0000:             s_inv16:   equ  (SUBTBL + $AE)
+<00066> 0000:             s_shl16:   equ  (SUBTBL + $B1)
+<00067> 0000:             s_shr16:   equ  (SUBTBL + $B4)
+<00068> 0000:             s_eq16:    equ  (SUBTBL + $B7)
+<00069> 0000:             s_gt16:    equ  (SUBTBL + $BA)
+<00070> 0000:             s_gte16:   equ  (SUBTBL + $BD)
+<00071> 0000:             s_lt16:    equ  (SUBTBL + $C0)
+<00072> 0000:             s_lte16:   equ  (SUBTBL + $C3)
+<00073> 0000:             s_ne16:    equ  (SUBTBL + $C6)
+<00074> 0000:             s_ugt16:   equ  (SUBTBL + $C9)
+<00075> 0000:             s_uge16:   equ  (SUBTBL + $CC)
+<00076> 0000:             s_ult16:   equ  (SUBTBL + $CF)
+<00077> 0000:             s_ule16:   equ  (SUBTBL + $D2)
+<00078> 0000:             s_scltos2: equ  (SUBTBL + $D5)
+<00079> 0000:             s_scltos4: equ  (SUBTBL + $D8)
+<00080> 0000:             s_sclsos2: equ  (SUBTBL + $DB)
+<00081> 0000:             s_sclsos4: equ  (SUBTBL + $DE)
+<00082> 0000:             s_unscl2:  equ  (SUBTBL + $E1)
+<00083> 0000:             s_unscl4:  equ  (SUBTBL + $E4)
+<00084>                   
+<00085>                   ;----------------------------------
+<00086>                   ; ElfC crt0 - error vectors
+<00087>                   ;----------------------------------
 <00088>                   
-<00089>                   ;-------------------------------------------------------------------------------
-<00090>                   ; crt0 - Elf/OS c start-up library
-<00091>                   ;-------------------------------------------------------------------------------
-<00092> 0000:                       extrn   auto_err
-[00009]                   
-[00010] 0000:             	           proc datetime
-[00011]                   
+<00089> 0000:                       extrn   auto_err
+<00090> 0000:                       extrn   stk_err
+<00091>                   
+<00092>                   ;---------- end elfc.inc ----------
+[00008]                   
+[00009] 0000:             	           proc datetime
+[00010]                   
 <00000>                   #include include/stdlib.inc
 <00001> 0000:                          extrn C_init
 <00002> 0000:                          extrn C_fdinit
@@ -326,7 +181,7 @@
 <00029> 0000:                          extrn Crename
 <00030> 0000:                          extrn Cmin
 <00031> 0000:                          extrn Cmax
-[00013]                   
+[00012]                   
 <00000>                   #include include/stdio.inc
 <00001> 0000:                          extrn Cstdin
 <00002> 0000:                          extrn Cstdout
@@ -372,9 +227,9 @@
 <00042> 0000:                          extrn Ctmpnam
 <00043> 0000:                          extrn Ctmpfile
 <00044> 0000:                          extrn Cfileno
-[00015]                   
-[00016]                   .link .library time.lib
-[00017]                   
+[00014]                   
+[00015]                   .link .library time.lib
+[00016]                   
 <00000>                   #include include/time.inc
 <00001> 0000:                          extrn C_dow
 <00002> 0000:                          extrn C_doy
@@ -385,91 +240,590 @@
 <00007> 0000:                          extrn Cutctime
 <00008> 0000:                          extrn Cstrftime
 <00009>                   
-[00019] 0000:             Cnow:    ds 18    ;----- cglbss
-[00020]                   	;----- cgpublic
-[00021] 0012:             	              public Ctp
-[00022] 0012:             Ctp:    ds 2    ;----- cggbss
-[00023]                   	;----- cgpublic
-[00024] 0014:             	              public Ctbuf
-[00025] 0014:             Ctbuf:    ds 64    ;----- cggbss
-[00026]                   	;----- cgpublic
-[00027] 0054:             	              public Cmain
-[00028]                   Cmain:
-[00029]                     ;----- cgsetup
-[00032]                   #endif
-[00033]                   	;---- cgentry
-[00034] 0054: e2          	          sex   r2   				 ; make sure X = SP
-[00035] 0055: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
-[00036] 0059: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
-[00037]                   	;----- cgstack
-[00038] 005d: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00039] 0060: ff fc       	          dw  -4  ;--- offset
-[00040] 0062: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00041]                   	;----- begin stmt ------
-[00042]                   	;----- cgldga
-[00043] 0065: d4 00 00    	 				call epush16
-[00044] 0068: 00 00       	 				  dw Cnow
-[00045]                   	;----- cgstorgw
-[00046] 006a: d4 00 00    	 				 call vstor16       ; store value from ES in global variable
-[00047] 006d: 00 12       	 				  dw Ctp
-[00048]                   	;----- cgpopd
-[00049] 006f: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00050]                   	;----- end stmt ------
-[00051]                   	;----- begin stmt ------
-[00052]                   	;---- queue lbr L3
-[00053]                   	;----- cgjump
-[00054] 0072: c0 00 79    	 				  lbr	L3
-[00055]                   
-[00056]                   L2:
-[00057] 0075: 45 44 54      db 'EDT'    ;----- cgdefs
-[00058] 0078: 00          	db	$00    ;----- cgdefb
-[00059]                   
-[00060]                   L3:
-[00061]                   	;----- cglit
-[00062] 0079: d4 00 00    	 				call epush16
-[00063] 007c: 00 01       	 				  dw 1
-[00064]                   	;----- cglit
-[00065] 007e: d4 00 00    	 				call epush16
-[00066] 0081: fe d4       	 				  dw -300
-[00067]                   	;----- cgldlab
-[00068] 0083: d4 00 00    	 				call epush16
-[00069] 0086: 00 75       	 				  dw  L2
-[00070]                   	;----- cgcall
-[00071] 0088: d4 00 00    	          call  Ctimezone
-[00072]                   	;----- cgstack
-[00073] 008b: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00074] 008e: 00 06       	          dw  6  ;--- offset
-[00075] 0090: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00076]                   	;---- queue dpush
-[00077]                   	;----- push + pop data not required, data remains unchanged in RA
-[00078]                   	;----- end stmt ------
-[00079]                   	;----- begin stmt ------
-[00080]                   	;----- cgldgw
-[00081] 0093: d4 00 00    	 				call vpush16
-[00082] 0096: 00 12       	 				  dw Ctp
-[00083]                   	;----- cgcall
-[00084] 0098: d4 00 00    	          call  Csystime
-[00085]                   	;----- cgstack
-[00086] 009b: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00087] 009e: 00 02       	          dw  2  ;--- offset
-[00088] 00a0: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00089]                   	;---- queue dpush
-[00090]                   	;------ commit push
-[00091]                   	;----- cgpushd
-[00092] 00a3: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00093]                   	;----- cgstorlw
-[00094] 00a6: d4 00 00    	          call  lstor16      ; store value from ES in local variable
-[00095] 00a9: ff fe       	          dw  -2  ;--- offset
-[00096]                   	;----- cgpopd
-[00097] 00ab: d4 00 00    	          call  dpop16   		 ; get result from expression stack
-[00098]                   	;----- end stmt ------
-[00099]                   	;----- begin stmt ------
-[00100]                   	;---- queue lbr L5
-[00101]                   	;----- cgjump
-[00102] 00ae: c0 00 d0    	 				  lbr	L5
-[00103]                   
-[00104]                   L4:
-[00105] 00b1: 25 30 32 64   db '%02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
+[00018] 0000:             Cnow:    ds 18    ;----- cglbss
+[00019]                   	;----- cgpublic
+[00020] 0012:             	              public Ctp
+[00021] 0012:             Ctp:    ds 2    ;----- cggbss
+[00022]                   	;----- cgpublic
+[00023] 0014:             	              public Ctbuf
+[00024] 0014:             Ctbuf:    ds 64    ;----- cggbss
+[00025]                   	;----- cgpublic
+[00026] 0054:             	              public Cmain
+[00027]                   Cmain:
+[00028]                     ;----- cgsetup
+[00031]                   #endif
+[00032]                   	;---- cgentry
+[00033] 0054: e2          	          sex   r2   				 ; make sure X = SP
+[00034] 0055: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
+[00035] 0059: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
+[00036]                   	;----- cgstack
+[00037] 005d: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00038] 005f: ff fc       	          dw  -4  ;--- offset
+[00039] 0061: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00040]                   	;----- begin stmt ------
+[00041]                   	;----- cgldga
+[00042] 0064: d9 12       	 				gosub s_epush16
+[00043] 0066: 00 00       	 				  dw Cnow
+[00044]                   	;----- cgstorgw
+[00045] 0068: d9 21       	 				 gosub s_vstor16      ; store value from ES in global variable
+[00046] 006a: 00 12       	 				  dw Ctp
+[00047]                   	;----- cgpopd
+[00048] 006c: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00049]                   	;----- end stmt ------
+[00050]                   	;----- begin stmt ------
+[00051]                   	;----- cglit
+[00052] 006e: d9 12       	 				gosub s_epush16
+[00053] 0070: 00 01       	 				  dw 1
+[00054]                   	;----- cglit
+[00055] 0072: d9 12       	 				gosub s_epush16
+[00056] 0074: fe d4       	 				  dw -300
+[00057]                   	;----- cgldlab
+[00058] 0076: d9 12       	 				gosub s_epush16
+[00059] 0078: 02 ba       	 				  dw  L2
+[00060]                   	;----- cgcall
+[00061] 007a: d4 00 00    	          call  Ctimezone
+[00062]                   	;----- cgstack
+[00063] 007d: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00064] 007f: 00 06       	          dw  6  ;--- offset
+[00065] 0081: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00066]                   	;---- queue dpush
+[00067]                   	;----- push + pop data not required, data remains unchanged in RA
+[00068]                   	;----- end stmt ------
+[00069]                   	;----- begin stmt ------
+[00070]                   	;----- cgldgw
+[00071] 0084: d9 1b       	 				gosub s_vpush16
+[00072] 0086: 00 12       	 				  dw Ctp
+[00073]                   	;----- cgcall
+[00074] 0088: d4 00 00    	          call  Csystime
+[00075]                   	;----- cgstack
+[00076] 008b: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00077] 008d: 00 02       	          dw  2  ;--- offset
+[00078] 008f: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00079]                   	;---- queue dpush
+[00080]                   	;------ commit push
+[00081]                   	;----- cgpushd
+[00082] 0092: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00083]                   	;----- cgstorlw
+[00084] 0094: d9 3c       	          gosub s_lstor16      ; store value from ES in local variable
+[00085] 0096: ff fe       	          dw  -2  ;--- offset
+[00086]                   	;----- cgpopd
+[00087] 0098: d9 09       	          gosub s_dpop16   		 ; get result from expression stack
+[00088]                   	;----- end stmt ------
+[00089]                   	;----- begin stmt ------
+[00090]                   	;----- cglit
+[00091] 009a: d9 12       	 				gosub s_epush16
+[00092] 009c: 00 0a       	 				  dw 10
+[00093]                   	;----- cgldgw
+[00094] 009e: d9 1b       	 				gosub s_vpush16
+[00095] 00a0: 00 12       	 				  dw Ctp
+[00096]                   	;----- cgadd
+[00097] 00a2: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00098]                   
+[00099]                   	;----- cgindw
+[00100] 00a4: d9 7e       	 				gosub s_deref16
+[00101]                   	;----- cglit
+[00102] 00a6: d9 12       	 				gosub s_epush16
+[00103] 00a8: 07 6c       	 				  dw 1900
+[00104]                   	;----- cgadd
+[00105] 00aa: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00106]                   
+[00107]                   	;----- cglit
+[00108] 00ac: d9 12       	 				gosub s_epush16
+[00109] 00ae: 00 06       	 				  dw 6
+[00110]                   	;----- cgldgw
+[00111] 00b0: d9 1b       	 				gosub s_vpush16
+[00112] 00b2: 00 12       	 				  dw Ctp
+[00113]                   	;----- cgadd
+[00114] 00b4: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00115]                   
+[00116]                   	;----- cgindw
+[00117] 00b6: d9 7e       	 				gosub s_deref16
+[00118]                   	;----- cglit
+[00119] 00b8: d9 12       	 				gosub s_epush16
+[00120] 00ba: 00 08       	 				  dw 8
+[00121]                   	;----- cgldgw
+[00122] 00bc: d9 1b       	 				gosub s_vpush16
+[00123] 00be: 00 12       	 				  dw Ctp
+[00124]                   	;----- cgadd
+[00125] 00c0: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00126]                   
+[00127]                   	;----- cgindw
+[00128] 00c2: d9 7e       	 				gosub s_deref16
+[00129]                   	;----- cglit
+[00130] 00c4: d9 12       	 				gosub s_epush16
+[00131] 00c6: 00 01       	 				  dw 1
+[00132]                   	;----- cgadd
+[00133] 00c8: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00134]                   
+[00135]                   	;----- cgldgw
+[00136] 00ca: d9 1b       	 				gosub s_vpush16
+[00137] 00cc: 00 12       	 				  dw Ctp
+[00138]                   	;----- cgindw
+[00139] 00ce: d9 7e       	 				gosub s_deref16
+[00140]                   	;----- cglit
+[00141] 00d0: d9 12       	 				gosub s_epush16
+[00142] 00d2: 00 02       	 				  dw 2
+[00143]                   	;----- cgldgw
+[00144] 00d4: d9 1b       	 				gosub s_vpush16
+[00145] 00d6: 00 12       	 				  dw Ctp
+[00146]                   	;----- cgadd
+[00147] 00d8: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00148]                   
+[00149]                   	;----- cgindw
+[00150] 00da: d9 7e       	 				gosub s_deref16
+[00151]                   	;----- cglit
+[00152] 00dc: d9 12       	 				gosub s_epush16
+[00153] 00de: 00 04       	 				  dw 4
+[00154]                   	;----- cgldgw
+[00155] 00e0: d9 1b       	 				gosub s_vpush16
+[00156] 00e2: 00 12       	 				  dw Ctp
+[00157]                   	;----- cgadd
+[00158] 00e4: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00159]                   
+[00160]                   	;----- cgindw
+[00161] 00e6: d9 7e       	 				gosub s_deref16
+[00162]                   	;----- cgldlab
+[00163] 00e8: d9 12       	 				gosub s_epush16
+[00164] 00ea: 02 be       	 				  dw  L3
+[00165]                   	;----- cgcall
+[00166] 00ec: d4 00 00    	          call  Cprintf
+[00167]                   	;----- cgstack
+[00168] 00ef: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00169] 00f1: 00 0e       	          dw  14  ;--- offset
+[00170] 00f3: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00171]                   	;---- queue dpush
+[00172]                   	;----- push + pop data not required, data remains unchanged in RA
+[00173]                   	;----- end stmt ------
+[00174]                   	;----- begin stmt ------
+[00175]                   	;----- cglit
+[00176] 00f6: d9 12       	 				gosub s_epush16
+[00177] 00f8: 00 0e       	 				  dw 14
+[00178]                   	;----- cgldgw
+[00179] 00fa: d9 1b       	 				gosub s_vpush16
+[00180] 00fc: 00 12       	 				  dw Ctp
+[00181]                   	;----- cgadd
+[00182] 00fe: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00183]                   
+[00184]                   	;----- cgindw
+[00185] 0100: d9 7e       	 				gosub s_deref16
+[00186]                   	;----- cglit
+[00187] 0102: d9 12       	 				gosub s_epush16
+[00188] 0104: 00 01       	 				  dw 1
+[00189]                   	;----- cgadd
+[00190] 0106: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00191]                   
+[00192]                   	;----- cglit
+[00193] 0108: d9 12       	 				gosub s_epush16
+[00194] 010a: 00 0c       	 				  dw 12
+[00195]                   	;----- cgldgw
+[00196] 010c: d9 1b       	 				gosub s_vpush16
+[00197] 010e: 00 12       	 				  dw Ctp
+[00198]                   	;----- cgadd
+[00199] 0110: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00200]                   
+[00201]                   	;----- cgindw
+[00202] 0112: d9 7e       	 				gosub s_deref16
+[00203]                   	;----- cgldlab
+[00204] 0114: d9 12       	 				gosub s_epush16
+[00205] 0116: 02 dd       	 				  dw  L4
+[00206]                   	;----- cgcall
+[00207] 0118: d4 00 00    	          call  Cprintf
+[00208]                   	;----- cgstack
+[00209] 011b: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00210] 011d: 00 06       	          dw  6  ;--- offset
+[00211] 011f: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00212]                   	;---- queue dpush
+[00213]                   	;----- push + pop data not required, data remains unchanged in RA
+[00214]                   	;----- end stmt ------
+[00215]                   	;----- begin stmt ------
+[00216]                   	;----- begin if
+[00217]                   	;----- cglit
+[00218] 0122: d9 12       	 				gosub s_epush16
+[00219] 0124: 00 10       	 				  dw 16
+[00220]                   	;----- cgldgw
+[00221] 0126: d9 1b       	 				gosub s_vpush16
+[00222] 0128: 00 12       	 				  dw Ctp
+[00223]                   	;----- cgadd
+[00224] 012a: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00225]                   
+[00226]                   	;----- cgindw
+[00227] 012c: d9 7e       	 				gosub s_deref16
+[00228]                   	;----- genbrfalse
+[00229]                   	;----- cgbrfalse
+[00230]                   	;----- cgbr
+[00231] 012e: d9 09       	 				 gosub s_dpop16       ; get result from expression stack
+[00232] 0130: 9a          	 				 ghi   ra            ; get MSB from result
+[00233] 0131: 52          	 				 str   r2            ; save in M(X)
+[00234] 0132: 8a          	 				 glo   ra            ; get LSB from result
+[00235] 0133: f1          	 				 or                  ; D = MSB | LSB
+[00236] 0134: c2 01 48    	 				 lbz	L5           ; check for branch
+[00237]                   	;----- begin stmt ------
+[00238]                   	;----- cgldlab
+[00239] 0137: d9 12       	 				gosub s_epush16
+[00240] 0139: 02 ff       	 				  dw  L6
+[00241]                   	;----- cgcall
+[00242] 013b: d4 00 00    	          call  Cprintf
+[00243]                   	;----- cgstack
+[00244] 013e: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00245] 0140: 00 02       	          dw  2  ;--- offset
+[00246] 0142: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00247]                   	;---- queue dpush
+[00248]                   	;----- push + pop data not required, data remains unchanged in RA
+[00249]                   	;----- end stmt ------
+[00250]                   	;---- queue lbr L7
+[00251]                   	;----- cgjump
+[00252] 0145: c0 01 56    	 				  lbr	L7
+[00253]                   
+[00254]                   L5:
+[00255]                   	;----- begin stmt ------
+[00256]                   	;----- cgldlab
+[00257] 0148: d9 12       	 				gosub s_epush16
+[00258] 014a: 03 17       	 				  dw  L8
+[00259]                   	;----- cgcall
+[00260] 014c: d4 00 00    	          call  Cprintf
+[00261]                   	;----- cgstack
+[00262] 014f: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00263] 0151: 00 02       	          dw  2  ;--- offset
+[00264] 0153: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00265]                   	;---- queue dpush
+[00266]                   	;----- push + pop data not required, data remains unchanged in RA
+[00267]                   	;----- end stmt ------
+[00268]                   
+[00269]                   L7:
+[00270]                   	;----- end if
+[00271]                   	;----- end stmt ------
+[00272]                   	;----- begin stmt ------
+[00273]                   	;----- cgldlw
+[00274] 0156: d9 42       	          gosub s_lpush16       ; push value of local variable on ES
+[00275] 0158: ff fe       	          dw  -2  ;--- offset
+[00276]                   	;----- genbrfalse
+[00277]                   	;----- cgbrfalse
+[00278]                   	;----- cgbr
+[00279] 015a: d9 09       	 				 gosub s_dpop16       ; get result from expression stack
+[00280] 015c: 9a          	 				 ghi   ra            ; get MSB from result
+[00281] 015d: 52          	 				 str   r2            ; save in M(X)
+[00282] 015e: 8a          	 				 glo   ra            ; get LSB from result
+[00283] 015f: f1          	 				 or                  ; D = MSB | LSB
+[00284] 0160: c2 01 6a    	 				 lbz	L10           ; check for branch
+[00285]                   	;----- cgldlab
+[00286] 0163: d9 12       	 				gosub s_epush16
+[00287] 0165: 03 33       	 				  dw  L12
+[00288]                   	;---- queue lbr L11
+[00289]                   	;----- cgjump
+[00290] 0167: c0 01 6e    	 				  lbr	L11
+[00291]                   
+[00292]                   L10:
+[00293]                   	;----- cgldlab
+[00294] 016a: d9 12       	 				gosub s_epush16
+[00295] 016c: 03 37       	 				  dw  L13
+[00296]                   
+[00297]                   L11:
+[00298]                   	;----- cgldlab
+[00299] 016e: d9 12       	 				gosub s_epush16
+[00300] 0170: 03 27       	 				  dw  L9
+[00301]                   	;----- cgcall
+[00302] 0172: d4 00 00    	          call  Cprintf
+[00303]                   	;----- cgstack
+[00304] 0175: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00305] 0177: 00 04       	          dw  4  ;--- offset
+[00306] 0179: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00307]                   	;---- queue dpush
+[00308]                   	;----- push + pop data not required, data remains unchanged in RA
+[00309]                   	;----- end stmt ------
+[00310]                   	;----- begin stmt ------
+[00311]                   	;----- cgldgw
+[00312] 017c: d9 1b       	 				gosub s_vpush16
+[00313] 017e: 00 12       	 				  dw Ctp
+[00314]                   	;----- cgcall
+[00315] 0180: d4 00 00    	          call  Casctime
+[00316]                   	;----- cgstack
+[00317] 0183: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00318] 0185: 00 02       	          dw  2  ;--- offset
+[00319] 0187: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00320]                   	;---- queue dpush
+[00321]                   	;------ commit push
+[00322]                   	;----- cgpushd
+[00323] 018a: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00324]                   	;----- cgldlab
+[00325] 018c: d9 12       	 				gosub s_epush16
+[00326] 018e: 03 3e       	 				  dw  L14
+[00327]                   	;----- cgcall
+[00328] 0190: d4 00 00    	          call  Cprintf
+[00329]                   	;----- cgstack
+[00330] 0193: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00331] 0195: 00 04       	          dw  4  ;--- offset
+[00332] 0197: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00333]                   	;---- queue dpush
+[00334]                   	;----- push + pop data not required, data remains unchanged in RA
+[00335]                   	;----- end stmt ------
+[00336]                   	;----- begin stmt ------
+[00337]                   	;----- cgcall
+[00338] 019a: d4 00 00    	          call  Ccstime
+[00339]                   	;---- queue dpush
+[00340]                   	;------ commit push
+[00341]                   	;----- cgpushd
+[00342] 019d: d9 0c       	          gosub s_dpush16   	 ; put result on expression stack
+[00343]                   	;----- cgldlab
+[00344] 019f: d9 12       	 				gosub s_epush16
+[00345] 01a1: 03 47       	 				  dw  L15
+[00346]                   	;----- cgcall
+[00347] 01a3: d4 00 00    	          call  Cprintf
+[00348]                   	;----- cgstack
+[00349] 01a6: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00350] 01a8: 00 04       	          dw  4  ;--- offset
+[00351] 01aa: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00352]                   	;---- queue dpush
+[00353]                   	;----- push + pop data not required, data remains unchanged in RA
+[00354]                   	;----- end stmt ------
+[00355]                   	;----- begin stmt ------
+[00356]                   	;----- cgldgw
+[00357] 01ad: d9 1b       	 				gosub s_vpush16
+[00358] 01af: 00 12       	 				  dw Ctp
+[00359]                   	;----- cgldlab
+[00360] 01b1: d9 12       	 				gosub s_epush16
+[00361] 01b3: 03 52       	 				  dw  L16
+[00362]                   	;----- cglit
+[00363] 01b5: d9 12       	 				gosub s_epush16
+[00364] 01b7: 00 40       	 				  dw 64
+[00365]                   	;----- cgldga
+[00366] 01b9: d9 12       	 				gosub s_epush16
+[00367] 01bb: 00 14       	 				  dw Ctbuf
+[00368]                   	;----- cgcall
+[00369] 01bd: d4 00 00    	          call  Cstrftime
+[00370]                   	;----- cgstack
+[00371] 01c0: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00372] 01c2: 00 08       	          dw  8  ;--- offset
+[00373] 01c4: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00374]                   	;---- queue dpush
+[00375]                   	;----- push + pop data not required, data remains unchanged in RA
+[00376]                   	;----- end stmt ------
+[00377]                   	;----- begin stmt ------
+[00378]                   	;----- cgldga
+[00379] 01c7: d9 12       	 				gosub s_epush16
+[00380] 01c9: 00 14       	 				  dw Ctbuf
+[00381]                   	;----- cgldlab
+[00382] 01cb: d9 12       	 				gosub s_epush16
+[00383] 01cd: 03 6a       	 				  dw  L17
+[00384]                   	;----- cgcall
+[00385] 01cf: d4 00 00    	          call  Cprintf
+[00386]                   	;----- cgstack
+[00387] 01d2: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00388] 01d4: 00 04       	          dw  4  ;--- offset
+[00389] 01d6: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00390]                   	;---- queue dpush
+[00391]                   	;----- push + pop data not required, data remains unchanged in RA
+[00392]                   	;----- end stmt ------
+[00393]                   	;----- begin stmt ------
+[00394]                   	;----- cgldgw
+[00395] 01d9: d9 1b       	 				gosub s_vpush16
+[00396] 01db: 00 12       	 				  dw Ctp
+[00397]                   	;----- cgcall
+[00398] 01dd: d4 00 00    	          call  Cutctime
+[00399]                   	;----- cgstack
+[00400] 01e0: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00401] 01e2: 00 02       	          dw  2  ;--- offset
+[00402] 01e4: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00403]                   	;---- queue dpush
+[00404]                   	;----- push + pop data not required, data remains unchanged in RA
+[00405]                   	;----- end stmt ------
+[00406]                   	;----- begin stmt ------
+[00407]                   	;----- cglit
+[00408] 01e7: d9 12       	 				gosub s_epush16
+[00409] 01e9: 00 0a       	 				  dw 10
+[00410]                   	;----- cgldgw
+[00411] 01eb: d9 1b       	 				gosub s_vpush16
+[00412] 01ed: 00 12       	 				  dw Ctp
+[00413]                   	;----- cgadd
+[00414] 01ef: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00415]                   
+[00416]                   	;----- cgindw
+[00417] 01f1: d9 7e       	 				gosub s_deref16
+[00418]                   	;----- cglit
+[00419] 01f3: d9 12       	 				gosub s_epush16
+[00420] 01f5: 07 6c       	 				  dw 1900
+[00421]                   	;----- cgadd
+[00422] 01f7: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00423]                   
+[00424]                   	;----- cglit
+[00425] 01f9: d9 12       	 				gosub s_epush16
+[00426] 01fb: 00 06       	 				  dw 6
+[00427]                   	;----- cgldgw
+[00428] 01fd: d9 1b       	 				gosub s_vpush16
+[00429] 01ff: 00 12       	 				  dw Ctp
+[00430]                   	;----- cgadd
+[00431] 0201: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00432]                   
+[00433]                   	;----- cgindw
+[00434] 0203: d9 7e       	 				gosub s_deref16
+[00435]                   	;----- cglit
+[00436] 0205: d9 12       	 				gosub s_epush16
+[00437] 0207: 00 08       	 				  dw 8
+[00438]                   	;----- cgldgw
+[00439] 0209: d9 1b       	 				gosub s_vpush16
+[00440] 020b: 00 12       	 				  dw Ctp
+[00441]                   	;----- cgadd
+[00442] 020d: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00443]                   
+[00444]                   	;----- cgindw
+[00445] 020f: d9 7e       	 				gosub s_deref16
+[00446]                   	;----- cglit
+[00447] 0211: d9 12       	 				gosub s_epush16
+[00448] 0213: 00 01       	 				  dw 1
+[00449]                   	;----- cgadd
+[00450] 0215: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00451]                   
+[00452]                   	;----- cgldgw
+[00453] 0217: d9 1b       	 				gosub s_vpush16
+[00454] 0219: 00 12       	 				  dw Ctp
+[00455]                   	;----- cgindw
+[00456] 021b: d9 7e       	 				gosub s_deref16
+[00457]                   	;----- cglit
+[00458] 021d: d9 12       	 				gosub s_epush16
+[00459] 021f: 00 02       	 				  dw 2
+[00460]                   	;----- cgldgw
+[00461] 0221: d9 1b       	 				gosub s_vpush16
+[00462] 0223: 00 12       	 				  dw Ctp
+[00463]                   	;----- cgadd
+[00464] 0225: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00465]                   
+[00466]                   	;----- cgindw
+[00467] 0227: d9 7e       	 				gosub s_deref16
+[00468]                   	;----- cglit
+[00469] 0229: d9 12       	 				gosub s_epush16
+[00470] 022b: 00 04       	 				  dw 4
+[00471]                   	;----- cgldgw
+[00472] 022d: d9 1b       	 				gosub s_vpush16
+[00473] 022f: 00 12       	 				  dw Ctp
+[00474]                   	;----- cgadd
+[00475] 0231: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00476]                   
+[00477]                   	;----- cgindw
+[00478] 0233: d9 7e       	 				gosub s_deref16
+[00479]                   	;----- cgldlab
+[00480] 0235: d9 12       	 				gosub s_epush16
+[00481] 0237: 03 7a       	 				  dw  L18
+[00482]                   	;----- cgcall
+[00483] 0239: d4 00 00    	          call  Cprintf
+[00484]                   	;----- cgstack
+[00485] 023c: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00486] 023e: 00 0e       	          dw  14  ;--- offset
+[00487] 0240: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00488]                   	;---- queue dpush
+[00489]                   	;----- push + pop data not required, data remains unchanged in RA
+[00490]                   	;----- end stmt ------
+[00491]                   	;----- begin stmt ------
+[00492]                   	;----- cglit
+[00493] 0243: d9 12       	 				gosub s_epush16
+[00494] 0245: 00 10       	 				  dw 16
+[00495]                   	;----- cgldgw
+[00496] 0247: d9 1b       	 				gosub s_vpush16
+[00497] 0249: 00 12       	 				  dw Ctp
+[00498]                   	;----- cgadd
+[00499] 024b: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00500]                   
+[00501]                   	;----- cgindw
+[00502] 024d: d9 7e       	 				gosub s_deref16
+[00503]                   	;----- cglit
+[00504] 024f: d9 12       	 				gosub s_epush16
+[00505] 0251: 00 0e       	 				  dw 14
+[00506]                   	;----- cgldgw
+[00507] 0253: d9 1b       	 				gosub s_vpush16
+[00508] 0255: 00 12       	 				  dw Ctp
+[00509]                   	;----- cgadd
+[00510] 0257: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00511]                   
+[00512]                   	;----- cgindw
+[00513] 0259: d9 7e       	 				gosub s_deref16
+[00514]                   	;----- cglit
+[00515] 025b: d9 12       	 				gosub s_epush16
+[00516] 025d: 00 01       	 				  dw 1
+[00517]                   	;----- cgadd
+[00518] 025f: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00519]                   
+[00520]                   	;----- cglit
+[00521] 0261: d9 12       	 				gosub s_epush16
+[00522] 0263: 00 0c       	 				  dw 12
+[00523]                   	;----- cgldgw
+[00524] 0265: d9 1b       	 				gosub s_vpush16
+[00525] 0267: 00 12       	 				  dw Ctp
+[00526]                   	;----- cgadd
+[00527] 0269: d9 84       	          gosub s_add16				 ; add TOS and SOS on Expression Stack
+[00528]                   
+[00529]                   	;----- cgindw
+[00530] 026b: d9 7e       	 				gosub s_deref16
+[00531]                   	;----- cgldlab
+[00532] 026d: d9 12       	 				gosub s_epush16
+[00533] 026f: 03 9e       	 				  dw  L19
+[00534]                   	;----- cgcall
+[00535] 0271: d4 00 00    	          call  Cprintf
+[00536]                   	;----- cgstack
+[00537] 0274: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00538] 0276: 00 08       	          dw  8  ;--- offset
+[00539] 0278: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00540]                   	;---- queue dpush
+[00541]                   	;----- push + pop data not required, data remains unchanged in RA
+[00542]                   	;----- end stmt ------
+[00543]                   	;----- begin stmt ------
+[00544]                   	;----- cgldgw
+[00545] 027b: d9 1b       	 				gosub s_vpush16
+[00546] 027d: 00 12       	 				  dw Ctp
+[00547]                   	;----- cgldlab
+[00548] 027f: d9 12       	 				gosub s_epush16
+[00549] 0281: 03 d0       	 				  dw  L20
+[00550]                   	;----- cglit
+[00551] 0283: d9 12       	 				gosub s_epush16
+[00552] 0285: 00 40       	 				  dw 64
+[00553]                   	;----- cgldga
+[00554] 0287: d9 12       	 				gosub s_epush16
+[00555] 0289: 00 14       	 				  dw Ctbuf
+[00556]                   	;----- cgcall
+[00557] 028b: d4 00 00    	          call  Cstrftime
+[00558]                   	;----- cgstack
+[00559] 028e: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00560] 0290: 00 08       	          dw  8  ;--- offset
+[00561] 0292: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00562]                   	;---- queue dpush
+[00563]                   	;----- push + pop data not required, data remains unchanged in RA
+[00564]                   	;----- end stmt ------
+[00565]                   	;----- begin stmt ------
+[00566]                   	;----- cgldga
+[00567] 0295: d9 12       	 				gosub s_epush16
+[00568] 0297: 00 14       	 				  dw Ctbuf
+[00569]                   	;----- cgldlab
+[00570] 0299: d9 12       	 				gosub s_epush16
+[00571] 029b: 03 e7       	 				  dw  L21
+[00572]                   	;----- cgcall
+[00573] 029d: d4 00 00    	          call  Cprintf
+[00574]                   	;----- cgstack
+[00575] 02a0: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00576] 02a2: 00 04       	          dw  4  ;--- offset
+[00577] 02a4: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00578]                   	;---- queue dpush
+[00579]                   	;----- push + pop data not required, data remains unchanged in RA
+[00580]                   	;----- end stmt ------
+[00581]                   
+[00582]                   L1:
+[00583]                   	;----- cgstack
+[00584] 02a7: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
+[00585] 02a9: 00 04       	          dw  4  ;--- offset
+[00586] 02ab: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00587]                   	;----- cgexit
+[00588] 02ae: e2          	          sex   r2            ; make sure X = SP
+[00589] 02af: d9 06       	          gosub s_stkchk      ; check for expression stack creep
+[00590] 02b1: c3 00 00    	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
+[00591] 02b4: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
+              bb 
+[00592]                   
+[00593] 02b9: d5          	          rtn    			 	     ; return to caller
+[00594]                   
+[00595]                   ;----- string table
+[00596]                   
+[00597]                   L2:
+[00598] 02ba: 45 44 54      db 'EDT'    ;----- cgdefs
+[00599] 02bd: 00          	db	$00    ;----- cgdefb
+[00600]                   
+[00601]                   L3:
+[00602] 02be: 25 30 32 64   db '%02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
               3a 25 30 32 
               64 3a 25 30 
               32 64 20 25 
@@ -477,100 +831,10 @@
               25 30 32 64 
               2f 25 30 34 
               64 0a 
-[00106] 00cf: 00          	db	$00    ;----- cgdefb
-[00107]                   
-[00108]                   L5:
-[00109]                   	;----- cglit
-[00110] 00d0: d4 00 00    	 				call epush16
-[00111] 00d3: 00 0a       	 				  dw 10
-[00112]                   	;----- cgldgw
-[00113] 00d5: d4 00 00    	 				call vpush16
-[00114] 00d8: 00 12       	 				  dw Ctp
-[00115]                   	;----- cgadd
-[00116] 00da: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00117]                   
-[00118]                   	;----- cgindw
-[00119] 00dd: d4 00 00    	 				call deref16
-[00120]                   	;----- cglit
-[00121] 00e0: d4 00 00    	 				call epush16
-[00122] 00e3: 07 6c       	 				  dw 1900
-[00123]                   	;----- cgadd
-[00124] 00e5: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00125]                   
-[00126]                   	;----- cglit
-[00127] 00e8: d4 00 00    	 				call epush16
-[00128] 00eb: 00 06       	 				  dw 6
-[00129]                   	;----- cgldgw
-[00130] 00ed: d4 00 00    	 				call vpush16
-[00131] 00f0: 00 12       	 				  dw Ctp
-[00132]                   	;----- cgadd
-[00133] 00f2: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00134]                   
-[00135]                   	;----- cgindw
-[00136] 00f5: d4 00 00    	 				call deref16
-[00137]                   	;----- cglit
-[00138] 00f8: d4 00 00    	 				call epush16
-[00139] 00fb: 00 08       	 				  dw 8
-[00140]                   	;----- cgldgw
-[00141] 00fd: d4 00 00    	 				call vpush16
-[00142] 0100: 00 12       	 				  dw Ctp
-[00143]                   	;----- cgadd
-[00144] 0102: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00145]                   
-[00146]                   	;----- cgindw
-[00147] 0105: d4 00 00    	 				call deref16
-[00148]                   	;----- cglit
-[00149] 0108: d4 00 00    	 				call epush16
-[00150] 010b: 00 01       	 				  dw 1
-[00151]                   	;----- cgadd
-[00152] 010d: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00153]                   
-[00154]                   	;----- cgldgw
-[00155] 0110: d4 00 00    	 				call vpush16
-[00156] 0113: 00 12       	 				  dw Ctp
-[00157]                   	;----- cgindw
-[00158] 0115: d4 00 00    	 				call deref16
-[00159]                   	;----- cglit
-[00160] 0118: d4 00 00    	 				call epush16
-[00161] 011b: 00 02       	 				  dw 2
-[00162]                   	;----- cgldgw
-[00163] 011d: d4 00 00    	 				call vpush16
-[00164] 0120: 00 12       	 				  dw Ctp
-[00165]                   	;----- cgadd
-[00166] 0122: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00167]                   
-[00168]                   	;----- cgindw
-[00169] 0125: d4 00 00    	 				call deref16
-[00170]                   	;----- cglit
-[00171] 0128: d4 00 00    	 				call epush16
-[00172] 012b: 00 04       	 				  dw 4
-[00173]                   	;----- cgldgw
-[00174] 012d: d4 00 00    	 				call vpush16
-[00175] 0130: 00 12       	 				  dw Ctp
-[00176]                   	;----- cgadd
-[00177] 0132: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00178]                   
-[00179]                   	;----- cgindw
-[00180] 0135: d4 00 00    	 				call deref16
-[00181]                   	;----- cgldlab
-[00182] 0138: d4 00 00    	 				call epush16
-[00183] 013b: 00 b1       	 				  dw  L4
-[00184]                   	;----- cgcall
-[00185] 013d: d4 00 00    	          call  Cprintf
-[00186]                   	;----- cgstack
-[00187] 0140: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00188] 0143: 00 0e       	          dw  14  ;--- offset
-[00189] 0145: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00190]                   	;---- queue dpush
-[00191]                   	;----- push + pop data not required, data remains unchanged in RA
-[00192]                   	;----- end stmt ------
-[00193]                   	;----- begin stmt ------
-[00194]                   	;---- queue lbr L7
-[00195]                   	;----- cgjump
-[00196] 0148: c0 01 6d    	 				  lbr	L7
-[00197]                   
-[00198]                   L6:
-[00199] 014b: 44 61 79 20   db 'Day of week: %d  Day of Year: %d', 10    ;----- cgdefs
+[00603] 02dc: 00          	db	$00    ;----- cgdefb
+[00604]                   
+[00605]                   L4:
+[00606] 02dd: 44 61 79 20   db 'Day of week: %d  Day of Year: %d', 10    ;----- cgdefs
               6f 66 20 77 
               65 65 6b 3a 
               20 25 64 20 
@@ -579,350 +843,68 @@
               59 65 61 72 
               3a 20 25 64 
               0a 
-[00200] 016c: 00          	db	$00    ;----- cgdefb
-[00201]                   
-[00202]                   L7:
-[00203]                   	;----- cglit
-[00204] 016d: d4 00 00    	 				call epush16
-[00205] 0170: 00 0e       	 				  dw 14
-[00206]                   	;----- cgldgw
-[00207] 0172: d4 00 00    	 				call vpush16
-[00208] 0175: 00 12       	 				  dw Ctp
-[00209]                   	;----- cgadd
-[00210] 0177: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00211]                   
-[00212]                   	;----- cgindw
-[00213] 017a: d4 00 00    	 				call deref16
-[00214]                   	;----- cglit
-[00215] 017d: d4 00 00    	 				call epush16
-[00216] 0180: 00 01       	 				  dw 1
-[00217]                   	;----- cgadd
-[00218] 0182: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00219]                   
-[00220]                   	;----- cglit
-[00221] 0185: d4 00 00    	 				call epush16
-[00222] 0188: 00 0c       	 				  dw 12
-[00223]                   	;----- cgldgw
-[00224] 018a: d4 00 00    	 				call vpush16
-[00225] 018d: 00 12       	 				  dw Ctp
-[00226]                   	;----- cgadd
-[00227] 018f: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00228]                   
-[00229]                   	;----- cgindw
-[00230] 0192: d4 00 00    	 				call deref16
-[00231]                   	;----- cgldlab
-[00232] 0195: d4 00 00    	 				call epush16
-[00233] 0198: 01 4b       	 				  dw  L6
-[00234]                   	;----- cgcall
-[00235] 019a: d4 00 00    	          call  Cprintf
-[00236]                   	;----- cgstack
-[00237] 019d: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00238] 01a0: 00 06       	          dw  6  ;--- offset
-[00239] 01a2: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00240]                   	;---- queue dpush
-[00241]                   	;----- push + pop data not required, data remains unchanged in RA
-[00242]                   	;----- end stmt ------
-[00243]                   	;----- begin stmt ------
-[00244]                   	;----- begin if
-[00245]                   	;----- cglit
-[00246] 01a5: d4 00 00    	 				call epush16
-[00247] 01a8: 00 10       	 				  dw 16
-[00248]                   	;----- cgldgw
-[00249] 01aa: d4 00 00    	 				call vpush16
-[00250] 01ad: 00 12       	 				  dw Ctp
-[00251]                   	;----- cgadd
-[00252] 01af: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00253]                   
-[00254]                   	;----- cgindw
-[00255] 01b2: d4 00 00    	 				call deref16
-[00256]                   	;----- genbrfalse
-[00257]                   	;----- cgbrfalse
-[00258]                   	;----- cgbr
-[00259] 01b5: d4 00 00    	 				 call  dpop16        ; get result from expression stack
-[00260] 01b8: 9a          	 				 ghi   ra            ; get MSB from result
-[00261] 01b9: 52          	 				 str   r2            ; save in M(X)
-[00262] 01ba: 8a          	 				 glo   ra            ; get LSB from result
-[00263] 01bb: f1          	 				 or                  ; D = MSB | LSB
-[00264] 01bc: c2 01 ed    	 				 lbz	L8           ; check for branch
-[00265]                   	;----- begin stmt ------
-[00266]                   	;---- queue lbr L10
-[00267]                   	;----- cgjump
-[00268] 01bf: c0 01 da    	 				  lbr	L10
-[00269]                   
-[00270]                   L9:
-[00271] 01c2: 44 61 79 6c   db 'Daylight Savings Time.', 10    ;----- cgdefs
+[00607] 02fe: 00          	db	$00    ;----- cgdefb
+[00608]                   
+[00609]                   L6:
+[00610] 02ff: 44 61 79 6c   db 'Daylight Savings Time.', 10    ;----- cgdefs
               69 67 68 74 
               20 53 61 76 
               69 6e 67 73 
               20 54 69 6d 
               65 2e 0a 
-[00272] 01d9: 00          	db	$00    ;----- cgdefb
-[00273]                   
-[00274]                   L10:
-[00275]                   	;----- cgldlab
-[00276] 01da: d4 00 00    	 				call epush16
-[00277] 01dd: 01 c2       	 				  dw  L9
-[00278]                   	;----- cgcall
-[00279] 01df: d4 00 00    	          call  Cprintf
-[00280]                   	;----- cgstack
-[00281] 01e2: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00282] 01e5: 00 02       	          dw  2  ;--- offset
-[00283] 01e7: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00284]                   	;---- queue dpush
-[00285]                   	;----- push + pop data not required, data remains unchanged in RA
-[00286]                   	;----- end stmt ------
-[00287]                   	;---- queue lbr L11
-[00288]                   	;----- cgjump
-[00289] 01ea: c0 02 10    	 				  lbr	L11
-[00290]                   
-[00291]                   L8:
-[00292]                   	;----- begin stmt ------
-[00293]                   	;---- queue lbr L13
-[00294]                   	;----- cgjump
-[00295] 01ed: c0 02 00    	 				  lbr	L13
-[00296]                   
-[00297]                   L12:
-[00298] 01f0: 53 74 61 6e   db 'Standard Time.', 10    ;----- cgdefs
+[00611] 0316: 00          	db	$00    ;----- cgdefb
+[00612]                   
+[00613]                   L8:
+[00614] 0317: 53 74 61 6e   db 'Standard Time.', 10    ;----- cgdefs
               64 61 72 64 
               20 54 69 6d 
               65 2e 0a 
-[00299] 01ff: 00          	db	$00    ;----- cgdefb
-[00300]                   
-[00301]                   L13:
-[00302]                   	;----- cgldlab
-[00303] 0200: d4 00 00    	 				call epush16
-[00304] 0203: 01 f0       	 				  dw  L12
-[00305]                   	;----- cgcall
-[00306] 0205: d4 00 00    	          call  Cprintf
-[00307]                   	;----- cgstack
-[00308] 0208: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00309] 020b: 00 02       	          dw  2  ;--- offset
-[00310] 020d: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00311]                   	;---- queue dpush
-[00312]                   	;----- push + pop data not required, data remains unchanged in RA
-[00313]                   	;----- end stmt ------
-[00314]                   
-[00315]                   L11:
-[00316]                   	;----- end if
-[00317]                   	;----- end stmt ------
-[00318]                   	;----- begin stmt ------
-[00319]                   	;---- queue lbr L15
-[00320]                   	;----- cgjump
-[00321] 0210: c0 02 1f    	 				  lbr	L15
-[00322]                   
-[00323]                   L14:
-[00324] 0213: 53 6f 75 72   db 'Source: %s', 10    ;----- cgdefs
+[00615] 0326: 00          	db	$00    ;----- cgdefb
+[00616]                   
+[00617]                   L9:
+[00618] 0327: 53 6f 75 72   db 'Source: %s', 10    ;----- cgdefs
               63 65 3a 20 
               25 73 0a 
-[00325] 021e: 00          	db	$00    ;----- cgdefb
-[00326]                   
-[00327]                   L15:
-[00328]                   	;---- queue lbr L19
-[00329]                   	;----- cgjump
-[00330] 021f: c0 02 26    	 				  lbr	L19
-[00331]                   
-[00332]                   L18:
-[00333] 0222: 52 54 43      db 'RTC'    ;----- cgdefs
-[00334] 0225: 00          	db	$00    ;----- cgdefb
-[00335]                   
-[00336]                   L19:
-[00337]                   	;---- queue lbr L21
-[00338]                   	;----- cgjump
-[00339] 0226: c0 02 30    	 				  lbr	L21
-[00340]                   
-[00341]                   L20:
-[00342] 0229: 4b 65 72 6e   db 'Kernel'    ;----- cgdefs
+[00619] 0332: 00          	db	$00    ;----- cgdefb
+[00620]                   
+[00621]                   L12:
+[00622] 0333: 52 54 43      db 'RTC'    ;----- cgdefs
+[00623] 0336: 00          	db	$00    ;----- cgdefb
+[00624]                   
+[00625]                   L13:
+[00626] 0337: 4b 65 72 6e   db 'Kernel'    ;----- cgdefs
               65 6c 
-[00343] 022f: 00          	db	$00    ;----- cgdefb
-[00344]                   
-[00345]                   L21:
-[00346]                   	;----- cgldlw
-[00347] 0230: d4 00 00    	          call  lpush16       ; push value of local variable on ES
-[00348] 0233: ff fe       	          dw  -2  ;--- offset
-[00349]                   	;----- genbrfalse
-[00350]                   	;----- cgbrfalse
-[00351]                   	;----- cgbr
-[00352] 0235: d4 00 00    	 				 call  dpop16        ; get result from expression stack
-[00353] 0238: 9a          	 				 ghi   ra            ; get MSB from result
-[00354] 0239: 52          	 				 str   r2            ; save in M(X)
-[00355] 023a: 8a          	 				 glo   ra            ; get LSB from result
-[00356] 023b: f1          	 				 or                  ; D = MSB | LSB
-[00357] 023c: c2 02 47    	 				 lbz	L16           ; check for branch
-[00358]                   	;----- cgldlab
-[00359] 023f: d4 00 00    	 				call epush16
-[00360] 0242: 02 22       	 				  dw  L18
-[00361]                   	;---- queue lbr L17
-[00362]                   	;----- cgjump
-[00363] 0244: c0 02 4c    	 				  lbr	L17
-[00364]                   
-[00365]                   L16:
-[00366]                   	;----- cgldlab
-[00367] 0247: d4 00 00    	 				call epush16
-[00368] 024a: 02 29       	 				  dw  L20
-[00369]                   
-[00370]                   L17:
-[00371]                   	;----- cgldlab
-[00372] 024c: d4 00 00    	 				call epush16
-[00373] 024f: 02 13       	 				  dw  L14
-[00374]                   	;----- cgcall
-[00375] 0251: d4 00 00    	          call  Cprintf
-[00376]                   	;----- cgstack
-[00377] 0254: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00378] 0257: 00 04       	          dw  4  ;--- offset
-[00379] 0259: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00380]                   	;---- queue dpush
-[00381]                   	;----- push + pop data not required, data remains unchanged in RA
-[00382]                   	;----- end stmt ------
-[00383]                   	;----- begin stmt ------
-[00384]                   	;---- queue lbr L23
-[00385]                   	;----- cgjump
-[00386] 025c: c0 02 68    	 				  lbr	L23
-[00387]                   
-[00388]                   L22:
-[00389] 025f: 41 73 63 69   db 'Ascii %s'    ;----- cgdefs
+[00627] 033d: 00          	db	$00    ;----- cgdefb
+[00628]                   
+[00629]                   L14:
+[00630] 033e: 41 73 63 69   db 'Ascii %s'    ;----- cgdefs
               69 20 25 73 
-[00390] 0267: 00          	db	$00    ;----- cgdefb
-[00391]                   
-[00392]                   L23:
-[00393]                   	;----- cgldgw
-[00394] 0268: d4 00 00    	 				call vpush16
-[00395] 026b: 00 12       	 				  dw Ctp
-[00396]                   	;----- cgcall
-[00397] 026d: d4 00 00    	          call  Casctime
-[00398]                   	;----- cgstack
-[00399] 0270: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00400] 0273: 00 02       	          dw  2  ;--- offset
-[00401] 0275: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00402]                   	;---- queue dpush
-[00403]                   	;------ commit push
-[00404]                   	;----- cgpushd
-[00405] 0278: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00406]                   	;----- cgldlab
-[00407] 027b: d4 00 00    	 				call epush16
-[00408] 027e: 02 5f       	 				  dw  L22
-[00409]                   	;----- cgcall
-[00410] 0280: d4 00 00    	          call  Cprintf
-[00411]                   	;----- cgstack
-[00412] 0283: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00413] 0286: 00 04       	          dw  4  ;--- offset
-[00414] 0288: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00415]                   	;---- queue dpush
-[00416]                   	;----- push + pop data not required, data remains unchanged in RA
-[00417]                   	;----- end stmt ------
-[00418]                   	;----- begin stmt ------
-[00419]                   	;---- queue lbr L25
-[00420]                   	;----- cgjump
-[00421] 028b: c0 02 99    	 				  lbr	L25
-[00422]                   
-[00423]                   L24:
-[00424] 028e: 43 53 74 69   db 'CStime: %s'    ;----- cgdefs
+[00631] 0346: 00          	db	$00    ;----- cgdefb
+[00632]                   
+[00633]                   L15:
+[00634] 0347: 43 53 74 69   db 'CStime: %s'    ;----- cgdefs
               6d 65 3a 20 
               25 73 
-[00425] 0298: 00          	db	$00    ;----- cgdefb
-[00426]                   
-[00427]                   L25:
-[00428]                   	;----- cgcall
-[00429] 0299: d4 00 00    	          call  Ccstime
-[00430]                   	;---- queue dpush
-[00431]                   	;------ commit push
-[00432]                   	;----- cgpushd
-[00433] 029c: d4 00 00    	          call  dpush16   		 ; put result on expression stack
-[00434]                   	;----- cgldlab
-[00435] 029f: d4 00 00    	 				call epush16
-[00436] 02a2: 02 8e       	 				  dw  L24
-[00437]                   	;----- cgcall
-[00438] 02a4: d4 00 00    	          call  Cprintf
-[00439]                   	;----- cgstack
-[00440] 02a7: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00441] 02aa: 00 04       	          dw  4  ;--- offset
-[00442] 02ac: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00443]                   	;---- queue dpush
-[00444]                   	;----- push + pop data not required, data remains unchanged in RA
-[00445]                   	;----- end stmt ------
-[00446]                   	;----- begin stmt ------
-[00447]                   	;---- queue lbr L27
-[00448]                   	;----- cgjump
-[00449] 02af: c0 02 ca    	 				  lbr	L27
-[00450]                   
-[00451]                   L26:
-[00452] 02b2: 25 41 20 25   db '%A %Y-%m-%d %H:%M:%S %Z'    ;----- cgdefs
+[00635] 0351: 00          	db	$00    ;----- cgdefb
+[00636]                   
+[00637]                   L16:
+[00638] 0352: 25 41 20 25   db '%A %Y-%m-%d %H:%M:%S %Z'    ;----- cgdefs
               59 2d 25 6d 
               2d 25 64 20 
               25 48 3a 25 
               4d 3a 25 53 
               20 25 5a 
-[00453] 02c9: 00          	db	$00    ;----- cgdefb
-[00454]                   
-[00455]                   L27:
-[00456]                   	;----- cgldgw
-[00457] 02ca: d4 00 00    	 				call vpush16
-[00458] 02cd: 00 12       	 				  dw Ctp
-[00459]                   	;----- cgldlab
-[00460] 02cf: d4 00 00    	 				call epush16
-[00461] 02d2: 02 b2       	 				  dw  L26
-[00462]                   	;----- cglit
-[00463] 02d4: d4 00 00    	 				call epush16
-[00464] 02d7: 00 40       	 				  dw 64
-[00465]                   	;----- cgldga
-[00466] 02d9: d4 00 00    	 				call epush16
-[00467] 02dc: 00 14       	 				  dw Ctbuf
-[00468]                   	;----- cgcall
-[00469] 02de: d4 00 00    	          call  Cstrftime
-[00470]                   	;----- cgstack
-[00471] 02e1: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00472] 02e4: 00 08       	          dw  8  ;--- offset
-[00473] 02e6: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00474]                   	;---- queue dpush
-[00475]                   	;----- push + pop data not required, data remains unchanged in RA
-[00476]                   	;----- end stmt ------
-[00477]                   	;----- begin stmt ------
-[00478]                   	;---- queue lbr L29
-[00479]                   	;----- cgjump
-[00480] 02e9: c0 02 fc    	 				  lbr	L29
-[00481]                   
-[00482]                   L28:
-[00483] 02ec: 4c 6f 63 61   db 'Local time: %s', 10    ;----- cgdefs
+[00639] 0369: 00          	db	$00    ;----- cgdefb
+[00640]                   
+[00641]                   L17:
+[00642] 036a: 4c 6f 63 61   db 'Local time: %s', 10    ;----- cgdefs
               6c 20 74 69 
               6d 65 3a 20 
               25 73 0a 
-[00484] 02fb: 00          	db	$00    ;----- cgdefb
-[00485]                   
-[00486]                   L29:
-[00487]                   	;----- cgldga
-[00488] 02fc: d4 00 00    	 				call epush16
-[00489] 02ff: 00 14       	 				  dw Ctbuf
-[00490]                   	;----- cgldlab
-[00491] 0301: d4 00 00    	 				call epush16
-[00492] 0304: 02 ec       	 				  dw  L28
-[00493]                   	;----- cgcall
-[00494] 0306: d4 00 00    	          call  Cprintf
-[00495]                   	;----- cgstack
-[00496] 0309: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00497] 030c: 00 04       	          dw  4  ;--- offset
-[00498] 030e: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00499]                   	;---- queue dpush
-[00500]                   	;----- push + pop data not required, data remains unchanged in RA
-[00501]                   	;----- end stmt ------
-[00502]                   	;----- begin stmt ------
-[00503]                   	;----- cgldgw
-[00504] 0311: d4 00 00    	 				call vpush16
-[00505] 0314: 00 12       	 				  dw Ctp
-[00506]                   	;----- cgcall
-[00507] 0316: d4 00 00    	          call  Cutctime
-[00508]                   	;----- cgstack
-[00509] 0319: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00510] 031c: 00 02       	          dw  2  ;--- offset
-[00511] 031e: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00512]                   	;---- queue dpush
-[00513]                   	;----- push + pop data not required, data remains unchanged in RA
-[00514]                   	;----- end stmt ------
-[00515]                   	;----- begin stmt ------
-[00516]                   	;---- queue lbr L31
-[00517]                   	;----- cgjump
-[00518] 0321: c0 03 48    	 				  lbr	L31
-[00519]                   
-[00520]                   L30:
-[00521] 0324: 47 4d 54 3a   db 'GMT: %02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
+[00643] 0379: 00          	db	$00    ;----- cgdefb
+[00644]                   
+[00645]                   L18:
+[00646] 037a: 47 4d 54 3a   db 'GMT: %02d:%02d:%02d %02d/%02d/%04d', 10    ;----- cgdefs
               20 25 30 32 
               64 3a 25 30 
               32 64 3a 25 
@@ -931,100 +913,10 @@
               2f 25 30 32 
               64 2f 25 30 
               34 64 0a 
-[00522] 0347: 00          	db	$00    ;----- cgdefb
-[00523]                   
-[00524]                   L31:
-[00525]                   	;----- cglit
-[00526] 0348: d4 00 00    	 				call epush16
-[00527] 034b: 00 0a       	 				  dw 10
-[00528]                   	;----- cgldgw
-[00529] 034d: d4 00 00    	 				call vpush16
-[00530] 0350: 00 12       	 				  dw Ctp
-[00531]                   	;----- cgadd
-[00532] 0352: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00533]                   
-[00534]                   	;----- cgindw
-[00535] 0355: d4 00 00    	 				call deref16
-[00536]                   	;----- cglit
-[00537] 0358: d4 00 00    	 				call epush16
-[00538] 035b: 07 6c       	 				  dw 1900
-[00539]                   	;----- cgadd
-[00540] 035d: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00541]                   
-[00542]                   	;----- cglit
-[00543] 0360: d4 00 00    	 				call epush16
-[00544] 0363: 00 06       	 				  dw 6
-[00545]                   	;----- cgldgw
-[00546] 0365: d4 00 00    	 				call vpush16
-[00547] 0368: 00 12       	 				  dw Ctp
-[00548]                   	;----- cgadd
-[00549] 036a: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00550]                   
-[00551]                   	;----- cgindw
-[00552] 036d: d4 00 00    	 				call deref16
-[00553]                   	;----- cglit
-[00554] 0370: d4 00 00    	 				call epush16
-[00555] 0373: 00 08       	 				  dw 8
-[00556]                   	;----- cgldgw
-[00557] 0375: d4 00 00    	 				call vpush16
-[00558] 0378: 00 12       	 				  dw Ctp
-[00559]                   	;----- cgadd
-[00560] 037a: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00561]                   
-[00562]                   	;----- cgindw
-[00563] 037d: d4 00 00    	 				call deref16
-[00564]                   	;----- cglit
-[00565] 0380: d4 00 00    	 				call epush16
-[00566] 0383: 00 01       	 				  dw 1
-[00567]                   	;----- cgadd
-[00568] 0385: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00569]                   
-[00570]                   	;----- cgldgw
-[00571] 0388: d4 00 00    	 				call vpush16
-[00572] 038b: 00 12       	 				  dw Ctp
-[00573]                   	;----- cgindw
-[00574] 038d: d4 00 00    	 				call deref16
-[00575]                   	;----- cglit
-[00576] 0390: d4 00 00    	 				call epush16
-[00577] 0393: 00 02       	 				  dw 2
-[00578]                   	;----- cgldgw
-[00579] 0395: d4 00 00    	 				call vpush16
-[00580] 0398: 00 12       	 				  dw Ctp
-[00581]                   	;----- cgadd
-[00582] 039a: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00583]                   
-[00584]                   	;----- cgindw
-[00585] 039d: d4 00 00    	 				call deref16
-[00586]                   	;----- cglit
-[00587] 03a0: d4 00 00    	 				call epush16
-[00588] 03a3: 00 04       	 				  dw 4
-[00589]                   	;----- cgldgw
-[00590] 03a5: d4 00 00    	 				call vpush16
-[00591] 03a8: 00 12       	 				  dw Ctp
-[00592]                   	;----- cgadd
-[00593] 03aa: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00594]                   
-[00595]                   	;----- cgindw
-[00596] 03ad: d4 00 00    	 				call deref16
-[00597]                   	;----- cgldlab
-[00598] 03b0: d4 00 00    	 				call epush16
-[00599] 03b3: 03 24       	 				  dw  L30
-[00600]                   	;----- cgcall
-[00601] 03b5: d4 00 00    	          call  Cprintf
-[00602]                   	;----- cgstack
-[00603] 03b8: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00604] 03bb: 00 0e       	          dw  14  ;--- offset
-[00605] 03bd: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00606]                   	;---- queue dpush
-[00607]                   	;----- push + pop data not required, data remains unchanged in RA
-[00608]                   	;----- end stmt ------
-[00609]                   	;----- begin stmt ------
-[00610]                   	;---- queue lbr L33
-[00611]                   	;----- cgjump
-[00612] 03c0: c0 03 f5    	 				  lbr	L33
-[00613]                   
-[00614]                   L32:
-[00615] 03c3: 47 4d 54 20   db 'GMT Day of week: %d  GMT Day of Year: %d DST: %d', 10    ;----- cgdefs
+[00647] 039d: 00          	db	$00    ;----- cgdefb
+[00648]                   
+[00649]                   L19:
+[00650] 039e: 47 4d 54 20   db 'GMT Day of week: %d  GMT Day of Year: %d DST: %d', 10    ;----- cgdefs
               44 61 79 20 
               6f 66 20 77 
               65 65 6b 3a 
@@ -1037,136 +929,22 @@
               20 44 53 54 
               3a 20 25 64 
               0a 
-[00616] 03f4: 00          	db	$00    ;----- cgdefb
-[00617]                   
-[00618]                   L33:
-[00619]                   	;----- cglit
-[00620] 03f5: d4 00 00    	 				call epush16
-[00621] 03f8: 00 10       	 				  dw 16
-[00622]                   	;----- cgldgw
-[00623] 03fa: d4 00 00    	 				call vpush16
-[00624] 03fd: 00 12       	 				  dw Ctp
-[00625]                   	;----- cgadd
-[00626] 03ff: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00627]                   
-[00628]                   	;----- cgindw
-[00629] 0402: d4 00 00    	 				call deref16
-[00630]                   	;----- cglit
-[00631] 0405: d4 00 00    	 				call epush16
-[00632] 0408: 00 0e       	 				  dw 14
-[00633]                   	;----- cgldgw
-[00634] 040a: d4 00 00    	 				call vpush16
-[00635] 040d: 00 12       	 				  dw Ctp
-[00636]                   	;----- cgadd
-[00637] 040f: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00638]                   
-[00639]                   	;----- cgindw
-[00640] 0412: d4 00 00    	 				call deref16
-[00641]                   	;----- cglit
-[00642] 0415: d4 00 00    	 				call epush16
-[00643] 0418: 00 01       	 				  dw 1
-[00644]                   	;----- cgadd
-[00645] 041a: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00646]                   
-[00647]                   	;----- cglit
-[00648] 041d: d4 00 00    	 				call epush16
-[00649] 0420: 00 0c       	 				  dw 12
-[00650]                   	;----- cgldgw
-[00651] 0422: d4 00 00    	 				call vpush16
-[00652] 0425: 00 12       	 				  dw Ctp
-[00653]                   	;----- cgadd
-[00654] 0427: d4 00 00    	          call  add16				 ; add TOS and SOS on Expression Stack
-[00655]                   
-[00656]                   	;----- cgindw
-[00657] 042a: d4 00 00    	 				call deref16
-[00658]                   	;----- cgldlab
-[00659] 042d: d4 00 00    	 				call epush16
-[00660] 0430: 03 c3       	 				  dw  L32
-[00661]                   	;----- cgcall
-[00662] 0432: d4 00 00    	          call  Cprintf
-[00663]                   	;----- cgstack
-[00664] 0435: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00665] 0438: 00 08       	          dw  8  ;--- offset
-[00666] 043a: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00667]                   	;---- queue dpush
-[00668]                   	;----- push + pop data not required, data remains unchanged in RA
-[00669]                   	;----- end stmt ------
-[00670]                   	;----- begin stmt ------
-[00671]                   	;---- queue lbr L35
-[00672]                   	;----- cgjump
-[00673] 043d: c0 04 57    	 				  lbr	L35
-[00674]                   
-[00675]                   L34:
-[00676] 0440: 25 41 20 25   db '%A %Y-%m-%d %H:%M:%S Z'    ;----- cgdefs
+[00651] 03cf: 00          	db	$00    ;----- cgdefb
+[00652]                   
+[00653]                   L20:
+[00654] 03d0: 25 41 20 25   db '%A %Y-%m-%d %H:%M:%S Z'    ;----- cgdefs
               59 2d 25 6d 
               2d 25 64 20 
               25 48 3a 25 
               4d 3a 25 53 
               20 5a 
-[00677] 0456: 00          	db	$00    ;----- cgdefb
-[00678]                   
-[00679]                   L35:
-[00680]                   	;----- cgldgw
-[00681] 0457: d4 00 00    	 				call vpush16
-[00682] 045a: 00 12       	 				  dw Ctp
-[00683]                   	;----- cgldlab
-[00684] 045c: d4 00 00    	 				call epush16
-[00685] 045f: 04 40       	 				  dw  L34
-[00686]                   	;----- cglit
-[00687] 0461: d4 00 00    	 				call epush16
-[00688] 0464: 00 40       	 				  dw 64
-[00689]                   	;----- cgldga
-[00690] 0466: d4 00 00    	 				call epush16
-[00691] 0469: 00 14       	 				  dw Ctbuf
-[00692]                   	;----- cgcall
-[00693] 046b: d4 00 00    	          call  Cstrftime
-[00694]                   	;----- cgstack
-[00695] 046e: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00696] 0471: 00 08       	          dw  8  ;--- offset
-[00697] 0473: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00698]                   	;---- queue dpush
-[00699]                   	;----- push + pop data not required, data remains unchanged in RA
-[00700]                   	;----- end stmt ------
-[00701]                   	;----- begin stmt ------
-[00702]                   	;---- queue lbr L37
-[00703]                   	;----- cgjump
-[00704] 0476: c0 04 87    	 				  lbr	L37
-[00705]                   
-[00706]                   L36:
-[00707] 0479: 47 4d 54 20   db 'GMT time: %s', 10    ;----- cgdefs
+[00655] 03e6: 00          	db	$00    ;----- cgdefb
+[00656]                   
+[00657]                   L21:
+[00658] 03e7: 47 4d 54 20   db 'GMT time: %s', 10    ;----- cgdefs
               74 69 6d 65 
               3a 20 25 73 
               0a 
-[00708] 0486: 00          	db	$00    ;----- cgdefb
-[00709]                   
-[00710]                   L37:
-[00711]                   	;----- cgldga
-[00712] 0487: d4 00 00    	 				call epush16
-[00713] 048a: 00 14       	 				  dw Ctbuf
-[00714]                   	;----- cgldlab
-[00715] 048c: d4 00 00    	 				call epush16
-[00716] 048f: 04 79       	 				  dw  L36
-[00717]                   	;----- cgcall
-[00718] 0491: d4 00 00    	          call  Cprintf
-[00719]                   	;----- cgstack
-[00720] 0494: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00721] 0497: 00 04       	          dw  4  ;--- offset
-[00722] 0499: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00723]                   	;---- queue dpush
-[00724]                   	;----- push + pop data not required, data remains unchanged in RA
-[00725]                   	;----- end stmt ------
-[00726]                   
-[00727]                   L1:
-[00728]                   	;----- cgstack
-[00729] 049c: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
-[00730] 049f: 00 04       	          dw  4  ;--- offset
-[00731] 04a1: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00732]                   	;----- cgexit
-[00733] 04a4: e2          	          sex   r2            ; make sure X = SP
-[00734] 04a5: d4 00 00    	          call  escheck       ; check for expression stack creep
-[00735] 04a8: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
-              bb 
-[00736]                   
-[00737] 04ad: d5          	          rtn	  			 	     ; return to caller
-[00738]                   	;---- cgpostlude
-[00739] 04ae:             	             endp
+[00659] 03f4: 00          	db	$00    ;----- cgdefb
+[00660]                   	;---- cgpostlude
+[00661] 03f5:             	             endp

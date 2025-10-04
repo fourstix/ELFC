@@ -3,161 +3,14 @@
 ; SubC Copyright 2012-2025 by Nils Holm
 ; -------------------------------------------------------------------
 #include include/ops_c.inc
-#include include/bios.inc
-#include include/kernel.inc
+#include include/os_api.inc
 #include include/elfc.inc
 
 	           proc hello
 
-            extrn C_init
+#include include/stdlib.inc
 
-            extrn C_fdinit
-
-            extrn C_fdvalid
-
-            extrn C_fdcnt
-
-            extrn Cabort
-
-            extrn Cabs
-
-            extrn Catexit      
-
-            extrn Cexit            
-
-            extrn Cmalloc
-
-            extrn Ccalloc 
-
-            extrn Crealloc
-
-            extrn Cfree  
-
-            extrn Catoi 
-
-            extrn Citoa           
-
-            extrn Citox
-
-            extrn Citou           
-
-            extrn Cdiv 
-
-            extrn Cbsearch              
-
-            extrn Cqsort
-
-            extrn Crand
-
-            extrn Csrand
-
-            extrn Ccreat
-
-            extrn Copen
-
-            extrn Cclose
-
-            extrn Cread
-
-            extrn Cwrite
-
-            extrn Clseek
-
-            extrn Cunlink
-
-            extrn Crename
-
-            extrn Cmin
-
-            extrn Cmax
-
-            extrn Cstdin
-
-            extrn Cstdout
-
-            extrn Cstderr
-
-            extrn Cputs
-
-            extrn Cputstr
-
-            extrn Cgets
-
-            extrn Cputch
-
-            extrn Cgetch
-
-            extrn Cputchar
-
-            extrn Cgetchar
-
-            extrn Cfdopen
-
-            extrn Cfclose
-
-            extrn Cfopen
-
-            extrn Cferror
-
-            extrn Cfeof
-
-            extrn Cclearerr
-
-            extrn Cfgetc
-
-            extrn Cfputc
-
-            extrn Cfgets
-
-            extrn Cfputs
-
-            extrn Cungetc
-
-            extrn Cfread
-
-            extrn Cfwrite
-
-            extrn Cfflush
-
-            extrn Cfprintf
-
-            extrn Ckprintf
-
-            extrn Cprintf
-
-            extrn Csprintf
-
-            extrn Cvfprintf
-
-            extrn Cvprintf
-
-            extrn Cvsprintf
-
-            extrn Cfscanf
-
-            extrn Cscanf
-
-            extrn Csscanf
-
-            extrn Cfgetpos
-
-            extrn Cfsetpos
-
-            extrn Cfseek
-
-            extrn Cftell
-
-            extrn Cperror
-
-            extrn Crewind
-
-            extrn Cremove
-
-            extrn Ctmpnam
-
-            extrn Ctmpfile
-
-            extrn Cfileno
+#include include/stdio.inc
 	;----- cgpublic
 	              public Cmain
 Cmain:
@@ -170,22 +23,13 @@ Cmain:
 	          push  rb				 		 ; save current BP (base pointer)
 	          copy  r7, rb			 	 ; set BP to current ES location
 	;----- begin stmt ------
-	;---- queue lbr L3
-	;----- cgjump
-	 				  lbr	L3
-
-L2:
-  db 'Hello, World!', 10    ;----- cgdefs
-	db	$00    ;----- cgdefb
-
-L3:
 	;----- cgldlab
-	 				call epush16
+	 				gosub s_epush16
 	 				  dw  L2
 	;----- cgcall
 	          call  Cprintf
 	;----- cgstack
-	          call  esmove				 ; move pointer for Expression Stack
+	          gosub s_esmove				 ; move pointer for Expression Stack
 	          dw  2  ;--- offset
 	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
 	;---- queue dpush
@@ -195,9 +39,16 @@ L3:
 L1:
 	;----- cgexit
 	          sex   r2            ; make sure X = SP
-	          call  escheck       ; check for expression stack creep
+	          gosub s_stkchk      ; check for expression stack creep
+	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
 	          pop   rb				 		 ; restore BP (base pointer)
 
-	          rtn	  			 	     ; return to caller
+	          rtn    			 	     ; return to caller
+
+;----- string table
+
+L2:
+  db 'Hello, World!', 10    ;----- cgdefs
+	db	$00    ;----- cgdefb
 	;---- cgpostlude
 	             endp
