@@ -1,7 +1,6 @@
 # Compiled binaries and object files
 *.o
 *.obj
-*.exe
 *.out
 *.bin
 *.dll
@@ -9,8 +8,6 @@
 *.dylib
 
 # Build directories
-build/
-bin/
 obj/
 Debug/
 Release/
