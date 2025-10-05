@@ -309,7 +309,13 @@ static void emittree1(node *a) {
 	case OP_LESS:	/* fallthru */
 	case OP_GREATER:/* fallthru */
 	case OP_LTEQ:	/* fallthru */
-	case OP_GTEQ:	emittree1(a->left);
+	case OP_GTEQ: /* fallthru */
+	//grw - added support for signed and unsigned
+	case OP_BLW:	/* fallthru */
+	case OP_ABV:/* fallthru */
+	case OP_BLWEQ:	/* fallthru */
+	case OP_ABVEQ: /* fallthru */
+	   	emittree1(a->left);
 			emittree1(a->right);
 			commit();
 			ptr = !inttype(a->args[0]);
