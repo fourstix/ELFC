@@ -3,270 +3,488 @@
 [00003]                   ; SubC Copyright 2012-2025 by Nils Holm
 [00004]                   ; -------------------------------------------------------------------
 <00000>                   #include include/ops_c.inc
-<00001>                   ;------------------------------------------------------
-<00002>                   ; ElfC Asm/02 Opcodes
-<00003>                   ;------------------------------------------------------
-<00004>                   
-<00005>                   .op "PUSH","N","9$1 73 8$1 73"
-<00006>                   .op "POP","N","60 72 A$1 F0 B$1"
-<00007>                   .op "CALL","W","D4 H1 L1"
-<00008>                   .op "RTN","","D5"
-<00009>                   .op "CLC","","FC 00"
-<00010>                   .op "STC","","FF 00"
-<00011>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
-<00012>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
-<00013>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
-<00014>                   .op "BRKPT","","79 D1"
-<00015>                   .op "ADDR16","NR","8$2 52 8$1 F4 A$1 9$2 52 9$1 74 B$1"
-<00016>                   .op "SUBR16","NR","8$2 52 8$1 F7 A$1 9$2 52 9$1 77 B$1"
-<00017>                   .op "GOSUB","W","D9 L1"
-<00018>                   .op "RSUB","","C0 21 00"
-<00019>                   
-<00020>                   ;------------------- end ops_c.inc --------------------
-<00000>                   #include include/os_api.inc
-<00001>                   ;--------------------------------------------------------------------
-<00002>                   ; Elf/OS and Mini/DOS Kernel API
-<00003>                   ;--------------------------------------------------------------------
-<00004>                   
-<00005> 0000:             O_OPEN:       equ    0306h             ; open a file
-<00006> 0000:             O_READ:       equ    0309h             ; read from file
-<00007> 0000:             O_WRITE:      equ    030ch             ; write to file
-<00008> 0000:             O_SEEK:       equ    030fh             ; seek to file position
-<00009> 0000:             O_CLOSE:      equ    0312h             ; close file
-<00010> 0000:             O_DELETE:     equ    0318h             ; delete a file
-<00011> 0000:             O_RENAME:     equ    031bh             ; rename a file
-<00012> 0000:             O_TYPE:       equ    0330h             ; console character output
-<00013> 0000:             O_MSG:        equ    0333h             ; console string output
-<00014> 0000:             O_READKEY:    equ    0336h             ; console character input
-<00015> 0000:             O_INPUT:      equ    0339h             ; console string input
-<00016> 0000:             O_INMSG:      equ    034bh             ; console inline messae output
-<00017> 0000:             O_GETDEV:     equ    034eh             ; get device information
-<00018> 0000:             O_GETTOD:     equ    0351h             ; get time of day
-<00019> 0000:             O_ALLOC:      equ    036ch             ; alloc memory block
-<00020> 0000:             O_DEALLOC:    equ    036fh             ; dealloc memory block
-<00021>                   
-<00022>                   ;--------------------------------------------------------------------
-<00023>                   ; Elf/OS and Mini/DOS Data Locations
-<00024>                   ;--------------------------------------------------------------------
-<00025>                   
-<00026> 0000:             K_KEYBUF:     equ    0080h             ; input key buffer
-<00027> 0000:             K_MONTH:      equ    0475h             ; date/time information
-<00028>                   
-<00029>                   ;-------------------------- end os_api.inc --------------------------
+<00001>                   .op "PUSH","N","9$1 73 8$1 73"
+<00002>                   .op "POP","N","60 72 A$1 F0 B$1"
+<00003>                   .op "MOV","NR","9$2 B$1 8$2 A$1"
+<00004>                   .op "MOV","NW","F8 H2 B$1 F8 L2 A$1"
+<00005>                   .op "CALL","W","D4 H1 L1"
+<00006>                   .op "RTN","","D5"
+<00007>                   .op "CLC","","FC 00"
+<00008>                   .op "STC","","FF 00"
+<00009>                   .op "COPY","NR","8$1 A$2 9$1 B$2"
+<00010>                   .op "LOAD","NW","F8 L2 A$1 F8 H2 B$1"
+<00011>                   .op "RETURN","","D5"
+<00012>                   .op "MATCH","NW","8$1 FF L2 52 9$1 7F H2 F1"
+<00013>                   .op "BRKPT","","79 D1"
+<00000>                   #include include/bios.inc
+<00001>                   ; *******************************************************************
+<00002>                   ; *** This software is copyright 2006 by Michael H Riley          ***
+<00003>                   ; *** You have permission to use, modify, copy, and distribute    ***
+<00004>                   ; *** this software so long as this copyright notice is retained. ***
+<00005>                   ; *** This software may not be used in commercial applications    ***
+<00006>                   ; *** without express written permission from the author.         ***
+<00007>                   ; *******************************************************************
+<00008>                   
+<00011>                   #endif
+<00012>                   
+<00013>                   ; Define address for standard BIOS vectors
+<00014>                   #ifndef BIOS
+<00015>                   #define BIOS 0ff00h
+<00016>                   #endif
+<00017>                   
+<00018>                   ; Define address for extended BIOS vectors
+<00019>                   #ifndef EBIOS
+<00020>                   #define EBIOS 0f800h
+<00021>                   #endif
+<00022>                   
+<00023>                   #ifndef _TASM_
+<00024> 0000:             scall:      equ  r4                    ; register for SCALL
+<00025> 0000:             sret:       equ  r5                    ; register for SRET
+<00026>                   
+<00027> 0000:             call:       equ  0ffe0h                ; depricated
+<00028> 0000:             ret:        equ  0fff1h                ; depricated
+<00029>                   #endif
+<00030>                   
+<00031> 0000:             f_boot:     equ  (BIOS+00h)            ; boot from ide device
+<00032> 0000:             f_type:     equ  (BIOS+03h)            ; type 1 character to console
+<00033> 0000:             f_read:     equ  (BIOS+06h)            ; read 1 character from console
+<00034> 0000:             f_msg:      equ  (BIOS+09h)            ; type asciiz string to console
+<00035> 0000:             f_typex:    equ  (BIOS+0ch)            ; depricated, just returns now
+<00036> 0000:             f_input:    equ  (BIOS+0fh)            ; read asciiz from console
+<00037> 0000:             f_strcmp:   equ  (BIOS+12h)            ; compare 2 strings
+<00038> 0000:             f_ltrim:    equ  (BIOS+15h)            ; trim leading spaces
+<00039> 0000:             f_strcpy:   equ  (BIOS+18h)            ; copy an asciiz string
+<00040> 0000:             f_memcpy:   equ  (BIOS+1bh)            ; copy memory
+<00041> 0000:             f_wrtsec:   equ  (BIOS+1eh)            ; write floppy sector (depricated)
+<00042> 0000:             f_rdsec:    equ  (BIOS+21h)            ; read floppy sector (depricated)
+<00043> 0000:             f_seek0:    equ  (BIOS+24h)            ; floppy seek to track 0 (depricated)
+<00044> 0000:             f_seek:     equ  (BIOS+27h)            ; floopy track seek (depricated)
+<00045> 0000:             f_drive:    equ  (BIOS+2ah)            ; select floppy drive (depricated)
+<00046> 0000:             f_setbd:    equ  (BIOS+2dh)            ; set console baud rate
+<00047> 0000:             f_mul16:    equ  (BIOS+30h)            ; 16-bit multiply
+<00048> 0000:             f_div16:    equ  (BIOS+33h)            ; 16-bit division
+<00049> 0000:             f_idereset: equ  (BIOS+36h)            ; reset ide device
+<00050> 0000:             f_idewrite: equ  (BIOS+39h)            ; write ide sector
+<00051> 0000:             f_ideread:  equ  (BIOS+3ch)            ; read ide sector
+<00052> 0000:             f_initcall: equ  (BIOS+3fh)            ; initialize R4 and R5
+<00053> 0000:             f_bootide:  equ  (BIOS+42h)            ; boot from ide device
+<00054> 0000:             f_hexin:    equ  (BIOS+45h)            ; convert ascii number to hex
+<00055> 0000:             f_hexout2:  equ  (BIOS+48h)            ; convert hex to 2-digit ascii
+<00056> 0000:             f_hexout4:  equ  (BIOS+4bh)            ; convert hex to 4-digit ascii
+<00057> 0000:             f_tty:      equ  (BIOS+4eh)            ; type character to console
+<00058> 0000:             f_mover:    equ  (BIOS+51h)            ; program relocator
+<00059> 0000:             f_minimon:  equ  (BIOS+54h)            ; mini monitor
+<00060> 0000:             f_freemem:  equ  (BIOS+57h)            ; determine memory size
+<00061> 0000:             F_isnum:    equ  (BIOS+5ah)            ; determine if D is numeric
+<00062> 0000:             f_atoi:     equ  (BIOS+5dh)            ; convert ascii to integer
+<00063> 0000:             f_uintout:  equ  (BIOS+60h)            ; convert unsigned integer to ascii
+<00064> 0000:             f_intout:   equ  (BIOS+63h)            ; convert signed integer to ascii
+<00065> 0000:             f_inmsg:    equ  (BIOS+66h)            ; type in-line message
+<00066> 0000:             f_inputl:   equ  (BIOS+69h)            ; read limited line from console
+<00067> 0000:             f_brktest:  equ  (BIOS+6ch)            ; check for serial break
+<00068> 0000:             f_findtkn:  equ  (BIOS+6fh)            ; find token in a token table
+<00069> 0000:             f_isalpha:  equ  (BIOS+72h)            ; determine if D is alphabetic
+<00070> 0000:             f_ishex:    equ  (BIOS+75h)            ; determine if D is hexadecimal
+<00071> 0000:             f_isalnum:  equ  (BIOS+78h)            ; determine if D is alpha or numeric
+<00072> 0000:             f_idnum:    equ  (BIOS+7bh)            ; determine type of ascii number
+<00073> 0000:             f_isterm:   equ  (BIOS+7eh)            ; determine if D is a termination char
+<00074> 0000:             f_getdev:   equ  (BIOS+81h)            ; get supported devices
+<00075>                   
+<00076> 0000:             f_version:  equ  (BIOS+0f9h)           ; 3 bytes holding bios version number
+<00077>                   
+<00078>                   ; "Extended" BIOS vectors
+<00079>                   
+<00080> 0000:             f_bread:    equ  (EBIOS+00h)        ; read from onboard serial port
+<00081> 0000:             f_btype:    equ  (EBIOS+03h)        ; write to onboard serial port
+<00082> 0000:             f_btest:    equ  (EBIOS+06h)        ; test onboard serial port
+<00083> 0000:             f_utype:    equ  (EBIOS+09h)        ; write to disk board UART
+<00084> 0000:             f_uread:    equ  (EBIOS+0ch)        ; read from disk board UART
+<00085> 0000:             f_utest:    equ  (EBIOS+0fh)        ; test disk board UART
+<00086> 0000:             f_usetbd:   equ  (EBIOS+12h)        ; set disk board UART baud rate and format
+<00087> 0000:             f_gettod:   equ  (EBIOS+15h)        ; read time of day clock
+<00088> 0000:             f_settod:   equ  (EBIOS+18h)        ; set time of day clock
+<00089> 0000:             f_rdnvr:    equ  (EBIOS+1bh)        ; read non volatile RAM
+<00090> 0000:             f_wrnvr:    equ  (EBIOS+1eh)        ; write non volatile RAM
+<00091> 0000:             f_idesize:  equ  (EBIOS+21h)        ; return size of attached IDE drive(s)
+<00092> 0000:             f_ideid:    equ  (EBIOS+24h)        ; return device data for IDE drive(s)
+<00093> 0000:             f_tmtoas:   equ  (EBIOS+2ah)        ; time to ASCII string
+<00094> 0000:             f_dttoas:   equ  (EBIOS+27h)        ; date to ASCII string
+<00095> 0000:             f_rtctest:  equ  (EBIOS+2dh)        ; test size and presence of RTC/NVR
+<00096> 0000:             f_astodt:   equ  (EBIOS+30h)        ; convert ASCII string to date
+<00097> 0000:             f_astotm:   equ  (EBIOS+33h)        ; convert ASCII string to time
+<00000>                   #include include/kernel.inc
+<00001> 0000:             O_CLDBOOT:    equ    0300h             ; jump to cold boot routine
+<00002> 0000:             O_WRMBOOT:    equ    0303h             ; jump to warm boot routine
+<00003> 0000:             O_OPEN:       equ    0306h             ; open a file
+<00004> 0000:             O_READ:       equ    0309h             ; read from file
+<00005> 0000:             O_WRITE:      equ    030ch             ; write to file
+<00006> 0000:             O_SEEK:       equ    030fh             ; seek to file position
+<00007> 0000:             O_CLOSE:      equ    0312h             ; close file
+<00008> 0000:             O_OPENDIR:    equ    0315h             ; open dir as a file
+<00009> 0000:             O_DELETE:     equ    0318h             ; delete a file
+<00010> 0000:             O_RENAME:     equ    031bh             ; rename a file
+<00011> 0000:             O_EXEC:       equ    031eh             ; execute an external program
+<00012> 0000:             O_MKDIR:      equ    0321h             ; make directory
+<00013> 0000:             O_CHDIR:      equ    0324h             ; change directory
+<00014> 0000:             O_RMDIR:      equ    0327h             ; remove directory
+<00015> 0000:             O_RDLUMP:     equ    032Ah             ; read LAT entry
+<00016> 0000:             O_RDLUMP32:   equ    040fh             ; read 32-bit LAT entry
+<00017> 0000:             O_WRLUMP:     equ    032Dh             ; write LAT entry
+<00018> 0000:             O_WRLUMP32:   equ    0421h             ; write LAT entry
+<00019> 0000:             O_TYPE:       equ    0330h             ; passthrough for console output
+<00020> 0000:             O_MSG:        equ    0333h             ; passthrough for console output
+<00021> 0000:             O_READKEY:    equ    0336h             ; passthrough for console input
+<00022> 0000:             O_INPUT:      equ    0339h             ; passthrough for console input
+<00023> 0000:             O_PRTSTAT:    equ    033ch             ; printer status
+<00024> 0000:             O_PRINT:      equ    033fh             ; output to printer
+<00025> 0000:             O_EXECBIN:    equ    0342h             ; execute from default directory
+<00026> 0000:             O_SETDEF:     equ    0345h             ; set/get default directory
+<00027> 0000:             O_KINIT:      equ    0348h             ; reserved - do not use!!!
+<00028> 0000:             O_INMSG:      equ    034bh             ; passthrough for console output
+<00029> 0000:             O_GETDEV:     equ    034eh             ; passthrough to f_getdef
+<00030> 0000:             O_GETTOD:     equ    0351h             ; passthrough to f_gettod
+<00031> 0000:             O_SETTOD:     equ    0354h             ; passthrough to f_settod
+<00032> 0000:             O_INPUTL:     equ    0357h             ; passthrough to f_inputl
+<00033> 0000:             O_BOOT:       equ    035ah             ; passthrough to f_boot
+<00034> 0000:             O_SETBD:      equ    0360h             ; passthrough to f_setbd
+<00035> 0000:             O_INITCALL:   equ    0363h             ; passthrough to f_initcall
+<00036> 0000:             O_BRKTEST:    equ    0366h             ; passthrough to f_brktest
+<00037> 0000:             O_DEVCTRL:    equ    0369h             ; Hook for device control drivers
+<00038> 0000:             O_ALLOC:      equ    036ch             ; passthrough to alloc
+<00039> 0000:             O_DEALLOC:    equ    036fh             ; passthrough to dealloc
+<00040> 0000:             O_TERMCTRL:   equ    0372h             ; Hook for terminal control drivers
+<00041> 0000:             O_NBREAD:     equ    0375h             ; passthrough to f_nbread
+<00042> 0000:             O_MEMBTRL:    equ    0378h             ; Hook for memory control drivers
+<00043> 0000:             O_LMPTOSEC:   equ    0409h             ; convert lump to sector
+<00044> 0000:             O_SECTOLMP:   equ    040ch             ; convert sector to lump
+<00045> 0000:             O_DIRENT:     equ    037Bh             ; get dirent for a file
+<00046> 0000:             O_RELSEC:     equ    0418h             ; find relative sector
+<00047> 0000:             O_TRUNC:      equ    046ah             ; Truncate file
+<00048> 0000:             O_VIDEO:      equ    0456h             ; video driver hook
+<00049> 0000:             D_IDERESET:   equ    0444h             ; passthrough to f_idereset
+<00050> 0000:             D_IDEREAD:    equ    0447h             ; passthrough to f_ideread
+<00051> 0000:             D_IDEWRITE:   equ    044Ah             ; passthrough to f_idewrite
+<00052> 0000:             D_REAPHEAP:   equ    044Dh             ; calls heap reaper to clean non-permanent heap blocks
+<00053> 0000:             D_SAVESYS:    equ    0459h             ; save system sector
+<00054> 0000:             D_DELCHAIN:   equ    0453h             ; delete an AU chain
+<00055> 0000:             D_ALLOCAU:    equ    045eh             ; allocate an AU
+<00056> 0000:             D_FREEDIRENT: equ    046dh             ; allocate a DIRENT
+<00057> 0000:             I_SERVE:      equ    03f6h             ; address of interrupt chain head
+<00058> 0000:             V_IVEC:       equ    03fdh             ; interrupt head
+<00059> 0000:             V_DVEC:       equ    036ah             ; device head
+<00060> 0000:             K_SYS_DTA:    equ    0100h             ; system sector DTA
+<00061> 0000:             K_VER:        equ    0400h             ; kernel version number
+<00062> 0000:             K_BUILD:      equ    0403h             ; kernel build number
+<00063> 0000:             K_BMONTH:     equ    0405h             ; kernel build month
+<00064> 0000:             K_BDAY:       equ    0406h             ; kernel build day
+<00065> 0000:             K_BYEAR:      equ    0407h             ; kernel build month
+<00066> 0000:             K_LASTSEC:    equ    042bh             ; sector currently in sys DTA
+<00067> 0000:             K_CWD_LUMP:   equ    0436h             ; lump for current directory
+<00068> 0000:             K_EXEC_AU:    equ    043Eh             ; executable starting AU
+<00069> 0000:             K_HIMEM:      equ    0442h             ; high memory pointer
+<00070> 0000:             K_LOWMEM:     equ    0465h             ; lowest memory heap can use
+<00071> 0000:             K_RETVAL:     equ    0467h             ; D on program exit
+<00072> 0000:             K_HEAP:       equ    0468h             ; heap pointer
+<00073> 0000:             K_CLKFREQ:    equ    0470h             ; system clock frequency
+<00074> 0000:             K_MONTH:      equ    0475h             ; date/time
+<00075> 0000:             K_DAY:        equ    0476h
+<00076> 0000:             K_YEAR:       equ    0477h
+<00077> 0000:             K_HOUR:       equ    0478h
+<00078> 0000:             K_MINUTE:     equ    0479h
+<00079> 0000:             K_SECOND:     equ    047ah
+<00080> 0000:             K_SECDEN:     equ    047bh
+<00081> 0000:             K_SECNUM:     equ    047dh
+<00082>                   
+<00083>                   
 <00000>                   #include include/elfc.inc
-<00001>                   ;----------------------------------
-<00002>                   ; ElfC - crt0 subroutine vectors
-<00003>                   ;----------------------------------
-<00004>                   
-<00005>                   #define SUBTBL   $2100
-<00006> 0000:             s_return:  equ  SUBTBL
-<00007>                   
-<00008> 0000:             s_esmove:  equ  (SUBTBL + $03)
-<00009> 0000:             s_stkchk:  equ  (SUBTBL + $06)
-<00010> 0000:             s_dpop16:  equ  (SUBTBL + $09)
-<00011> 0000:             s_dpush16: equ  (SUBTBL + $0C)
-<00012> 0000:             s_dget16:  equ  (SUBTBL + $0F)
-<00013> 0000:             s_epush16: equ  (SUBTBL + $12)
-<00014> 0000:             s_vpop16:  equ  (SUBTBL + $15)
-<00015> 0000:             s_vpush8:  equ  (SUBTBL + $18)
-<00016> 0000:             s_vpush16: equ  (SUBTBL + $1B)
-<00017> 0000:             s_vstor8:  equ  (SUBTBL + $1E)
-<00018> 0000:             s_vstor16: equ  (SUBTBL + $21)
-<00019> 0000:             s_vinc8:   equ  (SUBTBL + $24)
-<00020> 0000:             s_vinc16:  equ  (SUBTBL + $27)
-<00021> 0000:             s_vdec8:   equ  (SUBTBL + $2A)
-<00022> 0000:             s_vdec16:  equ  (SUBTBL + $2D)
-<00023> 0000:             s_vpinc16: equ  (SUBTBL + $30)
-<00024> 0000:             s_vpdec16: equ  (SUBTBL + $33)
-<00025> 0000:             s_linit16: equ  (SUBTBL + $36)
-<00026> 0000:             s_lstor8:  equ  (SUBTBL + $39)
-<00027> 0000:             s_lstor16: equ  (SUBTBL + $3C)
-<00028> 0000:             s_lpush8:  equ  (SUBTBL + $3F)
-<00029> 0000:             s_lpush16: equ  (SUBTBL + $42)
-<00030> 0000:             s_lget16:  equ  (SUBTBL + $45)
-<00031> 0000:             s_lset16:  equ  (SUBTBL + $48)
-<00032> 0000:             s_linc8:   equ  (SUBTBL + $4B)
-<00033> 0000:             s_linc16:  equ  (SUBTBL + $4E)
-<00034> 0000:             s_ldec8:   equ  (SUBTBL + $51)
-<00035> 0000:             s_ldec16:  equ  (SUBTBL + $54)
-<00036> 0000:             s_lpinc16: equ  (SUBTBL + $57)
-<00037> 0000:             s_lpdec16: equ  (SUBTBL + $5A)
-<00038> 0000:             s_psave:   equ  (SUBTBL + $5D)
-<00039> 0000:             s_pstor8:  equ  (SUBTBL + $60)
-<00040> 0000:             s_pstor16: equ  (SUBTBL + $63)
-<00041> 0000:             s_pinc8:   equ  (SUBTBL + $66)
-<00042> 0000:             s_pinc16:  equ  (SUBTBL + $69)
-<00043> 0000:             s_pdec8:   equ  (SUBTBL + $6C)
-<00044> 0000:             s_pdec16:  equ  (SUBTBL + $6F)
-<00045> 0000:             s_pincptr: equ  (SUBTBL + $72)
-<00046> 0000:             s_pdecptr: equ  (SUBTBL + $75)
-<00047> 0000:             s_laddr16: equ  (SUBTBL + $78)
-<00048> 0000:             s_deref8:  equ  (SUBTBL + $7B)
-<00049> 0000:             s_deref16: equ  (SUBTBL + $7E)
-<00050> 0000:             s_swap16:  equ  (SUBTBL + $81)
-<00051> 0000:             s_add16:   equ  (SUBTBL + $84)
-<00052> 0000:             s_sub16:   equ  (SUBTBL + $87)
-<00053> 0000:             s_neg16:   equ  (SUBTBL + $8A)
-<00054> 0000:             s_mdsgn16: equ  (SUBTBL + $8D)
-<00055> 0000:             s_mul16:   equ  (SUBTBL + $90)
-<00056> 0000:             s_div16:   equ  (SUBTBL + $93)
-<00057> 0000:             s_mod16:   equ  (SUBTBL + $96)
-<00058> 0000:             s_bool16:  equ  (SUBTBL + $99)
-<00059> 0000:             s_true16:  equ  (SUBTBL + $9C)
-<00060> 0000:             s_false16: equ  (SUBTBL + $9F)
-<00061> 0000:             s_and16:   equ  (SUBTBL + $A2)
-<00062> 0000:             s_or16:    equ  (SUBTBL + $A5)
-<00063> 0000:             s_xor16:   equ  (SUBTBL + $A8)
-<00064> 0000:             s_not16:   equ  (SUBTBL + $AB)
-<00065> 0000:             s_inv16:   equ  (SUBTBL + $AE)
-<00066> 0000:             s_shl16:   equ  (SUBTBL + $B1)
-<00067> 0000:             s_shr16:   equ  (SUBTBL + $B4)
-<00068> 0000:             s_eq16:    equ  (SUBTBL + $B7)
-<00069> 0000:             s_gt16:    equ  (SUBTBL + $BA)
-<00070> 0000:             s_gte16:   equ  (SUBTBL + $BD)
-<00071> 0000:             s_lt16:    equ  (SUBTBL + $C0)
-<00072> 0000:             s_lte16:   equ  (SUBTBL + $C3)
-<00073> 0000:             s_ne16:    equ  (SUBTBL + $C6)
-<00074> 0000:             s_ugt16:   equ  (SUBTBL + $C9)
-<00075> 0000:             s_uge16:   equ  (SUBTBL + $CC)
-<00076> 0000:             s_ult16:   equ  (SUBTBL + $CF)
-<00077> 0000:             s_ule16:   equ  (SUBTBL + $D2)
-<00078> 0000:             s_scltos2: equ  (SUBTBL + $D5)
-<00079> 0000:             s_scltos4: equ  (SUBTBL + $D8)
-<00080> 0000:             s_sclsos2: equ  (SUBTBL + $DB)
-<00081> 0000:             s_sclsos4: equ  (SUBTBL + $DE)
-<00082> 0000:             s_unscl2:  equ  (SUBTBL + $E1)
-<00083> 0000:             s_unscl4:  equ  (SUBTBL + $E4)
-<00084>                   
-<00085>                   ;----------------------------------
-<00086>                   ; ElfC crt0 - error vectors
-<00087>                   ;----------------------------------
-<00088>                   
-<00089> 0000:                       extrn   auto_err
-<00090> 0000:                       extrn   stk_err
-<00091>                   
-<00092>                   ;---------- end elfc.inc ----------
-[00008]                   
-[00009] 0000:             	           proc hello
-[00010]                   
-<00000>                   #include include/stdlib.inc
-<00001> 0000:                          extrn C_init
-<00002> 0000:                          extrn C_fdinit
-<00003> 0000:                          extrn C_fdtable
-<00004> 0000:                          extrn C_fildes
-<00005> 0000:                          extrn Cabort
-<00006> 0000:                          extrn Cabs
-<00007> 0000:                          extrn Catexit
-<00008> 0000:                          extrn Cexit
-<00009> 0000:                          extrn Cmalloc
-<00010> 0000:                          extrn Ccalloc
-<00011> 0000:                          extrn Crealloc
-<00012> 0000:                          extrn Cfree
-<00013> 0000:                          extrn Catoi
-<00014> 0000:                          extrn Citoa
-<00015> 0000:                          extrn Citox
-<00016> 0000:                          extrn Citou
-<00017> 0000:                          extrn Cdiv
-<00018> 0000:                          extrn Cbsearch
-<00019> 0000:                          extrn Cqsort
-<00020> 0000:                          extrn Crand
-<00021> 0000:                          extrn Csrand
-<00022> 0000:                          extrn Ccreat
-<00023> 0000:                          extrn Copen
-<00024> 0000:                          extrn Cclose
-<00025> 0000:                          extrn Cread
-<00026> 0000:                          extrn Cwrite
-<00027> 0000:                          extrn Clseek
-<00028> 0000:                          extrn Cunlink
-<00029> 0000:                          extrn Crename
-<00030> 0000:                          extrn Cmin
-<00031> 0000:                          extrn Cmax
-[00012]                   
-<00000>                   #include include/stdio.inc
-<00001> 0000:                          extrn Cstdin
-<00002> 0000:                          extrn Cstdout
-<00003> 0000:                          extrn Cstderr
-<00004> 0000:                          extrn Cputs
-<00005> 0000:                          extrn Cputstr
-<00006> 0000:                          extrn Cgets
-<00007> 0000:                          extrn Cputch
-<00008> 0000:                          extrn Cgetch
-<00009> 0000:                          extrn Cputchar
-<00010> 0000:                          extrn Cgetchar
-<00011> 0000:                          extrn Cfdopen
-<00012> 0000:                          extrn Cfclose
-<00013> 0000:                          extrn Cfopen
-<00014> 0000:                          extrn Cferror
-<00015> 0000:                          extrn Cfeof
-<00016> 0000:                          extrn Cclearerr
-<00017> 0000:                          extrn Cfgetc
-<00018> 0000:                          extrn Cfputc
-<00019> 0000:                          extrn Cfgets
-<00020> 0000:                          extrn Cfputs
-<00021> 0000:                          extrn Cungetc
-<00022> 0000:                          extrn Cfread
-<00023> 0000:                          extrn Cfwrite
-<00024> 0000:                          extrn Cfflush
-<00025> 0000:                          extrn Cfprintf
-<00026> 0000:                          extrn Ckprintf
-<00027> 0000:                          extrn Cprintf
-<00028> 0000:                          extrn Csprintf
-<00029> 0000:                          extrn Cvfprintf
-<00030> 0000:                          extrn Cvprintf
-<00031> 0000:                          extrn Cvsprintf
-<00032> 0000:                          extrn Cfscanf
-<00033> 0000:                          extrn Cscanf
-<00034> 0000:                          extrn Csscanf
-<00035> 0000:                          extrn Cfgetpos
-<00036> 0000:                          extrn Cfsetpos
-<00037> 0000:                          extrn Cfseek
-<00038> 0000:                          extrn Cftell
-<00039> 0000:                          extrn Cperror
-<00040> 0000:                          extrn Crewind
-<00041> 0000:                          extrn Cremove
-<00042> 0000:                          extrn Ctmpnam
-<00043> 0000:                          extrn Ctmpfile
-<00044> 0000:                          extrn Cfileno
-[00014]                   	;----- cgpublic
-[00015] 0000:             	              public Cmain
-[00016]                   Cmain:
-[00017]                     ;----- cgsetup
-[00020]                   #endif
-[00021]                   	;---- cgentry
-[00022] 0000: e2          	          sex   r2   				 ; make sure X = SP
-[00023] 0001: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
-[00024] 0005: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
-[00025]                   	;----- begin stmt ------
-[00026]                   	;----- cgldlab
-[00027] 0009: d9 12       	 				gosub s_epush16
-[00028] 000b: 00 23       	 				  dw  L2
-[00029]                   	;----- cgcall
-[00030] 000d: d4 00 00    	          call  Cprintf
-[00031]                   	;----- cgstack
-[00032] 0010: d9 03       	          gosub s_esmove				 ; move pointer for Expression Stack
-[00033] 0012: 00 02       	          dw  2  ;--- offset
-[00034] 0014: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
-[00035]                   	;---- queue dpush
-[00036]                   	;----- push + pop data not required, data remains unchanged in RA
-[00037]                   	;----- end stmt ------
-[00038]                   
-[00039]                   L1:
-[00040]                   	;----- cgexit
-[00041] 0017: e2          	          sex   r2            ; make sure X = SP
-[00042] 0018: d9 06       	          gosub s_stkchk      ; check for expression stack creep
-[00043] 001a: c3 00 00    	          lbdf  stk_err			 ; exit immediately when stack creep error occurs
-[00044] 001d: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
-              bb 
+<00001>                   ;-------------------------------------------------------------------------------
+<00002>                   ; elfc - a library for basic c language functions
+<00003>                   ;-------------------------------------------------------------------------------
+<00004> 0000:                       extrn   epush16
+<00005> 0000:                       extrn   epush8
+<00006> 0000:                       extrn   dpop16
+<00007> 0000:                       extrn   abs16
+<00008> 0000:                       extrn   add16
+<00009> 0000:                       extrn   and16
+<00010> 0000:                       extrn   atoi16
+<00011> 0000:                       extrn   div16
+<00012> 0000:                       extrn   eq16
+<00013> 0000:                     	extrn   false16
+<00014> 0000:                     	extrn   gt16
+<00015> 0000:                     	extrn   gte16
+<00016> 0000:                     	extrn   itoa16
+<00017> 0000:                     	extrn   lfsrshift
+<00018> 0000:                     	extrn   lt16
+<00019> 0000:                     	extrn   lte16
+<00020> 0000:                     	extrn   mdnorm16
+<00021> 0000:                     	extrn   mod16
+<00022> 0000:                     	extrn   mul16
+<00023> 0000:                     	extrn   ne16
+<00024> 0000:                     	extrn   neg16
+<00025> 0000:                     	extrn   or16
+<00026> 0000:                     	extrn   rnd16
+<00027> 0000:                     	extrn   sgn16
+<00028> 0000:                     	extrn   sub16
+<00029> 0000:                     	extrn   tobcd16
+<00030> 0000:                     	extrn   true16
+<00031> 0000:                     	extrn   xor16
+<00032> 0000:                       extrn   not16
+<00033> 0000:                       extrn   bool16
+<00034> 0000:                       extrn   inv16
+<00035> 0000:                       extrn   shl16
+<00036> 0000:                       extrn   shr16
+<00037> 0000:                       extrn   vpush16
+<00038> 0000:                       extrn   vpop16
+<00039> 0000:                       extrn   vpush8
+<00040> 0000:                       extrn   dpush16
+<00041> 0000:                       extrn   dpush8
+<00042> 0000:                       extrn   esmove
+<00043> 0000:                       extrn   linit16
+<00044> 0000:                       extrn   lstor16
+<00045> 0000:                       extrn   lstor8
+<00046> 0000:                       extrn   vstor16
+<00047> 0000:                       extrn   vstor8
+<00048> 0000:                       extrn   swap16
+<00049> 0000:                       extrn   dget16
+<00050> 0000:                       extrn   lpush16
+<00051> 0000:                       extrn   lpush8
+<00052> 0000:                       extrn   deref16
+<00053> 0000:                       extrn   deref8
+<00054> 0000:                       extrn   laddr16
+<00055> 0000:                       extrn   pstor16
+<00056> 0000:                       extrn   pstor8
+<00057> 0000:                       extrn   scltos2
+<00058> 0000:                       extrn   sclsos2
+<00059> 0000:                       extrn   unscl2
+<00060> 0000:                       extrn   vinc16
+<00061> 0000:                       extrn   vdec16
+<00062> 0000:                       extrn   vinc8
+<00063> 0000:                       extrn   vdec8
+<00064> 0000:                       extrn   linc16
+<00065> 0000:                       extrn   ldec16
+<00066> 0000:                       extrn   linc8
+<00067> 0000:                       extrn   ldec8
+<00068> 0000:                       extrn   lpinc16
+<00069> 0000:                       extrn   lpdec16
+<00070> 0000:                       extrn   vpinc16
+<00071> 0000:                       extrn   vpdec16
+<00072> 0000:                       extrn   psave
+<00073> 0000:                       extrn   pinc16
+<00074> 0000:                       extrn   pdec16
+<00075> 0000:                       extrn   pinc8
+<00076> 0000:                       extrn   pdec8
+<00077> 0000:                       extrn   pincptr
+<00078> 0000:                       extrn   pdecptr
+<00079> 0000:                       extrn   escheck
+<00080> 0000:                       extrn   ugt16
+<00081> 0000:                     	extrn   uge16
+<00082> 0000:                       extrn   ult16
+<00083> 0000:                     	extrn   ule16
+<00084> 0000:                       extrn   scltos4
+<00085> 0000:                       extrn   sclsos4
+<00086> 0000:                       extrn   unscl4
+<00087> 0000:                       extrn   lget16
+<00088> 0000:                       extrn   lget8
+<00089> 0000:                       extrn   lset16
+<00090>                   
+<00091>                   ;-------------------------------------------------------------------------------
+<00092>                   ; crt0 - Elf/OS c start-up library
+<00093>                   ;-------------------------------------------------------------------------------
+<00094> 0000:                       extrn   auto_err
+[00009]                   
+[00010] 0000:             	           proc hello
+[00011]                   
+[00012] 0000:                         extrn C_init
+[00013]                   
+[00014] 0000:                         extrn C_fdinit
+[00015]                   
+[00016] 0000:                         extrn C_fdvalid
+[00017]                   
+[00018] 0000:                         extrn C_fdcnt
+[00019]                   
+[00020] 0000:                         extrn Cabort
+[00021]                   
+[00022] 0000:                         extrn Cabs
+[00023]                   
+[00024] 0000:                         extrn Catexit
+[00025]                   
+[00026] 0000:                         extrn Cexit
+[00027]                   
+[00028] 0000:                         extrn Cmalloc
+[00029]                   
+[00030] 0000:                         extrn Ccalloc
+[00031]                   
+[00032] 0000:                         extrn Crealloc
+[00033]                   
+[00034] 0000:                         extrn Cfree
+[00035]                   
+[00036] 0000:                         extrn Catoi
+[00037]                   
+[00038] 0000:                         extrn Citoa
+[00039]                   
+[00040] 0000:                         extrn Citox
+[00041]                   
+[00042] 0000:                         extrn Citou
+[00043]                   
+[00044] 0000:                         extrn Cdiv
 [00045]                   
-[00046] 0022: d5          	          rtn    			 	     ; return to caller
+[00046] 0000:                         extrn Cbsearch
 [00047]                   
-[00048]                   ;----- string table
+[00048] 0000:                         extrn Cqsort
 [00049]                   
-[00050]                   L2:
-[00051] 0023: 48 65 6c 6c   db 'Hello, World!', 10    ;----- cgdefs
+[00050] 0000:                         extrn Crand
+[00051]                   
+[00052] 0000:                         extrn Csrand
+[00053]                   
+[00054] 0000:                         extrn Ccreat
+[00055]                   
+[00056] 0000:                         extrn Copen
+[00057]                   
+[00058] 0000:                         extrn Cclose
+[00059]                   
+[00060] 0000:                         extrn Cread
+[00061]                   
+[00062] 0000:                         extrn Cwrite
+[00063]                   
+[00064] 0000:                         extrn Clseek
+[00065]                   
+[00066] 0000:                         extrn Cunlink
+[00067]                   
+[00068] 0000:                         extrn Crename
+[00069]                   
+[00070] 0000:                         extrn Cmin
+[00071]                   
+[00072] 0000:                         extrn Cmax
+[00073]                   
+[00074] 0000:                         extrn Cstdin
+[00075]                   
+[00076] 0000:                         extrn Cstdout
+[00077]                   
+[00078] 0000:                         extrn Cstderr
+[00079]                   
+[00080] 0000:                         extrn Cputs
+[00081]                   
+[00082] 0000:                         extrn Cputstr
+[00083]                   
+[00084] 0000:                         extrn Cgets
+[00085]                   
+[00086] 0000:                         extrn Cputch
+[00087]                   
+[00088] 0000:                         extrn Cgetch
+[00089]                   
+[00090] 0000:                         extrn Cputchar
+[00091]                   
+[00092] 0000:                         extrn Cgetchar
+[00093]                   
+[00094] 0000:                         extrn Cfdopen
+[00095]                   
+[00096] 0000:                         extrn Cfclose
+[00097]                   
+[00098] 0000:                         extrn Cfopen
+[00099]                   
+[00100] 0000:                         extrn Cferror
+[00101]                   
+[00102] 0000:                         extrn Cfeof
+[00103]                   
+[00104] 0000:                         extrn Cclearerr
+[00105]                   
+[00106] 0000:                         extrn Cfgetc
+[00107]                   
+[00108] 0000:                         extrn Cfputc
+[00109]                   
+[00110] 0000:                         extrn Cfgets
+[00111]                   
+[00112] 0000:                         extrn Cfputs
+[00113]                   
+[00114] 0000:                         extrn Cungetc
+[00115]                   
+[00116] 0000:                         extrn Cfread
+[00117]                   
+[00118] 0000:                         extrn Cfwrite
+[00119]                   
+[00120] 0000:                         extrn Cfflush
+[00121]                   
+[00122] 0000:                         extrn Cfprintf
+[00123]                   
+[00124] 0000:                         extrn Ckprintf
+[00125]                   
+[00126] 0000:                         extrn Cprintf
+[00127]                   
+[00128] 0000:                         extrn Csprintf
+[00129]                   
+[00130] 0000:                         extrn Cvfprintf
+[00131]                   
+[00132] 0000:                         extrn Cvprintf
+[00133]                   
+[00134] 0000:                         extrn Cvsprintf
+[00135]                   
+[00136] 0000:                         extrn Cfscanf
+[00137]                   
+[00138] 0000:                         extrn Cscanf
+[00139]                   
+[00140] 0000:                         extrn Csscanf
+[00141]                   
+[00142] 0000:                         extrn Cfgetpos
+[00143]                   
+[00144] 0000:                         extrn Cfsetpos
+[00145]                   
+[00146] 0000:                         extrn Cfseek
+[00147]                   
+[00148] 0000:                         extrn Cftell
+[00149]                   
+[00150] 0000:                         extrn Cperror
+[00151]                   
+[00152] 0000:                         extrn Crewind
+[00153]                   
+[00154] 0000:                         extrn Cremove
+[00155]                   
+[00156] 0000:                         extrn Ctmpnam
+[00157]                   
+[00158] 0000:                         extrn Ctmpfile
+[00159]                   
+[00160] 0000:                         extrn Cfileno
+[00161]                   	;----- cgpublic
+[00162] 0000:             	              public Cmain
+[00163]                   Cmain:
+[00164]                     ;----- cgsetup
+[00167]                   #endif
+[00168]                   	;---- cgentry
+[00169] 0000: e2          	          sex   r2   				 ; make sure X = SP
+[00170] 0001: 9b 73 8b 73 	          push  rb				 		 ; save current BP (base pointer)
+[00171] 0005: 87 ab 97 bb 	          copy  r7, rb			 	 ; set BP to current ES location
+[00172]                   	;----- begin stmt ------
+[00173]                   	;---- queue lbr L3
+[00174]                   	;----- cgjump
+[00175] 0009: c0 00 1b    	 				  lbr	L3
+[00176]                   
+[00177]                   L2:
+[00178] 000c: 48 65 6c 6c   db 'Hello, World!', 10    ;----- cgdefs
               6f 2c 20 57 
               6f 72 6c 64 
               21 0a 
-[00052] 0031: 00          	db	$00    ;----- cgdefb
-[00053]                   	;---- cgpostlude
-[00054] 0032:             	             endp
+[00179] 001a: 00          	db	$00    ;----- cgdefb
+[00180]                   
+[00181]                   L3:
+[00182]                   	;----- cgldlab
+[00183] 001b: d4 00 00    	 				call epush16
+[00184] 001e: 00 0c       	 				  dw  L2
+[00185]                   	;----- cgcall
+[00186] 0020: d4 00 00    	          call  Cprintf
+[00187]                   	;----- cgstack
+[00188] 0023: d4 00 00    	          call  esmove				 ; move pointer for Expression Stack
+[00189] 0026: 00 02       	          dw  2  ;--- offset
+[00190] 0028: c3 00 00    	          lbdf  auto_err			 ; exit immediately when stack is exhausted by auto variables
+[00191]                   	;---- queue dpush
+[00192]                   	;----- push + pop data not required, data remains unchanged in RA
+[00193]                   	;----- end stmt ------
+[00194]                   
+[00195]                   L1:
+[00196]                   	;----- cgexit
+[00197] 002b: e2          	          sex   r2            ; make sure X = SP
+[00198] 002c: d4 00 00    	          call  escheck       ; check for expression stack creep
+[00199] 002f: 60 72 ab f0 	          pop   rb				 		 ; restore BP (base pointer)
+              bb 
+[00200]                   
+[00201] 0034: d5          	          rtn	  			 	     ; return to caller
+[00202]                   	;---- cgpostlude
+[00203] 0035:             	             endp
