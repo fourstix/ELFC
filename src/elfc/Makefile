@@ -3,7 +3,7 @@ CFLAGS = -Wall -g
 LDFLAGS =
 
 SRCS = cgelf.c decl.c error.c expr.c gen.c main.c misc.c \
-       prep.c opt.c scan.c stmt.c sym.c tree.c
+       modpath.c prep.c opt.c scan.c stmt.c sym.c tree.c
 OBJS = $(SRCS:.c=.o)
 TARGET = elfc
 
