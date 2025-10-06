@@ -1,6 +1,7 @@
 # Compiled binaries and object files
 *.o
 *.obj
+*.exe
 *.out
 *.bin
 *.dll
