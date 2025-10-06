@@ -4,10 +4,10 @@
  * In the public domain
  *
  * Test the file position functions
- * Test 2 of 
+ * Test 2 of
  */
 #define _STGROM_
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -39,30 +39,32 @@ void pr(char *s) {
 void test_fscan(void) {
   int i, j, k;
   char c;
+  unsigned int u;
   FILE *f;
 
-  pr("fscanf");    
+  pr("fscanf");
   if ((f = fopen("fscanf.tst", "w")) == NULL) {
     fail("fopen-1");
 		return;
 	}
-  fprintf(f, "%d %x %o", -35, 0x0400, 0135);
+  fprintf(f, "%d %x %o %u", -35, 0x0400, 0135, 60000);
   fprintf(f, "%s", "a\t100%  pass\n");
   rewind(f);
   /* read back test data we just wrote*/
-  fscanf(f, "%d %x %o", &i, &j, &k);
+  fscanf(f, "%d %x %o %u", &i, &j, &k, &u);
   /* read single character */
   fscanf(f, "%c", &c);
   /* whitespace seperates data string into two strings */
   fscanf(f, "%20s %20s", s1, s2);
   fclose(f);
-  
+
   if (i != -35) fail("fcanf-1 (int)");
   if (j != 1024) fail("fcanf-2 (hex)");
   if (k != 93) fail("fcanf-3 (octal)");
-  if (c != 'a') fail("fcanf-4 (char)");
-  if (strcmp(s1, "100%")) fail("fcanf-5 (%%)");
-  if (strcmp(s2, "pass")) fail("fcanf-6 (string)");
+  if (u != 60000) fail("fcanf-4 (unsigned int)");
+  if (c != 'a') fail("fcanf-5 (char)");
+  if (strcmp(s1, "100%")) fail("fcanf-6 (%%)");
+  if (strcmp(s2, "pass")) fail("fcanf-7 (string)");
 }
 
 

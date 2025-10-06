@@ -4,9 +4,9 @@
  * In the public domain
  *
  * Test the stdout and math functions
- * Test 4 of 
+ * Test 4 of
  */
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -30,11 +30,9 @@ void pr(char *s) {
 }
 
 void test_math(void) {
-	#define unsigned	char *
-
 	int	i, j, k;
 	int	rns[MAX];
-  
+
   i = 12345;
 
 	pr("atoi");
@@ -52,7 +50,7 @@ void test_math(void) {
 	if (abs(INT_MIN) != INT_MAX) fail("abs-4"); /* man page says so */
 
 
- 	pr("rand");  
+ 	pr("rand");
   //grw - not sure if this is a valid test,since  pseudo-random numbers may repeat
   //grw - although 10 out of 65,000 is fairly low probability, it could happen...
 	for (i=0; i<MAX; i++) {
@@ -63,18 +61,18 @@ void test_math(void) {
 				break;
 			}
 		rns[i] = k;
-    //grw - is unsigned even supported yet???
-		if ((unsigned) k > (unsigned) RAND_MAX) fail("rand-2");
+
+  	if ((unsigned) k > (unsigned) RAND_MAX) fail("rand-2");
 	}
-  
+
   //grw - print the numbers to validate randomness
   for (i=0; i<MAX; i++) {
     if ((i % 5) == 0)
       printf("\n% 5d", rns[i]);
-    else 
+    else
       printf(", % 5d", rns[i]);
   }
-  puts("");  
+  puts("");
 }
 void spfn_test(char *id, char *fmt, int v, char *res) {
   printf("sprintf test %s\n", id);
@@ -89,7 +87,7 @@ void spfn_test(char *id, char *fmt, int v, char *res) {
 	}
 }
 
-void spfs_test(char *id, char *fmt, char *v, char *res) {  
+void spfs_test(char *id, char *fmt, char *v, char *res) {
   printf("sprintf test %s\n", id);
 	sprintf(buf, fmt, v);
 	if (strcmp(buf, res)) {
@@ -104,7 +102,7 @@ void spfs_test(char *id, char *fmt, char *v, char *res) {
 
 void test_sprintf(void) {
 	pr("sprintf");
-  
+
 	spfn_test("1", "%d", 12345, "12345");
 	spfn_test("2", "%d", -12345, "-12345");
 	spfn_test("3", "%+d", 12345, "+12345");
@@ -130,6 +128,7 @@ void test_sprintf(void) {
   //grw - %x and %o are printed as unsigned values
 	spfn_test("23", "%x", -0x2def, "d211");
 	spfn_test("24", "%#x", -0x2def, "0xd211");
+  //grw - plus is ignored for unsigned types
 	spfn_test("25", "%+#X", 0x2def, "0X2DEF");
 	spfn_test("26", "%#+X", 0x2def, "0X2DEF");
 	spfn_test("27", "%#+X", 0x2def, "0X2DEF");
@@ -149,6 +148,7 @@ void test_sprintf(void) {
 	spfn_test("41", "%o", -0417, "177361");
 	spfn_test("42", "%#o", 0417, "0417");
 	spfn_test("43", "%#o", -0417, "0177361");
+  //grw - plus is ignored for unsigned types
 	spfn_test("44", "%#+o", 0417, "0417");
 	spfn_test("45", "%+#o", 0417, "0417");
 	spfn_test("46", "%#10o", 0417, "      0417");
@@ -172,6 +172,21 @@ void test_sprintf(void) {
 	spfn_test("64", "%#-1x", -0xabc, "0xf544");
 	spfs_test("65", "%1s", "foo", "foo");
 	spfs_test("66", "%-1s", "foo", "foo");
+  //grw - tests for unsigned integer format
+  spfn_test("67", "%u", 54321, "54321");
+  //grw - plus is ignored for unsigned types
+	spfn_test("68", "%+u", 54321, "54321");
+	spfn_test("69", "%10u", 54321, "     54321");
+  //grw - plus is ignored for unsigned types
+	spfn_test("70", "%+10u", 54321, "     54321");
+	spfn_test("71", "%-10u", 54321, "54321     ");
+  //grw - plus is ignored for unsigned types
+	spfn_test("72", "%-+10u", 54321, "54321     ");
+	spfn_test("73", "%+-10u", 54321, "54321     ");
+	spfn_test("74", "% 10u", 54321, "     54321");
+	spfn_test("75", "%010u", 54321, "0000054321");
+  spfn_test("76", "%u", -1, "65535");
+
 }
 
 
