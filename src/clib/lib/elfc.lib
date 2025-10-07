@@ -1,0 +1,436 @@
+.big
+{epush16
+:0000 e7 43 73 43 73 e2 c0 21 00
+}
+.big
+{dpop16
+:0000 e7 60 47 aa 07 ba e2 c0 21 00
+}
+.big
+{vpush16
+:0000 43 b8 43 a8 e7 48 ae 08 73 8e 73 e2 c0 21 00
+}
+.big
+{vpop16
+:0000 e7 43 b8 43 a8 60 47 58 18 07 58 e2 c0 21 00
+}
+.big
+{dpush16
+:0000 e7 9a 73 8a 73 e2 c0 21 00
+}
+.big
+{vpush8
+:0000 43 b8 43 a8 e7 43 c2 00 10 08 fe f8 ff cf f8 00
+:0010 73 48 73 e2 c0 21 00
++0007
+}
+.big
+{lstor16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 87 a8
+:0010 97 b8 18 48 5d 1d 08 5d c0 21 00
+}
+.big
+{lstor8
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 87 a8
+:0010 97 b8 18 48 5d c0 21 00
+}
+.big
+{linit16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 43 ae
+:0010 43 5d 1d 8e 5d c0 21 00
+}
+.big
+{esmove
+:0000 e2 43 ae 43 52 87 f4 a7 8e 52 97 74 b7 87 fd 00
+\es_min 000f
+/es_min 0012
+:0010 97 7d 00 c0 21 00
+}
+.big
+{add16
+:0000 e7 60 72 60 f4 73 72 60 74 73 27 e2 c0 21 00
+}
+.big
+{and16
+:0000 e7 60 72 60 f2 73 72 60 f2 73 27 e2 c0 21 00
+}
+.big
+{div16
+:0000 8a ae e7 60 72 ad 72 bd 72 aa f0 ba e2 8d ca 00
+:0010 1e 9d ca 00 1e e7 f8 00 73 73 e2 c0 21 00 f8 00
+:0020 bf af b8 a8 18 9d fa 80 ca 00 3a 8d fe ad 9d 7e
+:0030 bd 88 fe a8 98 7e b8 c0 00 25 8d ca 00 59 9d ca
+:0040 00 59 8e f6 cb 00 50 9f fb ff bf 8f fb ff af 1f
+:0050 e7 9f 73 8f 73 e2 c0 21 00 8a ac 9a bc 8d 52 8a
+:0060 f7 aa 9d 52 9a 77 ba c3 00 71 8c aa 9c ba c0 00
+:0070 7b 88 52 8f f4 af 98 52 9f 74 bf 9d f6 bd 8d 76
+:0080 ad 98 f6 b8 88 76 a8 c3 00 42 c0 00 3a
++000f
++0013
++0029
++0038
++003c
++0040
++0045
++0068
++006f
++0088
++008b
+}
+.big
+{eq16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?false16 0011
+:0010 c0 00 00
+}
+.big
+{ne16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 ca 00 00
+?false16 0011
+:0010 c0 00 00
+}
+.big
+{false16
+:0000 f8 00 e7 73 73 e2 c0 21 00
+}
+.big
+{gt16
+?false16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0013
+?false16 0016
+:0010 07 fe cb 00 00 c0 00 00
+}
+.big
+{gte16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0013
+?false16 0016
+:0010 07 fe cb 00 00 c0 00 00
+}
+.big
+{lt16
+?false16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0013
+?false16 0016
+:0010 07 fe c3 00 00 c0 00 00
+}
+.big
+{lte16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0013
+?false16 0016
+:0010 07 fe c3 00 00 c0 00 00
+}
+.big
+{mdsgn16
+:0000 e7 60 72 ad 72 bd 72 ac f0 bc e2 9c 52 9d f3 fe
+:0010 f8 00 7e ae 9c fe cb 00 22 9c fb ff bc 8c fb ff
+:0020 ac 1c 9d fe cb 00 30 9d fb ff bd 8d fb ff ad 1d
+:0030 e7 9c 73 8c 73 9d 73 8d 73 f8 00 ba 8e aa e2 c0
+:0040 21 00
++0017
++0025
+}
+.big
+{stkchk
+:0000 e2 87 52 8b f7 ae 97 52 9b 77 52 8e f1 ca 00 15
+:0010 fc 00 c0 21 00 ff 00 c0 21 00
++000e
+}
+.big
+{mod16
+:0000 e7 60 60 9a 73 8a 73 e2 c0 21 00
+}
+.big
+{mul16
+:0000 e7 60 72 ad 72 bd 72 ac f0 bc 8a ae f8 00 bf af
+:0010 e2 8d ca 00 30 9d ca 00 30 8e f6 cb 00 27 8f fb
+:0020 ff af 9f fb ff bf 1f e7 9f 73 8f 73 e2 c0 21 00
+:0030 9d f6 bd 8d 76 ad cb 00 43 8c 52 8f f4 af 9c 52
+:0040 9f 74 bf 8c fe ac 9c 7e bc c0 00 11
++0013
++0017
++001c
++0037
++004a
+}
+.big
+{neg16
+:0000 17 07 fb ff fc 01 57 17 07 fb ff 7c 00 57 27 27
+:0010 c0 21 00
+}
+.big
+{or16
+:0000 e7 60 72 60 f1 73 72 60 f1 73 27 e2 c0 21 00
+}
+.big
+{sub16
+:0000 e7 60 72 60 f5 73 72 60 75 73 27 e2 c0 21 00
+}
+.big
+{psave
+:0000 87 a8 97 b8 18 48 aa 08 ba e2 c0 21 00
+}
+.big
+{true16
+:0000 e7 f8 00 73 f8 01 73 e2 c0 21 00
+}
+.big
+{xor16
+:0000 e7 60 72 60 f3 73 72 60 f3 73 27 e2 c0 21 00
+}
+.big
+{not16
+?false16 0006
+?true16 0009
+:0000 e7 60 72 f1 e2 ca 00 00 c0 00 00
+}
+.big
+{bool16
+?true16 0008
+?false16 000d
+:0000 e7 60 72 f1 e2 ff 00 ca 00 00 fc 00 c0 00 00
+}
+.big
+{inv16
+:0000 17 07 fb ff 57 17 07 fb ff 57 27 27 c0 21 00
+}
+.big
+{laddr16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d e7 9d
+:0010 73 8d 73 e2 c0 21 00
+}
+.big
+{shl16
+:0000 e7 60 72 ac f1 c2 00 25 72 ca 00 29 8c ff 10 c3
+:0010 00 29 72 a8 07 b8 98 fe b8 88 7e a8 2c 8c ca 00
+?false16 002b
+:0020 16 98 73 88 73 e2 c0 21 00 60 c0 00 00
++0006
++000a
++0010
++001f
+}
+.big
+{shr16
+:0000 e7 60 72 ac f1 c2 00 25 72 ca 00 29 8c ff 10 c3
+:0010 00 29 72 a8 07 b8 98 f6 b8 88 76 a8 2c 8c ca 00
+?false16 002b
+:0020 16 98 73 88 73 e2 c0 21 00 60 c0 00 00
++0006
++000a
++0010
++001f
+}
+.big
+{vstor16
+:0000 43 b8 43 a8 e7 60 47 58 18 07 58 27 27 e2 c0 21
+:0010 00
+}
+.big
+{vstor8
+:0000 43 b8 43 a8 e7 60 07 58 27 e2 c0 21 00
+}
+.big
+{swap16
+:0000 e7 60 87 a8 97 b8 48 ad 48 bd 08 57 60 8d 58 18
+:0010 08 73 27 9d 58 e2 c0 21 00
+}
+.big
+{dget16
+:0000 e7 60 47 aa 07 ba 27 27 e2 c0 21 00
+}
+.big
+{lpush16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d e7 4d
+:0010 ae 0d 73 8e 73 e2 c0 21 00
+}
+.big
+{lpush8
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d e7 43
+:0010 c2 00 1a 0d fe f8 ff cf f8 00 73 0d 73 e2 c0 21
+:0020 00
++0011
+}
+.big
+{deref16
+:0000 e7 60 47 ad 07 bd 4d ae 0d 73 8e 73 e2 c0 21 00
+}
+.big
+{deref8
+:0000 e7 60 47 ad 07 bd 43 c2 00 11 0d fe f8 ff cf f8
+:0010 00 73 0d 73 e2 c0 21 00
++0008
+}
+.big
+{pstor16
+:0000 e7 60 47 5a 1a 07 5a 27 27 e2 c0 21 00
+}
+.big
+{pstor8
+:0000 e7 60 07 5a 27 e2 c0 21 00
+}
+.big
+{scltos2
+:0000 87 a8 97 b8 18 48 fe ae 08 7e 58 28 8e 58 e2 c0
+:0010 21 00
+}
+.big
+{sclsos2
+:0000 87 a8 97 b8 18 18 18 48 fe ae 08 7e 58 28 8e 58
+:0010 e2 c0 21 00
+}
+.big
+{vinc16
+:0000 43 bd 43 ad 4d a8 0d b8 18 98 5d 2d 88 5d e2 c0
+:0010 21 00
+}
+.big
+{vdec16
+:0000 43 bd 43 ad 4d a8 0d b8 28 98 5d 2d 88 5d e2 c0
+:0010 21 00
+}
+.big
+{vinc8
+:0000 43 bd 43 ad 0d a8 18 88 5d e2 c0 21 00
+}
+.big
+{vdec8
+:0000 43 bd 43 ad 0d a8 28 88 5d e2 c0 21 00
+}
+.big
+{linc16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 4d a8
+:0010 0d b8 18 98 5d 2d 88 5d e2 c0 21 00
+}
+.big
+{ldec16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 4d a8
+:0010 0d b8 28 98 5d 2d 88 5d e2 c0 21 00
+}
+.big
+{linc8
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 0d a8
+:0010 18 88 5d e2 c0 21 00
+}
+.big
+{ldec8
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 0d a8
+:0010 28 88 5d e2 c0 21 00
+}
+.big
+{lpinc16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 43 bc
+:0010 43 ac 4d a8 0d b8 8c 52 88 f4 a8 9c 52 98 74 b8
+:0020 98 5d 2d 88 5d e2 c0 21 00
+}
+.big
+{lpdec16
+:0000 e2 43 ae 43 52 8b f4 ad 8e 52 9b 74 bd 1d 43 bc
+:0010 43 ac 4d a8 0d b8 8c 52 88 f7 a8 9c 52 98 77 b8
+:0020 98 5d 2d 88 5d c0 21 00
+}
+.big
+{vpinc16
+:0000 e2 43 bd 43 ad 43 bc 43 ac 4d a8 0d b8 8c 52 88
+:0010 f4 a8 9c 52 98 74 b8 98 5d 2d 88 5d c0 21 00
+}
+.big
+{vpdec16
+:0000 e2 43 bd 43 ad 43 bc 43 ac 4d a8 0d b8 8c 52 88
+:0010 f7 a8 9c 52 98 77 b8 98 5d 2d 88 5d c0 21 00
+}
+.big
+{pinc16
+:0000 4a a8 0a b8 18 98 5a 2a 88 5a e2 c0 21 00
+}
+.big
+{pdec16
+:0000 4a a8 0a b8 28 98 5a 2a 88 5a e2 c0 21 00
+}
+.big
+{pinc8
+:0000 0a a8 18 88 5a e2 c0 21 00
+}
+.big
+{pdec8
+:0000 0a a8 28 88 5a e2 c0 21 00
+}
+.big
+{pincptr
+:0000 e2 43 bc 43 ac 4a a8 0a b8 8c 52 88 f4 a8 9c 52
+:0010 98 74 b8 98 5a 2a 88 5a c0 21 00
+}
+.big
+{pdecptr
+:0000 e2 4a a8 0a b8 43 bc 43 ac 8c 52 88 f7 a8 9c 52
+:0010 98 77 b8 98 5a 2a 88 5a c0 21 00
+}
+.big
+{ugt16
+?false16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0011
+?false16 0014
+:0010 c3 00 00 c0 00 00
+}
+.big
+{uge16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0011
+?false16 0014
+:0010 c3 00 00 c0 00 00
+}
+.big
+{ult16
+?false16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0011
+?false16 0014
+:0010 cb 00 00 c0 00 00
+}
+.big
+{ule16
+?true16 000e
+:0000 e7 60 72 60 f5 73 72 60 75 73 72 f1 e2 c2 00 00
+?true16 0011
+?false16 0014
+:0010 cb 00 00 c0 00 00
+}
+.big
+{scltos4
+:0000 87 a8 97 b8 18 48 fe ae 08 7e 58 8e fe ae 08 7e
+:0010 58 28 8e 58 e2 c0 21 00
+}
+.big
+{sclsos4
+:0000 87 a8 97 b8 18 18 18 48 fe ae 08 7e 58 8e fe ae
+:0010 08 7e 58 8e 28 8e 58 e2 c0 21 00
+}
+.big
+{unscl2
+:0000 87 a8 97 b8 18 48 ae 08 f6 58 28 8e 76 58 e2 c0
+:0010 21 00
+}
+.big
+{unscl4
+:0000 87 a8 97 b8 18 48 ae 08 f6 58 8e 76 ae 08 f6 58
+:0010 28 8e 76 58 e2 c0 21 00
+}
+.big
+{lget16
+:0000 e2 43 ae 43 52 8b f4 a8 8e 52 9b 74 b8 18 48 aa
+:0010 08 ba c0 21 00
+}
+.big
+{lset16
+:0000 e2 43 ae 43 52 8b f4 a8 8e 52 9b 74 b8 18 8a 58
+:0010 18 9a 58 c0 21 00
+}
