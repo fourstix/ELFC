@@ -135,13 +135,17 @@ Version 3
 
 * Version 3 adds support for the `signed` and `unsigned` keywords.
 
-* Implement a subroutine scheme for frequently used routines in the ElfC library to improve performance.
+* This version implements a subroutine scheme for frequently used routines in the ElfC library to improve performance.
 
-* Support for creating a string table in generated code was added to improve performance.
+* The generated code creates a string table for improved performance.
 
-* The stdlib defines the `size_t` type and the C library functions were updated ot use this type.
+* The stdlib defines the `size_t` type and the C library functions were updated to use this type.
 
 * The unsigned conversion `%u` is supported by the stdio printing and scanning functions.
+
+* Several functions were replaced by inline assembly code to remove dependencies on BIOS functions.
+
+* The included files were cleaned up to eliminate unused definitions, and the kerneal api were moved to  a separate included file.
 
 More information about Version 3, signed and unsigned types, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
@@ -422,7 +426,7 @@ Future Goals
 * Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
 
 
-Differences Between SubC and Full C89
+Differences Between ElfC and Full C89
 -------------------------------------
 
 *  The following keywords are not recognized:
