@@ -518,7 +518,7 @@ Repository Contents
   * scanfmt.c -- Demo of various scanf format conversions
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
-* **/src/clib/lib**  -- compiled ElfC C Library files
+* **/src/clib/lib**  -- Compiled ElfC C Library files
 * **/src/clib/elfc**  -- Source files for elfc.lib library
   * clean.bat - Windows batch file to clean binaries before assembling.
   * build.bat - Windows batch file to assemble files into elfc.lib system library.
@@ -538,14 +538,14 @@ Repository Contents
   * elfc_r304.zip** -- A zip file with the Windows version of the Release 3.04 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
   * elfc.arm65.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.04 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
   * elfc.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.04 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-* **/sample** -- sample code for the Walk-through documentation (TBD)
+* **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements
 -----------------
 
-Kudos to Tony Hefner for contributing the Linux builds and the make files.
+Kudos to Tony Hefner for contributing the Linux builds, the Linux make files, and adding support for Cmake.
 
-A big thank-you to David Madole for his suggestions on how to improve the code performance.
+A big thank-you to David Madole for his suggestions to improve code performance, including designing a sub-routine scheme that doubled the code performance.
 
 Many thanks to Mike Riley for making his library code available and his patience in answering my questions.
 

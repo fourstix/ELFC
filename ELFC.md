@@ -7,8 +7,8 @@ Types Supported
 <tr><th>Keyword</th><th>Name</th><th>Description</th><th>Minimum</th><th>Maximum</th></tr>
 <tr><td>char</td><td rowspan="2">Character</td><td rowspan="2">8-bit unsigned</td><td rowspan="2">0</td><td rowspan="2">255</td></tr>
 <tr><td>unsigned char</td></tr>
-<tr><td>signed char</td><td>Signed Character</td><td>8-bit signed</td><td>-127</td><td>127</td></tr>
-<tr><td>int</td><td rowspan="3">Signed Integer</td><td rowspan="3">16-bit signed</td><td rowspan="3">-32767</td><td rowspan="3">32767</td></tr>
+<tr><td>signed char</td><td>Signed Character</td><td>8-bit signed</td><td>-128</td><td>127</td></tr>
+<tr><td>int</td><td rowspan="3">Signed Integer</td><td rowspan="3">16-bit signed</td><td rowspan="3">-32768</td><td rowspan="3">32767</td></tr>
 <tr><td>signed int</td></tr>
 <tr><td>signed</td></tr>
 <tr><td>unsigned int</td><td rowspan="2">Unsigned Integer</td><td  rowspan="2">16-bit unsigned</td><td  rowspan="2">0</td><td  rowspan="2">65535</td></tr>
@@ -103,7 +103,7 @@ The following statement and preprocessor directive were added to SubC by ElfC to
 * The `#pragma` preprocessor directive can be used to directly insert a line of assembly code into the generated assembly file.
 
 
-Library Compiler Option 
+Library Compiler Option
 ------------------------
 
 * The new `-L` ElfC option will compile and assemble a C source file into a prg file defining an Elf/OS (Mini/DOS) library procedure.
@@ -134,9 +134,9 @@ When compiled with:
 ```
 ..\elfc -L abs.c
 ```
-Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.  
+Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.
 ```
-type abort.prg abs.prg exit.prg > stdlib.lib 
+type abort.prg abs.prg exit.prg > stdlib.lib
 ```
 
 
@@ -146,7 +146,7 @@ Print Conversions
 * The width specification is suppored.
 * The suppression operator `*` is supported.
 * The decimal precision is not supported.
-* The length modifiers h, l (el) and L are not supported. 
+* The length modifiers h, l (el) and L are not supported.
 * The `%d, %i, %u, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
 * The %f, %e, %E, %g and %G conversions are not supported.
 
@@ -174,8 +174,8 @@ The following functions were omitted from the ElfC stdlib C library.
 * char\* getenv(char *name);
 
 *Notes:*
-* *All the long and double utility functions were omitted because these types are not supported in the current version.* 
-* *The system and genenv() have no equivalent functions in Elf/OS or Mini/DOS* 
+* *All the long and double utility functions were omitted because these types are not supported in the current version.*
+* *The system and genenv() have no equivalent functions in Elf/OS or Mini/DOS*
 
 
 Unsupported Stdio Functions
@@ -218,7 +218,7 @@ Stdarg Modified Functions
 Assert Modified Function
 ------------------------
 * `assert` is implemented by function, because the preprocessor does not support macros with parameters.
-* The `assert` function has arguments for the assertion, file name and line number. 
+* The `assert` function has arguments for the assertion, file name and line number.
 * If the macro `NDEBUG` is defined the `assert` function returns immediately.
 * The `__FILE__` and `__LINE__` macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
 
@@ -237,7 +237,7 @@ struct tm {
     int tm_year;      /* years since 1900 */
     int tm_wday;      /* days since Sunday (0 to 6) */
     int tm_yday;      /* days since January 1 (0 to 365) */
-    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */ 
+    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */
 };
 ```
 
@@ -257,7 +257,7 @@ Local Timezone information
 ---------------------------
 ElfC does not support the _locale.h_ header, so the following function should be used to set time zone information and daylight savings time information before calling other time functions.
 
-* void timezone(char \*tzname, int tzoff_min, int tzdst) 
+* void timezone(char \*tzname, int tzoff_min, int tzdst)
 
 *Notes:*
 * _tzname_ is a string abbreviation for the time zone name, such as "EST" for US Eastern Standard Time.
@@ -281,7 +281,7 @@ The following functions provide equivalent time functions by through a pointer t
 * The _utctime()_ function may not be accurate if _timezone()_ has not be called previously.
 * The _systime()_ and _utctime()_ return 1 if a Real Time Clock (RTC) was used to provide the current time and 0 if data values in the kernel were used instead.
 * The _cstime()_ function will return a pointer to a buffer with a string representing the current time.
-* The _cstime()_ function is equivalent to calling _systime()_ and passing the pointer with the result to _asctime()_. 
+* The _cstime()_ function is equivalent to calling _systime()_ and passing the pointer with the result to _asctime()_.
 
 Internal Time Functions
 -----------------------
@@ -300,7 +300,7 @@ The following functions are supported as documented.
 *Notes:*
 
 * _asctime()_ provides a pointer to a buffer with a simple string representation of the time.
-* _strftim()_ formats the date and time information pointed to by _tp_ into a buffer _s_ using a format string _fmt_ that is similar to a printf format string.  
+* _strftim()_ formats the date and time information pointed to by _tp_ into a buffer _s_ using a format string _fmt_ that is similar to a printf format string.
 * _strftime()_ will write up to _smax_ characters are written into the buffer _s_ and will return the actual number of characters written, excluding '\0'.
 * All of the ANSI (C89) strftime conversion formats are supported.
 
