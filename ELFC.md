@@ -42,6 +42,61 @@ Types Supported
 * *Pointers to structures and pointers to unions are supported.*
 * *Typedef is supported.*
 
+Type Conversions
+-----------------
+ElfC follows the C "usual arithmetic conversions" The C Programming Language, 2nd Edition describes these rules in Section 2.7, Type Conversions, on page 42, and in Appendix A, Section A6.5 Arithmetic Conversions, on page 198. Since long, float and double types are not supported, these can be simplified as the two rules below.
+
+* Signed and unsigned character types are promoted to int.
+* If either of the operands are unsigned int, then (signed) int operator is promoted to unsigned.
+
+*Notes:*
+* Since character types are 8-bit types that fit completely into a subset of the 16-bit int type, they will keep their signed or unsigned value when promoted.
+* A negative signed character value promotes to the same negative int value, and an unsigned charater value promotes to the same positive int value.
+* Since int types do *not* fit completely into the range of unsigned int types, a negative int value will promote to a large positive value.
+* A positive signed int value promotes to the same positive unsigned int value.
+
+*Examples:*
+These examples are in the promote.c example program.
+```
+#include <stdio.h>
+
+unsigned char uc =  77;
+signed char   sc = -7;
+
+int main() {
+  char c;
+  c = uc + sc;
+
+  printf("char c = '%c' (%d)\n", c,c);
+}
+```
+This program will print:
+```
+char c = 'F' (70)
+```
+The value uc promotes to int 77 and sc promotes to int -7, and 77 + (-7) = int 70, which is then assigned
+back to unsigned char c as 'F' or 70.
+
+```
+#include <stdio.h>
+
+unsigned int  ui1 =  7;
+signed int    i   = -77;
+
+int main() {
+  unsigned int ui2, ui3;
+
+  ui2 = ui1 + i;
+  printf("unsigned int ui2 = %u (%#x%)\n", ui2, ui2);
+}
+```
+This program will print:
+```
+unsigned int ui2 = 65466 (0xffba)
+```
+In this example the int value -77 promotes to the unsigned int value of 65459, and 65459 plus the unigned int value 7 equals the unsigned int value of 65566.
+
+
 Registers Used
 ---------------
 
@@ -224,7 +279,6 @@ Assert Modified Function
 
 Time Library
 ---------------------------
-
 
 **The standard C time structure tm is defined by the ElfC time C library.**
 ```
