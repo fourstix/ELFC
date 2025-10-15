@@ -422,6 +422,8 @@ void cgbrtrue(int n, int sc)	{gen(";----- cgbrtrue"); cgbr("lbnz", n, sc); }
 void cgbrfalse(int n, int sc)	{gen(";----- cgbrfalse"); cgbr("lbz", n, sc); }
 
 void cgjump(int n)	{gen(";----- cgjump"); lgen(" 				  %s\t%c%d", "lbr", n); }
+//grw - added support for local labels and goto
+void cggoto(int n)	{gen(";----- cggoto"); llgen(" 				  %s\t%c%d", "lbr", n); }
 
 void cgldswtch(int n)	{gen(";----- cgldswtch"); }
 void cgcalswtch(void)	{gen(";----- cgcalswtch");

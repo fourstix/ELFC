@@ -123,16 +123,51 @@ void genlab(int id) {
 		Q_jmp = jnone;
 	}
 	commit();
-	//grw - proceed label with new line
+	//grw - precede label with new line
 	fprintf(Outfile, "\n%c%d:\n", LPREFIX, id);
 }
 
 char *labname(int id) {
-	static char	name[100];
+	//grw - why so large? Made size smaller
+	/* static char	name[100]; */
+	static char	name[10];
+
 
 	sprintf(name, "%c%d", LPREFIX, id);
 	return name;
 }
+
+//grw - added support for local labels and goto
+void genllab(int id) {
+	if (NULL == Outfile) return;
+	//grw - output any queued operations
+	commit();
+	//grw - precede label with new line
+	fprintf(Outfile, "\n%c%d:\n", UPREFIX, id);
+}
+
+//grw - added support for local labels and goto
+/*
+char *llabname(int id) {
+	static char	uname[10];
+
+	sprintf(uname, "%c%d", UPREFIX, id);
+	return uname;
+}
+*/
+//grw - generate an instruction with a local label
+void llgen(char *s, char *inst, int n) {
+	if (NULL == Outfile) return;
+	fputc('\t', Outfile);
+	fprintf(Outfile, s, inst, UPREFIX, n);
+	fputc('\n', Outfile);
+}
+//grw - added support for local labels and goto
+void gengoto(int dest) {
+	commit();
+	cggoto(dest);
+}
+
 
 char *gsym(char *s) {
 	static char	name[NAMELEN+2];
@@ -360,6 +395,8 @@ void genshr() {
 
 //grw - added support for signd and unsgined
 static int ptr(int p) {
+	//grw - added support for multiple pointer indirection
+/*
 	int	sp;
 
 	sp = p & STCMASK;
@@ -371,15 +408,37 @@ static int ptr(int p) {
 		STCPTR == sp || STCPP == sp ||
 		UNIPTR == sp || UNIPP == sp ||
 		FUNPTR == p;
+*/
+return (ptrlevel(p) > 0);
 }
 //grw - added support for signd and unsgined
+//grw - added support for multiple pointer indirection
 static int needscale(int p) {
 	int	sp;
+	int btype;
+	int lvl;
+	int scale = 0;
 
 	sp = p & STCMASK;
+	btype = basetype(p);
+	lvl   = ptrlevel(p);
+
+	if (STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp)
+	  /*structure and union pointers need scaling */
+	  scale = 1;
+	else if (lvl > 1) {
+		/* double, and up pointers need scaling */
+		scale = 1;
+	} else if (lvl == 1) {
+		/* integer pointers need scaling */
+		scale = (PINT == btype || PUINT == btype);
+	}
+/*
 	return INTPTR == p || INTPP == p || CHARPP == p || VOIDPP == p ||
 		UINTPTR == p || UINTPP == p || SCHARPP == p ||
 		STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp;
+*/
+return scale;
 }
 
 int genadd(int p1, int p2, int swapped) {
@@ -499,15 +558,20 @@ static void binopchk(int op, int p1, int p2) {
 		 GREATER == op || LTEQ == op || GTEQ == op)
 		&&
 		(p1 == p2 ||
+		 //grw - added support for multiple pointer indirection
+		 (isvoidptr(p1) && !inttype(p2)) ||
+		 (isvoidptr(p2) && !inttype(p1)))
+		 /*
 		 (VOIDPTR == p1 && !inttype(p2)) ||
 		 (VOIDPTR == p2 && !inttype(p1)))
+     */
 	)
 		return;
 	error("invalid operands to binary operator", NULL);
 }
 
 void commit_cmp(void) {
-	//grw
+	//grw - trace
 	gen(";----- commit_cmp");
 	switch (Q_cmp) {
   	case equal:		cgeq(); break;
@@ -525,7 +589,7 @@ void commit_cmp(void) {
 }
 
 void queue_cmp(int op) {
-  //grw  - trace
+  //grw - trace
 	gen(";----- queue_cmp");
 	commit();
 	Q_cmp = op;
@@ -759,9 +823,9 @@ void genentry(void) {
 	cgentry();
 }
 
-void genexit(void) {
-	//grw - removed gentext
-	//gentext();
+void genexit(int scope) {
+	//grw - added support for local labels and goto
+  chklocals(scope);
 	cgexit();
 	/* write out string table after code */
 	genstrtbl();
@@ -1176,9 +1240,15 @@ void addstr(int label, char *text, int len) {
 	} else
 	  ptext = 0;
 
+		//grw - convert string table to array of structures
+		str_tbl[str_idx].label = label;
+		str_tbl[str_idx].text = ptext;
+		str_tbl[str_idx].len  = len;
+		/*
 		str_lab[str_idx] = label;
 		str_text[str_idx] = ptext;
 		str_len[str_idx] = len;
+		*/
 		str_idx++;
 }
 
@@ -1194,8 +1264,14 @@ void addstr(int label, char *text, int len) {
 	 //grw - no need to concat empty string (Len includes quotes)
 	 if (len > 2) {
 	   prev_idx = str_idx - 1;
-     prev_txt = str_text[prev_idx];
+		 //grw - convert string table to array of structures
+     /*
+		 prev_txt = str_text[prev_idx];
 	   prev_len = str_len[prev_idx];
+		 */
+		 prev_txt = str_tbl[prev_idx].text;
+	   prev_len = str_tbl[prev_idx].len;
+
 	   new_len  = prev_len + len - 2;
 		 //grw - expand storage to hold new text
 		 new_txt  = realloc(prev_txt, new_len);
@@ -1203,8 +1279,13 @@ void addstr(int label, char *text, int len) {
 		   //grw - copy new text after end of old text, skipping quotes in middle
 		   memcpy(new_txt+prev_len-1, text+1, len-1);
 		   //grw - set previous string to concatenated text string
+			 //grw - convert string table to array of structures
+       /*
 		   str_text[prev_idx] = new_txt;
 			 str_len[prev_idx] = new_len;
+       */
+			 str_tbl[prev_idx].text = new_txt;
+			 str_tbl[prev_idx].len  = new_len;
 		 } else {
 			 /* if we ran out of memory, exit with error */
 			 fatal("Unable to concatenate literal strings");
@@ -1223,9 +1304,15 @@ void addstr(int label, char *text, int len) {
 
 	 genraw("\n;----- string table\n");
 	 for (i = 0; i < str_idx; i++) {
+		 //grw - convert string table to array of structures
+		 /*
 		 lab = str_lab[i];
 		 txt = str_text[i];
 		 len = str_len[i];
+     */
+		 lab = str_tbl[i].label;
+		 txt = str_tbl[i].text;
+		 len = str_tbl[i].len;
 
 		 /* write out each string in string table */
 		 genlab(lab);
@@ -1238,3 +1325,18 @@ void addstr(int label, char *text, int len) {
 	 /* reset the string table */
 	 str_idx = 0;
  }
+ /*
+  * Validate local labels used in goto statements in a function
+  */
+void chklocals(int scope) {
+	int idx;
+
+	if (llbl_idx > 0)
+	  genraw("\n;----- checking local labels\n");
+
+	/* check to see if any labels used by goto were never defined */
+  for (idx = 0; idx < llbl_idx; idx++) {
+		if (lcl_lbls[idx].scope == scope && lcl_lbls[idx].defined == 0)
+			error("goto target label %s is undefined", lcl_lbls[idx].text);
+	}
+}

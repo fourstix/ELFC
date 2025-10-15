@@ -155,3 +155,5 @@ char *procname(char *file);
 int  cgentrypt(void);
 //grw - set up handler for STG breakpoint
 void cgsetup(void);
+//grw - added support for user labels and goto
+void cggoto(int n);

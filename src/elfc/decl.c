@@ -83,10 +83,10 @@ static int initlist(char *name, int prim) {
 		//grw - update to allow concatenation of string literals
 		//gendefs(Text, Value);
 		//gendefb(0);
-		
+
 		//grw - removed genalign
 		//genalign(Value-1);
-		
+
 		//grw - update to allow concatenation of string literals
 		//Token = scan();
 		//return Value-1;
@@ -238,12 +238,22 @@ static int pmtrdecls(void) {
 
 int pointerto(int prim) {
 	int	y;
+	//grw - added support for multiple pointer indirection
+	int lvl;
 
+	lvl = ptrlevel(prim);
+
+	if (lvl >= MAXPTR || (prim & TYPEMASK) == FUNPTR ||
+	    (prim & STCMASK) == STCPP || (prim & STCMASK) == UNIPP )
+		error("too many levels of indirection", NULL);
+
+	/*
 	if (CHARPP == prim || INTPP == prim || VOIDPP == prim ||
 	    SCHARPP == prim || UINTPP == prim ||FUNPTR == prim ||
 	    (prim & STCMASK) == STCPP || (prim & STCMASK) == UNIPP
 	)
 		error("too many levels of indirection", NULL);
+	*/
 	y = prim & ~STCMASK;
 	switch (prim & STCMASK) {
 	case PSTRUCT:	return STCPTR | y;
@@ -251,6 +261,11 @@ int pointerto(int prim) {
 	case PUNION:	return UNIPTR | y;
 	case UNIPTR:	return UNIPP | y;
 	}
+	//grw - added support for multiple pointer indirection
+	if (lvl < MAXPTR)
+	  lvl++;
+	return setptrlevel(prim, lvl);
+/*
 	return PINT == prim? INTPTR:
 	  PUINT == prim? UINTPTR:
 		PCHAR == prim? CHARPTR:
@@ -260,6 +275,7 @@ int pointerto(int prim) {
 		UINTPTR == prim? UINTPP:
 		CHARPTR == prim? CHARPP:
 		SCHARPTR == prim? SCHARPP: VOIDPP;
+*/
 }
 
 /*
@@ -288,11 +304,19 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	if (STAR == Token) {
 		Token = scan();
 		*pprim = pointerto(*pprim);
+		//grw - added support for multiple pointer indirection
+		while (STAR == Token) {
+			Token = scan();
+			*pprim = pointerto(*pprim);
+			ptrptr++;
+		}
+/*
 		if (STAR == Token) {
 			Token = scan();
 			*pprim = pointerto(*pprim);
 			ptrptr = 1;
 		}
+*/
 	}
 	else if (LPAREN == Token) {
 		if (CTYPE == scls)
@@ -337,7 +361,9 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		return TFUNCTION;
 	}
 	else if (LBRACK == Token) {
-		if (ptrptr)
+		//grw - added support for multiple pointer indirection
+		/* if (ptrptr) */
+		if (ptrptr > MAXPTR)
 			error("too many levels of indirection: %s", name);
 		Token = scan();
 		if (RBRACK == Token) {
@@ -455,7 +481,7 @@ static int localdecls(void) {
         SCHAR == Token || UINT == Token ||
 				VOID == Token ||
 				STRUCT == Token || UNION == Token
-			) {					
+			) {
 				prim = primtype(Token, NULL);
 				Token = scan();
 			}
@@ -586,7 +612,7 @@ void decl(int clss, int prim, int utype) {
 				compound(0);
 				genlab(Retlab);
 				genstack(-lsize);
-				genexit();
+				genexit(Thisfn);
 				if (O_debug & D_LSYM)
 					dumpsyms("LOCALS: ", name, Locs,
 						NSYMBOLS);
@@ -713,7 +739,6 @@ void typedecl(void) {
 		decl(CTYPE, Prims[utype], utype);
 	}
 	else {
-		//grw - TODO update this for signed and unsigned
 		prim = primtype(Token, NULL);
 		Token = scan();
 		decl(CTYPE, prim, 0);
@@ -755,7 +780,7 @@ void top(void) {
 	case UNION:
 		structdecl(clss, UNION == Token);
 		break;
-	
+
 	case CHAR:
 	case INT:
 	case SCHAR:
@@ -774,6 +799,10 @@ void top(void) {
 		else
 			decl(clss, PINT, 0);
 		break;
+	case ULABEL:
+	    error("invalid location for local label: %s", Text);
+			Token = scan();
+			break;
 	default:
 		error("type specifier expected at: %s", Text);
 		Token = synch(SEMI);

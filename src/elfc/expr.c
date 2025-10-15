@@ -129,7 +129,9 @@ static node *primary(int *lv) {
 		//grw - removed genalign
 		//genalign(k+1);
 		n = mkleaf(OP_LDLAB, lab);
-		lv[LVPRIM] = CHARPTR;
+		//grw - added support for multiple pointer indirection
+		/* lv[LVPRIM] = CHARPTR; */
+		lv[LVPRIM] = (PCHAR | 0x0010);
 		return n;
 	case LPAREN:
 		Token = scan();
@@ -144,10 +146,15 @@ static node *primary(int *lv) {
 }
 
 int typematch(int p1, int p2) {
+	//grw - added support for multiple pointer indirection
 	if (p1 == p2) return 1;
 	if (inttype(p1) && inttype(p2)) return 1;
+	if (!inttype(p1) && isvoidptr(p2)) return 1;
+	if (isvoidptr(p1) && !inttype(p2)) return 1;
+/*
 	if (!inttype(p1) && VOIDPTR == p2) return 1;
 	if (VOIDPTR == p1 && !inttype(p2)) return 1;
+	*/
 	return 0;
 }
 
@@ -203,7 +210,10 @@ static node *fnargs(int fn, int *na) {
 
 int deref(int p) {
 	int	y;
+	//grw - added support for multiple pointer indirection
+	int lvl;
 
+/*
 	switch (p) {
 	case INTPP:	return INTPTR;
 	case INTPTR:	return PINT;
@@ -213,12 +223,24 @@ int deref(int p) {
 	case VOIDPTR:	return PCHAR;
 	case FUNPTR:	return PCHAR;
 	}
-	y = p & ~STCMASK;
-	switch (p & STCMASK) {
-	case STCPP:	return STCPTR | y;
-	case STCPTR:	return PSTRUCT | y;
-	case UNIPP:	return UNIPTR | y;
-	case UNIPTR:	return PUNION | y;
+*/
+  if (p & STCMASK) {
+		y = p & ~STCMASK;
+		switch (p & STCMASK) {
+		case STCPP:	return STCPTR | y;
+		case STCPTR:	return PSTRUCT | y;
+		case UNIPP:	return UNIPTR | y;
+		case UNIPTR:	return PUNION | y;
+		}
+	} else if (isvoidptr(p) || isfunptr(p)){
+		/* Void* and (func*)() deref to char */
+		return PCHAR;
+	} else {
+		lvl = ptrlevel(p);
+		if (lvl > 0) {
+			lvl--;
+			return setptrlevel(p, lvl);
+		}
 	}
 	return -1;
 }
@@ -227,7 +249,8 @@ static node *indirection(node *n, int *lv) {
 	int	p;
 
 	n = rvalue(n, lv);
-	if (VOIDPTR == lv[LVPRIM])
+	//grw - added support for multiple pointer indirection
+	if (isvoidptr(lv[LVPRIM]))
 		error("dereferencing void pointer", NULL);
 	if ((p = deref(lv[LVPRIM])) < 0) {
 		if (lv[LVSYM])
@@ -312,11 +335,15 @@ static node *postfix(int *lv) {
 				p = lv[LVPRIM];
 				if (PINT != lv2[LVPRIM])
 					error("non-integer subscript", NULL);
+				//grw - added support for multiple pointer indirection
+        /*
 				if (    PINT == p || INTPTR == p ||
 					CHARPTR == p || VOIDPTR == p ||
 					STCPTR == (p & STCMASK) ||
 					UNIPTR == (p & STCMASK)
 				) {
+				*/
+				if (PINT == p || ptrlevel(p) > 0) {
 					n2 = mkunop(OP_SCALE, n2);
 				}
 				else if (comptype(p)) {
@@ -340,7 +367,9 @@ static node *postfix(int *lv) {
 				n = mkunop2(OP_CALL, lv[LVSYM], na, n);
 			}
 			else {
-				if (lv[LVPRIM] != FUNPTR) badcall(lv);
+				//grw - added support for multiple pointer indirection
+				/* if (lv[LVPRIM] != FUNPTR) badcall(lv); */
+				if (!isfunptr(lv[LVPRIM])) badcall(lv);
 				n = mkbinop(OP_GLUE, n, fn);
 				n = mkunop2(OP_CALR, lv[LVSYM], na, n);
 				lv[LVPRIM] = PINT;
@@ -423,7 +452,11 @@ static node *comp_size(void) {
 		if (STAR == Token) {
 			k = PTRSIZE;
 			Token = scan();
-			if (STAR == Token) Token = scan();
+			//grw - added support for multiple pointer indirection
+			/* if (STAR == Token) Token = scan(); */
+			/* We can have multiple STAR tokens */
+			while (STAR == Token)
+			  Token = scan();
 		}
 		if (0 == k)
 			error("sizeof(void) is unknown", NULL);
@@ -594,7 +627,9 @@ static node *cast(int *lv) {
 		else if (STAR == Token) {
 			t = pointerto(t);
 			Token = scan();
-			if (STAR == Token) {
+			//grw - added support for multiple pointer indirection
+			/* if (STAR == Token) { */
+			while (STAR == Token) {
 				t = pointerto(t);
 				Token = scan();
 			}

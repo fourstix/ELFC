@@ -25,6 +25,8 @@
 
 #define PREFIX		'C'
 #define LPREFIX		'L'
+#define UPREFIX		'U'
+
 
 #define INTSIZE		BPW
 #define PTRSIZE		INTSIZE
@@ -45,7 +47,11 @@
 #define MAXFNARGS	 8
 
 /* Maximum number of strings in string table */
-#define MAXSTRTBL  20
+#define MAXSTRTBL  40
+
+//grw - added support for local labels and goto
+/* Maximum number of user defined local slabels */
+#define MAXUSRLBL  20
 
 /* assert(NSYMBOLS < PSTRUCT) */
 #define NSYMBOLS	1024
@@ -63,6 +69,7 @@ enum {
 };
 
 /* primitive types */
+/*
 enum {
 	PCHAR = 1,
   PSCHAR,
@@ -80,6 +87,34 @@ enum {
 	VOIDPTR,
 	VOIDPP,
 	FUNPTR,
+	PSTRUCT = 0x2000,
+	PUNION  = 0x4000,
+	STCPTR  = 0x6000,
+	STCPP   = 0x8000,
+	UNIPTR  = 0xA000,
+	UNIPP   = 0xC000,
+	STCMASK = 0xE000
+};
+*/
+
+#define PTRMASK  0x00F0
+#define TYPEMASK 0x000F
+#define MAXPTR   15
+#define CNSTMASK 001000
+
+enum {
+	PCHAR = 1,
+  PSCHAR,
+	PINT,
+  PUINT,
+	PVOID,
+  //grw - define future 32-bit types
+  PLONG,
+  PULONG,
+  PFLOAT,
+  //grw - bits 4-7 are for the pointer level for primitive types
+  //grw - special types function pointers, structures and unions
+	FUNPTR  = 0x0100,
 	PSTRUCT = 0x2000,
 	PUNION  = 0x4000,
 	STCPTR  = 0x6000,
@@ -189,10 +224,10 @@ enum {
 	ARROW, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR, ASPLUS,
 	ASRSHIFT, ASDIV, ASMUL, ASSIGN, AUTO, BREAK, CASE, CHAR, COLON,
 	COMMA, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
-	EXTERN, FOR, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
+	EXTERN, FOR,  GOTO, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
 	LPAREN, NOT, QMARK, RBRACE, RBRACK, REGISTER, RETURN, RPAREN, SCHAR,
 	SEMI, SIGNED, SIZEOF, STATIC, STRLIT, STRUCT, SWITCH, TILDE, TYPEDEF,
-	UINT, UNION, UNSIGNED, VOID, VOLATILE, WHILE, XEOF, XMARK,
+	UINT, ULABEL, UNION, UNSIGNED, VOID, VOLATILE, WHILE, XEOF, XMARK,
 
 	P_DEFINE, P_ELSE, P_ELSENOT, P_ENDIF, P_ERROR, P_IFDEF,
 	P_IFNDEF, P_INCLUDE, P_LINE, P_PRAGMA, P_UNDEF

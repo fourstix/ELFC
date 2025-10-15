@@ -255,6 +255,10 @@ static int keyword(char *s) {
 	case 'f':
 		if (!strcmp(s, "for")) return FOR;
 		break;
+	//grw - added support for local labels and goto
+	case 'g':
+		if (!strcmp(s, "goto")) return GOTO;
+		break;
 	case 'i':
 		if (!strcmp(s, "if")) return IF;
 		if (!strcmp(s, "int")) return INT;
@@ -585,6 +589,14 @@ static int scanpp(void) {
 					} //if SIGNED || UNSIGNED
 					return t;
 				} // if keyword(Text)
+        //grw - added support for local labels and goto
+				c = next();
+				/* a local label is an identifier that ends in a colon */
+				if (':' == c) {
+					return ULABEL;
+				} else {
+					putback(c);
+				}
 				return IDENT;
 			}
 			else {

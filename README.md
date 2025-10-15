@@ -15,10 +15,11 @@ Design Goals
 * Use the [Asm/02](https://github.com/fourstix/Asm-02) assembler and the [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
 * Create a library based on Mike Riley's [Library/02](https://github.com/rileym65/Library-02) standard library.
 * Target both Elf/OS and Mini/DOS as a platform.
-* Target Windows as the development platform (cross-compiler)
+* Target Windows and Linux as the development platform (cross-compiler)
 * Use an expression stack similar to the one implemented in Mike Riley's Fortran/02 program.
 * Minimize changes to basic SubC compiler code and prefer changes to the code generation and library code functions.
 * Implement the code generation functions first, migrate to the latest version of SubC and then work on implementing the C libraries.
+* Extend the SubC code to cover additional C keywords and functions.
 
 Release 1
 ----------
@@ -148,6 +149,11 @@ Version 3
 * The included files were cleaned up to eliminate unused definitions, and the kerneal api were moved to  a separate included file.
 
 More information about Version 3, signed and unsigned types, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+Release 3.1
+------------
+*  This release removes the restriction of only 2 levels of pointer indirection and supports up to 15 levels of indirection. This meets the ANSI specified minimum of 12 levels of indrection.
+* This release adds support for local labels and the `goto` keyword.
 
 Stdlib Library
 --------------
@@ -414,7 +420,10 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
-* Calls to BIOS routines were replaced with inline assembly code to improve performance.
+* Add support for the `const` keyword.
+* Add support for returning a structure or union from a function.
+* Add support for warning messages to the compiler.
+* Replace the C code in the rand function in stdlib with inline assembly code.
 
 Future Goals
 -------------
@@ -430,18 +439,16 @@ Differences Between ElfC and Full C89
 -------------------------------------
 
 *  The following keywords are not recognized:
-   `const`, `double`, `float`, `goto`, `long`, `short`.
+   `const`, `double`, `float`, `long`, `short`.
 
 *  There are four primitive data types: signed and unsigned `int` and
    signed and unsigned `char`; there are also void pointers, and there
    is limited support for `int(*)()` (pointers to functions
    of type int).
 
-*  No more than two levels of indirection are supported, and
-   arrays are limited to one dimension, i.e. valid declarators
-   are limited to `x`, `x[]`, `*x`, `*x[]`, `**x` (and `(*x)()`).
+*  Arrays are limited to one dimension.
 
-*  K&R-style function declarations (with parameter declarations
+*  Old K&R-style function declarations (with parameter declarations
    between the parameter list and function body) are not
    accepted.
 
@@ -456,9 +463,15 @@ Differences Between ElfC and Full C89
 *  Struct/union declarations must be global (struct and union
    objects may be declared locally, though).
 
-*  A struct/union cannot be passed as an argument to a function, nor can
-   a function return a struct/union value.  However, a *pointer* to struct/union
-   can be passed as an argument to a function and a pointer to a struct/union may be returned by a function.
+*  No more than two levels of indirection are supported for pointers
+   to structures and unions, i.e. pointers to a struct/union and pointers
+   to pointers to a struct/union are supported.
+
+*  A struct/union cannot be passed as an argument to a function, nor can a
+   function return a struct/union value.
+
+*  However, a *pointer* to struct/union can be passed as an argument to a
+   function and a pointer to a struct/union may be returned by a function.
 
 *  There is no support for bit fields.
 

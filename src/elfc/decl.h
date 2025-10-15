@@ -64,7 +64,8 @@ void	gendefw(int v);
 //grw - added support for signed and unsigned
 void	gendiv(int sgn);
 void	genentry(void);
-void	genexit(void);
+//grw - added support for user labels and goto
+void	genexit(int scope);
 void	geninc(int *lv, int inc, int pre);
 void	genind(int p);
 void	genior(void);
@@ -185,3 +186,28 @@ int	chartype(int p);
 int	signtype(int p);
 //grw - function for signed or unsigned operand
 int unsgnop(int p1, int p2);
+//grw - level of multiple pointer indirection
+int ptrlevel(int ptype);
+//grw - return the base type of pointer or primitive type
+int basetype(int ptype);
+//grw - determine if a type is a pointer to void
+int isvoidptr(int ptype);
+//grw - determine if a type is a pointer to function
+int isfunptr(int ptype);
+//grw - set the type with a new level of pointer indirection
+int setptrlevel(int ptype, int lvl);
+//grw - functions to support user labels and goto
+//grw - generate an instruction with a user label
+void llgen(char *s, char *inst, int n);
+//grw - generate a user lable
+void genllab(int id);
+//grw - get the local label name
+/* char *llabname(int id); */
+//grw - find a local label in the list
+int findLocalLabel(int scope, char *text);
+//grw - add a new user label to the list
+int addLocalLabel(int fn, char *text, int defined);
+//grw - added support for user labels and goto
+void gengoto(int dest);
+//grw - added support for user labels and goto
+void chklocals(int scope);

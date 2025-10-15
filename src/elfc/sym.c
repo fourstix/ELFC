@@ -310,20 +310,28 @@ int objsize(int prim, int type, int size) {
 		k = INTSIZE;
 	else if (PCHAR == prim || PSCHAR == prim)
 		k = CHARSIZE;
-	else if (INTPTR == prim || CHARPTR == prim || UINTPTR == prim 
+	//grw - added support for multiple pointer indirection
+	/*
+	else if (INTPTR == prim || CHARPTR == prim || UINTPTR == prim
 		|| SCHARPTR == prim ||VOIDPTR == prim)
 		k = PTRSIZE;
-	else if (INTPP == prim || CHARPP == prim || UINTPP == prim || 
+	else if (INTPP == prim || CHARPP == prim || UINTPP == prim ||
 		SCHARPP == prim || VOIDPP == prim)
 		k = PTRSIZE;
+	*/
 	else if (STCPTR == sp || STCPP == sp)
 		k = PTRSIZE;
 	else if (UNIPTR == sp || UNIPP == sp)
 		k = PTRSIZE;
 	else if (PSTRUCT == sp || PUNION == sp)
 		k = Sizes[prim & ~STCMASK];
-	else if (FUNPTR == prim)
+	else if (ptrlevel(prim) > 0)
+	  k = PTRSIZE;
+  //grw - ptrlevel covers function pointer
+	/*
+	else if (FUNPTR == (prim & TYPEMASK))
 		k = PTRSIZE;
+  */
 	if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
 		return -1;
 	if (TARRAY == type)
@@ -332,6 +340,11 @@ int objsize(int prim, int type, int size) {
 }
 
 static char *typename(int p) {
+	//grw - added support for multiple pointer indirection
+  static char tname[12];
+	int lvl;
+	int btype;
+
 	switch (p & STCMASK) {
 	case PSTRUCT:	return "STRUCT";
 	case STCPTR:	return "STCT*";
@@ -340,7 +353,30 @@ static char *typename(int p) {
 	case UNIPTR:	return "UNIO*";
 	case UNIPP:	return "UNIO**";
 	}
+	lvl = ptrlevel(p);
+	btype = basetype(p);
+
+	if (btype == PINT) strcpy(tname, "INT");
+	else if (btype == PUINT) strcpy(tname, "UINT");
+	else if (btype == PCHAR) strcpy(tname, "CHAR");
+	else if (btype == PSCHAR) strcpy(tname, "SCHAR");
+	else if (btype == PVOID) strcpy(tname, "VOID");
+	else if (btype == FUNPTR) return "FUN*";
+	else return "n/a";
+
+	if (lvl > 3) {
+		/* indicate higher than triple pointer */
+		strcat(tname, "***+");
+	} else {
+		/* add up to 3 stars */
+  	while (lvl > 1) {
+	  	strcat(tname, "*");
+			lvl--;
+		}
+	}
+  return tname;
 	//grw - added support for signed and unsigned
+  /*
 	return	PINT    == p? "INT":
 		PCHAR   == p? "CHAR":
 		PSCHAR   == p? "SCHAR":
@@ -357,6 +393,7 @@ static char *typename(int p) {
 		SCHARPP  == p? "SCHAR**":
 		VOIDPP  == p? "VOID**":
 		PVOID   == p? "VOID": "n/a";
+		*/
 }
 
 void dumpsyms(char *title, char *sub, int from, int to) {
@@ -398,4 +435,40 @@ void dumpsyms(char *title, char *sub, int from, int to) {
 		}
 		putchar('\n');
 	}
+}
+
+//grw - added support for local labels and goto
+int findLocalLabel(int scope, char *text) {
+	int idx;
+	int llid = 0;
+
+	for (idx = 0; idx < llbl_idx; idx++) {
+		/* find the matching label in the function */
+		if ((lcl_lbls[idx].scope == scope) && !strcmp(lcl_lbls[idx].text, text)) {
+			llid = idx + 1;
+			break;
+		}
+	}
+	return llid;
+}
+
+//grw - for compilers after C99
+#ifndef __SUBC__
+#define strdup _strdup
+#endif
+//grw - added support for local labels and goto
+int addLocalLabel(int fn, char *text, int defined) {
+	int llid = 0;
+
+	if (llbl_idx < MAXUSRLBL) {
+		lcl_lbls[llbl_idx].scope = fn;
+		/* need to duplicate strings since text is overwritten */
+		lcl_lbls[llbl_idx].text  = strdup(text);
+		lcl_lbls[llbl_idx].defined = defined;
+		llbl_idx++;
+		llid = llbl_idx;
+	} else {
+		error("Too many local labels.", NULL);
+	}
+return llid;
 }
