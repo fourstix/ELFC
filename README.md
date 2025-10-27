@@ -154,6 +154,13 @@ Release 3.1
 ------------
 *  This release removes the restriction of only 2 levels of pointer indirection and supports up to 15 levels of indirection. This meets the ANSI specified minimum of 12 levels of indrection.
 * This release adds support for local labels and the `goto` keyword.
+* The `const` keyword is now supported.
+* Functions may now return a structure or union.
+* ElfC can now emit warning messages when compiling code.
+* The rand function in stdlib now uses inline assembly code.
+* Pointers may now be initialized with non-zero constant address values, like *0xFF00*
+
+More information about Version 3.1, labels, `goto` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Stdlib Library
 --------------
@@ -420,10 +427,12 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
-* Add support for the `const` keyword.
-* Add support for returning a structure or union from a function.
-* Add support for warning messages to the compiler.
-* Replace the C code in the rand function in stdlib with inline assembly code.
+* Update the preprocessor to handle Macro parameters.
+
+* Add support to the preprocessor to accept multi-line commands.
+
+* Add support to the preprocessor for the `#` and `##` operators.
+
 
 Future Goals
 -------------
@@ -439,7 +448,7 @@ Differences Between ElfC and Full C89
 -------------------------------------
 
 *  The following keywords are not recognized:
-   `const`, `double`, `float`, `long`, `short`.
+   `double`, `float`, `long`, `short`.
 
 *  There are four primitive data types: signed and unsigned `int` and
    signed and unsigned `char`; there are also void pointers, and there
@@ -452,13 +461,21 @@ Differences Between ElfC and Full C89
    between the parameter list and function body) are not
    accepted.
 
-*  There are no `const` variables.
+*  Pointers to `const` variables are supported, but neither `const` pointers
+   to varying variables, nor `const` pointers to `const` variables are supported.
+
+*  The syntax `const int * p;` is supported, but the syntaxes `int * const p;` and
+   `const int * const p;` are *not* supported.
+
+*  The `const` keyword is ignored in structures, unions and arrays.
+
+*  The compiler does not prevent assignment of a pointer to a varying variable
+   to a pointer to `const` variable.
 
 *  There are no long integers.
 
-*  Struct/union declarations must be separate from the
-   declarations of struct/union objects, i.e.
-   `struct p { int x, y; } q;` will not work.
+*  Struct/union declarations must be separate from the declarations of
+   struct/union objects, i.e. `struct p { int x, y; } q;` will not work.
 
 *  Struct/union declarations must be global (struct and union
    objects may be declared locally, though).
@@ -467,17 +484,14 @@ Differences Between ElfC and Full C89
    to structures and unions, i.e. pointers to a struct/union and pointers
    to pointers to a struct/union are supported.
 
-*  A struct/union cannot be passed as an argument to a function, nor can a
-   function return a struct/union value.
-
-*  However, a *pointer* to struct/union can be passed as an argument to a
-   function and a pointer to a struct/union may be returned by a function.
+*  A struct/union cannot be passed as an argument to a function, but a
+   *pointer* to struct/union can be passed as an argument to a function.
 
 *  There is no support for bit fields.
 
 *  Only ints, chars, and arrays of int and char can be
    initialized in their declarations; pointers can be
-   initialized with 0 or NULL.
+   initialized with NULL or a constant address value.
 
 *  Local arrays cannot have initializers.
 
@@ -485,8 +499,6 @@ Differences Between ElfC and Full C89
    bodies (they do not work in other compound statements).
 
 *  Arguments of prototypes must be named.
-
-*  There is no `goto`.
 
 *  There are no parameterized macros.
 
@@ -510,6 +522,8 @@ Differences Between ElfC and Full C89
 *  Function pointers are limited to one single type, `int(*)()`,
    and they have no argument types. Note that this declaration
    will in fact generate a pointer to `int(*)(void)`.
+
+*  Pointers to function pointers are not supported.
 
 *  Due to the lack of parameterized macros, `assert` and other
    macros are implemented as functions.
