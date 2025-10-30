@@ -157,7 +157,6 @@ Release 3.1
 * The `const` keyword is now supported.
 * Functions may now return a structure or union.
 * ElfC can now emit warning messages when compiling code.
-* The rand function in stdlib now uses inline assembly code.
 * Pointers may now be initialized with non-zero constant address values, like *0xFF00*
 
 More information about Version 3.1, labels, `goto` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
@@ -186,7 +185,7 @@ Stdlib Library
 * void free(void\* p);
 
 **Number Conversion**
-* int atoi(char \*s);
+* int atoi(const char \*s);
 * void itoa(int n, char \*s);
 * void itox(int n, char \*s);
 * void itou(unsigned int n, char \*s);
@@ -196,7 +195,7 @@ Stdlib Library
 **Math Utilities**
 
 * int abs(int n);
-* void div(int num, int denom, div_t *rp);
+* div_t div(int num, int denom);
 * void \*bsearch(void \*key, void \*array, size_t count, size_t size, int (\*cmp)());
 * void qsort(void \*list, size_t count, size_t size, int (\*cmp)());
 * int rand(void);
@@ -225,8 +224,8 @@ Stdio Library
 **Unbuffered Character I/O**
 
 * char \*gets(char \*buf);
-* int	 puts(char \*s);
-* int	 putstr(char \*s);
+* int	 puts(const char \*s);
+* int	 putstr(const char \*s);
 * int getch(void);
 * int	putch(int ch);
 
@@ -237,7 +236,7 @@ Stdio Library
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
-* int fputs(char \*s, FILE \*f);
+* int fputs(const char \*s, FILE \*f);
 * int putchar(int c);
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
@@ -248,37 +247,37 @@ Stdio Library
 
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
-* FILE \*fopen(char \*path, char \*mode);
+* FILE \*fopen(const char \*path, const char \*mode);
 * size_t fread(void \*p, size_t size, size_t count, FILE \*f);
-* size_t fwrite(void \*p, size_t size, size_t count, FILE \*f);
+* size_t fwrite(const void \*p, size_t size, size_t count, FILE \*f);
 * int fflush(FILE \*f);
 
 *Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP (No Operation) function*
 
 **Formatted Output**
 
-* int fprintf(FILE \*f, char \*fmt, ...);
-* int printf(char \*fmt, ...);
-* int sprintf(char \*buf, char \*fmt, ...);
-* int kprintf(int fd, char \*fmt, ...);
-* int vfprintf(FILE \*f, char \*fmt, void \*\*args);
-* int vprintf(char \*fmt, void \*\*args);
-* int vsprintf(char \*buf, char \*fmt, void \*\*args);
+* int fprintf(FILE \*f, const char \*fmt, ...);
+* int printf(const char \*fmt, ...);
+* int sprintf(char \*buf, const char \*fmt, ...);
+* int kprintf(int fd, const char \*fmt, ...);
+* int vfprintf(FILE \*f, const char \*fmt, void \*\*args);
+* int vprintf(const char \*fmt, void \*\*args);
+* int vsprintf(char \*buf, const char \*fmt, void \*\*args);
 
 *Note: Information about supported print conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 **Formatted Input**
 
-* int fscanf(FILE \*f, char \*fmt, ...);
-* int scanf(char \*fmt, ...);
-* int sscanf(char \*src, char \*fmt, ...);
+* int fscanf(FILE \*f, const char \*fmt, ...);
+* int scanf(const char \*fmt, ...);
+* int sscanf(char \*src, const char \*fmt, ...);
 
 *Note: Information about supported scan conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 **File Operations**
 
-* int remove(char \*path);
-* int rename(char \*old, char \*new);
+* int remove(const char \*path);
+* int rename(const char \*old, const char \*new);
 * char \*tmpnam(char \*buf);
 * FILE \*tmpfile(void);
 
@@ -299,7 +298,7 @@ Stdio Library
 * int ferror(FILE \*f);
 * int feof(FILE \*f);
 * void clrerror(FILE \*f);
-* void perror(char \*msg);
+* void perror(const char \*msg);
 
 String Library
 ----------------
@@ -308,31 +307,31 @@ String Library
 
 **Memory Functions**
 
-* void \*memchr(void \*p, int c, size_t n);
-* int memcmp(void \*p1, void \*p2, size_t n);
-* void \*memcpy(void \*d, void \*s, size_t n);
-* void \*memmove(void \*d, void \*s, size_t n);
+* void \*memchr(const void \*p, int c, size_t n);
+* int memcmp(const void \*p1, const void \*p2, size_t n);
+* void \*memcpy(void \*d, const void \*s, size_t n);
+* void \*memmove(void \*d, const void \*s, size_t n);
 * void \*memset(void \*p, int c, size_t n);
 
 **String Functions**
 
-* char \*strcat(char \*d, char \*a);
-* char \*strchr(char \*s, int c);
-* int strcmp(char \*s1, char \*s2);
-* char \*strcpy(char \*d, char \*s);
-* size_t strcspn(char \*s, char \*set);
-* char \*strdup(char \*s);
+* char \*strcat(char \*d, const char \*a);
+* char \*strchr(const char \*s, int c);
+* int strcmp(const char \*s1, const char \*s2);
+* char \*strcpy(char \*d, const char \*s);
+* size_t strcspn(const char \*s, const char \*set);
+* char \*strdup(const char \*s);
 * char \*strerror(int err);
-* size_t strlen(char \*s);
-* char \*strncat(char \*d, char \*a, size_t n);
-* int strncmp(char \*s1, char \*s2, size_t n);
-* char \*strncpy(char \*d, char \*s, size_t n);
-* size_t strlcpy(char \*d, char \*s, size_t n);
-* char \*strpbrk(char \*s, char \*set);
-* char \*strrchr(char \*s, int c);
-* size_t strspn(char \*s, char \*set);
-* char \*strstr(char \*s1, char \*s2);
-* char \*strtok(char \*s, char \*sep);
+* size_t strlen(const char \*s);
+* char \*strncat(char \*d, const char \*a, size_t n);
+* int strncmp(const char \*s1, const char \*s2, size_t n);
+* char \*strncpy(char \*d, const char \*s, size_t n);
+* size_t strlcpy(char \*d, const char \*s, size_t n);
+* char \*strpbrk(const char \*s, const char \*set);
+* char \*strrchr(const char \*s, int c);
+* size_t strspn(const char \*s, const char \*set);
+* char \*strstr(const char \*s1, const char \*s2);
+* char \*strtok(char \*s, const char \*sep);
 
 *Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
 
@@ -410,7 +409,7 @@ struct tm {
 * int  systime(struct tm \*tp);
 * char \*asctime(struct tm \*tp);
 * char \*cstime(void);
-* int  strftime(char \*s, int smax, char \*fmt, struct tm \*tp);
+* int  strftime(char \*s, int smax, const char \*fmt, struct tm \*tp);
 * void timezone(char \*tzname, int tzoff_min, int tzdst);
 * int  utctime(struct tm \*tp);
 
@@ -427,6 +426,10 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
+* The `volatile` keyword should prevent optimization on that variable.
+
+* Implement the stdlib rand() function using inline code.
+
 * Update the preprocessor to handle Macro parameters.
 
 * Add support to the preprocessor to accept multi-line commands.
@@ -434,10 +437,12 @@ Next Release
 * Add support to the preprocessor for the `#` and `##` operators.
 
 
+
 Future Goals
 -------------
 
 * Convert library to 32-bit library and implement long, short and float data types.
+* Convert the rand function in stdlib to use inline assembly code.
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.

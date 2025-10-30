@@ -96,6 +96,44 @@ unsigned int ui2 = 65466 (0xffba)
 ```
 In this example the int value -77 promotes to the unsigned int value of 65459, and 65459 plus the unigned int value 7 equals the unsigned int value of 65566.
 
+Types Qualifiers
+-----------------
+The type qualifier `volatile` is accepted, but ignored.
+
+The type qualifier `const` is supported for variables and pointers to constant variables, but constant pointers are not supported.
+
+Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a declaration, but ignores it unless the variable is also declared `const`, then ElfC will emit an error.
+
+Per the ANSI C C89/C90 specification, `volatile const` is accepted as valid syntax.
+
+Functions may be declared to return a `const`, and per the ANSI C C89/C90 specification, it is ignored.
+
+Arguments to a function may be declared as `const` and ElfC will treat these parameters as initialized inside the function.  An attempt to assign a value to a `const` argument inside the function would be considered an error.
+
+Type qualifiers are ignored when considering if two type are compatible.
+
+
+**Implementation Defined Behavior**
+
+*Note:* Much of this behavior is undefined in ANSI C89/C90 specification, but may contradicts behavior defined in later versions of the C specification, such as C11.
+
+ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the initializations.
+
+ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment would be treated as an error.
+
+User types may include `const` in the typdef definiton, but `const` may not be applied to an existing user type.
+
+The compiler does not prevent assignment of a pointer to a varying variable to a pointer to `const` variable.
+
+**Differces from ANSI C89/C90**
+
+*Note:* The following behavior differs from the ANSI C89/C90 specification.
+
+Neither `const` pointers to varying variables, nor `const` pointers to `const` variables are supported by ElfC.  The syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
+
+The `const` keyword is ignored for structures, unions and arrays.  The `const` keyword is ignored for members inside structures and unions.
+
+The `volatile` keyword is ignored and does not prevent optimization. (This behavior may be changed in a later release.)
 
 Registers Used
 ---------------
@@ -247,7 +285,6 @@ The following functions were omitted from the ElfC stdio C library.
 Stdlib Modified Functions
 -------------------------
 *  Because long types are not supported, `lseek` takes two int arguments for the offset, and returns an int value, 0  for success or -1 for error.
-*  `div` uses a pointer to a div_t structure for the result, because returning a structure is not supported.
 * `min` and `max` are implemented as functions because macro parameters are not supported.
 * `itox` and `itou` are available to convert int values to hexadecimal and unsigned integer ASCII strings.
 
