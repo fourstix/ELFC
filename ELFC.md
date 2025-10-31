@@ -102,38 +102,54 @@ The type qualifier `volatile` is accepted, but ignored.
 
 The type qualifier `const` is supported for variables and pointers to constant variables, but constant pointers are not supported.
 
-Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a declaration, but ignores it unless the variable is also declared `const`, then ElfC will emit an error.
+Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a declaration, but ignores it unless the variable is also declared `const`, in that case ElfC will emit an error.
 
 Per the ANSI C C89/C90 specification, `volatile const` is accepted as valid syntax.
 
-Functions may be declared to return a `const`, and per the ANSI C C89/C90 specification, it is ignored.
+Functions may be declared to return a `const` value. Per the ANSI C C89/C90 specification, `const` is ignored since a function may never be an lvalue.
 
-Arguments to a function may be declared as `const` and ElfC will treat these parameters as initialized inside the function.  An attempt to assign a value to a `const` argument inside the function would be considered an error.
+Arguments to a function may be declared as `const` and ElfC will treat these arguments as initialized inside the function.  An attempt to assign a value to a `const` argument inside the function is considered an error.
+
+A pointer to a varying variable can be assigned to a pointer to a `const` variable.
 
 Type qualifiers are ignored when considering if two type are compatible.
 
-
 **Implementation Defined Behavior**
 
-*Note:* Much of this behavior is undefined in ANSI C89/C90 specification, but may contradicts behavior defined in later versions of the C specification, such as C11.
+*Note:* This behavior is not specified by the ANSI C89/C90 specification, but contradicts behavior as defined in later versions of the C specification.
 
-ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the initializations.
+ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the possible type initializations.
 
-ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment would be treated as an error.
+ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment will be treated as an error.
 
-User types may include `const` in the typdef definiton, but `const` may not be applied to an existing user type.
+User defined types may include `const` in their typdef definition, but `const` may not be applied to an existing user defined type.
 
-The compiler does not prevent assignment of a pointer to a varying variable to a pointer to `const` variable.
-
-**Differces from ANSI C89/C90**
+**Differences from ANSI C89/C90**
 
 *Note:* The following behavior differs from the ANSI C89/C90 specification.
 
-Neither `const` pointers to varying variables, nor `const` pointers to `const` variables are supported by ElfC.  The syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
+Neither `const` pointers to varying variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
 
-The `const` keyword is ignored for structures, unions and arrays.  The `const` keyword is ignored for members inside structures and unions.
+The `const` keyword is ignored for structures, unions and arrays.  The `const` keyword is ignored for members inside structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.
+
+ElfC does not prevent the assignment of a pointer to a `const` variable to a pointer to a varying variable.
 
 The `volatile` keyword is ignored and does not prevent optimization. (This behavior may be changed in a later release.)
+
+Local Labels and `goto`
+-----------------------
+
+ElfC supports local labels and goto.
+
+Local labels have functional scope and their own namespace.
+
+The `goto` keyword can be used to jump directly to a local label within the same function.
+
+There are few restrictions on local label locations and goto.  For example, they may jump into the body of an iteration statement, like `for` or `while` statement, bypassing any initializations or tests done at the beginning.
+
+ElfC will emit a warning when a local label is defined within the body of an iteration statement.
+
+Local labels and `goto` should be used with caution, if used at all.
 
 Registers Used
 ---------------
