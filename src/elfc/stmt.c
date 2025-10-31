@@ -225,6 +225,10 @@ static void asm_stmt(void) {
 
 static void local_label(void) {
 	int llid;
+
+	if (Bsp > 0 || Csp > 0)
+	  warn("local label %s inside an iteration statement", Text);
+
 	gen(";----- begin local label stmt");
 	llid = findLocalLabel(Thisfn, Text);
 	/* if label not defined previously, add it now */

@@ -95,13 +95,17 @@ static int initlist(char *name, int prim) {
 	lbrace();
 	while (Token != RBRACE) {
 		v = constexpr();
-		if (PCHAR == prim) {
+		//grw - add support for const keyword
+		/* if (PCHAR == prim) { */
+		if (PCHAR == (prim & ~CNSTMASK)) {
 			if (v < 0 || v > 255) {
 				sprintf(buf, "%d", v);
 				error("initializer out of range: %s", buf);
 			}
 			gendefb(v);
-		} else if (PSCHAR == prim) {
+		} else if (PSCHAR == (prim & ~CNSTMASK)) {
+			//grw - add support for const keyword
+		/* } else if (PSCHAR == prim) { */
 			if (v < -128 || v > 127) {
 				sprintf(buf, "%d", v);
 				error("initializer out of range: %s", buf);
@@ -154,8 +158,8 @@ int primtype(int t, char *s) {
 
 int usertype(char *s) {
 	int	y;
-
-	if ((y = findsym(s)) == 0) return 0;
+	if ((y = findsym(s)) == 0)
+		return 0;
 	return CTYPE == Stcls[y]? y: 0;
 }
 
@@ -179,6 +183,8 @@ static int pmtrdecls(void) {
 	char	name[NAMELEN+1];
 	int	utype, prim, type, size, na, addr;
 	int	dummy;
+	//grw - added support for const keyword
+	int cnst;
 
 	if (RPAREN == Token)
 		return 0;
@@ -186,6 +192,8 @@ static int pmtrdecls(void) {
 	//grw - our stack frome does not include ret address nor frame address
 	//addr = 2*BPW;
 	addr = 0;
+	//grw - added support for const keyword
+	cnst = 0;
 	for (;;) {
 		utype = 0;
 		if (na > 0 && ELLIPSIS == Token) {
@@ -193,10 +201,17 @@ static int pmtrdecls(void) {
 			na = -(na + 1);
 			break;
 		}
+		else if (CONST == Token) {
+			cnst = 1;
+			Token = scan();
+			continue;
+		}
 		else if (IDENT == Token &&
 			 (utype = usertype(Text)) == 0)
 		{
 			prim = PINT;
+			if (cnst)
+			  prim |= CNSTMASK;
 		}
 		else {
 			//grw - added signed and unsigned types
@@ -208,6 +223,16 @@ static int pmtrdecls(void) {
 				name[0] = 0;
 				prim = utype? Prims[utype]:
 					primtype(Token, NULL);
+				//grw - added support for const keyword
+				//grw - in a function, the const value is considered initialized
+				if (cnst) {
+					if (prim & STCMASK)
+						warn("const keyword ignored for struct/union types", NULL);
+					else if (utype) {
+					  error("const keyword not valid before user defined types", NULL);
+					} else
+						prim |= CNSTMASK;
+				}
 				Token = scan();
 				if (RPAREN == Token && prim == PVOID && !na)
 					return 0;
@@ -228,9 +253,12 @@ static int pmtrdecls(void) {
 		addloc(name, prim, type, CAUTO, size, addr, 0);
 		addr += BPW;
 		na++;
-		if (COMMA == Token)
+		if (COMMA == Token) {
 			Token = scan();
-		else
+			//grw - added support for const keyword
+			/* reset constant flag */
+			cnst = 0;
+		}	else
 			break;
 	}
 	return na;
@@ -346,11 +374,18 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			error(unsupp, NULL);
 		Token = scan();
 		*pval = constexpr();
-		if (PCHAR == *pprim || PSCHAR == *pprim)
+		//grw - convert to use chartype()
+		/* if (PCHAR == *pprim || PSCHAR == *pprim) */
+
+		if (chartype(*pprim))
 			*pval &= 0xff;
-		if (*pval && !inttype(*pprim))
-			error("non-zero pointer initialization", NULL);
+		//grw - allow non-zero pointer initialization
+	 	/*	if (*pval && !inttype(*pprim))
+		  error("non-zero pointer initialization", NULL);	*/
 		*pinit = 1;
+		//grw - added support for const keyword
+		if (CNST == (*pprim & CNSTMASK))
+			*pprim |= CINIT;
 	}
 	else if (!pmtr && LPAREN == Token) {
 		if (CTYPE == scls)
@@ -365,6 +400,11 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		/* if (ptrptr) */
 		if (ptrptr > MAXPTR)
 			error("too many levels of indirection: %s", name);
+    if (*pprim & CNSTMASK) {
+			//grw - clear unused constant bits for array types
+			*pprim &= ~CNSTMASK;
+  		warn("const keyword ignored for array %s", name);
+    }
 		Token = scan();
 		if (RBRACK == Token) {
 			if (CTYPE == scls)
@@ -442,6 +482,7 @@ int upgrade_array(int utype, int type, int *size) {
  *	| REGISTER
  *	| STATIC
  *	| VOLATILE
+ *	| CONST
  *
  * ldecl_list :=
  *	  declarator
@@ -451,14 +492,16 @@ int upgrade_array(int utype, int type, int *size) {
 static int localdecls(void) {
 	char	name[NAMELEN+1];
 	int	utype, prim, type, size, addr = 0, val, ini;
-	int	stat, extn;
+	//grw - added support for const keyword
+	int	stat, extn, cnst, rgstr;
 	int	pbase, rsize;
 
 	Nli = 0;
 	utype = 0;
 	//grw - added signed and unsigned types
+	//grw - added support for const keyword
 	while ( AUTO == Token || EXTERN == Token || REGISTER == Token ||
-		STATIC == Token || VOLATILE == Token ||
+		STATIC == Token || VOLATILE == Token || CONST == Token ||
 		INT == Token || CHAR == Token || VOID == Token ||
 		SCHAR == Token || UINT == Token ||
 		ENUM == Token ||
@@ -470,26 +513,73 @@ static int localdecls(void) {
 			continue;
 		}
 		extn = stat = 0;
+		//grw - added support for const keyword
+		cnst = rgstr = 0;
 		if (AUTO == Token || REGISTER == Token || STATIC == Token ||
-			VOLATILE == Token || EXTERN == Token ) {
-			stat = STATIC == Token;
-			extn = EXTERN == Token;
+			//grw - added support for const keyword
+			VOLATILE == Token || CONST == Token || EXTERN == Token ) {
+			stat  = STATIC == Token;
+			extn  = EXTERN == Token;
+			//grw - added support for const keyword
+			cnst  = CONST == Token;
+			rgstr = REGISTER == Token;
 			Token = scan();
+			//grw - added support for const keyword
+			/* static/extern const, const static/extern are valid qualifiers */
+			if ((stat || extn) && (CONST == Token)) {
+				cnst = 1;
+				Token = scan();
+			} else if (cnst) {
+				  if (STATIC == Token || EXTERN == Token) {
+						stat = STATIC == Token;
+						extn = EXTERN == Token;
+						Token = scan();
+			    } else if (REGISTER == Token){
+					  error ("\'const register\' is not a legal type qualifier", NULL);
+						Token = scan();
+					}
+			} else if (cnst && (AUTO == Token || VOLATILE == Token)) {
+				/* auto and volatile after const are valid, but ignored */
+				Token = scan();
+			} else if (!cnst && (Token == CONST)) {
+				/* const after (ignored) auto and volatile is valid */
+				cnst = 1;
+				Token = scan();
+				/* but const and register are not valid together */
+				if (rgstr) {
+					error ("\'register const\' is not a legal type qualifier", NULL);
+				}
+			}
 
-			if (	INT == Token || CHAR == Token ||
+			//grw - const is not valid before user types (but okay within)
+			if (cnst && utype)
+				error("const keyword not valid with user defined types", NULL);
+
+			if (INT == Token || CHAR == Token ||
 				//grw - added signed and unsigned types
         SCHAR == Token || UINT == Token ||
 				VOID == Token ||
 				STRUCT == Token || UNION == Token
 			) {
 				prim = primtype(Token, NULL);
+				//grw - added support for const keyword
+				if (cnst) {
+					if (prim & STCMASK)
+					  warn("const keyword ignored for struct/union types", NULL);
+					else
+				    prim |= CNST;
+				}
 				Token = scan();
 			}
 			else if (utype) {
 				prim = Prims[utype];
 			}
-			else
+			else {
   		  prim = PINT;
+				//grw - added support for const keyword
+				if (cnst)
+					prim |= CNST;
+			}
 		}
 		else if (utype) {
 			prim = Prims[utype];
@@ -519,6 +609,11 @@ static int localdecls(void) {
 					0, val);
 			}
 			else {
+				//grw - need to pad struct/union at top of list in case its returned
+				if (!addr && (prim & STCMASK)) {
+					addloc("_pad", PINT, TVARIABLE, CAUTO, 2, 0, 0);
+					addr -= BPW;
+				}
 				addr -= rsize;
 				addloc(name, prim, type, CAUTO, size, addr, 0);
 			}
@@ -679,11 +774,18 @@ void structdecl(int clss, int uniondecl) {
 	Token = scan();
 	utype = 0;
 	//grw - added signed and unsigned types
+	//grw - added support to ignore const keyword
 	while (	INT == Token || CHAR == Token || VOID == Token ||
-		UINT == Token || SCHAR == Token ||
+		UINT == Token || SCHAR == Token || CONST == Token ||
 		STRUCT == Token || UNION == Token ||
 		(IDENT == Token && (utype = usertype(Text)) != 0)
 	) {
+		if (CONST == Token) {
+			//grw - ignore const keyword in member fields
+			warn("const keyword ignored for struct/union members", NULL);
+			Token = scan();
+			continue;
+		}
 		base = utype? Prims[utype]: primtype(Token, NULL);
 		size = 0;
 		Token = scan();
@@ -728,11 +830,19 @@ void structdecl(int clss, int uniondecl) {
  */
 
 void typedecl(void) {
-	int	utype, prim;
-
+	int	utype, prim, cnst;
+	//grw - added support for const keyword
+	cnst = 0;
 	Token = scan();
+
+	if(CONST == Token) {
+    cnst = 1;
+		Token = scan();
+	}
 	if (STRUCT == Token || UNION == Token) {
 		structdecl(CTYPE, UNION == Token);
+		if (cnst)
+		  warn("const keyword ignored for struct/union types", NULL);
 	}
 	else if ((utype = usertype(Text)) != 0) {
 		Token = scan();
@@ -740,6 +850,8 @@ void typedecl(void) {
 	}
 	else {
 		prim = primtype(Token, NULL);
+		if (cnst)
+		  prim |= CNST;
 		Token = scan();
 		decl(CTYPE, prim, 0);
 	}
@@ -760,14 +872,27 @@ void typedecl(void) {
  *	  EXTERN
  *	| STATIC
  */
-
 void top(void) {
 	int	utype, prim, clss = CPUBLIC;
+	//grw - added support for const keyword
+	int cnst;
 
+	cnst = 0;
+
+	//grw - added support for const keyword
+	if (CONST == Token) {
+		cnst = 1;
+		Token = scan();
+	}
 	switch (Token) {
 	case EXTERN:	clss = CEXTERN; Token = scan(); break;
 	case STATIC:	clss = CSTATIC; Token = scan(); break;
 	case VOLATILE:	Token = scan(); break;
+	}
+	/* const may also follow the extern/static/volatile keywords */
+	if (!cnst && (CONST == Token)){
+		cnst = 1;
+		Token = scan();
 	}
 	switch (Token) {
 	case ENUM:
@@ -779,6 +904,8 @@ void top(void) {
 	case STRUCT:
 	case UNION:
 		structdecl(clss, UNION == Token);
+		if (cnst)
+		  warn("const keyword ignored for struct/union types", NULL);
 		break;
 
 	case CHAR:
@@ -787,6 +914,8 @@ void top(void) {
 	case UINT:
 	case VOID:
 		prim = primtype(Token, NULL);
+		if (cnst)
+		  prim |= CNST;
 		Token = scan();
 		decl(clss, prim, 0);
 		break;
@@ -795,9 +924,17 @@ void top(void) {
 		if ((utype = usertype(Text)) != 0) {
 			Token = scan();
 			decl(clss, Prims[utype], utype);
+			if (cnst && utype)
+			  error("const keyword not valid before user defined type", NULL);
 		}
-		else
-			decl(clss, PINT, 0);
+		else {
+			//grw - added support for const keyword
+			/* decl(clss, PINT, 0); */
+			prim = PINT;
+			if (cnst)
+			  prim |= CNST;
+			decl(clss, prim, 0);
+		}
 		break;
 	case ULABEL:
 	    error("invalid location for local label: %s", Text);

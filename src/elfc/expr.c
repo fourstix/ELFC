@@ -146,16 +146,39 @@ static node *primary(int *lv) {
 }
 
 int typematch(int p1, int p2) {
+	//grw - added support for const keyword
+	int stc;
+
+	/* check for struct/union types */
+	stc = ((p1 & STCMASK) || (p2 & STCMASK));
+	if (!stc) {
+		/* const qualifier does not affect type matching
+     * so remove any const bits from primitive type before comparing
+		 */
+		p1 &= ~CNSTMASK;
+		p2 &= ~CNSTMASK;
+	}
+
 	//grw - added support for multiple pointer indirection
 	if (p1 == p2) return 1;
 	if (inttype(p1) && inttype(p2)) return 1;
 	if (!inttype(p1) && isvoidptr(p2)) return 1;
 	if (isvoidptr(p1) && !inttype(p2)) return 1;
+
+	return 0;
+
+	//grw - added support for multiple pointer indirection
+/*
+	if (p1 == p2) return 1;
+	if (inttype(p1) && inttype(p2)) return 1;
+	if (!inttype(p1) && isvoidptr(p2)) return 1;
+	if (isvoidptr(p1) && !inttype(p2)) return 1;
+*/
 /*
 	if (!inttype(p1) && VOIDPTR == p2) return 1;
 	if (VOIDPTR == p1 && !inttype(p2)) return 1;
-	*/
 	return 0;
+	*/
 }
 
 /*
@@ -322,7 +345,6 @@ static node *stc_access(node *n, int *lv, int ptr) {
 static node *postfix(int *lv) {
 	node	*n = NULL, *n2, *fn;
 	int	lv2[LV], p, na;
-
 	n = primary(lv);
 	for (;;) {
 		switch (Token) {
@@ -343,7 +365,9 @@ static node *postfix(int *lv) {
 					UNIPTR == (p & STCMASK)
 				) {
 				*/
-				if (PINT == p || ptrlevel(p) > 0) {
+				//grw - changed to use pinttype
+				/* if (PINT == p || ptrlevel(p) > 0) { */
+				if (pinttype(p) || ptrlevel(p) > 0) {
 					n2 = mkunop(OP_SCALE, n2);
 				}
 				else if (comptype(p)) {
@@ -898,11 +922,20 @@ static node *asgmnt(int *lv) {
 		Token = scan();
 		n2 = asgmnt(lv2);
 		n2 = rvalue(n2, lv2);
+		if (!allowasgmnt(lv))
+			error("cannot assign value to initialized const variable", NULL);
 		if (ASSIGN == op) {
 			if (!typematch(lv[LVPRIM], lv2[LVPRIM]))
 				error("assignment from incompatible type",
 					NULL);
-			n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+			if(comptype(lv[LVPRIM])) {
+				//grw - added support to assign struct/union
+				n = mkbinop2(OP_COPY, lv[LVPRIM], lv[LVSYM], n, n2);
+				//grw - set LVADDR to indicate lvalue in test below
+				lv[LVADDR] = 1;
+			} else {
+ 			  n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+			}
 		}
 		else {
 			memcpy(lvs, lv, sizeof(lvs));
@@ -970,4 +1003,40 @@ int constexpr(void) {
 		return 0;
 	}
 	return n->args[0];
+}
+
+/*
+ * Check to see if an assignment to lvalue is allowed
+ * return 1 if assignment allowed, 0 if not allowed
+ */
+int allowasgmnt(int *lv) {
+	int prim = lv[LVPRIM];
+	int y    = lv[LVSYM];
+	int cnst;
+
+	/* struct/union ignore constant */
+	if (prim & STCMASK)
+	  return 1;
+
+	cnst = prim & CNSTMASK;
+
+	/* if not constant, assignment okay */
+	if (!cnst)
+	  return 1;
+
+
+	/* if constant, but not initialized */
+	if (cnst == CNST) {
+		/* mark current lvalue and primitive as initialized */
+		Prims[y] |= CINIT;
+		lv[LVPRIM] |= CINIT;
+		return 1;
+	}
+
+	/* we can assign values to const pointers themselves */
+	if (ptrlevel(prim) > 0)
+	   return 1;
+
+	/* consant already initialized, return no assignment allowed */
+	return 0;
 }

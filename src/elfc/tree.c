@@ -412,6 +412,16 @@ static void emittree1(node *a) {
 			lv[LVSYM] = a->args[1];
 			genstore(lv);
 			break;
+	//grw - copy a complex type
+	case OP_COPY:
+			emittree1(a->left);
+			commit();
+			emittree1(a->right);
+			commit();
+			lv[LVPRIM] = a->args[0];
+			lv[LVSYM] = a->args[1];
+			gencopy(lv);
+			break;
 	}
 }
 

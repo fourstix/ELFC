@@ -119,6 +119,9 @@ int eofcheck(void) {
 }
 
 int inttype(int p) {
+	//grw - added support for const keyword
+	/* remove any const bits before comparing */
+	p &= ~CNSTMASK;
 	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p;
 }
 
@@ -133,17 +136,34 @@ void notvoid(int p) {
 }
 
 int chartype(int p) {
+	//grw - added support for const keyword
+	/* remove any const bits before comparing */
+	p &= ~CNSTMASK;
 	return PCHAR == p || PSCHAR == p;
+}
+
+/* primitive int type */
+int pinttype(int p) {
+	/* remove any const bits before comparing */
+	p &= ~CNSTMASK;
+	return PINT == p || PUINT == p;
 }
 
 /* returns 1 if signed, 0 if unsigned */
 int signtype(int p) {
+	//grw - added support for const keyword
+	/* remove any const bits before comparing */
+	p &= ~CNSTMASK;
 	/* only chararacter and unsigned integer are signed */
 	return PCHAR != p && PUINT != p;
 }
 
 /* returns 1 if an unsgined opertor should be used */
 int unsgnop(int p1, int p2) {
+	//grw - added support for const keyword
+	/* remove any const bits before comparing */
+	p1 &= ~CNSTMASK;
+	p2 &= ~CNSTMASK;
 	/* unsigned op if either argument is an unsigned type */
 	return (p1 == PUINT || p2 == PUINT || p1 == PCHAR || p2 == PCHAR);
 }
@@ -235,4 +255,39 @@ int setptrlevel(int ptype, int lvl) {
 	ptype |= newval;
 
 	return ptype;
+}
+
+/* check to see if pointers are compatible */
+int compatible(int p1, int p2) {
+	int lvl_1;
+	int lvl_2;
+	int stc;
+
+	/* get the level for the pointers */
+	lvl_1 = ptrlevel(p1);
+	lvl_2 = ptrlevel(p2);
+
+	/* if either value is not a pointer,
+	 *  then indicate compatible for pointer arithmetic
+	 */
+	if (!lvl_1 || !lvl_2)
+	  return 1;
+
+	/* If the pointers are different levels,
+	 * then they are not compatible
+	 */
+	if (lvl_1 != lvl_2)
+	  return 0;
+
+	/* check to see if comparing struct/union pointers */
+	stc = p1 & STCMASK;
+
+	/* const keyword is ignored for pointers to struct/union */
+	if (!stc) {
+		/* constant pointers compatible with non-constant pointers */
+   	/* so remove any constant bits before comparing */
+    p1 &= ~CNSTMASK;
+	  p2 &= ~CNSTMASK;
+  }
+ return (p1 == p2);
 }

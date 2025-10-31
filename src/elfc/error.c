@@ -47,3 +47,9 @@ int synch(int syn) {
 	Syntoken = syn;
 	return t;
 }
+
+void warn(char *s, char *a) {
+	fprintf(stderr, "warning: %s: %d: ", File, Line);
+	fprintf(stderr, s, a);
+	fprintf(stderr, "\n");
+}

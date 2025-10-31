@@ -211,20 +211,38 @@ void cglognot(void)	{gen(";----- cglognot");
 		gen("          gosub s_not16				 ; logical not TOS on Expression Stack\n"); }
 
 void cgscale(void)	{gen(";----- cgscale");
-	gen(" 				gosub s_scltos2");}
+	gen(" 				gosub s_scltos2n");
+	ngen(" 				  %s %d", "db", 1);
+;
+
+}
 void cgscale2(void)	{gen(";----- cgscale2");
-	gen(" 				gosub s_sclsos2");}
+	gen(" 				gosub s_sclsos2n");
+	ngen(" 				  %s %d", "db", 1);}
+
 void cgunscale(void)	{gen(";----- cgunscale");
-	gen(" 				gosub s_unscl2");}
+	gen(" 				gosub s_unscl2n");
+	ngen(" 				  %s %d", "db", 1);}
 
 void cgscaleby(int v)	{
 	gen(";----- cgscaleby");
  	if (v == 1)
 		return;   /* no scale required */
 	else if (v == 2) {
-		gen(" 				gosub s_scltos2");  /* scale by shifting */
+		gen(" 				gosub s_scltos2n");  /* scale by shifting */
+		ngen(" 				  %s %d", "db", 1);
 	}	else if (v == 4) {
-		gen(" 				gosub s_scltos4");  /* scale by shifting twice */
+		gen(" 				gosub s_scltos2n");  /* scale by shifting twice */
+		ngen(" 				  %s %d", "db", 2);
+	} else if (v == 8) {
+		gen(" 				gosub s_scltos2n");  /* scale by shifting three times */
+		ngen(" 				  %s %d", "db", 3);
+	} else if (v == 16) {
+		gen(" 				gosub s_scltos2n");  /* scale by shifting four times */
+		ngen(" 				  %s %d", "db", 4);
+	} else if (v == 32) {
+		gen(" 				gosub s_scltos2n");  /* scale by shifting five times */
+		ngen(" 				  %s %d", "db", 5);
 	} else { /* scale by multiplication */
 		gen(" 				gosub s_epush16       ; put size on stack");
 		ngen(" 				  %s %d", "dw", v);
@@ -237,11 +255,22 @@ void cgscale2by(int v){
 	gen(";----- cgscale2by");
 	if (v == 1)
 	 return;   /* no scale required */
-	else if (v == 2) {
-	 gen(" 				gosub s_sclsos2");  /* scale by shifting */
- }	else if (v == 4) {
-	 gen(" 				gosub s_sclsos4");  /* scale by shifting twice */
-	} else { /* scale by multiplication */
+  else if (v == 2) {
+	 gen(" 				gosub s_sclsos2n");  /* scale by shifting */
+	 ngen(" 				  %s %d", "db", 1);
+  } else if (v == 4) {
+	 gen(" 				gosub s_sclsos2n");  /* scale by shifting twice */
+	 ngen(" 				  %s %d", "db", 2);
+  } else if (v == 8) {
+ 	 gen(" 				gosub s_sclsos2n");  /* scale by shifting three times */
+ 	 ngen(" 				  %s %d", "db", 3);
+  } else if (v == 16) {
+ 	 gen(" 				gosub s_sclsos2n");  /* scale by shifting four times */
+ 	 ngen(" 				  %s %d", "db", 4);
+  } else if (v == 32) {
+ 	 gen(" 				gosub s_sclsos2n");  /* scale by shifting five times */
+ 	 ngen(" 				  %s %d", "db", 5);
+  } else { /* scale by multiplication */
 	 gen("        gosub s_swap16				 ; swap TOS and SOS on Expression Stack");
 	 gen(" 				gosub s_epush16        ; put size on stack");
 	 ngen(" 				  %s %d", "dw", v);
@@ -257,15 +286,25 @@ void cgunscaleby(int v)	{
 	gen(";----- cgunscaleby");
 	if (v == 1)
 	 return;   /* no unscale required */
-	else if (v == 1) {
-	 gen(" 				gosub s_unscl2");  /* unscale by shifting */
- }	else if (v == 4) {
-	 gen(" 				gosub s_unscl4");  /* unscale by shifting */
+	else if (v == 2) {
+	 gen(" 				gosub s_unscl2n");  /* unscale by shifting */
+	 ngen(" 				  %s %d", "db", 1);
+  }	else if (v == 4) {
+	 gen(" 				gosub s_unscl2n");  /* unscale by shifting twice */
+	 ngen(" 				  %s %d", "db", 2);
+  } else if (v == 8) {
+	 gen(" 				gosub s_unscl2n");  /* unscale by shifting three times */
+	 ngen(" 				  %s %d", "db", 3);
+  } else if (v == 16) {
+	 gen(" 				gosub s_unscl2n");  /* unscale by shifting four times */
+	 ngen(" 				  %s %d", "db", 4);
+  } else if (v == 32) {
+	 gen(" 				gosub s_unscl2n");  /* unscale by shifting five times */
+	 ngen(" 				  %s %d", "db", 5);
 	} else {
 	 gen(" 				gosub s_epush16        ; put size on stack");
  	 ngen(" 				  %s %d", "dw", v);
 	 //grw - added support for signed and unsigned
-	 /* gen("        gosub s_mdsgn16			   ; Removed this once unsigned supported?\n"); */
 	 gen("        load  ra, 0	           ; prepare RA for unsigned divide\n");
 	 gen("        gosub s_div16				   ; divide difference by size\n");
 	}
@@ -610,4 +649,11 @@ void cgsetup(void) {
 	genraw("#ifdef STGROM\n");
 	genraw("      load   r1, $F000  ; set up handler for STG Breakpoint\n");
 	genraw("#endif\n");
+}
+
+//grw - added support to assign struct/union
+void cgcopy(int n) {
+  gen(";----- cgcopy");
+	gen(" 				gosub s_mcopy  ; copy structure memory block");
+	ngen(" 				  %s %d", "dw", n);
 }

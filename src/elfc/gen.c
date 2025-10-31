@@ -485,7 +485,9 @@ int gensub(int p1, int p2, int swapped) {
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
 	if (!swapped) cgswap();
-	if (!inttype(p1) && !inttype(p2) && p1 != p2)
+	//grw - changed to use ptr compatibility function
+	/* if (!inttype(p1) && !inttype(p2) && p1 != p2) */
+	if (!compatible(p1,p2))
 		error("incompatible pointer types in binary '-'", NULL);
 	if (ptr(p1) && !ptr(p2)) {
 			if (needscale(p1)) {
@@ -1112,6 +1114,16 @@ void genstore(int *lv) {
 	}
 }
 
+//grw - added support to assign struct/union
+void gencopy(int *lv) {
+	int size;
+	if (NULL == lv) return;
+  size = Sizes[lv[LVPRIM] & ~STCMASK];
+  //grw - add cgcopy method to memcopy struct/union
+	cgcopy(size);
+  return;
+}
+
 /* genrval computation */
 
 void genrval(int *lv) {
@@ -1322,6 +1334,7 @@ void addstr(int label, char *text, int len) {
 		 /* free the memory for the string */
 		 free(txt);
 	 }
+	 genraw("\n;----- end string table\n");
 	 /* reset the string table */
 	 str_idx = 0;
  }

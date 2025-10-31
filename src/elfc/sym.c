@@ -155,7 +155,9 @@ static void defglob(char *name, int prim, int type, int size, int val,
 		else
 			genbss(gsym(name), objsize(prim, TVARIABLE, size), st);
 	}
-	else if (PCHAR == prim) {
+	//grw - update to use chartype
+	else if (chartype(prim)) {
+	/* else if (PCHAR == prim) { */
 		if (TARRAY == type)
 			genbss(gsym(name), size, st);
 		else {
@@ -164,7 +166,9 @@ static void defglob(char *name, int prim, int type, int size, int val,
 			//genalign(1);
 		}
 	}
-	else if (PINT == prim) {
+	//grw - update to use pinttype
+	else if (pinttype(prim)) {
+	/* else if (PINT == prim) { */
 		if (TARRAY == type)
 			genbss(gsym(name), size*INTSIZE, st);
 		else
@@ -256,7 +260,9 @@ static void defloc(int prim, int type, int size, int val, int init) {
 		else
 			genbss(labname(val), objsize(prim, TVARIABLE, size),1);
 	}
-	else if (PCHAR == prim) {
+	//grw - update to use chartype
+	else if (chartype(prim)) {
+	/* else if (PCHAR == prim) { */
 		if (TARRAY == type)
 			genbss(labname(val), size, 1);
 		else {
@@ -265,7 +271,9 @@ static void defloc(int prim, int type, int size, int val, int init) {
 			//genalign(1);
 		}
 	}
-	else if (PINT == prim) {
+	//grw - update to use pinttype
+	else if (pinttype(prim)) {
+	/* else if (PINT == prim) { */
 		if (TARRAY == type)
 			genbss(labname(val), size*INTSIZE, 1);
 		else
@@ -306,10 +314,19 @@ int objsize(int prim, int type, int size) {
 	int	k = 0, sp;
 
 	sp = prim & STCMASK;
+
+	//grw - convert to use chartype and pinttype
+	if (chartype(prim))
+		k = CHARSIZE;
+  else if (pinttype(prim))
+  	k = INTSIZE;
+
+	/*
 	if (PINT == prim || PUINT == prim)
 		k = INTSIZE;
 	else if (PCHAR == prim || PSCHAR == prim)
 		k = CHARSIZE;
+	*/
 	//grw - added support for multiple pointer indirection
 	/*
 	else if (INTPTR == prim || CHARPTR == prim || UINTPTR == prim

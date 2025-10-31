@@ -241,6 +241,7 @@ static int keyword(char *s) {
 	case 'c':
 		if (!strcmp(s, "case")) return CASE;
 		if (!strcmp(s, "char")) return CHAR;
+		if (!strcmp(s, "const")) return CONST;
 		if (!strcmp(s, "continue")) return CONTINUE;
 		break;
 	case 'd':
@@ -316,6 +317,8 @@ static int macro(char *name) {
 
 static int scanpp(void) {
 	int	c, t, peek;
+	//grw - added support for local labels and goto
+	static int ternary = 0;
 
 	if (Rejected != -1) {
 		t = Rejected;
@@ -416,6 +419,7 @@ static int scanpp(void) {
 				return SLASH;
 			}
 		case ':':
+		  ternary--;
 			return COLON;
 		case ';':
 			return SEMI;
@@ -469,6 +473,7 @@ static int scanpp(void) {
 				return GREATER;
 			}
 		case '?':
+			ternary++;
 			return QMARK;
 		case '[':
 			return LBRACK;
@@ -592,7 +597,8 @@ static int scanpp(void) {
         //grw - added support for local labels and goto
 				c = next();
 				/* a local label is an identifier that ends in a colon */
-				if (':' == c) {
+				/* but not inside a ternary statement */
+				if (':' == c && !ternary) {
 					return ULABEL;
 				} else {
 					putback(c);

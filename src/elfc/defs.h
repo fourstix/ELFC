@@ -10,7 +10,7 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION		"2025-10-05"
+#define VERSION		"2025-10-31"
 
 #ifndef SCCDIR
  #define SCCDIR		"."
@@ -97,10 +97,8 @@ enum {
 };
 */
 
-#define PTRMASK  0x00F0
-#define TYPEMASK 0x000F
 #define MAXPTR   15
-#define CNSTMASK 001000
+
 
 enum {
 	PCHAR = 1,
@@ -112,17 +110,31 @@ enum {
   PLONG,
   PULONG,
   PFLOAT,
+  //grw - type for function pointer
+  FUNPTR,
+
+  //grw - bits 0-3 are for the primitive types
+  TYPEMASK = 0x000F,
   //grw - bits 4-7 are for the pointer level for primitive types
-  //grw - special types function pointers, structures and unions
-	FUNPTR  = 0x0100,
-	PSTRUCT = 0x2000,
-	PUNION  = 0x4000,
-	STCPTR  = 0x6000,
-	STCPP   = 0x8000,
-	UNIPTR  = 0xA000,
-	UNIPP   = 0xC000,
-	STCMASK = 0xE000
+  PTRMASK  = 0x00F0,
+
+  //grw - flag to mark primative types as constant
+  CNST     = 0x0100,
+  //grw - flag to mark constant as initialized
+  CINIT    = 0x0200,
+  //grw - mask for constant bits
+  CNSTMASK = 0x0300,
+  //grw - special types for structures and unions and their pointer types
+	PSTRUCT  = 0x2000,
+	PUNION   = 0x4000,
+	STCPTR   = 0x6000,
+	STCPP    = 0x8000,
+	UNIPTR   = 0xA000,
+	UNIPP    = 0xC000,
+  //grw - mask to determine if a type is struct/union
+	STCMASK  = 0xE000
 };
+
 
 /* storage classes */
 enum {
@@ -223,7 +235,7 @@ enum {
 
 	ARROW, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR, ASPLUS,
 	ASRSHIFT, ASDIV, ASMUL, ASSIGN, AUTO, BREAK, CASE, CHAR, COLON,
-	COMMA, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
+	COMMA, CONST, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
 	EXTERN, FOR,  GOTO, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
 	LPAREN, NOT, QMARK, RBRACE, RBRACK, REGISTER, RETURN, RPAREN, SCHAR,
 	SEMI, SIGNED, SIZEOF, STATIC, STRLIT, STRUCT, SWITCH, TILDE, TYPEDEF,
@@ -243,5 +255,7 @@ enum {
 	OP_NOT, OP_NOTEQ, OP_PLUS, OP_PREDEC, OP_PREINC, OP_POSTDEC,
 	OP_POSTINC, OP_RSHIFT, OP_RVAL, OP_SCALE, OP_SCALEBY, OP_SUB,
   //grw - added support for signed and unsigned
-  OP_UMUL, OP_UDIV, OP_UMOD, OP_ABV, OP_ABVEQ, OP_BLW, OP_BLWEQ
+  OP_UMUL, OP_UDIV, OP_UMOD, OP_ABV, OP_ABVEQ, OP_BLW, OP_BLWEQ,
+  //grw - added support for assigning struct/union types
+  OP_COPY
 };

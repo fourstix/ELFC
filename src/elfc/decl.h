@@ -109,6 +109,7 @@ char	*gsym(char *s);
 void	ident(void);
 void	init(void);
 void	initopt(void);
+//grw - check for compatible int types (true for int and char types)
 int	inttype(int p);
 int	label(void);
 char	*labname(int id);
@@ -211,3 +212,13 @@ int addLocalLabel(int fn, char *text, int defined);
 void gengoto(int dest);
 //grw - added support for user labels and goto
 void chklocals(int scope);
+//grw - added warning to compiler
+void	warn(char *s, char *a);
+//grw - added logic to assign struct/union
+void	gencopy(int *lv);
+//grw - added support for const keyword
+int allowasgmnt(int *lv);
+//grw - check for int types alone (true for int , false for char types)
+int	pinttype(int p);
+//grw - check to see if two pointers are compatible
+int compatible(int p1, int p2);
