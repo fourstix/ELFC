@@ -96,45 +96,105 @@ unsigned int ui2 = 65466 (0xffba)
 ```
 In this example the int value -77 promotes to the unsigned int value of 65459, and 65459 plus the unigned int value 7 equals the unsigned int value of 65566.
 
+Scope
+------
+
+ElfC supports declarations made in *global* scope and *local* scope.
+
+If the declaration appears outside of any function then it is said to have *global* scope, which terminates at the end of the translation unit.
+
+If the declaration appears within a function definition or within the list of parameter declarations in a function definition, the identifier has *local* scope.
+
+ElfC does not support declarations made in *block* scope.  Declarations cannot be declared within a block defined by a pair of braces, unless that block is the definition of function.
+
+If an identifier is declared by declaration with *local* scope, then it is only available within the function where it was declared.
+
+If an identifier is declared by declaration with *global* scope, then it is available throughout the file where it was declared.
+
+Storage Class Specifiers
+--------------------------
+ElfC supports the C standard type declaration syntax as specified in ANSI C C89/C90 specification. The declaration type may be prefixed by a storage class specifier, a type qualifier or both. If both are used, the storage class specifier must come before the type qualifier.
+
+<table>
+<tr><th>Storage Class Specifiers</th></tr>
+<tr><td>extern</td></tr>
+<tr><td>static</td></tr>
+<tr><td>auto</td></tr>
+<tr><td>register</td></tr>
+<tr><td>typedef</td></tr>
+</table>
+
+*Notes:*
+The `auto` and `register` storage class specifiers may only be used in local scope. ElfC will emit an error if they are used in global scope.
+
+The `register` storage class specifier is treated the same as `auto`, except if the `const` type qualifier is used, then ElfC will emit an error because that combination is forbidden by the ANSI C C89/C90 specification.
+
+The `auto` storage class specifier is the default for *local* scope declarations and `static` is the default for *global* scope declarations.
+
+The `typedef` keyword is used to define user types.
+
 Types Qualifiers
 -----------------
-The type qualifier `volatile` is accepted, but ignored.
 
-The type qualifier `const` is supported for variables and pointers to constant variables, but constant pointers are not supported.
+<table>
+<tr><th>Type Qualifiers</th></tr>
+<tr><td>const</td></tr>
+<tr><td>volatile</td></tr>
+<tr><td>const volatile</td></tr>
+<tr><td>volatile const</td></tr>
+</table>
 
-Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a declaration, but ignores it unless the variable is also declared `const`, in that case ElfC will emit an error.
+The type qualifier `volatile` is accepted, and will suppress optimization.
 
-Per the ANSI C C89/C90 specification, `volatile const` is accepted as valid syntax.
+The type qualifier `const` is supported for variables and pointers to constant variables.
+
+Either `volatile const` or `const volatile` are accepted as valid syntax, and are treated exactly the same.
+
+If a storage class specifier is used in a declaration, the type qualifier must come after it.
+
+Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a local declaration, but ignores it unless the variable is also declared `const`, in that case ElfC will emit an error.
 
 Functions may be declared to return a `const` value. Per the ANSI C C89/C90 specification, `const` is ignored since a function may never be an lvalue.
 
 Arguments to a function may be declared as `const` and ElfC will treat these arguments as initialized inside the function.  An attempt to assign a value to a `const` argument inside the function is considered an error.
 
-A pointer to a varying variable can be assigned to a pointer to a `const` variable.
+A pointer to an unqualified variable can be assigned to a pointer to a `const` or `volatile` variable, and vice versa.
 
-Type qualifiers are ignored when considering if two type are compatible.
+Type qualifiers are ignored when considering if two types are compatible.
 
 **Implementation Defined Behavior**
 
-*Note:* This behavior is not specified by the ANSI C89/C90 specification, but contradicts behavior as defined in later versions of the C specification.
+*Note:* This behavior is not specified by the ANSI C89/C90 specification, but may contradict behavior specified in C99 and later versions.
 
-ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the possible type initializations.
+ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the possible declaration type initializations.
 
 ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment will be treated as an error.
 
-User defined types may include `const` in their typdef definition, but `const` may not be applied to an existing user defined type.
+The `const` keyword is supported for static and global arrays, but these arrays must be initialized when declared.
+
+User defined types may include `const` in their typdef definition, but `const` not supported when applied to an existing user defined type.
+
+Neither `const` pointers to (varying) variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
+
+The `const` keyword is supported for members inside structures and unions.
+
+ElfC does not prevent the assignment of a pointer to a `const` or `volatile` variable to an unqualified pointer.
+
+Functions may be declared to return a `volatile` value and arguments may be qualified as `volatile` but ElfC will ignore the `volatile` keyword, per the ANSI C C89/C90 specification.
+
+The `volatile` keyword is ignored for structures, unions. This is allowed by the ANSI C C89/C90 specification, because ElfC performs no optimizations related to these cases.
+
+The `volatile` keyword is supported for the members inside structures and unions.
+
+User defined types may include `volatile` in their typdef definition, but `volatile` is ignored when applied to an existing user defined type.
 
 **Differences from ANSI C89/C90**
 
 *Note:* The following behavior differs from the ANSI C89/C90 specification.
 
-Neither `const` pointers to varying variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
+The `const` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.  ElfC supports the `const` keyword for the *members* of structures and unions.
 
-The `const` keyword is ignored for structures, unions and arrays.  The `const` keyword is ignored for members inside structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.
-
-ElfC does not prevent the assignment of a pointer to a `const` variable to a pointer to a varying variable.
-
-The `volatile` keyword is ignored and does not prevent optimization. (This behavior may be changed in a later release.)
+The `const` keyword is *not* supported for local (auto) arrays, because ElfC does not support initializing local arrays.
 
 Local Labels and `goto`
 -----------------------
@@ -147,7 +207,7 @@ The `goto` keyword can be used to jump directly to a local label within the same
 
 There are few restrictions on local label locations and goto.  For example, they may jump into the body of an iteration statement, like `for` or `while` statement, bypassing any initializations or tests done at the beginning.
 
-ElfC will emit a warning when a local label is defined within the body of an iteration statement.
+ElfC will emit a warning when a local label is defined within the body of an iteration statement, but the ANSI C89/C90 specification does not prohibit this. (Jumping into an iteration statement may bypass initializations, and is considered bad practice.)
 
 Local labels and `goto` should be used with caution, if used at all.
 
@@ -328,7 +388,7 @@ Assert Modified Function
 * `assert` is implemented by function, because the preprocessor does not support macros with parameters.
 * The `assert` function has arguments for the assertion, file name and line number.
 * If the macro `NDEBUG` is defined the `assert` function returns immediately.
-* The `__FILE__` and `__LINE__` macros can be used as the file and line arguments, so the correct values are printed if the assertion is false.
+* The `__FILE__`, `__LINE__` and `__FUNC__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
 
 Time Library
 ---------------------------
@@ -448,9 +508,10 @@ Pre-Defined Macros
 * `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `_STGROM_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
+* `__FUNC__` insert the current function name in the code file.
 * If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
 
-*Note: The `__LINE__` and `__FILE__` macros begin and end with **two** underscores.*
+*Note: The `__LINE__`, `__FILE__` and `__FUNC__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------

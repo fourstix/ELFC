@@ -152,14 +152,28 @@ More information about Version 3, signed and unsigned types, library functions a
 
 Release 3.1
 ------------
-*  This release removes the restriction of only 2 levels of pointer indirection and supports up to 15 levels of indirection. This meets the ANSI specified minimum of 12 levels of indrection.
+*  This release removes the restriction of only 2 levels of pointer indirection and supports up to 15 levels of indirection. This meets the ANSI specified minimum of 12 levels of indirection.
+
 * This release adds support for local labels and the `goto` keyword.
+
 * The `const` keyword is now supported.
+
 * Functions may now return a structure or union.
+
+* Structures and unions may now be assigned.
+
 * ElfC can now emit warning messages when compiling code.
+
 * Pointers may now be initialized with non-zero constant address values, like *0xFF00*
 
-More information about Version 3.1, labels, `goto` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+* The `__FUNC__` preprocessor directive was added in this version.
+
+* Declaring a variable as `volatile` will now prevent optimizations on that variable.
+
+* Global and static arrays may be initialized using initializer list or string. ElfC will
+  emit an error message if the initializer list size does not match the size of the array.
+
+More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Stdlib Library
 --------------
@@ -426,17 +440,9 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
-* The `volatile` keyword should prevent optimization on that variable.
-
-* Implement the stdlib rand() function using inline code.
-
 * Update the preprocessor to handle Macro parameters.
-
 * Add support to the preprocessor to accept multi-line commands.
-
 * Add support to the preprocessor for the `#` and `##` operators.
-
-
 
 Future Goals
 -------------
@@ -466,16 +472,13 @@ Differences Between ElfC and Full C89
    between the parameter list and function body) are not
    accepted.
 
-*  Pointers to `const` variables are supported, but neither `const` pointers
-   to varying variables, nor `const` pointers to `const` variables are supported.
+*  Pointers to `const` variables are supported, but neither `const` pointers to
+   (varying) variables, nor `const` pointers to `const` variables are supported,
+   i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;`
+   are *not* supported.
 
-*  The syntax `const int * p;` is supported, but the syntaxes `int * const p;` and
-   `const int * const p;` are *not* supported.
-
-*  The `const` keyword is ignored in structures, unions and arrays.
-
-*  The compiler does not prevent assignment of a pointer to a varying variable
-   to a pointer to `const` variable.
+*  The `const` and `volatile` keywords are ignored for structures and unions, but
+   may be used for their members.
 
 *  There are no long integers.
 
@@ -499,6 +502,10 @@ Differences Between ElfC and Full C89
    initialized with NULL or a constant address value.
 
 *  Local arrays cannot have initializers.
+
+*  The initializer list must have exactly the same elements as the gobal or static
+   array.  ElfC will not pad the array, nor will ElfC truncate the initializer list
+   or string.
 
 *  Local declarations are limited to the beginnings of function
    bodies (they do not work in other compound statements).
