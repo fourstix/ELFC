@@ -170,8 +170,8 @@ Release 3.1
 
 * Declaring a variable as `volatile` will now prevent optimizations on that variable.
 
-* Global and static arrays may be initialized using initializer list or string. ElfC will
-  emit an error message if the initializer list size does not match the size of the array.
+* Static (and global) arrays may be initialized using an initializer list or a string. ElfC
+  will emit an error message if the initializer list size does not match the size of the array.
 
 More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 

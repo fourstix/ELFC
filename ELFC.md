@@ -101,11 +101,11 @@ Scope
 
 ElfC supports declarations made in *global* scope and *local* scope.
 
-If the declaration appears outside of any function then it is said to have *global* scope, which terminates at the end of the translation unit.
+If the declaration appears outside of any function then it is said to have *global* scope, which terminates at the end of the file.
 
 If the declaration appears within a function definition or within the list of parameter declarations in a function definition, the identifier has *local* scope.
 
-ElfC does not support declarations made in *block* scope.  Declarations cannot be declared within a block defined by a pair of braces, unless that block is the definition of function.
+ElfC does not support declarations made in *block* scope.  Declarations cannot be declared within a block defined by a pair of braces, unless that block is the definition of a function.
 
 If an identifier is declared by declaration with *local* scope, then it is only available within the function where it was declared.
 
@@ -170,7 +170,7 @@ ElfC does not require immediate initialization in the declaration of a `const` v
 
 ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment will be treated as an error.
 
-The `const` keyword is supported for static and global arrays, but these arrays must be initialized when declared.
+The `const` keyword is supported for static (and global) arrays, but these arrays must be initialized when declared.
 
 User defined types may include `const` in their typdef definition, but `const` not supported when applied to an existing user defined type.
 
