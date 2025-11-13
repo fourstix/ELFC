@@ -10,6 +10,6 @@
 
 extern int _vformat(int mode, int max, void *dest, char *fmt, void **varg);
 
-int sprintf(char *buf, char *fmt, ...) {
+int sprintf(char *buf, const char *fmt, ...) {
 	return _vformat(0, 0, buf, fmt, (void **) &fmt + 1);
 }

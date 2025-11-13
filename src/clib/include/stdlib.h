@@ -118,13 +118,11 @@ typedef unsigned int ptrdiff_t;
 typedef unsigned int wchar_t;
 typedef unsigned int max_align_t;
 
-/* structure for div function */
-struct div_stc {
+/* typedef for div function */
+typedef struct {
     int quot;       /* quotient */
     int rem;        /* remainder */
-};
-
-typedef struct div_stc div_t;
+} div_t;
 
 void _init(void);
 int _fdinit(void);

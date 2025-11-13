@@ -17,42 +17,42 @@ int _openmode(char *mode) {
 	else if ('r' == *mode++) {
 		if ('+' == *mode)
 		  return O_OPEN;
-		else 
+		else
 			return O_RDONLY;
 	}
 	return EOF;
 }
 
-FILE *fopen(char *path, char *mode) {
+FILE *fopen(const char *path, const char *mode) {
 	int	fd;
 	int flags;
 
 	/* mode for everything but read only */
 	int  iomode = _FREAD | _FWRITE;
-	
+
 	flags = _openmode(mode);
-	
+
 	if (flags == EOF) {
-		errno = EINVAL;  
+		errno = EINVAL;
 		return NULL;
 	}
-		
+
 	fd = open(path, flags);
-	
-	if (fd == EOF) { 
+
+	if (fd == EOF) {
 		/* map generic io error to file error */
 		if (errno == EIO) {
 			/* if read-only then not found error */
 		  if (flags == O_RDONLY)
 			  errno = ENOENT;
 		  /* otherwise, then file access error */
-		  else 
+		  else
 			  errno = EACCESS;
 		}
 		return NULL;
 	}
 	if (flags == O_RDONLY)
 		iomode = _FREAD;
-		
+
 	return fdopen(fd, iomode);
 }
