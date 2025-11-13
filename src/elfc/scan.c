@@ -310,6 +310,10 @@ static int macro(char *name) {
 		//grw - print file name as C string in source (double quoted)
 		sprintf(pbuf, "\"%s\"", File);
 		playmac(pbuf);
+	} else if (!strcmp(name, "__FUNC__")){
+		//grw - print function name as C string in source (double quoted)
+		sprintf(pbuf, "\"%s\"", Thisfn ? Names[Thisfn] : "(none)");
+		playmac(pbuf);
 	} else
 	  playmac(Mtext[y]);
 	return 1;

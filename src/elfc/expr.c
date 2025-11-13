@@ -152,11 +152,12 @@ int typematch(int p1, int p2) {
 	/* check for struct/union types */
 	stc = ((p1 & STCMASK) || (p2 & STCMASK));
 	if (!stc) {
-		/* const qualifier does not affect type matching
-     * so remove any const bits from primitive type before comparing
+		/*
+		 * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
 		 */
-		p1 &= ~CNSTMASK;
-		p2 &= ~CNSTMASK;
+		p1 &= ~TQMASK;
+		p2 &= ~TQMASK;
 	}
 
 	//grw - added support for multiple pointer indirection
@@ -322,6 +323,19 @@ static node *stc_access(node *n, int *lv, int ptr) {
 	}
 	Token = scan();
 	p = Prims[y];
+	//grw - updated to add support for const and volatile
+
+	/*
+	 * check bits on plain types for uninitialized const
+	 * since a struct/union can be a member of another struct/union
+	 * we have to make sure it's a plain type member as well
+	 */
+	if (((p & STCMASK) == 0) && (p & CNSTMASK) == CNST) {
+		/* mark current member's primitive as initialized */
+		Prims[y] |= CINIT;
+	}
+
+
 	if (TARRAY == Types[y]) {
 		p = pointerto(p);
 		lv[LVADDR] = 0;
@@ -1018,6 +1032,7 @@ int allowasgmnt(int *lv) {
 	if (prim & STCMASK)
 	  return 1;
 
+	/* check type qualifier bits for const */
 	cnst = prim & CNSTMASK;
 
 	/* if not constant, assignment okay */

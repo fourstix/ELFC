@@ -263,9 +263,13 @@ static void defloc(int prim, int type, int size, int val, int init) {
 	//grw - update to use chartype
 	else if (chartype(prim)) {
 	/* else if (PCHAR == prim) { */
-		if (TARRAY == type)
-			genbss(labname(val), size, 1);
-		else {
+	//grw - added support to iniitialze global and static arrays
+		/* if (TARRAY == type) */
+		if (TARRAY == type) {
+			/* if not initialized, reserve space */
+			if(!init)
+			  genbss(labname(val), size, 1);
+		} else {
 			gendefb(init);
 			//grw - removed genalign
 			//genalign(1);
@@ -274,12 +278,18 @@ static void defloc(int prim, int type, int size, int val, int init) {
 	//grw - update to use pinttype
 	else if (pinttype(prim)) {
 	/* else if (PINT == prim) { */
-		if (TARRAY == type)
-			genbss(labname(val), size*INTSIZE, 1);
-		else
+	//grw - added support to iniitialze global and static arrays
+		/* if (TARRAY == type) */
+		if (TARRAY == type) {
+			/* if not initialized, reserve space */
+			if(!init)
+			  genbss(labname(val), size*INTSIZE, 1);
+		} else {
 			gendefw(init);
+		}
 	}
 	else {
+		/* arrays of pointers are not initialized */
 		if (TARRAY == type)
 			genbss(labname(val), size*PTRSIZE, 1);
 		else

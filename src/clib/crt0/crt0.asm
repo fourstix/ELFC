@@ -56,9 +56,9 @@
           extrn   laddr16
           extrn   pstor16
           extrn   pstor8
-          extrn   scltos2
-          extrn   sclsos2
-          extrn   unscl2
+          extrn   scltos2n
+          extrn   sclsos2n
+          extrn   unscl2n
           extrn   vinc16
           extrn   vdec16
           extrn   vinc8
@@ -83,11 +83,9 @@
           extrn   uge16
           extrn   ult16
           extrn   ule16
-          extrn   scltos4
-          extrn   sclsos4
-          extrn   unscl4
           extrn   lget16
           extrn   lset16
+          extrn   mcopy
 
 
           ;----- C routines
@@ -265,12 +263,10 @@ s_ugt16:    lbr ugt16
 s_uge16:    lbr uge16
 s_ult16:    lbr ult16
 s_ule16:    lbr ule16
-s_scltos2:  lbr scltos2
-s_scltos4:  lbr scltos4
-s_sclsos2:  lbr sclsos2
-s_sclsos4:  lbr sclsos4
-s_unscl2:   lbr unscl2
-s_unscl4:   lbr unscl4
+s_scltos2n: lbr scltos2n
+s_sclsos2n: lbr sclsos2n
+s_unscl2n:  lbr unscl2n
+s_mcopy:    lbr mcopy
 
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP

@@ -42,9 +42,9 @@
 ..\asm02 -L laddr16.asm
 ..\asm02 -L pstor16.asm
 ..\asm02 -L pstor8.asm
-..\asm02 -L scltos2.asm
-..\asm02 -L sclsos2.asm
-..\asm02 -L unscl2.asm
+..\asm02 -L scltos2n.asm
+..\asm02 -L sclsos2n.asm
+..\asm02 -L unscl2n.asm
 ..\asm02 -L vinc16.asm
 ..\asm02 -L vdec16.asm
 ..\asm02 -L vinc8.asm
@@ -69,11 +69,9 @@
 ..\asm02 -L uge16.asm
 ..\asm02 -L ult16.asm
 ..\asm02 -L ule16.asm
-..\asm02 -L scltos4.asm
-..\asm02 -L sclsos4.asm
-..\asm02 -L unscl4.asm
 ..\asm02 -L lget16.asm
 ..\asm02 -L lset16.asm
+..\asm02 -L mcopy.asm
 
 
 type epush16.prg dpop16.prg vpush16.prg vpop16.prg dpush16.prg > elfc.lib
@@ -84,10 +82,10 @@ type mod16.prg mul16.prg neg16.prg or16.prg sub16.prg psave.prg >> elfc.lib
 type true16.prg xor16.prg not16.prg bool16.prg inv16.prg  laddr16.prg >> elfc.lib
 type shl16.prg shr16.prg vstor16.prg vstor8.prg swap16.prg dget16.prg >> elfc.lib
 type lpush16.prg lpush8.prg deref16.prg deref8.prg pstor16.prg pstor8.prg >> elfc.lib
-type scltos2.prg sclsos2.prg vinc16.prg vdec16.prg vinc8.prg vdec8.prg >> elfc.lib
+type scltos2n.prg sclsos2n.prg vinc16.prg vdec16.prg vinc8.prg vdec8.prg >> elfc.lib
 type linc16.prg ldec16.prg linc8.prg ldec8.prg lpinc16.prg lpdec16.prg >> elfc.lib
 type vpinc16.prg vpdec16.prg pinc16.prg pdec16.prg pinc8.prg pdec8.prg >> elfc.lib
 type pincptr.prg pdecptr.prg ugt16.prg uge16.prg ult16.prg ule16.prg >> elfc.lib
-type scltos4.prg sclsos4.prg unscl2.prg unscl4.prg lget16.prg lset16.prg >> elfc.lib
+type unscl2n.prg lget16.prg lset16.prg mcopy.prg >> elfc.lib
 
-copy elfc.lib ..\lib\elfc.lib 
+copy elfc.lib ..\lib\elfc.lib

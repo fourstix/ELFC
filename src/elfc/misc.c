@@ -50,6 +50,8 @@ void init(void) {
 	//grw - add predefined macros for line number and file name
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+	//grw - add predefined macro for function name
+	addglob("__FUNC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	Infile = stdin;
 	File = "(stdin)";
 	Basefile = NULL;
@@ -120,8 +122,9 @@ int eofcheck(void) {
 
 int inttype(int p) {
 	//grw - added support for const keyword
-	/* remove any const bits before comparing */
-	p &= ~CNSTMASK;
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
+
 	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p;
 }
 
@@ -137,23 +140,23 @@ void notvoid(int p) {
 
 int chartype(int p) {
 	//grw - added support for const keyword
-	/* remove any const bits before comparing */
-	p &= ~CNSTMASK;
+	/* remove any type qualifier bits before comparing */
+	p &= ~TQMASK;
 	return PCHAR == p || PSCHAR == p;
 }
 
 /* primitive int type */
 int pinttype(int p) {
-	/* remove any const bits before comparing */
-	p &= ~CNSTMASK;
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
 	return PINT == p || PUINT == p;
 }
 
 /* returns 1 if signed, 0 if unsigned */
 int signtype(int p) {
 	//grw - added support for const keyword
-	/* remove any const bits before comparing */
-	p &= ~CNSTMASK;
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
 	/* only chararacter and unsigned integer are signed */
 	return PCHAR != p && PUINT != p;
 }
@@ -161,9 +164,9 @@ int signtype(int p) {
 /* returns 1 if an unsgined opertor should be used */
 int unsgnop(int p1, int p2) {
 	//grw - added support for const keyword
-	/* remove any const bits before comparing */
-	p1 &= ~CNSTMASK;
-	p2 &= ~CNSTMASK;
+	/* remove any type qualifier before comparing */
+	p1 &= ~TQMASK;
+	p2 &= ~TQMASK;
 	/* unsigned op if either argument is an unsigned type */
 	return (p1 == PUINT || p2 == PUINT || p1 == PCHAR || p2 == PCHAR);
 }
@@ -286,8 +289,8 @@ int compatible(int p1, int p2) {
 	if (!stc) {
 		/* constant pointers compatible with non-constant pointers */
    	/* so remove any constant bits before comparing */
-    p1 &= ~CNSTMASK;
-	  p2 &= ~CNSTMASK;
+    p1 &= ~TQMASK;
+	  p2 &= ~TQMASK;
   }
  return (p1 == p2);
 }

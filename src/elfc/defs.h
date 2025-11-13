@@ -50,7 +50,7 @@
 #define MAXSTRTBL  40
 
 //grw - added support for local labels and goto
-/* Maximum number of user defined local slabels */
+/* Maximum number of user defined local labels */
 #define MAXUSRLBL  20
 
 /* assert(NSYMBOLS < PSTRUCT) */
@@ -124,6 +124,10 @@ enum {
   CINIT    = 0x0200,
   //grw - mask for constant bits
   CNSTMASK = 0x0300,
+  //grw - volatile bit
+  VLTL     = 0x0400,
+  //grw - mask for type qualifiers
+  TQMASK   = 0x0700,
   //grw - special types for structures and unions and their pointer types
 	PSTRUCT  = 0x2000,
 	PUNION   = 0x4000,
