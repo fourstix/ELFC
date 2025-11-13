@@ -6,7 +6,7 @@
 #pragma           extrn Cstrlen
 #pragma           extrn Cstrcpy
 
-char *strdup(char *s) {
+char *strdup(const char *s) {
 	char	*p;
 	p = NULL;
 

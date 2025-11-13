@@ -2,8 +2,8 @@
 #include <string.h>
 
 #pragma           extrn Cmemcpy
- 
-void *memmove(void *d, void *s, size_t n) {
+
+void *memmove(void *d, const void *s, size_t n) {
 	char	*p;
 
 	if (d < s) return memcpy(d, s, n);

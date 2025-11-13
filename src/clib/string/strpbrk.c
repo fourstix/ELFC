@@ -4,8 +4,8 @@
 #pragma           extrn Cstrchr
 
 
-char *strpbrk(char *s, char *set) {
+char *strpbrk(const char *s, const char *set) {
 	while (*s && !strchr(set, *s))
 		s++;
-	return *s? s: NULL;
+	return *s ? s: NULL;
 }

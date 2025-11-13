@@ -5,7 +5,7 @@
  *	strncpy()
  */
 
-char *strncpy(char *d, char *s, size_t n) {
+char *strncpy(char *d, const char *s, size_t n) {
 	char	*p;
 
 	for (p = d; n && *s; n--)

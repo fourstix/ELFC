@@ -5,7 +5,7 @@
 #pragma           extrn Cstrncmp
 #pragma           extrn Cstrlen
 
-char *strstr(char *s1, char *s2) {
+char *strstr(const char *s1, const char *s2) {
   int len2;
   char *p;
 

@@ -1,13 +1,13 @@
-int strcmp(char *s1, char *s2) {
+int strcmp(const char *s1, const char *s2) {
   int  dif;
   dif = s1 - s2; /* in case either string is null */
-  
+
   if (s1 && s2) {
     asm("         gosub s_lget16  ; set the first string pointer");
-    asm("           dw 0          ; from argument stack");      
-    asm("         copy ra, rf     ; put s1 pointer into rf");        
+    asm("           dw 0          ; from argument stack");
+    asm("         copy ra, rf     ; put s1 pointer into rf");
     asm("         gosub s_lget16  ; set the second string pointer");
-    asm("           dw 2          ; from argument stack");             
+    asm("           dw 2          ; from argument stack");
     asm("         copy ra, rd     ; put s2 pointer into rd");
     asm("cmp:     lda     rd      ; get next byte in s2");
 	  asm("         str     r2	    ; store in M(X)");
@@ -18,7 +18,7 @@ int strcmp(char *s1, char *s2) {
     asm("         lbr     done    ; if different, we're done");
     asm("cmpe:    ldx             ; check s2 M(X);");
     asm("         lbz     done    ; if also terminator, s1 == s2");
-    asm("         sdi  0          ; negate D, because s1 < s2");  
+    asm("         sdi  0          ; negate D, because s1 < s2");
     asm("done:    plo  ra         ; put D value in ra");
     asm("         shl             ; shift msb into DF to check sign bit");
     asm("         ldi  0          ; put zero D for positive");
@@ -27,6 +27,6 @@ int strcmp(char *s1, char *s2) {
     asm("         phi  ra         ; put sign extension into ra");
     asm("         gosub s_lset16  ; set the return value");
     asm("           dw -2         ; in the argument stack");
-  }             
+  }
   return dif;
 }

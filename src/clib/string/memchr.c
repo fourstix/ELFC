@@ -1,21 +1,21 @@
 #define _ELFCLIB_
 #include <string.h>
 
-void *memchr(void *p, int c, size_t n) {
+void *memchr(const void *p, int c, size_t n) {
 	char *q;
 	q = NULL;
-	
+
 	if (p) {
 		asm("         gosub s_lget16  ; set the memory pointer");
-		asm("           dw 0          ; from argument stack");      
-		asm("         copy ra, rf     ; put memory pointer into rf");        
+		asm("           dw 0          ; from argument stack");
+		asm("         copy ra, rf     ; put memory pointer into rf");
 		asm("         gosub s_lget16  ; set the counter");
-		asm("           dw 4          ; from argument stack");      
+		asm("           dw 4          ; from argument stack");
 		asm("         copy ra, rc     ; put counter into rc");
 		asm("         gosub s_lget16  ; set the search character");
-		asm("           dw 2          ; from argument stack");             
+		asm("           dw 2          ; from argument stack");
 		asm("         glo  ra     		; put search character into M(X)");
-		asm("         str  r2         ; for comparisons");	 		
+		asm("         str  r2         ; for comparisons");
 		asm("loop:    glo  rc         ; get low count byte");
 		asm("         lbnz mchr       ; jump if not zero");
 		asm("         ghi  rc         ; get high count byte");
@@ -28,8 +28,8 @@ void *memchr(void *p, int c, size_t n) {
 		asm("match:   dec  rf         ; move RF back to found character");
 		asm("         copy  rf, ra    ; copy memory pointer to found character");
 		asm("         gosub s_lset16  ; set the return value");
-		asm("           dw -2         ; in the local variable on the stack");   
-		asm("notfnd:  adi  0          ; clear DF for return"); 				 
+		asm("           dw -2         ; in the local variable on the stack");
+		asm("notfnd:  adi  0          ; clear DF for return");
 	}
 	return q;
 }

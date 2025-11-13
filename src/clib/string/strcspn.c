@@ -3,7 +3,7 @@
 
 #pragma           extrn Cstrchr
 
-size_t strcspn(char *s, char *set) {
+size_t strcspn(const char *s, const char *set) {
 	int	i = 0;
 
 	while (*s && !strchr(set, *s))

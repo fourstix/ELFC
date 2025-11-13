@@ -1,16 +1,16 @@
 #define _ELFCLIB_
 #include <string.h>
 
-char *strchr(char *s, int c) {
+char *strchr(const char *s, int c) {
   char *p;
   p = NULL;
   if (s) {
     asm("         gosub s_lget16  ; set the source pointer");
-    asm("           dw 0          ; from argument stack");             
+    asm("           dw 0          ; from argument stack");
     asm("         copy ra, rf     ; put source pointer into rf");
     asm("         gosub s_lget16  ; set the search character");
-    asm("           dw 2          ; from argument stack");             
-    asm("         glo  ra         ; put character value into M(x)");  
+    asm("           dw 2          ; from argument stack");
+    asm("         glo  ra         ; put character value into M(x)");
     asm("         str  r2         ; for comparisons");
     asm("loop:    lda  rf         ; get byte from string");
     asm("         lbz  notfnd     ; jump if end of string");
@@ -19,12 +19,12 @@ char *strchr(char *s, int c) {
     asm("         dec  rf         ; move RF back to found character");
     asm("         copy  rf, ra    ; copy pointer to found character");
     asm("         gosub s_lset16  ; set the return value");
-    asm("           dw -2         ; in the argument stack");   
+    asm("           dw -2         ; in the argument stack");
     asm("notfnd:  adi  0          ; clear DF after arithmetic");
   }
   return p;
-  
-  
+
+
   /*
 	while (*s && *s != c)
 		s++;

@@ -1,21 +1,21 @@
 #define _ELFCLIB_
 #include <string.h>
 
- int strncmp(char *s1, char *s2, size_t n) {
+ int strncmp(const char *s1, const char *s2, size_t n) {
 	 int  dif;
 	 /* return value in case either string is null */
-   dif = s1 - s2; 
-   
+   dif = s1 - s2;
+
    if (s1 && s2) {
      asm("         gosub s_lget16  ; set the first string pointer");
-     asm("           dw 0          ; from argument stack");      
-     asm("         copy ra, rf     ; put s1 pointer into rf");        
+     asm("           dw 0          ; from argument stack");
+     asm("         copy ra, rf     ; put s1 pointer into rf");
      asm("         gosub s_lget16  ; set the second string pointer");
-     asm("           dw 2          ; from argument stack");             
-     asm("         copy ra, rd     ; put s2 pointer into rd"); 
+     asm("           dw 2          ; from argument stack");
+     asm("         copy ra, rd     ; put s2 pointer into rd");
 		 asm("         gosub s_lget16  ; set the counter");
-     asm("           dw 4          ; from argument stack");      
-     asm("         copy ra, rc     ; put counter into rc");        
+     asm("           dw 4          ; from argument stack");
+     asm("         copy ra, rc     ; put counter into rc");
 		 asm("loop:    lda  rf         ; get byte from first string");
 		 asm("         str  r2         ; store for compare");
 		 asm("         lda  rd         ; get byte from second string");
@@ -24,7 +24,7 @@
 		 asm("         sd              ; compare M(X) - D => s1 - s2");
 		 asm("         lbnz bad        ; jump if no match");
      asm("         ldx             ; check M(X) to see if we hit the terminator");
-     asm("         lbz  match      ; if we hit the terminator, strings match");     
+     asm("         lbz  match      ; if we hit the terminator, strings match");
 		 asm("         dec  rc         ; decrement characters to compare");
 		 asm("         glo  rc         ; see if done");
 		 asm("         lbnz loop       ; loop if not done");
@@ -45,8 +45,8 @@
      asm("done:    gosub s_lset16  ; set the return value");
      asm("           dw -2         ; in the argument stack");
 		 asm("         adi      0      ; clear DF after arithmetic");
-   }             
-   return dif;	 
+   }
+   return dif;
  }
 
 /*

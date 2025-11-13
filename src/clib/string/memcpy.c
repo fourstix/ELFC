@@ -1,16 +1,16 @@
 #define _ELFCLIB_
 #include <string.h>
 
- void *memcpy(void *d, void *s, size_t n) {
+ void *memcpy(void *d, const void *s, size_t n) {
  if (d && s) {
 	 asm("         gosub s_lget16  ; set the destination pointer");
-	 asm("           dw 0          ; from argument stack");      
-	 asm("         copy ra, rd     ; put destination pointer into rd");        
+	 asm("           dw 0          ; from argument stack");
+	 asm("         copy ra, rd     ; put destination pointer into rd");
 	 asm("         gosub s_lget16  ; set the source pointer");
-	 asm("           dw 2          ; from argument stack");             
-	 asm("         copy ra, rf     ; put source pointer into rf"); 
+	 asm("           dw 2          ; from argument stack");
+	 asm("         copy ra, rf     ; put source pointer into rf");
 	 asm("         gosub s_lget16  ; get the counter");
-	 asm("           dw 4          ; from argument stack");      
+	 asm("           dw 4          ; from argument stack");
 	       /* inline f_memcpy BIOS function  */
    asm("mcpy:    glo    ra       ; get low count byte");
    asm("         lbnz   mcpy1    ; jump if not zero");
