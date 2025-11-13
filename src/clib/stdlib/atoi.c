@@ -5,18 +5,18 @@
 /* define only extern procedures required */
 #pragma           extrn Cisspace
 
-int atoi(char *s) {
+int atoi(const char *s) {
   int i;
-  
+
   if (s == NULL) return 0;
-  
+
   /* skip over any leading whitespace */
   while(isspace(*s)) s++;
-  
+
   /* skip over leading plus */
   if(*s == '+') s++;
-  
-  
+
+
   asm(";----------------------------------------------");
   asm(";      Convert ASCII string to integer");
   asm("; registers used:");
@@ -25,10 +25,10 @@ int atoi(char *s) {
   asm(";  R8 - Temporary value");
   asm(";  RC - Converted 16-bit integer value");
   asm(";----------------------------------------------");
-   
+
 
   asm("           gosub s_lget16  ; get the buffer pointer for string");
-  asm("             dw 0          ; get pointer from argument stack");           
+  asm("             dw 0          ; get pointer from argument stack");
   asm("           copy ra, rf     ; copy pointer for function call");
   asm("           sex     r2              ; make sure X = SP");
   asm("           ldi     0               ; zero result");
@@ -102,7 +102,7 @@ int atoi(char *s) {
   asm("           lbr     atoi_0_1   ; loop back for more digits");
   asm("atoi_done: copy    rc, ra     ; copy result to accumulator");
   asm("           gosub   s_lset16   ; set integer value for return");
-  asm("             dw -2            ; set local variable on stack");           
+  asm("             dw -2            ; set local variable on stack");
 
 	return i;
 }
