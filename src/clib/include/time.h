@@ -1,11 +1,11 @@
 #ifndef _TIME_
 #define _TIME_
- 
+
 /* include stdlib if not included already */
 #ifndef _STDLIB_
 #include <stdlib.h>
 #endif
- 
+
  /* don't define all external functions inside C library procdures to prevent dupes */
 #ifndef _ELFCLIB_
 #pragma .link .library time.lib
@@ -28,7 +28,7 @@ struct tm {
     int tm_year;      /* years since 1900 */
     int tm_wday;      /* days since Sunday (0 to 6) */
     int tm_yday;      /* days since January 1 (0 to 365) */
-    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */ 
+    int tm_isdst;     /* Daylight Savings Time (0 => no, 1 => yes, -1 => unknown) */
 };
 
 void _dow(struct tm *tp);
@@ -36,7 +36,7 @@ void _doy(struct tm *tp);
 int  systime(struct tm *tp);
 char *asctime(struct tm *tp);
 char *cstime(void);
-int  strftime(char* s, int smax, char * fmt, struct tm *tp);
+int  strftime(char* s, int smax, const char * fmt, struct tm *tp);
 void timezone(char *tzname, int tzoff_min, int tzdst);
 int  utctime(struct tm *tp);
 

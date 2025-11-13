@@ -119,10 +119,12 @@ typedef unsigned int wchar_t;
 typedef unsigned int max_align_t;
 
 /* structure for div function */
-struct div_t {
+struct div_stc {
     int quot;       /* quotient */
     int rem;        /* remainder */
 };
+
+typedef struct div_stc div_t;
 
 void _init(void);
 int _fdinit(void);
@@ -139,7 +141,7 @@ void itoa(int n, char *s);
 void itox(int n, char *s);
 void itou(unsigned int n, char *s);
 int abs(int n);
-struct div_t div(int num, int denom);
+div_t div(int num, int denom);
 void *bsearch(void *key, void *array, size_t count, size_t size, int (*cmp)());
 void qsort(void *list, size_t count, size_t size, int (*cmp)());
 int rand(void);
