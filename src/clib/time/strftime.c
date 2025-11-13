@@ -48,13 +48,13 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   char *_days_ab;
   char *_months_ab;
 
-  /* Use compact strings to save space */  
+  /* Use compact strings to save space */
   _days_ab = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
   _months_ab = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
   _days = "Sunday\0\0\0\0Monday\0\0\0\0Tuesday\0\0\0Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday";
-  
+
   _fillmonths(_months);
-  
+
   for ( ; *format; ++format) {
     if (*format == '%') {
 
@@ -79,7 +79,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         /* case 'h': */
           pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab+(t->tm_mon)*4, pt, ptlim);
           continue;
-/*          
+/*
         case 'C':
           pt = _conv((t->tm_year + 1900) / 100, "%02d", pt, ptlim);
           continue;
@@ -87,15 +87,15 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'c':
           pt = _fmt("%a %b %e %H:%M:%S %Y", t, pt, ptlim);
           continue;
-/*          
+/*
         case 'D':
           pt = _fmt("%m/%d/%y", t, pt, ptlim);
           continue;
-*/          
+*/
         case 'd':
           pt = _conv(t->tm_mday, "%02d", pt, ptlim);
           continue;
-/*          
+/*
         case 'e':
           pt = _conv(t->tm_mday, "%2d", pt, ptlim);
           continue;
@@ -116,7 +116,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'j':
           pt = _conv(t->tm_yday + 1, "%03d", pt, ptlim);
           continue;
-/*          
+/*
         case 'k':
           pt = _conv(t->tm_hour, "%2d", pt, ptlim);
           continue;
@@ -132,11 +132,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'm':
           pt = _conv(t->tm_mon + 1, "%02d", pt, ptlim);
           continue;
-/*          
+/*
         case 'n':
           pt = _add("\n", pt, ptlim);
           continue;
-          
+
 */
         case 'P':
           pt = _add((t->tm_hour >= 12) ? "PM" : "AM", pt, ptlim);
@@ -145,14 +145,14 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'p':
           pt = _add((t->tm_hour >= 12) ? "pm" : "am", pt, ptlim);
           continue;
-/*          
+/*
         case 'R':
           pt = _fmt("%H:%M", t, pt, ptlim);
           continue;
 
         case 'r':
           pt = _fmt("%I:%M:%S %P", t, pt, ptlim);
-          continue;          
+          continue;
 */
         case 'S':
           pt = _conv(t->tm_sec, "%02d", pt, ptlim);
@@ -161,11 +161,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'T':
           pt = _fmt("%H:%M:%S", t, pt, ptlim);
           continue;
-          
+
         case 't':
           pt = _add("\t", pt, ptlim);
           continue;
-*/  
+*/
         case 'U':
           pt = _conv((t->tm_yday + 7 - t->tm_wday) / 7, "%02d", pt, ptlim);
           continue;
@@ -173,7 +173,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'u':
           pt = _conv((t->tm_wday == 0) ? 7 : t->tm_wday, "%d", pt, ptlim);
           continue;
-          
+
         case 'v':
           pt = _fmt("%e-%b-%Y", t, pt, ptlim);
           continue;
@@ -201,22 +201,22 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'Y':
           pt = _conv(t->tm_year + 1900, "%04d", pt, ptlim);
           continue;
-/*        
+/*
         case 'z': {
           if (_tz_hr < 0)
             pt = _add("-", pt, ptlim);
-          else   
+          else
             pt = _add("+", pt, ptlim);
-            
+
           pt = _conv(abs(_tz_hr), "%02d:", pt, ptlim);
           pt = _conv(abs(_tz_min), "%02d", pt, ptlim);
-        
+
           continue;
         }
-*/        
+*/
         case 'Z':
           pt = _add(_tzname ? _tzname : "?", pt, ptlim);
-          continue;          
+          continue;
 
         case '%':
         default:
@@ -231,7 +231,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   return pt;
 }
 
-int  strftime(char *s, int maxsize, char *format, struct tm *tp) {
+int  strftime(char *s, int maxsize, const char *format, struct tm *tp) {
   char *p;
 
   p = _fmt(((format == NULL) ? "%c" : format), tp, s, s + maxsize);
