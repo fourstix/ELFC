@@ -5,8 +5,8 @@
 
 int ftell(FILE *f) {
   int   val;
-  static pos_t position;
-  static pos_t *pos;
+  pos_t position;
+  pos_t *pos;
 
   pos = &position;
   /* any return value but zero is an error */

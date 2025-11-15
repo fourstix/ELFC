@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 div_t div(int num, int denom) {
-  static div_t rp;
+  div_t rp;
 	rp.quot = num / denom;
 	rp.rem = num % denom;
 	/*

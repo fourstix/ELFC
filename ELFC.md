@@ -170,7 +170,7 @@ ElfC does not require immediate initialization in the declaration of a `const` v
 
 ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment will be treated as an error.
 
-The `const` keyword is supported for static (and global) arrays, but these arrays must be initialized when declared.
+The `const` keyword is supported for static (and global) arrays, and `const` arrays must be initialized when declared.
 
 User defined types may include `const` in their typdef definition, but `const` not supported when applied to an existing user defined type.
 
