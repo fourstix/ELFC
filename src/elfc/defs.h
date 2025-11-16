@@ -53,6 +53,9 @@
 /* Maximum number of user defined local labels */
 #define MAXUSRLBL  20
 
+/* Warning size for local objects */
+#define LGOBJSIZE  20
+
 /* assert(NSYMBOLS < PSTRUCT) */
 #define NSYMBOLS	1024
 #define POOLSIZE	16384

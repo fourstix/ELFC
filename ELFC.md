@@ -172,9 +172,10 @@ ElfC allows variables to be declared as `const` and initialized later by an assi
 
 The `const` keyword is supported for static (and global) arrays, and `const` arrays must be initialized when declared.
 
-User defined types may include `const` in their typdef definition, but `const` not supported when applied to an existing user defined type.
+User defined types may include `const` in their typedef definition, and `const` may be
+applied to an existing user defined type.
 
-Neither `const` pointers to (varying) variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
+The `const` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.
 
 The `const` keyword is supported for members inside structures and unions.
 
@@ -182,17 +183,17 @@ ElfC does not prevent the assignment of a pointer to a `const` or `volatile` var
 
 Functions may be declared to return a `volatile` value and arguments may be qualified as `volatile` but ElfC will ignore the `volatile` keyword, per the ANSI C C89/C90 specification.
 
-The `volatile` keyword is ignored for structures, unions. This is allowed by the ANSI C C89/C90 specification, because ElfC performs no optimizations related to these cases.
+The `volatile` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.s
 
 The `volatile` keyword is supported for the members inside structures and unions.
 
-User defined types may include `volatile` in their typdef definition, but `volatile` is ignored when applied to an existing user defined type.
+User defined types may include `volatile` in their typedef definition, and `volatile` may be applied to an existing user defined type.
 
 **Differences from ANSI C89/C90**
 
 *Note:* The following behavior differs from the ANSI C89/C90 specification.
 
-The `const` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.  ElfC supports the `const` keyword for the *members* of structures and unions.
+Neither `const` pointers to (varying) variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
 
 The `const` keyword is *not* supported for local (auto) arrays, because ElfC does not support initializing local arrays.
 

@@ -130,6 +130,7 @@ int inttype(int p) {
 
 int comptype(int p) {
 	p &= STCMASK;
+
 	return p == PSTRUCT || p == PUNION;
 }
 

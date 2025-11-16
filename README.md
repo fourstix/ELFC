@@ -497,9 +497,8 @@ Differences Between ElfC and Full C89
 
 *  There is no support for bit fields.
 
-*  Only ints, chars, and arrays of int and char can be
-   initialized in their declarations; pointers can be
-   initialized with NULL or a constant address value.
+*  Only ints, chars, and arrays of int and char can be initialized in their
+   declarations; pointers can be initialized with NULL or a constant address value.
 
 *  Local arrays cannot have initializers.
 
