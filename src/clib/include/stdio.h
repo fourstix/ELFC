@@ -115,8 +115,8 @@ typedef struct {
 
 /* unbuffered system IO functions */
 char *gets(char *buf);
-int	 puts(char *s);
-int	 putstr(char *s);
+int	 puts(const char *s);
+int	 putstr(const char *s);
 int getch(void);
 int	putch(int ch);
 
@@ -124,7 +124,7 @@ int	putch(int ch);
 int fgetc(FILE *f);
 int fputc(int c, FILE *f);
 char *fgets(char *s, int len, FILE *f);
-int fputs(char *s, FILE *f);
+int fputs(const char *s, FILE *f);
 int putchar(int c);
 int getchar(void);
 int ungetc(int c, FILE *f);
@@ -132,28 +132,28 @@ int ungetc(int c, FILE *f);
 /* buffered file functions */
 FILE *fdopen(int fd, int iomode);
 int fclose(FILE *f);
-FILE *fopen(char *path, char *mode);
+FILE *fopen(const char *path, const char *mode);
 size_t fread(void *p, size_t size, size_t count, FILE *f);
-size_t fwrite(void *p, size_t size, size_t count, FILE *f);
+size_t fwrite(const void *p, size_t size, size_t count, FILE *f);
 int fflush(FILE *f);
 
 /* print functions */
-int fprintf(FILE *f, char *fmt, ...);
-int printf(char *fmt, ...);
-int sprintf(char *buf, char *fmt, ...);
-int kprintf(int fd, char *fmt, ...);
-int vfprintf(FILE *f, char *fmt, void **args);
-int vprintf(char *fmt, void **args);
-int vsprintf(char *buf, char *fmt, void **args);
+int fprintf(FILE *f, const char *fmt, ...);
+int printf(const char *fmt, ...);
+int sprintf(char *buf, const char *fmt, ...);
+int kprintf(int fd, const char *fmt, ...);
+int vfprintf(FILE *f, const char *fmt, void **args);
+int vprintf(const char *fmt, void **args);
+int vsprintf(char *buf, const char *fmt, void **args);
 
 /* scan functions */
-int fscanf(FILE *f, char *fmt, ...);
-int scanf(char *fmt, ...);
-int sscanf(char *src, char *fmt, ...);
+int fscanf(FILE *f, const char *fmt, ...);
+int scanf(const char *fmt, ...);
+int sscanf(char *src, const char *fmt, ...);
 
 /* file functions */
-int remove(char *path);
-int rename(char *old, char *new);
+int remove(const char *path);
+int rename(const char *old, const char *new);
 int fileno(FILE *f);
 char *tmpnam(char *buf);
 FILE *tmpfile(void);
@@ -169,5 +169,5 @@ void rewind(FILE *f);
 int ferror(FILE *f);
 int feof(FILE *f);
 void clearerr(FILE *f);
-void perror(char *msg);
+void perror(const char *msg);
 #endif

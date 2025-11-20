@@ -11,7 +11,6 @@
 /*
 #define DEBUG
 */
-
 int	Level = 0;
 char	Bars[MAXBARS];
 
@@ -188,8 +187,8 @@ void dumptree(node *a) {
 	case OP_ABV: dumpbinop("ux>uy", a); break;
 	case OP_ABVEQ: dumpbinop("ux>=uy", a); break;
 	case OP_BLW: dumpbinop("ux<uy", a); break;
-	case OP_BLWQ: dumpbinop("ux<=uy", a); break;
-	case OP_MOD:	dumpbinop("ux%uy", a); break;
+	case OP_BLWEQ: dumpbinop("ux<=uy", a); break;
+	case OP_UMOD:	dumpbinop("ux%uy", a); break;
 	case OP_NOTEQ:	dumpbinop("x!=y", a); break;
 	case OP_RSHIFT:	dumpbinop("x>>y", a); break;
 	case OP_ASSIGN:	dumpbinop2("x=y", a); break;
@@ -412,6 +411,16 @@ static void emittree1(node *a) {
 			lv[LVSYM] = a->args[1];
 			genstore(lv);
 			break;
+	//grw - copy a complex type
+	case OP_COPY:
+			emittree1(a->left);
+			commit();
+			emittree1(a->right);
+			commit();
+			lv[LVPRIM] = a->args[0];
+			lv[LVSYM] = a->args[1];
+			gencopy(lv);
+			break;
 	}
 }
 
@@ -419,6 +428,13 @@ void emittree(node *a) {
 #ifdef DEBUG
 	dumptree(a);
 #endif
-	a = optimize(a);
+
+
+//grw - optimize only if volatile bit is not set
+  if (!((a->args[0]) & VLTL))
+	  a = optimize(a);
+#ifdef DEBUG
+    else warn("volatile type node not optimized.\n", NULL);
+#endif
 	emittree1(a);
 }

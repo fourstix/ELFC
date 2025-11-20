@@ -34,6 +34,9 @@ void init(void) {
 	//grw - added string table
 	str_idx = 0;
 
+	//grw -  added support for local labels and goto
+	llbl_idx = 0;
+
 	addglob("", 0, 0, 0, 0, 0, NULL, 0);
 	addglob("__SUBC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	if (!strcmp(OS, "DOS"))
@@ -47,6 +50,8 @@ void init(void) {
 	//grw - add predefined macros for line number and file name
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+	//grw - add predefined macro for function name
+	addglob("__FUNC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	Infile = stdin;
 	File = "(stdin)";
 	Basefile = NULL;
@@ -116,11 +121,16 @@ int eofcheck(void) {
 }
 
 int inttype(int p) {
+	//grw - added support for const keyword
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
+
 	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p;
 }
 
 int comptype(int p) {
 	p &= STCMASK;
+
 	return p == PSTRUCT || p == PUNION;
 }
 
@@ -130,17 +140,158 @@ void notvoid(int p) {
 }
 
 int chartype(int p) {
+	//grw - added support for const keyword
+	/* remove any type qualifier bits before comparing */
+	p &= ~TQMASK;
 	return PCHAR == p || PSCHAR == p;
+}
+
+/* primitive int type */
+int pinttype(int p) {
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
+	return PINT == p || PUINT == p;
 }
 
 /* returns 1 if signed, 0 if unsigned */
 int signtype(int p) {
+	//grw - added support for const keyword
+	/* remove any type qualifier before comparing */
+	p &= ~TQMASK;
 	/* only chararacter and unsigned integer are signed */
 	return PCHAR != p && PUINT != p;
 }
 
 /* returns 1 if an unsgined opertor should be used */
 int unsgnop(int p1, int p2) {
+	//grw - added support for const keyword
+	/* remove any type qualifier before comparing */
+	p1 &= ~TQMASK;
+	p2 &= ~TQMASK;
 	/* unsigned op if either argument is an unsigned type */
 	return (p1 == PUINT || p2 == PUINT || p1 == PCHAR || p2 == PCHAR);
+}
+
+/* returns the level of pointer indirection  */
+/* 0 = not a pointer                         */
+/* 1 = pointer to type                       */
+/* 2 = pointer to pointer to type            */
+/* 3 = pointer to pointer to ponter to type  */
+/* and so on up to 15 levels                 */
+
+int ptrlevel(int ptype) {
+	int lvl;
+	int stc;
+
+	stc = ptype & STCMASK;
+
+	if (stc) {
+		if (stc == STCPTR || stc == UNIPTR) {
+		  lvl = 1;
+		} else if (stc == STCPP || stc == UNIPP) {
+		  lvl = 2;
+		} else {
+			lvl = 0;
+		}
+	} else {
+		if (FUNPTR == (ptype & TYPEMASK))
+			lvl = 1;
+		else
+	    lvl = ((ptype & PTRMASK) >> 4);
+	}
+	return lvl;
+}
+
+/* Return the base type of indirect pointer */
+int basetype(int ptype) {
+	int stc;
+	int btype = 0;
+
+	stc = ptype & STCMASK;
+	if (stc) {
+		if (stc == STCPTR || 	stc == STCPP) {
+			btype = PSTRUCT;
+		} else if (stc == UNIPTR || stc == UNIPP) {
+			btype = PUNION;
+		} else {
+			/* else it's PSTRUCT or PUNION */
+			btype = stc;
+		}
+  } else {
+		/* remove pointer count to get base type */
+	    btype = ptype & TYPEMASK;
+  }
+	return btype;
+}
+
+/* Return true if ptype is a pointer to void */
+int isvoidptr(int ptype) {
+	int lvl;
+	int vtype;
+	lvl = ptrlevel(ptype);
+	vtype = basetype(ptype);
+
+	return ((lvl == 1) && (vtype == PVOID));
+}
+
+/* Return true if ptype is a pointer to function */
+int isfunptr(int ptype) {
+	/* int lvl; */
+	int ftype;
+	//grw - ignore multiple indirection for now
+	/* lvl = ptrlevel(ptype); */
+	ftype = basetype(ptype);
+
+	return (ftype == FUNPTR);
+}
+
+
+/* Set the type with a new level of pointer indirection */
+int setptrlevel(int ptype, int lvl) {
+	int newval;
+
+	/* shift level into second nibble position */
+	newval = lvl << 4;
+
+	/* clear out the old value */
+	ptype &= ~PTRMASK;
+	/* set the pointer level to new value */
+	ptype |= newval;
+
+	return ptype;
+}
+
+/* check to see if pointers are compatible */
+int compatible(int p1, int p2) {
+	int lvl_1;
+	int lvl_2;
+	int stc;
+
+	/* get the level for the pointers */
+	lvl_1 = ptrlevel(p1);
+	lvl_2 = ptrlevel(p2);
+
+	/* if either value is not a pointer,
+	 *  then indicate compatible for pointer arithmetic
+	 */
+	if (!lvl_1 || !lvl_2)
+	  return 1;
+
+	/* If the pointers are different levels,
+	 * then they are not compatible
+	 */
+	if (lvl_1 != lvl_2)
+	  return 0;
+
+	/* check to see if comparing struct/union pointers */
+	stc = p1 & STCMASK;
+
+	/* const keyword is ignored for pointers to struct/union */
+	if (!stc) {
+		/* constant pointers compatible with non-constant pointers */
+   	/* so remove any constant bits before comparing */
+    p1 &= ~TQMASK;
+	  p2 &= ~TQMASK;
+  }
+ return (p1 == p2);
 }

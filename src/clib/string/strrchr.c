@@ -3,7 +3,7 @@
 
 #pragma           extrn Cstrchr
 
-char *strrchr(char *s, int c) {
+char *strrchr(const char *s, int c) {
 	char	*p;
 
 	p = NULL;
@@ -11,6 +11,6 @@ char *strrchr(char *s, int c) {
 	while (*s)
 		if (*s++ == c)
 			p = s-1;
-	}		
+	}
 	return p;
 }

@@ -3,6 +3,6 @@
 
 #pragma             extrn Cunlink
 
-int remove(char *path) {
+int remove(const char *path) {
 	return unlink(path);
 }

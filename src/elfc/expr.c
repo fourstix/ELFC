@@ -129,7 +129,9 @@ static node *primary(int *lv) {
 		//grw - removed genalign
 		//genalign(k+1);
 		n = mkleaf(OP_LDLAB, lab);
-		lv[LVPRIM] = CHARPTR;
+		//grw - added support for multiple pointer indirection
+		/* lv[LVPRIM] = CHARPTR; */
+		lv[LVPRIM] = (PCHAR | 0x0010);
 		return n;
 	case LPAREN:
 		Token = scan();
@@ -144,11 +146,40 @@ static node *primary(int *lv) {
 }
 
 int typematch(int p1, int p2) {
+	//grw - added support for const keyword
+	int stc;
+
+	/* check for struct/union types */
+	stc = ((p1 & STCMASK) || (p2 & STCMASK));
+	if (!stc) {
+		/*
+		 * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+		 */
+		p1 &= ~TQMASK;
+		p2 &= ~TQMASK;
+	}
+
+	//grw - added support for multiple pointer indirection
 	if (p1 == p2) return 1;
 	if (inttype(p1) && inttype(p2)) return 1;
+	if (!inttype(p1) && isvoidptr(p2)) return 1;
+	if (isvoidptr(p1) && !inttype(p2)) return 1;
+
+	return 0;
+
+	//grw - added support for multiple pointer indirection
+/*
+	if (p1 == p2) return 1;
+	if (inttype(p1) && inttype(p2)) return 1;
+	if (!inttype(p1) && isvoidptr(p2)) return 1;
+	if (isvoidptr(p1) && !inttype(p2)) return 1;
+*/
+/*
 	if (!inttype(p1) && VOIDPTR == p2) return 1;
 	if (VOIDPTR == p1 && !inttype(p2)) return 1;
 	return 0;
+	*/
 }
 
 /*
@@ -203,7 +234,10 @@ static node *fnargs(int fn, int *na) {
 
 int deref(int p) {
 	int	y;
+	//grw - added support for multiple pointer indirection
+	int lvl;
 
+/*
 	switch (p) {
 	case INTPP:	return INTPTR;
 	case INTPTR:	return PINT;
@@ -213,12 +247,24 @@ int deref(int p) {
 	case VOIDPTR:	return PCHAR;
 	case FUNPTR:	return PCHAR;
 	}
-	y = p & ~STCMASK;
-	switch (p & STCMASK) {
-	case STCPP:	return STCPTR | y;
-	case STCPTR:	return PSTRUCT | y;
-	case UNIPP:	return UNIPTR | y;
-	case UNIPTR:	return PUNION | y;
+*/
+  if (p & STCMASK) {
+		y = p & ~STCMASK;
+		switch (p & STCMASK) {
+		case STCPP:	return STCPTR | y;
+		case STCPTR:	return PSTRUCT | y;
+		case UNIPP:	return UNIPTR | y;
+		case UNIPTR:	return PUNION | y;
+		}
+	} else if (isvoidptr(p) || isfunptr(p)){
+		/* Void* and (func*)() deref to char */
+		return PCHAR;
+	} else {
+		lvl = ptrlevel(p);
+		if (lvl > 0) {
+			lvl--;
+			return setptrlevel(p, lvl);
+		}
 	}
 	return -1;
 }
@@ -227,7 +273,8 @@ static node *indirection(node *n, int *lv) {
 	int	p;
 
 	n = rvalue(n, lv);
-	if (VOIDPTR == lv[LVPRIM])
+	//grw - added support for multiple pointer indirection
+	if (isvoidptr(lv[LVPRIM]))
 		error("dereferencing void pointer", NULL);
 	if ((p = deref(lv[LVPRIM])) < 0) {
 		if (lv[LVSYM])
@@ -276,6 +323,19 @@ static node *stc_access(node *n, int *lv, int ptr) {
 	}
 	Token = scan();
 	p = Prims[y];
+	//grw - updated to add support for const and volatile
+
+	/*
+	 * check bits on plain types for uninitialized const
+	 * since a struct/union can be a member of another struct/union
+	 * we have to make sure it's a plain type member as well
+	 */
+	if (((p & STCMASK) == 0) && (p & CNSTMASK) == CNST) {
+		/* mark current member's primitive as initialized */
+		Prims[y] |= CINIT;
+	}
+
+
 	if (TARRAY == Types[y]) {
 		p = pointerto(p);
 		lv[LVADDR] = 0;
@@ -299,7 +359,6 @@ static node *stc_access(node *n, int *lv, int ptr) {
 static node *postfix(int *lv) {
 	node	*n = NULL, *n2, *fn;
 	int	lv2[LV], p, na;
-
 	n = primary(lv);
 	for (;;) {
 		switch (Token) {
@@ -312,11 +371,17 @@ static node *postfix(int *lv) {
 				p = lv[LVPRIM];
 				if (PINT != lv2[LVPRIM])
 					error("non-integer subscript", NULL);
+				//grw - added support for multiple pointer indirection
+        /*
 				if (    PINT == p || INTPTR == p ||
 					CHARPTR == p || VOIDPTR == p ||
 					STCPTR == (p & STCMASK) ||
 					UNIPTR == (p & STCMASK)
 				) {
+				*/
+				//grw - changed to use pinttype
+				/* if (PINT == p || ptrlevel(p) > 0) { */
+				if (pinttype(p) || ptrlevel(p) > 0) {
 					n2 = mkunop(OP_SCALE, n2);
 				}
 				else if (comptype(p)) {
@@ -340,7 +405,9 @@ static node *postfix(int *lv) {
 				n = mkunop2(OP_CALL, lv[LVSYM], na, n);
 			}
 			else {
-				if (lv[LVPRIM] != FUNPTR) badcall(lv);
+				//grw - added support for multiple pointer indirection
+				/* if (lv[LVPRIM] != FUNPTR) badcall(lv); */
+				if (!isfunptr(lv[LVPRIM])) badcall(lv);
 				n = mkbinop(OP_GLUE, n, fn);
 				n = mkunop2(OP_CALR, lv[LVSYM], na, n);
 				lv[LVPRIM] = PINT;
@@ -423,7 +490,11 @@ static node *comp_size(void) {
 		if (STAR == Token) {
 			k = PTRSIZE;
 			Token = scan();
-			if (STAR == Token) Token = scan();
+			//grw - added support for multiple pointer indirection
+			/* if (STAR == Token) Token = scan(); */
+			/* We can have multiple STAR tokens */
+			while (STAR == Token)
+			  Token = scan();
 		}
 		if (0 == k)
 			error("sizeof(void) is unknown", NULL);
@@ -594,7 +665,9 @@ static node *cast(int *lv) {
 		else if (STAR == Token) {
 			t = pointerto(t);
 			Token = scan();
-			if (STAR == Token) {
+			//grw - added support for multiple pointer indirection
+			/* if (STAR == Token) { */
+			while (STAR == Token) {
 				t = pointerto(t);
 				Token = scan();
 			}
@@ -863,11 +936,20 @@ static node *asgmnt(int *lv) {
 		Token = scan();
 		n2 = asgmnt(lv2);
 		n2 = rvalue(n2, lv2);
+		if (!allowasgmnt(lv))
+			error("cannot assign value to initialized const variable", NULL);
 		if (ASSIGN == op) {
 			if (!typematch(lv[LVPRIM], lv2[LVPRIM]))
 				error("assignment from incompatible type",
 					NULL);
-			n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+			if(comptype(lv[LVPRIM])) {
+				//grw - added support to assign struct/union
+				n = mkbinop2(OP_COPY, lv[LVPRIM], lv[LVSYM], n, n2);
+				//grw - set LVADDR to indicate lvalue in test below
+				lv[LVADDR] = 1;
+			} else {
+ 			  n = mkbinop2(OP_ASSIGN, lv[LVPRIM], lv[LVSYM], n, n2);
+			}
 		}
 		else {
 			memcpy(lvs, lv, sizeof(lvs));
@@ -935,4 +1017,41 @@ int constexpr(void) {
 		return 0;
 	}
 	return n->args[0];
+}
+
+/*
+ * Check to see if an assignment to lvalue is allowed
+ * return 1 if assignment allowed, 0 if not allowed
+ */
+int allowasgmnt(int *lv) {
+	int prim = lv[LVPRIM];
+	int y    = lv[LVSYM];
+	int cnst;
+
+	/* struct/union ignore constant */
+	if (prim & STCMASK)
+	  return 1;
+
+	/* check type qualifier bits for const */
+	cnst = prim & CNSTMASK;
+
+	/* if not constant, assignment okay */
+	if (!cnst)
+	  return 1;
+
+
+	/* if constant, but not initialized */
+	if (cnst == CNST) {
+		/* mark current lvalue and primitive as initialized */
+		Prims[y] |= CINIT;
+		lv[LVPRIM] |= CINIT;
+		return 1;
+	}
+
+	/* we can assign values to const pointers themselves */
+	if (ptrlevel(prim) > 0)
+	   return 1;
+
+	/* consant already initialized, return no assignment allowed */
+	return 0;
 }

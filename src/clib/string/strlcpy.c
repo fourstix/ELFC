@@ -20,13 +20,13 @@
  * chars will be copied.  Always NUL terminates (unless dsize == 0).
  * Returns strlen(src); if retval >= dsize, truncation occurred.
  */
-size_t strlcpy(char *dst, char *src, size_t dsize) {
+size_t strlcpy(char *dst, const char *src, size_t dsize) {
 	char *osrc;
 	int  nleft;
 
 	osrc = src;
 	nleft = dsize;
-	
+
 	/* Copy as many bytes as will fit. */
 	if (nleft != 0) {
 		while (--nleft != 0) {

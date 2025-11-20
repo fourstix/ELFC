@@ -215,6 +215,70 @@ static void asm_stmt(void) {
 	semi();
 }
 
+//grw - added support for local labels and goto
+
+/*
+ * user_label :=
+ *	  text:
+ * Output a user label in the assembly file
+ */
+
+static void local_label(void) {
+	int llid;
+
+	if (Bsp > 0 || Csp > 0)
+	  warn("local label %s inside an iteration statement", Text);
+
+	gen(";----- begin local label stmt");
+	llid = findLocalLabel(Thisfn, Text);
+	/* if label not defined previously, add it now */
+
+	if (llid > 0) {
+		/* if we found one, make sure it wasn't defined before*/
+		if (lcl_lbls[llid-1].defined == 0)
+		  lcl_lbls[llid-1].defined = 1;
+		else
+		  error("duplicate local label %s", lcl_lbls[llid-1].text);
+	} else {
+		/* set defined flag true, to indicate label is define */
+		llid = addLocalLabel(Thisfn, Text, 1);
+  }
+  /* generate the user label */
+  genllab(llid);
+	/* local label must be followed by a statement */
+	Token = scan();
+	stmt();
+	gen(";----- end local label stmt");
+
+}
+
+/*
+ * goto_stmt :=
+ *	  GOTO label ;
+ */
+static void goto_stmt(void) {
+  int llid;
+	//grw - trace
+  gen(";----- begin goto");
+	Token = scan();
+	if (Token != IDENT) {
+		error("missing local label after 'goto'", NULL);
+	} else {
+		llid = findLocalLabel(Thisfn, Text);
+		/* check to see if already defined */
+		if (llid == 0) {
+			/* set defined flag false, to indicate label not define yet*/
+			llid = addLocalLabel(Thisfn, Text, 0);
+  	}
+		gengoto(llid);
+		/* goto ends with semicolon after label */
+		Token = scan();
+		semi();
+	}
+	//grw - trace
+	gen(";----- end goto");
+}
+
 /*
  * return_stmt :=
  *	  RETURN ;
@@ -386,14 +450,14 @@ static void wrong_ctx(int t) {
  *	| switch_stmt
  *	| while_stmt
  *	| compound
+ *  | local_label: stmt ;
  *	| ;
  *	| expr ;
+
  */
 
 static void stmt(void) {
 	int	lv[LV];
-	//grw - trace
-	gen(";----- begin stmt ------");
 
 	switch (Token) {
 	//grw -- added asm statement
@@ -410,14 +474,15 @@ static void stmt(void) {
 	case SEMI:	Token = scan(); break;
 	case DEFAULT:	wrong_ctx(DEFAULT); break;
 	case CASE:	wrong_ctx(CASE); break;
+	//grw - add support for local labels and goto
+	case ULABEL: local_label(); break;
+	case GOTO: goto_stmt(); break;
 	//grw - added logic to get result from expression stack
 	//grw - genpopd will eliminate a redundant push/pop then do a commit
-	default:	expr(lv, 0); semi(); genpopd(); break;
+	default: 	gen(";----- begin stmt");
+	          expr(lv, 0); semi(); genpopd();
+						gen(";----- end stmt");
+            break;
 	//default:	expr(lv, 0); semi(); genpopd(); commit(); break;
-
 	}
-	//grw - removed clear logic
-	//clear(1);
-	//grw - trace
-	gen(";----- end stmt ------");
 }

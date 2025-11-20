@@ -1,21 +1,21 @@
 #define _ELFCLIB_
 #include <string.h>
 
-int memcmp(void *p1, void *p2, size_t n) {
+int memcmp(const void *p1, const void *p2, size_t n) {
   int  dif;
 	/* return value in case either string is null */
-  dif = p1 - p2; 
-   
+  dif = p1 - p2;
+
   if (p1 && p2) {
     asm("         gosub s_lget16  ; set the first string pointer");
-    asm("           dw 0          ; from argument stack");      
-    asm("         copy ra, rf     ; put destination pointer into rd");        
+    asm("           dw 0          ; from argument stack");
+    asm("         copy ra, rf     ; put destination pointer into rd");
     asm("         gosub s_lget16  ; set the second string pointer");
-    asm("           dw 2          ; from argument stack");             
-    asm("         copy ra, rd     ; put source pointer into rf"); 
+    asm("           dw 2          ; from argument stack");
+    asm("         copy ra, rd     ; put source pointer into rf");
 		asm("         gosub s_lget16  ; set the counter");
-    asm("           dw 4          ; from argument stack");      
-    asm("         copy ra, rc     ; put counter into rc");        
+    asm("           dw 4          ; from argument stack");
+    asm("         copy ra, rc     ; put counter into rc");
 		asm("loop:    lda  rf         ; get byte from first string");
 		asm("         str  r2         ; store for compare");
 		asm("         lda  rd         ; get byte from second string");
@@ -39,8 +39,8 @@ int memcmp(void *p1, void *p2, size_t n) {
     asm("done:    gosub s_lset16  ; set the return value");
     asm("           dw -2         ; in the argument stack");
 		asm("         adi      0      ; clear DF after arithmetic");
-  }             
-  return dif;	 
+  }
+  return dif;
 }
 
 /*

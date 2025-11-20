@@ -14,6 +14,6 @@
 #pragma           extrn Cstrerror
 #pragma .link .library string.lib
 
-void perror(char *msg) {
+void perror(const char *msg) {
 	fprintf(stderr, "%s: %s\n", msg, strerror(errno));
 }

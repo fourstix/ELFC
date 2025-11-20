@@ -92,8 +92,29 @@ extern_ int	O_debug;
 extern_ int	O_library;
 
 //grw - create string table
-//grw - TODO convert this to array of structure
+//grw - convert string table to array of structures
+struct str_entry {
+  int  label;
+  char *text;
+  int  len;
+};
+/*
 extern_ int	str_lab[MAXSTRTBL];
 extern_ char *str_text[MAXSTRTBL];
 extern_ int	str_len[MAXSTRTBL];
+*/
+extern_ struct str_entry str_tbl[MAXSTRTBL];
 extern_ int str_idx;
+
+//grw - added support for local labels and goto
+
+/* entry for local lables*/
+struct  llbl_entry {
+  int  scope;
+  char *text;
+  int  defined;
+};
+/* table for local lables */
+extern_ struct llbl_entry lcl_lbls[MAXUSRLBL];
+/* index for local labels */
+extern_ int llbl_idx;

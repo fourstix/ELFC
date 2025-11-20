@@ -3,7 +3,7 @@
 
 #pragma           extrn Cstrchr
 
-char *strtok(char *s, char *sep) {
+char *strtok(char *s, const char *sep) {
 	static char	*src = 0;
 	char		*p;
 

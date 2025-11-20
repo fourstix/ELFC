@@ -40,7 +40,7 @@ int _fwrite(void *p, size_t size, FILE *f) {
   return k;
 }
 
-size_t fwrite(void *p, size_t size, size_t count, FILE *f) {
+size_t fwrite(const void *p, size_t size, size_t count, FILE *f) {
 	int	k;
 
 	if ((k = _fwrite(p, size * count, f)) < 0)

@@ -15,10 +15,11 @@ Design Goals
 * Use the [Asm/02](https://github.com/fourstix/Asm-02) assembler and the [Link/02](https://github.com/fourstix/Link-02) linker to produce CDP1802 binary code to run as an Elf/OS or Mini/DOS program
 * Create a library based on Mike Riley's [Library/02](https://github.com/rileym65/Library-02) standard library.
 * Target both Elf/OS and Mini/DOS as a platform.
-* Target Windows as the development platform (cross-compiler)
+* Target Windows and Linux as the development platform (cross-compiler)
 * Use an expression stack similar to the one implemented in Mike Riley's Fortran/02 program.
 * Minimize changes to basic SubC compiler code and prefer changes to the code generation and library code functions.
 * Implement the code generation functions first, migrate to the latest version of SubC and then work on implementing the C libraries.
+* Extend the SubC code to cover additional C keywords and functions.
 
 Release 1
 ----------
@@ -149,6 +150,31 @@ Version 3
 
 More information about Version 3, signed and unsigned types, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
+Release 3.1
+------------
+*  This release removes the restriction of only 2 levels of pointer indirection and supports up to 15 levels of indirection. This meets the ANSI specified minimum of 12 levels of indirection.
+
+* This release adds support for local labels and the `goto` keyword.
+
+* The `const` keyword is now supported.
+
+* Functions may now return a structure or union.
+
+* Structures and unions may now be assigned.
+
+* ElfC can now emit warning messages when compiling code.
+
+* Pointers may now be initialized with non-zero constant address values, like *0xFF00*
+
+* The `__FUNC__` preprocessor directive was added in this version.
+
+* Declaring a variable as `volatile` will now prevent optimizations on that variable.
+
+* Static (and global) arrays may be initialized using an initializer list or a string. ElfC
+  will emit an error message if the initializer list size does not match the size of the array.
+
+More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
 Stdlib Library
 --------------
 **The following functions are supported in the ElfC stdlib C library.**
@@ -173,7 +199,7 @@ Stdlib Library
 * void free(void\* p);
 
 **Number Conversion**
-* int atoi(char \*s);
+* int atoi(const char \*s);
 * void itoa(int n, char \*s);
 * void itox(int n, char \*s);
 * void itou(unsigned int n, char \*s);
@@ -183,7 +209,7 @@ Stdlib Library
 **Math Utilities**
 
 * int abs(int n);
-* void div(int num, int denom, div_t *rp);
+* div_t div(int num, int denom);
 * void \*bsearch(void \*key, void \*array, size_t count, size_t size, int (\*cmp)());
 * void qsort(void \*list, size_t count, size_t size, int (\*cmp)());
 * int rand(void);
@@ -212,8 +238,8 @@ Stdio Library
 **Unbuffered Character I/O**
 
 * char \*gets(char \*buf);
-* int	 puts(char \*s);
-* int	 putstr(char \*s);
+* int	 puts(const char \*s);
+* int	 putstr(const char \*s);
 * int getch(void);
 * int	putch(int ch);
 
@@ -224,7 +250,7 @@ Stdio Library
 * int fgetc(FILE \*f);
 * int fputc(int c, FILE \*f);
 * char \*fgets(char \*s, int len, FILE \*f);
-* int fputs(char \*s, FILE \*f);
+* int fputs(const char \*s, FILE \*f);
 * int putchar(int c);
 * int getchar(void);
 * int ungetc(int c, FILE \*f);
@@ -235,37 +261,37 @@ Stdio Library
 
 * FILE \*fdopen(int fd, int iomode);
 * int fclose(FILE \*f);
-* FILE \*fopen(char \*path, char \*mode);
+* FILE \*fopen(const char \*path, const char \*mode);
 * size_t fread(void \*p, size_t size, size_t count, FILE \*f);
-* size_t fwrite(void \*p, size_t size, size_t count, FILE \*f);
+* size_t fwrite(const void \*p, size_t size, size_t count, FILE \*f);
 * int fflush(FILE \*f);
 
 *Note: Elf/OS and Mini/DOS use a write through buffer, so the fflush function is implemented as a NOP (No Operation) function*
 
 **Formatted Output**
 
-* int fprintf(FILE \*f, char \*fmt, ...);
-* int printf(char \*fmt, ...);
-* int sprintf(char \*buf, char \*fmt, ...);
-* int kprintf(int fd, char \*fmt, ...);
-* int vfprintf(FILE \*f, char \*fmt, void \*\*args);
-* int vprintf(char \*fmt, void \*\*args);
-* int vsprintf(char \*buf, char \*fmt, void \*\*args);
+* int fprintf(FILE \*f, const char \*fmt, ...);
+* int printf(const char \*fmt, ...);
+* int sprintf(char \*buf, const char \*fmt, ...);
+* int kprintf(int fd, const char \*fmt, ...);
+* int vfprintf(FILE \*f, const char \*fmt, void \*\*args);
+* int vprintf(const char \*fmt, void \*\*args);
+* int vsprintf(char \*buf, const char \*fmt, void \*\*args);
 
 *Note: Information about supported print conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 **Formatted Input**
 
-* int fscanf(FILE \*f, char \*fmt, ...);
-* int scanf(char \*fmt, ...);
-* int sscanf(char \*src, char \*fmt, ...);
+* int fscanf(FILE \*f, const char \*fmt, ...);
+* int scanf(const char \*fmt, ...);
+* int sscanf(char \*src, const char \*fmt, ...);
 
 *Note: Information about supported scan conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 **File Operations**
 
-* int remove(char \*path);
-* int rename(char \*old, char \*new);
+* int remove(const char \*path);
+* int rename(const char \*old, const char \*new);
 * char \*tmpnam(char \*buf);
 * FILE \*tmpfile(void);
 
@@ -286,7 +312,7 @@ Stdio Library
 * int ferror(FILE \*f);
 * int feof(FILE \*f);
 * void clrerror(FILE \*f);
-* void perror(char \*msg);
+* void perror(const char \*msg);
 
 String Library
 ----------------
@@ -295,31 +321,31 @@ String Library
 
 **Memory Functions**
 
-* void \*memchr(void \*p, int c, size_t n);
-* int memcmp(void \*p1, void \*p2, size_t n);
-* void \*memcpy(void \*d, void \*s, size_t n);
-* void \*memmove(void \*d, void \*s, size_t n);
+* void \*memchr(const void \*p, int c, size_t n);
+* int memcmp(const void \*p1, const void \*p2, size_t n);
+* void \*memcpy(void \*d, const void \*s, size_t n);
+* void \*memmove(void \*d, const void \*s, size_t n);
 * void \*memset(void \*p, int c, size_t n);
 
 **String Functions**
 
-* char \*strcat(char \*d, char \*a);
-* char \*strchr(char \*s, int c);
-* int strcmp(char \*s1, char \*s2);
-* char \*strcpy(char \*d, char \*s);
-* size_t strcspn(char \*s, char \*set);
-* char \*strdup(char \*s);
+* char \*strcat(char \*d, const char \*a);
+* char \*strchr(const char \*s, int c);
+* int strcmp(const char \*s1, const char \*s2);
+* char \*strcpy(char \*d, const char \*s);
+* size_t strcspn(const char \*s, const char \*set);
+* char \*strdup(const char \*s);
 * char \*strerror(int err);
-* size_t strlen(char \*s);
-* char \*strncat(char \*d, char \*a, size_t n);
-* int strncmp(char \*s1, char \*s2, size_t n);
-* char \*strncpy(char \*d, char \*s, size_t n);
-* size_t strlcpy(char \*d, char \*s, size_t n);
-* char \*strpbrk(char \*s, char \*set);
-* char \*strrchr(char \*s, int c);
-* size_t strspn(char \*s, char \*set);
-* char \*strstr(char \*s1, char \*s2);
-* char \*strtok(char \*s, char \*sep);
+* size_t strlen(const char \*s);
+* char \*strncat(char \*d, const char \*a, size_t n);
+* int strncmp(const char \*s1, const char \*s2, size_t n);
+* char \*strncpy(char \*d, const char \*s, size_t n);
+* size_t strlcpy(char \*d, const char \*s, size_t n);
+* char \*strpbrk(const char \*s, const char \*set);
+* char \*strrchr(const char \*s, int c);
+* size_t strspn(const char \*s, const char \*set);
+* char \*strstr(const char \*s1, const char \*s2);
+* char \*strtok(char \*s, const char \*sep);
 
 *Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
 
@@ -397,7 +423,7 @@ struct tm {
 * int  systime(struct tm \*tp);
 * char \*asctime(struct tm \*tp);
 * char \*cstime(void);
-* int  strftime(char \*s, int smax, char \*fmt, struct tm \*tp);
+* int  strftime(char \*s, int smax, const char \*fmt, struct tm \*tp);
 * void timezone(char \*tzname, int tzoff_min, int tzdst);
 * int  utctime(struct tm \*tp);
 
@@ -414,12 +440,15 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 
-* Calls to BIOS routines were replaced with inline assembly code to improve performance.
+* Update the preprocessor to handle Macro parameters.
+* Add support to the preprocessor to accept multi-line commands.
+* Add support to the preprocessor for the `#` and `##` operators.
 
 Future Goals
 -------------
 
 * Convert library to 32-bit library and implement long, short and float data types.
+* Convert the rand function in stdlib to use inline assembly code.
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.
@@ -430,50 +459,57 @@ Differences Between ElfC and Full C89
 -------------------------------------
 
 *  The following keywords are not recognized:
-   `const`, `double`, `float`, `goto`, `long`, `short`.
+   `double`, `float`, `long`, `short`.
 
 *  There are four primitive data types: signed and unsigned `int` and
    signed and unsigned `char`; there are also void pointers, and there
    is limited support for `int(*)()` (pointers to functions
    of type int).
 
-*  No more than two levels of indirection are supported, and
-   arrays are limited to one dimension, i.e. valid declarators
-   are limited to `x`, `x[]`, `*x`, `*x[]`, `**x` (and `(*x)()`).
+*  Arrays are limited to one dimension.
 
-*  K&R-style function declarations (with parameter declarations
+*  Old K&R-style function declarations (with parameter declarations
    between the parameter list and function body) are not
    accepted.
 
-*  There are no `const` variables.
+*  Pointers to `const` variables are supported, but neither `const` pointers to
+   (varying) variables, nor `const` pointers to `const` variables are supported,
+   i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;`
+   are *not* supported.
+
+*  The `const` and `volatile` keywords are ignored for structures and unions, but
+   may be used for their members.
 
 *  There are no long integers.
 
-*  Struct/union declarations must be separate from the
-   declarations of struct/union objects, i.e.
-   `struct p { int x, y; } q;` will not work.
+*  Struct/union declarations must be separate from the declarations of
+   struct/union objects, i.e. `struct p { int x, y; } q;` will not work.
 
 *  Struct/union declarations must be global (struct and union
    objects may be declared locally, though).
 
-*  A struct/union cannot be passed as an argument to a function, nor can
-   a function return a struct/union value.  However, a *pointer* to struct/union
-   can be passed as an argument to a function and a pointer to a struct/union may be returned by a function.
+*  No more than two levels of indirection are supported for pointers
+   to structures and unions, i.e. pointers to a struct/union and pointers
+   to pointers to a struct/union are supported.
+
+*  A struct/union cannot be passed as an argument to a function, but a
+   *pointer* to struct/union can be passed as an argument to a function.
 
 *  There is no support for bit fields.
 
-*  Only ints, chars, and arrays of int and char can be
-   initialized in their declarations; pointers can be
-   initialized with 0 or NULL.
+*  Only ints, chars, and arrays of int and char can be initialized in their
+   declarations; pointers can be initialized with NULL or a constant address value.
 
 *  Local arrays cannot have initializers.
+
+*  The initializer list must have exactly the same elements as the gobal or static
+   array.  ElfC will not pad the array, nor will ElfC truncate the initializer list
+   or string.
 
 *  Local declarations are limited to the beginnings of function
    bodies (they do not work in other compound statements).
 
 *  Arguments of prototypes must be named.
-
-*  There is no `goto`.
 
 *  There are no parameterized macros.
 
@@ -497,6 +533,8 @@ Differences Between ElfC and Full C89
 *  Function pointers are limited to one single type, `int(*)()`,
    and they have no argument types. Note that this declaration
    will in fact generate a pointer to `int(*)(void)`.
+
+*  Pointers to function pointers are not supported.
 
 *  Due to the lack of parameterized macros, `assert` and other
    macros are implemented as functions.
