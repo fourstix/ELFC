@@ -479,10 +479,8 @@ int findLocalLabel(int scope, char *text) {
 	return llid;
 }
 
-//grw - for compilers after C99
-#ifndef __SUBC__
-#define strdup _strdup
-#endif
+//grw - moved warning suppression to NMake file
+
 //grw - added support for local labels and goto
 int addLocalLabel(int fn, char *text, int defined) {
 	int llid = 0;

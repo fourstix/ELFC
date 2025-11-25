@@ -568,11 +568,11 @@ static int localdecls(void) {
 				  error (invalid, "const");
 				Token = scan();
         if (VOLATILE == Token || (IDENT == Token && (utype = usertype(Text)) != 0)) {
-					if (VOLATILE == Token)
+          if (VOLATILE == Token) {
 					  if (vltl)
 						  error(invalid, "volatile");
 						else vltl = 1;
-
+          }
 					Token = scan();
 				}
 			} else if (VOLATILE == Token) {
