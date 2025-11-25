@@ -554,6 +554,7 @@ Repository Contents
   * fib.c -- Demo to print series of Fibonacci numbers
   * printfmt.c -- Demo of various printf format conversions
   * scanfmt.c -- Demo of various scanf format conversions
+  * tqdemo.c -- Demo of type qualifiers `volatile` and `const`
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/clib/lib**  -- Compiled ElfC C Library files
