@@ -3,19 +3,18 @@
              extrn C_fdtable
              extrn C_fildes
              extrn Cabort
-             extrn Cabs
-             extrn Catexit      
-             extrn Cexit            
+             extrn Catexit
+             extrn Cexit
              extrn Cmalloc
-             extrn Ccalloc 
+             extrn Ccalloc
              extrn Crealloc
-             extrn Cfree  
-             extrn Catoi 
-             extrn Citoa           
+             extrn Cfree
+             extrn Catoi
+             extrn Citoa
              extrn Citox
-             extrn Citou           
-             extrn Cdiv 
-             extrn Cbsearch              
+             extrn Citou
+             extrn Cdiv
+             extrn Cbsearch
              extrn Cqsort
              extrn Crand
              extrn Csrand
@@ -27,5 +26,3 @@
              extrn Clseek
              extrn Cunlink
              extrn Crename
-             extrn Cmin
-             extrn Cmax

@@ -44,7 +44,7 @@
 ?stk_err 01d4
 =Cisprint 01dc
 :01d0 e2 d9 06 c3 00 00 60 72 ab f0 bb d5 e2 9b 73 8b
-:01e0 73 87 ab 97 bb d9 42 00 00 d9 12 00 20 d9 b7 d9
+:01e0 73 87 ab 97 bb d9 12 00 20 d9 42 00 00 d9 b7 d9
 :01f0 0f 9a 52 8a f1 ca 02 0a d9 09 d9 42 00 00 d4 01
 ?auto_err 0206
 :0200 70 d9 03 00 02 c3 00 00 d9 0c d9 99 d9 09 e2 d9

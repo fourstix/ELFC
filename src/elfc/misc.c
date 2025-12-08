@@ -51,7 +51,7 @@ void init(void) {
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	//grw - add predefined macro for function name
-	addglob("__FUNC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+	addglob("__FUNCTION__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	Infile = stdin;
 	File = "(stdin)";
 	Basefile = NULL;

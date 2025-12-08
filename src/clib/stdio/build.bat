@@ -10,9 +10,7 @@
 ..\elfc -L ferror.c
 ..\elfc -L clearerr.c
 ..\elfc -L fputc.c
-..\elfc -L putchar.c
 ..\elfc -L fgetc.c
-..\elfc -L getchar.c
 ..\elfc -L fgets.c
 ..\elfc -L fputs.c
 ..\elfc -L fread.c
@@ -44,8 +42,8 @@
 ..\elfc -L fileno.c
 
 
-type gets.prg puts.prg putstr.prg getch.prg putch.prg fdopen.prg fclose.prg fopen.prg > stdio.lib
-type feof.prg ferror.prg clearerr.prg fputc.prg putchar.prg fgetc.prg getchar.prg >> stdio.lib
+type gets.prg puts.prg putstr.prg getch.prg putch.prg fdopen.prg fclose.prg > stdio.lib
+type fopen.prg feof.prg ferror.prg clearerr.prg fputc.prg fgetc.prg >> stdio.lib
 type fgets.prg fputs.prg fread.prg fwrite.prg ungetc.prg _vformat.prg _vscan.prg >> stdio.lib
 type printf.prg fprintf.prg sprintf.prg vprintf.prg vfprintf.prg vsprintf.prg >> stdio.lib
 type kprintf.prg fscanf.prg scanf.prg sscanf.prg fflush.prg remove.prg rename.prg >> stdio.lib

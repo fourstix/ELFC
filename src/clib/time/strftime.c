@@ -18,7 +18,7 @@ static char *_add(char *str, char *pt, char *ptlim) {
 }
 
 static char *_conv(int n, char *format, char *pt, char *ptlim) {
-  char  buf[32];
+  static char  buf[32];
 
   sprintf(buf, format, n);
   return _add(buf, pt, ptlim);
@@ -44,7 +44,7 @@ void _fillmonths(char* m[]) {
 
 static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   char *_days;
-  char *_months[12];
+  static char *_months[12];
   char *_days_ab;
   char *_months_ab;
 

@@ -497,3 +497,19 @@ int addLocalLabel(int fn, char *text, int defined) {
 	}
 return llid;
 }
+
+/*
+ * find arguments for a macro and
+ * load arguments into mhide array
+ */
+int findargs(int id) {
+	int idx;
+	int count = 0;
+	for(idx = 0; idx < Margp; idx++) {
+		if (Margs[idx].id == id) {
+			Mhide[count] = Margs[idx].text;
+			count++;
+		}
+	}
+	return count;
+}

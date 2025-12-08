@@ -222,3 +222,13 @@ int allowasgmnt(int *lv);
 int	pinttype(int p);
 //grw - check to see if two pointers are compatible
 int compatible(int p1, int p2);
+//grw - load macro arguments into Mhide array
+int findargs(int id);
+//grw - scan macro parameters int Mshow array
+int scanparams(char *name);
+//grw - replace macro arguments with macro parameters
+void prepmac(char *mb, char *m, int nargs);
+//grw - function to trim a macro parameter for pasting
+int trim(char *pb, int max);
+//grw - function to foramt a macro parameter as a string literal
+int stringify(char *pb, int max);

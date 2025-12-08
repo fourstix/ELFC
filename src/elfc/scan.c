@@ -7,8 +7,12 @@
 #include "data.h"
 #include "decl.h"
 
-//grw - add static buffer for predefined macros
-char pbuf[33];
+//grw - add static buffer for predefined macros and macro parameters
+/* buffer includes room for added quote marks and null */
+char pbuf[MAXPARAMLEN+3];
+char playbuf[TEXTLEN+1];
+
+char macro_badop[] = "Operator %s is not used corectly in macro";
 
 int next(void) {
 	int	c;
@@ -29,6 +33,21 @@ int next(void) {
 	}
 	c = fgetc(Infile);
 	if ('\n' == c) Line++;
+  /* support backslash at end of line as line continuation */
+  if ('\\' == c) {
+    /* peek at next char */
+    c = fgetc(Infile);
+    /* ignore newline, otherwise pushback */
+    if ('\n' == c) {
+			/* per C18, line count gets incremented even if spliced */
+			Line++;
+      c = fgetc(Infile);
+    } else {
+      /* if not end of line, push back character and return backslash */
+      ungetc(c, Infile);
+			c = '\\';
+    }
+  }
 	return c;
 }
 
@@ -56,6 +75,7 @@ static int scanch(void) {
 	int	i, c, c2;
 
 	c = next();
+
 	if ('\\' == c) {
 		switch (c = next()) {
 		case 'a': return '\a';
@@ -68,6 +88,8 @@ static int scanch(void) {
 		case 't': return '\t';
 		case 'v': return '\v';
 		case '\\': return '\\';
+		/* added case for line splicing inside string */
+		case '\n': return ' ';
 		case '"': return '"' | 256;
 		case '\'': return '\'';
 		case '0': case '1': case '2':
@@ -295,9 +317,10 @@ static int keyword(char *s) {
 
 static int macro(char *name) {
 	int	y;
-  //arh - p, size unused
-	//char *p;
-	//int  size;
+	int  mparamc;
+	int  margcnt;
+	char *pfname;
+
 
 	y = findmac(name);
 	if (!y || Types[y] != TMACRO)
@@ -307,15 +330,44 @@ static int macro(char *name) {
 		sprintf(pbuf, "%d", Line);
 		playmac(pbuf);
 	} else if (!strcmp(name, "__FILE__")){
-		//grw - print file name as C string in source (double quoted)
-		sprintf(pbuf, "\"%s\"", File);
+		/* we need to strip off any path info to find file name at end of string */
+		/* search for Linux separator nearest end of string */
+    pfname = strrchr(File, '/');
+		/* if we found a slash, name is one past */
+		if (pfname) {
+		  pfname++;
+		}	else {
+			/* else, try backslash near the end for windows path */
+			pfname = strrchr(File, '\\');
+		  /* if we found slash, name is one past */
+		  /* else, just use entire file string as file name */
+		  if (pfname) pfname++;
+		  else pfname = File;
+	  }
+		/* copy print filename as C string (double quotes) */
+		sprintf(pbuf, "\"%s\"", pfname);
 		playmac(pbuf);
-	} else if (!strcmp(name, "__FUNC__")){
+	} else if (!strcmp(name, "__FUNCTION__")){
 		//grw - print function name as C string in source (double quoted)
 		sprintf(pbuf, "\"%s\"", Thisfn ? Names[Thisfn] : "(none)");
 		playmac(pbuf);
-	} else
-	  playmac(Mtext[y]);
+	} else {
+		margcnt = findargs(y);
+		if (margcnt > 0) {
+			//grw - parse params into Mshow array
+			 mparamc = scanparams(name);
+			//grw - verify margc matches count of args
+			if (margcnt != mparamc)
+			  error("Invalid number of parameters in marco %s", name);
+
+			//grw - substitue params for arguments in Macro text
+			prepmac(playbuf, Mtext[y], margcnt);
+			playmac(playbuf);
+		} else {
+			/* if no arguments, play macro text directly */
+			playmac(Mtext[y]);
+		}
+	}
 	return 1;
 }
 
@@ -323,6 +375,9 @@ static int scanpp(void) {
 	int	c, t, peek;
 	//grw - added support for local labels and goto
 	static int ternary = 0;
+	//grw - added support for macro operaters
+	int n = 0;
+	int len = 0;
 
 	if (Rejected != -1) {
 		t = Rejected;
@@ -528,9 +583,12 @@ static int scanpp(void) {
 		case '#':
 			Text[0] = '#';
 			scanident(next(), &Text[1], TEXTLEN-1);
-			if ((t = keyword(Text)) != 0)
+      /* Updated logic to not consider # in hidden macro an error */
+			if ((t = keyword(Text)) != 0) {
 				return t;
-			error("unknown preprocessor command: %s", Text);
+      } else if (!frozen(1)) {
+			  error("unknown preprocessor command: %s", Text);
+      }
 			return IDENT;
 		case '.':
 			if ((c = next()) == '.') {
@@ -646,4 +704,215 @@ void reject(void) {
 	Rejected = Token;
 	Rejval = Value;
 	strcpy(Rejtext, Text);
+}
+
+/*
+ * Scan for macro parameters
+ * Note that parameters may contain whitespace,
+ * parenthesis and commas
+ * So we must track the level or nesting
+ */
+int scanparams(char *name) {
+	int nest = 0;
+	int idx = 0;
+	int cnt = 0;
+	char ch;
+
+
+	ch = next();
+	if (ch != '(') {
+	  error("Macro %s requires parameters\n", name);
+		return 0;
+	}
+
+	do {
+		while(ch = next()) {
+			if (ch == '(')
+			  nest++;
+			if (ch == ')') {
+				if (nest) {
+				  --nest;
+				} else {
+					/* unnested rparen marks end of parameter list */
+				  break;
+				} //if-else
+			}
+			/* ignore commas in nested parameters */
+			if (!nest && ch == ',')
+			  break;
+			/* if we hit end of line something went wrong */
+			if (ch == '\n') {
+				error("Invalid parameter list for macro %s\n", name);
+				break;
+			}
+			pbuf[idx++] = ch;
+			if (idx >= MAXPARAMLEN) {
+				error("Parameter too long in marco %s\n", name);
+				break;
+			}
+
+		} //while
+		/* end string for param */
+		pbuf[idx] = '\0';
+		Mshow[cnt++] = strdup(pbuf);
+		/* reset character index for next parameter */
+		idx = 0;
+  } while(ch != ')');
+
+	return cnt;
+}
+
+/*
+ * Replace the argument with the matching macro parameter,
+ * if found, remove leading and trailing whitespace for pasting.
+ */
+int replace(char *pb, int max) {
+	int i = 0;
+  char *m;
+	int j = 0;
+
+	for (i = 0; i < max; i++) {
+		/* if buffer matchs an argument, replace with parameter */
+    if (*pb == *Mhide[i] && !strcmp(pb, Mhide[i])) {
+      /* We need to trim the matching param */
+			m = Mshow[i];
+      while(isspace(*m)) m++;
+      /* copy remaining param string into buffer */
+      while(*m) {
+          pb[j++] = *m++;
+      }
+      /* remove whitespace form the end */
+      while(isspace(pb[--j]));
+
+      /* terminate string with null */
+      pb[++j] = 0;
+			break;
+		}
+	}
+	return (i < max);
+}
+
+/*
+ * Replace the argument with the matching macro parameter,
+ * formatted as a string literal.  Any embedded backslash
+ * or double quote marks are escaped.
+ */
+int stringify(char *pb, int max) {
+	int i = 0;
+	char *m;
+	int j = 0;
+
+	for (i = 0; i < max; i++) {
+		/* if buffer matchs an argument, replace with parameter as string*/
+    if (*pb == *Mhide[i] && !strcmp(pb, Mhide[i])) {
+			m = Mshow[i];
+			/* string starts with double quote mark */
+			pb[j++] = '"';
+			/* skip over leading whitespace in param */
+			while(isspace(*m)) m++;
+			/* copy remaining param string into buffer */
+		  while(*m) {
+					/* escape any backslash or double quote in param text */
+				  if (*m == '\\' || *m == '""')
+					  pb[j++] = '\\';
+
+					pb[j++] = *m++;
+			}
+			/* remove whitespace form the end */
+			while(isspace(pb[--j]));
+			/* string ends with double quote mark */
+			pb[++j] = '"';
+
+			/* terminate string literal with null */
+			pb[++j] = 0;
+			break;
+		}
+	}
+	/* return false if argument was never found */
+	return (i < max);
+}
+
+
+char *getparam(char *p, char *m) {
+  int cnt = 0;
+	while (isalnum(*m) || *m == '_') {
+		*p++ = *m++;
+		cnt++;
+		/* don't scan more than param size */
+		if (cnt == MAXPARAMLEN)
+		  break;
+  }
+	*p = 0;
+return m;
+}
+
+void prepmac(char *mb, char *m, int nargs) {
+	char cm;
+	int  mi = 0;
+	int  pi = 0;
+
+	while(*m) {
+		cm = *m;
+
+		/* check for beginning of argument */
+		if (isalpha(cm) || cm == '_') {
+			m = getparam(pbuf, m);
+			replace(pbuf, nargs);
+			/* copy param string into macro buffer */
+			pi = 0;
+			while(pbuf[pi])
+				mb[mi++] = pbuf[pi++];
+
+		} else if (cm == '#') {
+			/* skip over hash mark */
+			m++;
+			cm = *m;
+
+			if (cm == '#') {
+				/* skip over second hash mark */
+        m++;
+        cm = *m;
+        /* remove spaces before paste operator */
+        while(isspace(mb[--mi]));
+        /* we are now at the first non-space so move after it */
+        mi++;
+
+        /* skip over spaces after paste operator */
+        while(isspace(cm)) {
+          m++;
+          cm = *m;
+        }
+        /* get next string of identifier text (can be numeric) */
+				if (isalnum(cm) || cm == '_') {
+					m = getparam(pbuf, m);
+					/* trim parameter for pasting */
+					replace(pbuf, nargs);
+					/* copy trimmed param string into macro buffer */
+					pi = 0;
+					while(pbuf[pi])
+					  mb[mi++] = pbuf[pi++];
+				} else {
+				  error(macro_badop, "##");
+			  } // if stringify - else
+			} else if (isalpha(cm) || cm == '_') {
+				m = getparam(pbuf, m);
+
+				if (stringify(pbuf, nargs)) {
+					/* copy param as string literal into macro buffer */
+					pi = 0;
+					while(pbuf[pi])
+						mb[mi++] = pbuf[pi++];
+				} else {
+	        error(macro_badop, "#");
+				} // if paste - else
+		  } else {
+			error(macro_badop, "#");
+		  }
+		} else {
+			mb[mi++] = cm;
+			m++;
+		}
+	} //while
+	/* end string in buffer */
+	mb[mi] = 0;
 }
