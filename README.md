@@ -166,7 +166,7 @@ Release 3.1
 
 * Pointers may now be initialized with non-zero constant address values, like *0xFF00*
 
-* The `__FUNC__` preprocessor directive was added in this version.
+* The `__FUNCTION__` preprocessor directive was added in this version.
 
 * Declaring a variable as `volatile` will now prevent optimizations on that variable.
 
@@ -174,6 +174,17 @@ Release 3.1
   will emit an error message if the initializer list size does not match the size of the array.
 
 More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+Release 3.3
+-----------
+
+Release 3.3 adds support for parameterized macros.
+
+* The preprocessor can now handle macros with parameters.
+* The preprocessor can accept multi-line macro commands.
+* The preprocessor supports the `#`(stringify) and `##` (paste token) operators.
+* The scanner now supports line splicing where a backslash at end of line indicates line continuation.
+
 
 Stdlib Library
 --------------
@@ -370,34 +381,26 @@ Ctype Library
 * int	toupper(int c);
 
 
-Assert Library
+Assert Header
 --------------
 
-**The following function is supported in the ElfC assert C library.**
+**The assert macro is provided by the <assert.h> header file**
 
-* void assert(int a, char\* file, int line);
-
-*Notes:*
-* *`assert` is implemented by a function, rather than a macro, because preprocessor macros do not support parameters.*
-* *The pre-defined macros `__FILE__` and `__LINE__` should be used for the file and line arguments.*
-* *If the macro `NDEBUG` is defined then the assert function returns immediately*
-* *Otherwise, `assert` prints a message containing the file name and line number and then calls the `abort` function to exit.*
-
-Stdarg Library
----------------
-
-**The following functions are supported in the ElfC stdarg C library.**
-
-* void	\*\*_va_start(void \*last);
-* void	 \*_va_arg(void \*\*ap);
-* void	  _va_end(void \*\*ap);
+* assert(int *expression*);
 
 *Notes:*
-* *The `stdarg` library is implemented by functions, because preprocessor macros do not support parameters.*
-* *The `va_arg` function does not include an argument for the type.*
-* *The `va_end` function is a NOP (No Operation) function.*
+* If *expression* evaluates to false (zero), the `assert` macro prints a message to `stderr` containing the file name and line number and then calls the `abort` function to exit.*
+* *If the macro `NDEBUG` is defined then the assert macro is ignored*
 
-More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+Stdarg Header
+--------------
+ Macros in the <stdarg.h> header file support stepping through a list of function arguments of variable numbers and type.
+
+* va_start(va_list ap, lastarg);
+* va_arg(va_list ap, type);
+* va_end(va_list ap);
+
+More information about unsupported library functions, header files, macros and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 
 Time Library
@@ -439,10 +442,6 @@ More information about unsupported library functions, header files and ElfC inte
 
 Next Release
 -------------
-
-* Update the preprocessor to handle Macro parameters.
-* Add support to the preprocessor to accept multi-line commands.
-* Add support to the preprocessor for the `#` and `##` operators.
 
 Future Goals
 -------------
@@ -511,15 +510,9 @@ Differences Between ElfC and Full C89
 
 *  Arguments of prototypes must be named.
 
-*  There are no parameterized macros.
-
 *  The `#if` and `#elif` preprocessor commands are not recognized.
 
-*  The preprocessor does not accept multi-line commands.
-
 *  The preprocessor does not accept comments in (some) commands.
-
-*  The preprocessor does not recognize the `#` and `##` operators.
 
 *  There may not be any blanks between the `#` that introduces
    a preprocessor command and the subsequent command (e.g.:
@@ -535,9 +528,6 @@ Differences Between ElfC and Full C89
    will in fact generate a pointer to `int(*)(void)`.
 
 *  Pointers to function pointers are not supported.
-
-*  Due to the lack of parameterized macros, `assert` and other
-   macros are implemented as functions.
 
 *  The SubC compiler accepts `//` comments in addition to `/* */`.
 
@@ -574,9 +564,9 @@ Repository Contents
   * libtest1.c to libtest4.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
 * **/bin**  -- Binary files for ElfC
-  * elfc_r311.zip** -- A zip file with the Windows version of the Release 3.11 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * elfc.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.11 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * elfc.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.11 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r330.zip** -- A zip file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * elfc.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 * **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements
