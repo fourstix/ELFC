@@ -71,6 +71,11 @@ static void defmac(void) {
 			  continue;
 			} else if (Token == RPAREN) {
 				prev = 0;
+				/* handle empty (void) parameter list */
+				if (margc == 0) {
+					margs[margc] = 0;
+					margc++;
+				}
 				getln(mbuf, TEXTLEN-1);
 			  break;
 			}	else {

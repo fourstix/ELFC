@@ -13,6 +13,8 @@ void init(void) {
 	Rejected = -1;
 	Errors = 0;
 	Mp = 0;
+	//grw - added count for all macro parameters
+	Margp = 0;
 	Expandmac = 1;
 	Syntoken = 0;
 	Isp = 0;

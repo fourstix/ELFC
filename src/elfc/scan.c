@@ -321,8 +321,8 @@ static int macro(char *name) {
 	int  margcnt;
 	char *pfname;
 
-
 	y = findmac(name);
+
 	if (!y || Types[y] != TMACRO)
 		return 0;
 	if (!strcmp(name, "__LINE__")) {
@@ -355,7 +355,8 @@ static int macro(char *name) {
 		margcnt = findargs(y);
 		if (margcnt > 0) {
 			//grw - parse params into Mshow array
-			 mparamc = scanparams(name);
+			mparamc = scanparams(name);
+
 			//grw - verify margc matches count of args
 			if (margcnt != mparamc)
 			  error("Invalid number of parameters in marco %s", name);
@@ -850,6 +851,12 @@ void prepmac(char *mb, char *m, int nargs) {
 	char cm;
 	int  mi = 0;
 	int  pi = 0;
+
+	/* handle case of empty (void) parameter list */
+	if (nargs == 1 && !Mhide[0]) {
+	  strcpy(mb, m);
+		return;
+	}
 
 	while(*m) {
 		cm = *m;

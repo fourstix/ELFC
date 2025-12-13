@@ -126,17 +126,17 @@ typedef struct {
 
 /* Absolute value */
 #ifndef abs
-#define abs(n) ((n < 0) ? -n : n)
+#define abs(n) (((n) < 0) ? -(n) : (n))
 #endif
 
 /* Minimum value */
 #ifndef min
-#define min(a,b) ((a < b) ? a : b)
+#define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
 /* Maximum value */
 #ifndef max
-#define max(a,b) ((a > b) ? a : b)
+#define max(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
 void _init(void);
