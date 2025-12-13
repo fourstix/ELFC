@@ -55,7 +55,7 @@ static int	err;
  * When BASE is negative, upper case letters will be
  * used in hexa-decimal formatting.
  *
- * Octal and hexadecimal numbers are converted as 
+ * Octal and hexadecimal numbers are converted as
  * unsigned values.
  */
 static char *bitoa(char *p, int n, int base, char *sgnch) {
@@ -88,14 +88,14 @@ static char *bitoa(char *p, int n, int base, char *sgnch) {
 			  *--p = (n & 0x0007) + '0';
 			  n >>= 3;
 			} while(n);
-	}	
+	}
 	if (s) *sgnch = '-';
 	return p;
 }
 
 static void append(char *what, int len) {
 	int	k;
-	
+
 	if (0 == len) {
 		return;
 	}
@@ -115,12 +115,13 @@ static void append(char *what, int len) {
  * write the output to that stream.
  * When MODE==-1, assume that DEST is a unix file
  * descriptor and write the output to that fd.
- * In MODE==0, write at most MAX characters to DEST
- * where MAX==0 means unlimited).
+ * In MODE==0, write at most MAXC characters to DEST
+ * where MAXC==0 means unlimited).
  */
 
-int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
+ //grw - changed max to maxc to avoid conflict with macro names
 
+int _vformat(int mode, int maxc, void *dest, char *fmt, void **varg) {
 	char	*p, *end;
 //	char	*lbuf, *p, *end;
 	int	left, len, alt, k;
@@ -131,13 +132,13 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 
   if (mode != 0) {
 	  //lbuf = (char *) malloc(_BUFLEN);
-		
+
 		/* check for out of memory */
 		if (_lbuf == NULL) {
 			errno = ENOMEM;
 			return -1;
 		}
-  }	
+  }
 	//grw - implement a smaller buffer
 	//end = &lbuf[_BUFLEN];
 	end = &sbuf[8];
@@ -165,10 +166,10 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 	}
 
 	olen = 0;
-	if (0 == max)
+	if (0 == maxc)
 		limit = _BUFLEN;
-	else	
- 	  limit = max;
+	else
+ 	  limit = maxc;
 
 	while (*fmt) {
 		left = len = 0;
@@ -210,7 +211,7 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				while (isdigit(*fmt)) {
 					len = len * 10 + *fmt++ - '0';
 				}
-		
+
 			switch (*fmt++) {
 			case 'c':
 				*pad = ' ';
@@ -267,7 +268,7 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 				*sgnch = 0;
 				na++;
 				break;
-	
+
 			case 'x':
 			case 'X':
 				k = 'X' == fmt[-1]? -16: 16;
@@ -294,13 +295,13 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 		}
 
 		k = strlen(p) + strlen(pfx) + strlen(sgnch);
-		
+
 		if ('0' == *pad) {
 			if (*sgnch) append(sgnch, 1);
 			append(pfx, strlen(pfx));
 			pfx = "";
 		}
-		
+
 		while (!left && len-- > k) {
 			append(pad, 1);
 		}
@@ -335,9 +336,9 @@ int _vformat(int mode, int max, void *dest, char *fmt, void **varg) {
 			} else if (_fwrite(vbuf, olen, outf) != olen) {
 					errno = EIO;
 					outf->iom |= _FERROR;
-					na = -1;	
+					na = -1;
 				}
-		}		
+		}
 		/* free the line buffer memory */
 		//free(lbuf);
   }
