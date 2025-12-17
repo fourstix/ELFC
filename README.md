@@ -166,7 +166,7 @@ Release 3.1
 
 * Pointers may now be initialized with non-zero constant address values, like *0xFF00*
 
-* The `__FUNCTION__` preprocessor directive was added in this version.
+* The `__FUNC__` preprocessor directive was renamed to `__FUNCTION__` in this version.
 
 * Declaring a variable as `volatile` will now prevent optimizations on that variable.
 
@@ -181,9 +181,13 @@ Release 3.3
 Release 3.3 adds support for parameterized macros.
 
 * The preprocessor can now handle macros with parameters.
+* The preprocessor supports macros with empty parameter lists.
 * The preprocessor can accept multi-line macro commands.
 * The preprocessor supports the `#`(stringify) and `##` (paste token) operators.
 * The scanner now supports line splicing where a backslash at end of line indicates line continuation.
+* The -P option will cause ElfC to output the macro text to stdio as each macro is expanded.
+* The stdarg and assert libraries are replaced by the traditional C macros.
+* The abs, min and max functions in the stdlib library and the getchar, putchar, getc and putc in the stdio library are replaced by their traditional C macros.
 
 
 Stdlib Library

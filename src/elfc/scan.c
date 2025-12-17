@@ -357,14 +357,26 @@ static int macro(char *name) {
 			//grw - parse params into Mshow array
 			mparamc = scanparams(name);
 
-			//grw - verify margc matches count of args
+			/* verify margc matches count of args */
 			if (margcnt != mparamc)
 			  error("Invalid number of parameters in marco %s", name);
 
+			/* verify empty list does not match single (non-blank) parameter */
+			if ((margcnt == 1) && !Mhide[0] && !blank(Mshow[0]))
+  			error("Non-empty parameter list in marco %s", name);
+
 			//grw - substitue params for arguments in Macro text
 			prepmac(playbuf, Mtext[y], margcnt);
+
+			//grw - show expanded macro text
+			if (O_playmac)
+			  printf("Expanded Macro %s: \"%s\"\n", name, playbuf);
+			/* play expanded macro */
 			playmac(playbuf);
 		} else {
+			//grw - show emacro text
+			if (O_playmac)
+			  printf("Macro %s: \"%s\"\n", name, Mtext[y]);
 			/* if no arguments, play macro text directly */
 			playmac(Mtext[y]);
 		}
@@ -756,6 +768,7 @@ int scanparams(char *name) {
 		/* end string for param */
 		pbuf[idx] = '\0';
 		Mshow[cnt++] = strdup(pbuf);
+
 		/* reset character index for next parameter */
 		idx = 0;
   } while(ch != ')');

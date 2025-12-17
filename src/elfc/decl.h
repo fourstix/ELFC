@@ -232,3 +232,5 @@ void prepmac(char *mb, char *m, int nargs);
 int trim(char *pb, int max);
 //grw - function to foramt a macro parameter as a string literal
 int stringify(char *pb, int max);
+//grw - test to see if a string is all whitespace or empty
+int blank(char *p);

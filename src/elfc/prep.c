@@ -12,7 +12,8 @@ char	mbuf[TEXTLEN+1];
 void playmac(char *s) {
 	if (Mp >= MAXNMAC) fatal("too many nested macros");
 	Macc[Mp] = next();
-	Macp[Mp++] = s;
+	//grw - duplicate string buffer since it's reused
+	Macp[Mp++] = strdup(s);
 }
 
 int getln(char *buf, int max) {

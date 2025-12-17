@@ -297,3 +297,16 @@ int compatible(int p1, int p2) {
   }
  return (p1 == p2);
 }
+
+/* Test to see if string is all whitespace or empty */
+int blank(char *p) {
+	/* consider a null string to be blank */
+	if (!p)
+	  return 1;
+
+	/* skip over any leading whitespace in string */
+	while(isspace(*p)) p++;
+
+	/* if entire string was whitespace, then it was blank */
+	return (*p == 0);
+}

@@ -377,15 +377,47 @@ Stdio Modified Functions
 
 String Modified Functions
 -------------------------
-* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.
+* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.  Unlike `strncpy`, a null is *always* appened with `strlcpy`.
 * `strdup` will allocate memory for the size a string, copy the string into memory and then return a pointer to the duplicate string.
 
 Stdarg Macros
--------------------------
+-----------------
 * ElfC supports the variable argument macros as specified by the ANSI C C89/C90 specification.
+* The variable argument macros use an argument pointer of type `va_list`, eg. `va_list ap;`
+* The `va_start` should be called before `va_arg` is used to initialize the argument pointer.
+* The `va_arg` macro can then be used to get the next argument.
+* The `va_end` should be called after all variable arguments have been processed.
+* The argument pointer is invalid after `va_end` is called.
 
-Assert Modified Function
-------------------------
+```
+#include <stdio.h>
+#include <stdarg.h>
+
+/*
+ * Function to print a number of variable arguments, specified by count
+ */
+int example(int count, ...) {
+  int i, x;
+  /* define argument pointer of type va_list */
+  va_list ap;
+
+  /* Set argument pointer to next argument after last */
+  va_start(ap, count);
+
+  /* print all the integer arguments */
+  for (i=0; i < count; i++){
+    /* get the next argument as integer */
+    x = va_arg(ap, int);
+    printf("arg %d = %d\n"i, x);
+  }
+  /* call va_end before function exits */
+  va_end(ap);
+}
+```
+
+
+Assert Macro
+--------------
 * ElfC supports the `assert` macro as specified by the ANSI C C89/C90 specification.
 * If the macro `NDEBUG` is defined the `assert` macro is ignored.
 * The `__FILE__`, `__LINE__` and `__FUNCTION__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
