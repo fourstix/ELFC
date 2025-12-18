@@ -47,12 +47,13 @@ void test_math(void) {
 	if (abs(0) != 0) fail("abs-1");
 	if (abs(123) != 123) fail("abs-2");
 	if (abs(-456) != 456) fail("abs-3");
-	if (abs(INT_MIN) != INT_MAX) fail("abs-4"); /* man page says so */
+	/* -(INT_MIN) is undefined (overflow error) */
+	if (abs(INT_MIN+1) != INT_MAX) fail("abs-4");
 
 
  	pr("rand");
   //grw - not sure if this is a valid test,since  pseudo-random numbers may repeat
-  //grw - although 10 out of 65,000 is fairly low probability, it could happen...
+  //grw - 10 out of 65,000 is fairly low probability of collision, but it could happen...
 	for (i=0; i<MAX; i++) {
 		k = rand();
 		for (j=0; j<i; j++)
