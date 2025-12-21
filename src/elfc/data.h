@@ -106,6 +106,9 @@ extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action
 extern_ int	O_library;
+//grw - added play macro action
+extern_ int	O_playmac;
+
 
 //grw - create string table
 //grw - convert string table to array of structures
