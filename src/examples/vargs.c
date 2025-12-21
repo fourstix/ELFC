@@ -2,11 +2,15 @@
 #include <stdio.h>
 #include <string.h>
 
-int a = 6;
+/* gloabal variables used in examples */
+int a = 3;
 int b = 9;
 char str[] = "Testing!";
 
-/* This test function using a count value for passing variable arguments */
+/*
+ * This function uses a count value for passing
+ * a number of variable arguments of the same type
+ */
 void testcnt(int count, ...) {
   va_list ap;
 
@@ -14,17 +18,21 @@ void testcnt(int count, ...) {
 
   va_start(ap, count);
 
-  printf("&list = %p, arglist = %p\n", &count, ap);
+  //printf("&list = %p, arglist = %p\n", &count, ap);
 
   for(i = 0; i < count; i++) {
     t = va_arg(ap, int);
 
-    printf("t = %d, arglist = %p\n", t, ap);
+    /* print each integer passed to function */
+    printf("t = %d\n", t);
   }
   va_end(ap);
 }
 
-/* This test function using a format string for passing variable arguments */
+/*
+ * This function uses a format string for passing
+ * variable arguments of different types
+ */
 void testfmt(char *myfmt, ...) {
   int i;
   char c;
@@ -74,11 +82,10 @@ int main(){
 
   /* set integer pointer to global value */
   pi = &b;
-;
 
-  /* example of using a count for passing variable arguments */
-  testcnt(3, 0, 1, 2);
+  /* using a count for passing variable arguments */
+  testcnt(3, 1, 2, a);
 
-  /* example of using a format string for passing variable arguments */
+  /* using a format string for passing variable arguments */
   testfmt("icpsq", n, c1, pi, str, &a);
 }
