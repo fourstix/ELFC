@@ -25,6 +25,22 @@ extern_ char	*Fpath;
 extern_ char	*Macp[MAXNMAC];
 extern_ int	Macc[MAXNMAC];
 extern_ int	Mp;
+/* Macro Parameter counts */
+//extern_ int Margc[MAXNMAC];
+/* Macro arg entries */
+struct marg_entry {
+  int  id;
+  char *text;
+};
+/* Marco args count */
+extern_ int	Margp;
+/* Macro args table */
+extern_ struct marg_entry Margs[MAXNMAC];
+/* Macro arg text to replace */
+extern_ char *Mhide[MAXMARGS];
+/* Macro parameters */
+extern_ char *Mshow[MAXMARGS];
+
 extern_ int	Expandmac;
 extern_ int	Ifdefstk[MAXIFDEF], Isp;
 extern_ int	Inclev;
@@ -90,6 +106,9 @@ extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action
 extern_ int	O_library;
+//grw - added play macro action
+extern_ int	O_playmac;
+
 
 //grw - create string table
 //grw - convert string table to array of structures

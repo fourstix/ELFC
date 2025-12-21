@@ -7,44 +7,108 @@
 #include "data.h"
 #include "decl.h"
 
+char	mbuf[TEXTLEN+1];
+
 void playmac(char *s) {
 	if (Mp >= MAXNMAC) fatal("too many nested macros");
 	Macc[Mp] = next();
-	Macp[Mp++] = s;
+	//grw - duplicate string buffer since it's reused
+	Macp[Mp++] = strdup(s);
 }
 
 int getln(char *buf, int max) {
 	int	k;
 
-	if (fgets(buf, max, Infile) == NULL) return 0;
-	k = (int)strlen(buf);
-	if (k) buf[--k] = 0;
-	if (k && '\r' == buf[k-1]) buf[--k] = 0;
+	k = 1;
+	//grw - updated logic to handle a backslash at end of lines
+	do {
+		if (fgets(buf + k - 1, max - k + 1, Infile) == NULL) return 0;
+		k = (int) strlen(buf);
+		/* remove newline at end of string */
+		if (k) buf[--k] = 0;
+		/* remove carriage return before newline */
+		if (k && '\r' == buf[k-1]) buf[--k] = 0;
+	} while(k && '\\' == buf[k-1]);
+
 	return k;
 }
 
 static void defmac(void) {
 	char	name[NAMELEN+1];
-	char	buf[TEXTLEN+1], *p;
-	int	y;
+	char	*p;
+	int	  y;
+	int   margc = 0;
+	char  *margs[MAXMARGS];
+	int   idx;
+	int   prev;
 
 	Token = scanraw();
 	if (Token != IDENT)
 		error("identifier expected after '#define': %s", Text);
 	copyname(name, Text);
-	if ('\n' == Putback)
-		buf[0] = 0;
-	else
-		getln(buf, TEXTLEN-1);
-	for (p = buf; isspace(*p); p++)
+	if ('\n' == Putback) {
+		mbuf[0] = 0;
+	} else if ('(' == Putback) {
+		prev = 0;
+		Token = scanraw();
+
+ 		while((Token = scanraw())) {
+			if (Token == IDENT) {
+				if (margc < MAXMARGS) {
+				  margs[margc] = strdup(Text);
+			    margc++;
+			  } else {
+					error("Too many arguments in macro %s\n", name);
+				}
+				prev = 0;
+			} else if (Token == COMMA) {
+				if (prev == COMMA) {
+				  error("Invalid arguments in macro %s\n", name);
+					getln(mbuf, TEXTLEN-1);
+					break;
+				}
+				/* set previous token to comma */
+				prev = COMMA;
+			  continue;
+			} else if (Token == RPAREN) {
+				prev = 0;
+				/* handle empty (void) parameter list */
+				if (margc == 0) {
+					margs[margc] = 0;
+					margc++;
+				}
+				getln(mbuf, TEXTLEN-1);
+			  break;
+			}	else {
+			  error("Invalid arguments for macro %s\n", name);
+				getln(mbuf, TEXTLEN-1);
+				break;
+			}
+		}
+	} else {
+		getln(mbuf, TEXTLEN-1);
+	}
+	/* skip over whitespace before macro text */
+	for (p = mbuf; isspace(*p); p++)
 		;
 	if ((y = findmac(name)) != 0) {
-		if (strcmp(Mtext[y], buf))
+		//grw - added check for maxro params
+		if (strcmp(Mtext[y], mbuf) || Sizes[y] != margc)
 			error("macro redefinition: %s", name);
-	}
-	else {
-		addglob(name, 0, TMACRO, 0, 0, 0, globname(p), 0);
-	}
+	}	else {
+		y = addglob(name, 0, TMACRO, 0, 0, margc, globname(p), 0);
+
+		for (idx = 0; idx < margc; idx++){
+			if (Margp >= MAXNMAC) {
+				error("Too many global macro arguments.\n", NULL);
+			} else {
+				/* Add macro argument to global list */
+			  Margs[Margp].id = y;
+			  Margs[Margp].text = margs[idx];
+			  Margp++;
+		  }
+		}
+  }
 	Line++;
 }
 

@@ -1,27 +1,21 @@
 #ifndef _STDARG_
 #define _STDARG_
- 
+
 /* include stdlib if not included already */
 #ifndef _STDLIB_
 #include <stdlib.h>
 #endif
- 
-#ifndef _ELFCLIB_
-#pragma .link .library stdarg.lib 
-#pragma             extrn Cva_start
-#pragma             extrn Cva_arg
-#pragma             extrn Cva_end
-#endif
 
+/* Arguments on the stack are all int sized */
+typedef int* va_list;
 
-typedef void** va_list;
-/*
- * These are (slightly incompatible) functions,
- * because we don't have parameterized macros.
- */
+/* Set argument pointer to next argument after last */
+#define va_start(ap, last)  ((ap) = ((int*)(&last) + 1))
 
-void	**va_start(void *last);
-void	 *va_arg(void **ap);
-void	  va_end(void **ap);
+/* Get next argument from stack and cast to type T */
+#define va_arg(ap, T) (T)(*ap++)
+
+/* Set argument poiter to null */
+#define va_end(ap)  (ap = (void*)0)
 
 #endif

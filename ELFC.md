@@ -294,19 +294,22 @@ Library Compiler Option
 
 Example:
 
-The C file `abs.c` containing the function:
+The C file `cstime.c` containing the function:
 ```
-int abs(int n) {
-  return (n < 0) ? -n : n;
-  }
+static struct tm _tm;
+
+char *cstime(void) {
+  systime(&_tm);
+  return asctime(&_tm);
+}
 ```
 When compiled with:
 ```
-..\elfc -L abs.c
+..\elfc -L cstime.c
 ```
-Will produce the file abs.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as stdlib.lib. The library can then be linked to a C program to provide the `abs` function.
+Will produce the file cstime.prg that can be concatenated into an Elf/OS (Mini/DOS) library, such as time.lib. The library can then be linked to a C program to provide the `cstime` function.
 ```
-type abort.prg abs.prg exit.prg > stdlib.lib
+type systime.prg asctime.prg cstime.prg > time.lib
 ```
 
 
@@ -345,7 +348,7 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The system and genenv() have no equivalent functions in Elf/OS or Mini/DOS*
+* *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS*
 
 
 Unsupported Stdio Functions
@@ -362,7 +365,6 @@ The following functions were omitted from the ElfC stdio C library.
 Stdlib Modified Functions
 -------------------------
 *  Because long types are not supported, `lseek` takes two int arguments for the offset, and returns an int value, 0  for success or -1 for error.
-* `min` and `max` are implemented as functions because macro parameters are not supported.
 * `itox` and `itou` are available to convert int values to hexadecimal and unsigned integer ASCII strings.
 
 Stdio Modified Functions
@@ -375,21 +377,50 @@ Stdio Modified Functions
 
 String Modified Functions
 -------------------------
-* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.
+* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.  Unlike `strncpy`, a null is *always* appened with `strlcpy`.
 * `strdup` will allocate memory for the size a string, copy the string into memory and then return a pointer to the duplicate string.
 
-Stdarg Modified Functions
--------------------------
-* The stdarg library is implemented by variable argument functions, because preprocessor macros do not support parameters.
-* `va_arg` function does not include an argument for the type name, because macro parameters is not supported.
-* `va_end` is implemented as a NOP (No Operation) function.
+Stdarg Macros
+-----------------
+* ElfC supports the variable argument macros as specified by the ANSI C C89/C90 specification.
+* The variable argument macros use an argument pointer of type `va_list`, eg. `va_list ap;`
+* The `va_start` should be called before `va_arg` is used to initialize the argument pointer.
+* The `va_arg` macro can then be used to get the next argument.
+* The `va_end` should be called after all variable arguments have been processed.
+* The argument pointer is invalid after `va_end` is called.
 
-Assert Modified Function
-------------------------
-* `assert` is implemented by function, because the preprocessor does not support macros with parameters.
-* The `assert` function has arguments for the assertion, file name and line number.
-* If the macro `NDEBUG` is defined the `assert` function returns immediately.
-* The `__FILE__`, `__LINE__` and `__FUNC__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
+```
+#include <stdio.h>
+#include <stdarg.h>
+
+/*
+ * Function to print a number of variable arguments, specified by count
+ */
+int example(int count, ...) {
+  int i, x;
+  /* define argument pointer of type va_list */
+  va_list ap;
+
+  /* Set argument pointer to next argument after last */
+  va_start(ap, count);
+
+  /* print all the integer arguments */
+  for (i=0; i < count; i++){
+    /* get the next argument as integer */
+    x = va_arg(ap, int);
+    printf("arg %d = %d\n"i, x);
+  }
+  /* call va_end before function exits */
+  va_end(ap);
+}
+```
+
+
+Assert Macro
+--------------
+* ElfC supports the `assert` macro as specified by the ANSI C C89/C90 specification.
+* If the macro `NDEBUG` is defined the `assert` macro is ignored.
+* The `__FILE__`, `__LINE__` and `__FUNCTION__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
 
 Time Library
 ---------------------------
@@ -509,10 +540,14 @@ Pre-Defined Macros
 * `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `_STGROM_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
-* `__FUNC__` insert the current function name in the code file.
-* If `NDEBUG` is defined, the `assert` function returns immediately, and the code for the assert message is suppressed.
+* `__FUNCTION__` insert the current function name in the code file.
+* If `NDEBUG` is defined, the `assert` macro is ignored.
+* The <assert.h> header file defines the `assert` macro.
+* The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
+* The <stdio.h> header file defines the `getchar` and `putchar` macros.
+* The <stdlib.h> header file defines the `abs`, `min` and `max` macros.
 
-*Note: The `__LINE__`, `__FILE__` and `__FUNC__` macros begin and end with **two** underscores.*
+*Note: The `__LINE__`, `__FILE__` and `__FUNCTION__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------

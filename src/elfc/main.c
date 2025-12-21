@@ -30,17 +30,6 @@ void cleanup(void) {
 	}
 }
 //grw - rewrote newfilename function for multiple character suffix
-/*
-char *newfilename(char *file, int sfx) {
-	char	*ofile;
-
-	if ((ofile = strdup(file)) == NULL)
-		cmderror("too many file names", NULL);
-	ofile[strlen(ofile)-1] = sfx;
-	return ofile;
-}
-*/
-
 char *newfilename(char *file, char* sfx) {
 	int   len = (int)(strlen(file) + strlen(file) + 1);
 	char *ofile = malloc(len);
@@ -226,6 +215,8 @@ static void longusage(void) {
   	"-L       compile and assemble a library object file\n"
 		//grw - added no c libs option
     "-N       do not link stdlib and stdio by default\n"
+    //grw - added play macro option
+    "-P       print expanded macro text\n"
 		"-S       compile to assembly language\n"
 		"-V       print version and exit\n"
 		"\n" );
@@ -282,8 +273,11 @@ int main(int argc, char *argv[]) {
     //grw - added no c libs option
 	O_clibs = 1;
 	O_outfile = "";
-    //grw - added library option
-    O_library = 0;
+  //grw - added library option
+  O_library = 0;
+  //grw - added play macro option
+  O_playmac = 0;
+
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -329,6 +323,10 @@ int main(int argc, char *argv[]) {
 				//grw - don't link stdlib and stdio
 				O_clibs = 0;
 				break;
+      case 'P':
+        //grw - don't link stdlib and stdio
+        O_playmac = 1;
+        break;
 			case 'S':
 				O_componly = O_asmonly = 1;
 				break;

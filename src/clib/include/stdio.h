@@ -96,6 +96,14 @@ extern FILE	*stdin, *stdout, *stderr;
 #define putc	fputc
 #endif
 
+#ifndef getchar
+#define getchar()	 fgetc(stdin)
+#endif
+
+#ifndef putchar
+#define putchar(x)	 fputc(x, stdout)
+#endif
+
 #ifndef SEEK_SET
 #define SEEK_SET	0
 #endif
@@ -125,8 +133,6 @@ int fgetc(FILE *f);
 int fputc(int c, FILE *f);
 char *fgets(char *s, int len, FILE *f);
 int fputs(const char *s, FILE *f);
-int putchar(int c);
-int getchar(void);
 int ungetc(int c, FILE *f);
 
 /* buffered file functions */

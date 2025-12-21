@@ -6,8 +6,6 @@
              extrn Cgets
              extrn Cputch
              extrn Cgetch
-             extrn Cputchar
-             extrn Cgetchar
              extrn Cfdopen
              extrn Cfclose
              extrn Cfopen

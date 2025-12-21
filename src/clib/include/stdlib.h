@@ -124,6 +124,21 @@ typedef struct {
     int rem;        /* remainder */
 } div_t;
 
+/* Absolute value */
+#ifndef abs
+#define abs(n) (((n) < 0) ? -(n) : (n))
+#endif
+
+/* Minimum value */
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+
+/* Maximum value */
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+
 void _init(void);
 int _fdinit(void);
 int _fildes(int fd);
@@ -138,14 +153,11 @@ int atoi(const char *s);
 void itoa(int n, char *s);
 void itox(int n, char *s);
 void itou(unsigned int n, char *s);
-int abs(int n);
 div_t div(int num, int denom);
 void *bsearch(void *key, void *array, size_t count, size_t size, int (*cmp)());
 void qsort(void *list, size_t count, size_t size, int (*cmp)());
 int rand(void);
 void srand(int n);
-int min(int a, int b);
-int max(int a, int b);
 
 /* unistd file functions */
 int	 creat(char *path, int mode);

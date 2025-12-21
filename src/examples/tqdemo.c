@@ -121,9 +121,9 @@ int main() {
 
   /* volatile array elements, no optimizations are done */
   a2[0] = 5+1;
-  assert(a2[0]== 6,  __FILE__, __LINE__);
+  assert(a2[0]== 6);
   a2[1] = a2[0] * 2 * 4;
-  assert(a2[1]== 48,  __FILE__, __LINE__);
+  assert(a2[1]== 48);
 
   /* cannot update const variables after initialization */
 
@@ -140,29 +140,29 @@ int main() {
   /* x = 4; */
 
   p = &x; /* allowed, assigning pointer to constant */
-  assert(*p == 5, __FILE__, __LINE__);
+  assert(*p == 5);
 
   /* not allowed */
   /* *p = 6; */
 
   p = &y; /* allowed, assigning pointer value to pointer to constant */
-  assert(*p == 3, __FILE__, __LINE__);
+  assert(*p == 3);
 
   /* not allowed, update through pointer to constant */
   /* *p = 8; */
 
   q = p; /* allowed, assigning pointer */
-  assert(*q == 3, __FILE__, __LINE__);
+  assert(*q == 3);
 
   /* not allowed, update through pointer to constant */
   /* *p = 9; */
 
   /* allowed, update through (plain) pointer */
   *q = 9;
-  assert(y == 9, __FILE__, __LINE__);
+  assert(y == 9);
 
   q = &g1; /* allowed, but plain pointers over-ride const behavior */
-  assert(*q == 0, __FILE__, __LINE__);
+  assert(*q == 0);
 
   p = q;  /* allowed, assigning pointer to constant  */
 
@@ -170,23 +170,23 @@ int main() {
   /* *p = 9; */
 
   *q = 9; /* allowed, plain pointer over-rides const behavior */
-  assert(g1 == 9, __FILE__, __LINE__);
+  assert(g1 == 9);
 
   /* allowed */
   y = sumstr("hello");
-  assert(y == 532, __FILE__, __LINE__);
+  assert(y == 532);
 
   /* allowed */
   y = test(x);
-  assert(y == 25, __FILE__, __LINE__);
+  assert(y == 25);
 
   /* allowed, but no optimizations are done */
   v = x*2*3;
-  assert(v == 30, __FILE__, __LINE__);
+  assert(v == 30);
 
   /* allowed, but no optimizations are done */
   y = v + 2 + 1;
-  assert(y == 33, __FILE__, __LINE__);
+  assert(y == 33);
 
   return 1;
 }

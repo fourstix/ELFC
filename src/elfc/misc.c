@@ -13,6 +13,8 @@ void init(void) {
 	Rejected = -1;
 	Errors = 0;
 	Mp = 0;
+	//grw - added count for all macro parameters
+	Margp = 0;
 	Expandmac = 1;
 	Syntoken = 0;
 	Isp = 0;
@@ -51,7 +53,7 @@ void init(void) {
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	//grw - add predefined macro for function name
-	addglob("__FUNC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+	addglob("__FUNCTION__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	Infile = stdin;
 	File = "(stdin)";
 	Basefile = NULL;
@@ -294,4 +296,17 @@ int compatible(int p1, int p2) {
 	  p2 &= ~TQMASK;
   }
  return (p1 == p2);
+}
+
+/* Test to see if string is all whitespace or empty */
+int blank(char *p) {
+	/* consider a null string to be blank */
+	if (!p)
+	  return 1;
+
+	/* skip over any leading whitespace in string */
+	while(isspace(*p)) p++;
+
+	/* if entire string was whitespace, then it was blank */
+	return (*p == 0);
 }

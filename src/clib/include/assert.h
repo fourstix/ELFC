@@ -1,21 +1,21 @@
 #ifndef _ASSERT_
 #define _ASSERT_
-  
-/* include stdlib if not included already */
+
+/* include stdlib and stdio if not included already */
 #ifndef _STDLIB_
 #include <stdlib.h>
 #endif
-  
-/* don't define all external functions inside C libraries to prevent dupes */
-#ifndef _ELFCLIB_ 
-#pragma .link .library assert.lib
-#pragma             extrn Cassert  
+
+#ifndef _STDIO_
+#include <stdio.h>
 #endif
 
 #ifdef NDEBUG
-#pragma #define NDEBUG
+#define assert(expr)
+#else
+#define assert(expr) if(!(expr)){\
+ fprintf(stderr, "Assertion \'%s\' failed in file %s, line %d, function %s\n",\
+ #expr, __FILE__, __LINE__, __FUNCTION__); abort();}
 #endif
-
-void assert(int a, char *file, int line);
 
 #endif

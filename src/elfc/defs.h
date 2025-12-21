@@ -46,6 +46,12 @@
 //#define MAXFNARGS	32
 #define MAXFNARGS	 8
 
+/* Maximum number of arguments per Macro */
+#define MAXMARGS	 8
+
+/* Maximum length of macro parameter */
+#define MAXPARAMLEN	 40
+
 /* Maximum number of strings in string table */
 #define MAXSTRTBL  40
 

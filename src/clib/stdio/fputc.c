@@ -9,18 +9,18 @@
 
 int fputc(int c, FILE *f) {
 	char	b[1];
-  
-  if (f == NULL) 
+
+  if (f == NULL)
     return EOF;
-    
+
   if ((f->iom & _FWRITE) == 0)
     return EOF;
-    
+
   if (f->iom & _FERROR)
     return EOF;
-    
+
   f->last = _FWRITE;
-  
+
   if (f->mode == _IONBF || f->mode == _IOTMP) {
     /* non-buffered file io */
     *b = c;
@@ -32,9 +32,15 @@ int fputc(int c, FILE *f) {
       errno = EIO;
       return EOF;
     }
-  } else if (f->mode == _IOSYS) {   
+  } else if (f->mode == _IOSYS) {
     /* elfos system io */
-    return putch(c);
+		asm("         gosub s_lget16    ; get character to send");
+		asm("           dw  0           ; from first arg ");
+		asm("         glo  ra           ; ra holds character to send");
+		asm("         call  O_TYPE      ; send character to the terminal");
+		return c;
+		/* inline putch code */
+    /* return putch(c); */
   } else {
     /* set error for Unknown io type*/
     f->iom |= _FERROR;
@@ -42,4 +48,3 @@ int fputc(int c, FILE *f) {
     return EOF;
   }
 }
-    
