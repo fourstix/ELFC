@@ -52,7 +52,7 @@ static void defmac(void) {
 		prev = 0;
 		Token = scanraw();
 
- 		while(Token = scanraw()) {
+ 		while((Token = scanraw())) {
 			if (Token == IDENT) {
 				if (margc < MAXMARGS) {
 				  margs[margc] = strdup(Text);

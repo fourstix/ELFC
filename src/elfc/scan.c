@@ -389,8 +389,6 @@ static int scanpp(void) {
 	//grw - added support for local labels and goto
 	static int ternary = 0;
 	//grw - added support for macro operaters
-	int n = 0;
-	int len = 0;
 
 	if (Rejected != -1) {
 		t = Rejected;
@@ -739,7 +737,7 @@ int scanparams(char *name) {
 	}
 
 	do {
-		while(ch = next()) {
+		while((ch = next())) {
 			if (ch == '(')
 			  nest++;
 			if (ch == ')') {
@@ -827,7 +825,7 @@ int stringify(char *pb, int max) {
 			/* copy remaining param string into buffer */
 		  while(*m) {
 					/* escape any backslash or double quote in param text */
-				  if (*m == '\\' || *m == '""')
+				  if (*m == '\\' || *m == '\"')
 					  pb[j++] = '\\';
 
 					pb[j++] = *m++;
