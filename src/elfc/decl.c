@@ -14,6 +14,7 @@ static int declarator(int arg, int scls, char *name, int *pprim, int *psize,
 static char invalid[] = "type qualifier \'%s\' not valid";
 static char ignored[] = "type qualifier \'%s\' ignored";
 static char bad_cls[] = "storage class \'%s\' not valid for global scope";
+static char max_lvl[] = "too many levels of indirection in %s";
 
 /*
  * enumdecl := { enumlist } ;
@@ -268,7 +269,7 @@ static int pmtrdecls(void) {
 		type = declarator(1, CAUTO, name, &prim, &size, &dummy,
 				&dummy);
 		if ((utype && TARRAY == Types[utype]) || TARRAY == type) {
-			prim = pointerto(prim);
+			prim = pointerto(prim, name);
 			type = TVARIABLE;
 		}
 		addloc(name, prim, type, CAUTO, size, addr, 0);
@@ -285,23 +286,34 @@ static int pmtrdecls(void) {
 	return na;
 }
 
-int pointerto(int prim) {
+int pointerto(int prim, char *name) {
 	int	y;
 	//grw - added support for multiple pointer indirection
-	int lvl;
+	int lvl, stc;
 
 	lvl = ptrlevel(prim);
+	/* check to see if struct/union type */
+	stc = (prim & STCMASK);
 
-	if (lvl >= MAXPTR || (prim & TYPEMASK) == FUNPTR ||
-	    (prim & STCMASK) == STCPP || (prim & STCMASK) == UNIPP )
-		error("too many levels of indirection", NULL);
+	/* if no name set to generic */
+  if (!name)
+	  name = "pointer";
 
-	y = prim & ~STCMASK;
-	switch (prim & STCMASK) {
-	case PSTRUCT:	return STCPTR | y;
-	case STCPTR:	return STCPP | y;
-	case PUNION:	return UNIPTR | y;
-	case UNIPTR:	return UNIPP | y;
+  if (stc) {
+		y = prim & ~STCMASK;
+		switch (stc) {
+			case PSTRUCT:	return STCPTR | y;
+			case STCPTR:	return STCPP | y;
+			case PUNION:	return UNIPTR | y;
+			case UNIPTR:	return UNIPP | y;
+			case STCPP:   /* falls through */
+			case UNIPP: {
+				error(max_lvl, name);
+				return prim;
+			}
+		}
+  } else if (lvl >= MAXPTR || ((prim & TYPEMASK) == FUNPTR)) {
+		error(max_lvl, name);
 	}
 	//grw - added support for multiple pointer indirection
 	if (lvl < MAXPTR)
@@ -336,11 +348,11 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	unsupp = "unsupported typedef syntax";
 	if (STAR == Token) {
 		Token = scan();
-		*pprim = pointerto(*pprim);
+		*pprim = pointerto(*pprim, name);
 		//grw - added support for multiple pointer indirection
 		while (STAR == Token) {
 			Token = scan();
-			*pprim = pointerto(*pprim);
+			*pprim = pointerto(*pprim, name);
 			ptrptr++;
 		}
 	}
@@ -397,7 +409,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		//grw - added support for multiple pointer indirection
 		/* if (ptrptr) */
 		if (ptrptr > MAXPTR)
-			error("too many levels of indirection: %s", name);
+			error(max_lvl, name);
 		//grw - moving const warning to non-initialized arrays
 		Token = scan();
 		if (RBRACK == Token) {
@@ -405,7 +417,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 				error(unsupp, NULL);
 			Token = scan();
 			if (pmtr) {
-				*pprim = pointerto(*pprim);
+				*pprim = pointerto(*pprim, name);
 			}
 			else {
 				type = TARRAY;

@@ -73,7 +73,7 @@ static node *primary(int *lv) {
 		}
 		if (TARRAY == Types[y]) {
 			n = mkleaf(OP_ADDR, y);
-			lv[LVPRIM] = pointerto(lv[LVPRIM]);
+			lv[LVPRIM] = pointerto(lv[LVPRIM], name);
 			return n;
 		}
 		if (CTYPE == Stcls[y])
@@ -203,7 +203,7 @@ static node *fnargs(int fn, int *na) {
 		n = mkbinop(OP_GLUE, n, n2);
 		if (comptype(lv[LVPRIM])) {
 			error("struct/union passed by value", NULL);
-			lv[LVPRIM] = pointerto(lv[LVPRIM]);
+			lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
 		}
 		if (types && *types) {
 			if (!typematch(*types, lv[LVPRIM])) {
@@ -337,7 +337,7 @@ static node *stc_access(node *n, int *lv, int ptr) {
 
 
 	if (TARRAY == Types[y]) {
-		p = pointerto(p);
+		p = pointerto(p, NULL);
 		lv[LVADDR] = 0;
 	}
 	lv[LVPRIM] = p;
@@ -609,7 +609,7 @@ static node *prefix(int *lv) {
 		) {
 			error("lvalue expected after unary '&'", NULL);
 		}
-		lv[LVPRIM] = pointerto(lv[LVPRIM]);
+		lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
 		lv[LVADDR] = 0;
 		return n;
 	case SIZEOF:
@@ -663,12 +663,12 @@ static node *cast(int *lv) {
 			t = FUNPTR;
 		}
 		else if (STAR == Token) {
-			t = pointerto(t);
+			t = pointerto(t, NULL);
 			Token = scan();
 			//grw - added support for multiple pointer indirection
 			/* if (STAR == Token) { */
 			while (STAR == Token) {
-				t = pointerto(t);
+				t = pointerto(t, NULL);
 				Token = scan();
 			}
 		}

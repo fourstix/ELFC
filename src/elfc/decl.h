@@ -139,7 +139,7 @@ int	objsize(int prim, int type, int size);
 node	*optimize(node *n);
 void	opt_init(void);
 void	playmac(char *s);
-int	pointerto(int prim);
+int	pointerto(int prim, char *name);
 void	preproc(void);
 int	primtype(int t, char *s);
 void	program(char *name, FILE *in, FILE *out, char *def);
