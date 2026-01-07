@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Installation
 -------------
-* Unzip the file elfc_r332.zip into the desired directory
+* Unzip the file elfc_r335.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -577,9 +577,9 @@ Repository Contents
   * libtest1.c to libtest4.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
 * **/bin**  -- Binary files for ElfC
-  * elfc_r332.zip** -- A zip file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * elfc_r332.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * elfc_r332.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r335.zip** -- A zip file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * elfc_r335.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r335.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 * **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements
@@ -620,22 +620,22 @@ Copyright (c) 2011-2016 by Nils M Holm
 Placed in the public domain by the author.
 
 Elf/OS
-Copyright (c) 2004-2025 by Mike Riley
+Copyright (c) 2004-2026 by Mike Riley
 
 Mini/DOS
-Copyright (c) 2025-2025 by David Madole
+Copyright (c) 2025-2026 by David Madole
 
 Asm/02 1802 Assembler
-Copyright (c) 2004-2025 by Mike Riley
+Copyright (c) 2004-2026 by Mike Riley
 
 Link/02 1802 Linker
-Copyright (c) 2004-2025 by Mike Riley
+Copyright (c) 2004-2026 by Mike Riley
 
 Library/02 Elf/OS standard library
-Copyright (c) 2022-2025 by Mike Riley
+Copyright (c) 2022-2026 by Mike Riley
 
 Microsoft Visual Studio 2022
-Copyright (c) 2022-2025 by Microsoft Corp.
+Copyright (c) 2022-2026 by Microsoft Corp.
 
 Many thanks to the original authors for making their designs and code available as open source.
 
@@ -643,7 +643,7 @@ This code, firmware, and software is released under the [MIT License](http://ope
 
 The MIT License (MIT)
 
-Copyright (c) 2025 by Gaston Williams
+Copyright (c) 2026 by Gaston Williams
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
