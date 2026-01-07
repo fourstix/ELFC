@@ -13,6 +13,7 @@ int entry = 0;
 //grw - removed gendata and gentext functions
 //void cgdata(void)	{gen(";----- cgdata");}
 //void cgtext(void)	{gen(";----- cgtext"); }
+
 void cgprelude()	{
 	char *pname;
 	pname = procname(Basefile);
@@ -30,19 +31,29 @@ void cgprelude()	{
 	}
 }
 
-void cgpostlude(void)	{ gen(";---- cgpostlude");
+void cgpostlude(void)	{
 	char* pname;
-	gen("             endp");
-	//grw - make sure entry point was generated in library
-	if (O_library && entry) {
+	int   i;
+	gen(";---- cgpostlude");
+	/* print external symbols for program modules */
+	if (!O_library) {
+		for (i = 0; i < Globs; i++) {
+			if (Stcls[i] != CEXTERN) continue;
+			sgen("\t%s %s", "extrn", gsym(Names[i]));
+		}
+	} else if (O_library && entry) {
+		//grw - make sure entry point was generated in library module
 		pname = procname(Basefile);
 		//grw - fail if proc name is missing
-		if (pname == NULL)
+		if (pname == NULL) {
 			error("Proc Name is Null.", NULL);
-
+		} else {
 		pname++;   //grw - skip over initial C in proc name
 		error("entry point function %s not found in libary file", pname);
+	  }
 	}
+	/* generate end of program or library module */
+	gen("             endp");
 }
 
 /* moved postlude code to crt0 module */
