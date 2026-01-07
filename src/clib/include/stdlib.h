@@ -9,11 +9,6 @@
 #define BRKPT
 #endif
 
-/* don't define all external functions inside C libraries to prevent dupes */
-#ifndef _ELFCLIB_
-#pragma #include include/stdlib.inc
-#endif
-
 /* file descriptor constants */
 #ifndef FD_MAX
 #define FD_MAX  7

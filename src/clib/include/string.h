@@ -8,7 +8,6 @@
 
 #ifndef _ELFCLIB_
 #pragma .link .library string.lib
-#pragma #include include/string.inc
 #endif
 
 #ifndef EOF

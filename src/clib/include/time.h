@@ -9,7 +9,6 @@
  /* don't define all external functions inside C library procdures to prevent dupes */
 #ifndef _ELFCLIB_
 #pragma .link .library time.lib
-#pragma #include include/time.inc
 #endif
 
 

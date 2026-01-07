@@ -136,8 +136,12 @@ static void assemble(char *file, char *path) {
   //grw
 	//if (O_verbose > 1) printf("%s\n", cmd);
   if (O_verbose > 0) printf("%s\n", cmd);
-	if (system(cmd))
+
+	if (system(cmd)) {
 		cmderror("assembler invocation failed", NULL);
+  } else {
+    collect(newfilename(file, "prg"), 1);
+  }
   //grw - don't delete files
 	//if (delete) {
 	//	if (O_verbose > 2) printf("rm %s\n", file);
@@ -147,23 +151,34 @@ static void assemble(char *file, char *path) {
 
 //arh - removed unused function concat
 //grw need to pass filename to Link/02
-//static void link(void) {
 static void link(char *fname, char *path) {
 	char	cmd[TEXTLEN+2];
-  //grw - cmd2 not used
-	//char	cmd2[TEXTLEN+2];
+  //grw - modules to be linked
+	char	mods[TEXTLEN+2];
 	char	*ofile;
   //grw - add binary file name
   char	*binfile;
+  int   i;
+
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");
   binfile = newfilename(fname, "elfos");
-  //grw - rewrote logic for Link/02
 
-  if (strlen(O_outfile) + 6 + strlen(ofile) + strlen(LDCMD) + strlen(SYSLIBC) + strlen(binfile) + strlen(path) >= TEXTLEN)
+  //grw - set up initial mods list
+  strcpy(mods, ofile);
+
+  //grw - rewrote logic for Link/02 add remaining modules to list
+  for (i=1; i < Nf; i++) {
+    if (Temp[i]) {
+      strcat(mods, " ");
+      strcat(mods, Files[i]);
+    }
+  }
+
+  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) + strlen(binfile) + strlen(path) >= TEXTLEN)
 	 	cmderror("linker command too long", NULL);
 
-  sprintf(cmd, LDCMD, path, path, path, ofile);
+  sprintf(cmd, LDCMD, path, path, path, mods);
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -172,7 +187,6 @@ static void link(char *fname, char *path) {
   } else {
     strcat(cmd, " -o ");
     strcat(cmd, binfile);
-
   }
 
   //grw - added no c libs option
@@ -210,7 +224,7 @@ static void longusage(void) {
 		"-d opt   activate debug option OPT, ? = list\n"
 		"-o file  write linker output to FILE\n"
 		"-t       test only, generate no code\n"
-		"-v       verbose, more v's = more verbose\n"
+		"-v       verbose output\n"
 		"-D m=v   define macro M with optional value V\n"
   	"-L       compile and assemble a library object file\n"
 		//grw - added no c libs option
@@ -261,8 +275,8 @@ static char exe_path[MAXPATH];
 int main(int argc, char *argv[]) {
 	int	i, j;
 	char	*def;
-    //grw need to pase file name to Asm/02 and Link/02
-    char  *fname = "";
+  //grw need to pase first file name to Asm/02 and Link/02
+  char  *fname = NULL;
 
 	def = NULL;
 	O_debug = 0;
@@ -348,16 +362,27 @@ int main(int argc, char *argv[]) {
 		if (filetype(argv[i]) == 'c') {
 			compile(argv[i], def);
 			//grw - set name for linker
-			fname = argv[i];
+      if (fname == NULL) {
+			  fname = argv[i];
+      } else {
+      //grw - pass rest of modules to linker
+
+      }
 			if (Errors && !O_testonly)
 				cmderror("compilation stopped", NULL);
 			if (!O_asmonly && !O_testonly)
 				assemble(argv[i], Fpath);
 			i++;
 		}
-		else if (filetype(argv[i]) == 's') {
+    //grw - support 'asm' for extension (used by Asm/02)
+		else if (filetype(argv[i]) == 's' || strstr(argv[i], ".asm")) {
 			//grw - set name for linker
-			fname = argv[i];
+      if (fname == NULL) {
+        fname = argv[i];
+      } else {
+        //grw - add name to module list for linker
+        collect(newfilename(argv[i], "prg"), 1);
+      }
 
 			if (!O_testonly) assemble(argv[i++], Fpath);
 		}
