@@ -6,11 +6,6 @@
 #include <stdlib.h>
 #endif
 
-/* don't define all external functions inside C library procdures to prevent dupes */
-#ifndef _ELFCLIB_
-#pragma #include include/stdio.inc
-#endif
-
 /* Maximum size of string in Elf/OS is 255 bytes */
 #ifndef _BUFFLEN
 #define _BUFLEN		  256
@@ -85,6 +80,7 @@ typedef struct {
 	int	ch;
 	int tmpid;
 } FILE;
+
 
 extern FILE	*stdin, *stdout, *stderr;
 

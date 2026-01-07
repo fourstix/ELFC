@@ -1,10 +1,6 @@
 #ifndef _ERRNO_
 #define _ERRNO_
 
-#ifndef _ELFCLIB_
-#pragma             extrn Cerrno
-#endif
-
 extern int errno;
 
 #define EOK	    0

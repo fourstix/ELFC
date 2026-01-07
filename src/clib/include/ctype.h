@@ -1,16 +1,15 @@
 #ifndef _CTYPE_
 #define _CTYPE_
- 
+
 /* include stdlib if not included already */
 #ifndef _STDLIB_
 #include <stdlib.h>
 #endif
- 
+
  /* don't define all external functions inside C library procdures to prevent dupes */
 #ifndef _ELFCLIB_
 #pragma .link .library ctype.lib
 #pragma .link .requires Cctype
-#pragma #include include/ctype.inc
 #endif
 
 int	isalnum(int c);
