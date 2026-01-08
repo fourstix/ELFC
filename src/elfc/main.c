@@ -119,6 +119,10 @@ static void collect(char *file, int temp) {
 static void assemble(char *file, char *path) {
 	char	*ofile;
 	char	cmd[TEXTLEN+1];
+  char  *vb;
+
+  //grw - add support for quiet flag
+  vb = (O_verbose > 0) ? "" : "-q";
 
   //grw - Asm/02 specifies object name
 	//file = newfilename(file, 's');
@@ -130,11 +134,13 @@ static void assemble(char *file, char *path) {
   //	ofile = O_outfile;
   ofile = newfilename(file, "asm");
 
-	if (strlen(ofile) + strlen(ASCMD) >= TEXTLEN)
+	if (strlen(ofile) + strlen(ASCMD) + strlen(vb) >= TEXTLEN)
 		cmderror("assembler command too long", NULL);
-	sprintf(cmd, ASCMD, path, path, ofile);
-  //grw
-	//if (O_verbose > 1) printf("%s\n", cmd);
+
+  //grw - snprintf is safer
+	snprintf(cmd, sizeof(cmd), ASCMD, path, vb, path, ofile);
+
+  //grw - show assembly command
   if (O_verbose > 0) printf("%s\n", cmd);
 
 	if (system(cmd)) {
@@ -152,13 +158,18 @@ static void assemble(char *file, char *path) {
 //arh - removed unused function concat
 //grw need to pass filename to Link/02
 static void link(char *fname, char *path) {
-	char	cmd[TEXTLEN+2];
+  //grw - larger command size for linker
+	char	cmd[CMDLEN+1];
   //grw - modules to be linked
-	char	mods[TEXTLEN+2];
+	char	mods[TEXTLEN+1];
 	char	*ofile;
   //grw - add binary file name
   char	*binfile;
   int   i;
+  char  *vb;
+
+  //grw - add support for quiet flag
+  vb = (O_verbose > 0) ? "" : "-q";
 
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");
@@ -175,10 +186,13 @@ static void link(char *fname, char *path) {
     }
   }
 
-  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) + strlen(binfile) + strlen(path) >= TEXTLEN)
+  //grw - check length of command
+  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) +
+      strlen(binfile) + strlen(path) + strlen(vb) >= CMDLEN)
 	 	cmderror("linker command too long", NULL);
 
-  sprintf(cmd, LDCMD, path, path, path, mods);
+  //grw - snprintf is safer
+  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, path, path, mods);
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -237,7 +251,7 @@ static void longusage(void) {
 }
 
 static void version(void) {
-	printf("SubC version %s for %s/%s\n", VERSION, OS, CPU);
+	printf("ElfC version %s for %s %s\n", VERSION, OS, CPU);
 }
 
 static char *nextarg(int argc, char *argv[], int *pi, int *pj) {

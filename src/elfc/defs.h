@@ -10,7 +10,7 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION		"2025-10-31"
+#define VERSION		"3.3.6"
 
 #ifndef SCCDIR
  #define SCCDIR		"."
@@ -32,6 +32,8 @@
 #define PTRSIZE		INTSIZE
 #define CHARSIZE	1
 
+//grw - larger command size for linker
+#define CMDLEN    1024
 #define TEXTLEN		512
 #define NAMELEN		16
 
@@ -77,38 +79,10 @@ enum {
 	TSTRUCT
 };
 
-/* primitive types */
-/*
-enum {
-	PCHAR = 1,
-  PSCHAR,
-	PINT,
-  PUINT,
-	CHARPTR,
-  SCHARPTR,
-	INTPTR,
-  UINTPTR,
-	CHARPP,
-  SCHARPP,
-	INTPP,
-  UINTPP,
-	PVOID,
-	VOIDPTR,
-	VOIDPP,
-	FUNPTR,
-	PSTRUCT = 0x2000,
-	PUNION  = 0x4000,
-	STCPTR  = 0x6000,
-	STCPP   = 0x8000,
-	UNIPTR  = 0xA000,
-	UNIPP   = 0xC000,
-	STCMASK = 0xE000
-};
-*/
-
+//grw - maximum pointer level
 #define MAXPTR   15
 
-
+/* primitive types */
 enum {
 	PCHAR = 1,
   PSCHAR,
