@@ -73,19 +73,16 @@
 ..\asm02 -L lset16.asm
 ..\asm02 -L mcopy.asm
 
-
-type epush16.prg dpop16.prg vpush16.prg vpop16.prg dpush16.prg > elfc.lib
-type vpush8.prg lstor16.prg lstor8.prg linit16.prg esmove.prg >> elfc.lib
-type add16.prg and16.prg div16.prg eq16.prg ne16.prg false16.prg >> elfc.lib
-type gt16.prg gte16.prg lt16.prg lte16.prg mdsgn16.prg stkchk.prg >> elfc.lib
-type mod16.prg mul16.prg neg16.prg or16.prg sub16.prg psave.prg >> elfc.lib
-type true16.prg xor16.prg not16.prg bool16.prg inv16.prg  laddr16.prg >> elfc.lib
-type shl16.prg shr16.prg vstor16.prg vstor8.prg swap16.prg dget16.prg >> elfc.lib
-type lpush16.prg lpush8.prg deref16.prg deref8.prg pstor16.prg pstor8.prg >> elfc.lib
-type scltos2n.prg sclsos2n.prg vinc16.prg vdec16.prg vinc8.prg vdec8.prg >> elfc.lib
-type linc16.prg ldec16.prg linc8.prg ldec8.prg lpinc16.prg lpdec16.prg >> elfc.lib
-type vpinc16.prg vpdec16.prg pinc16.prg pdec16.prg pinc8.prg pdec8.prg >> elfc.lib
-type pincptr.prg pdecptr.prg ugt16.prg uge16.prg ult16.prg ule16.prg >> elfc.lib
-type unscl2n.prg lget16.prg lset16.prg mcopy.prg >> elfc.lib
+type add16.prg and16.prg bool16.prg deref16.prg deref8.prg dget16.prg div16.prg > elfc.lib
+type dpop16.prg dpush16.prg epush16.prg eq16.prg esmove.prg false16.prg gt16.prg >> elfc.lib
+type gte16.prg inv16.prg laddr16.prg ldec16.prg ldec8.prg lget16.prg linc16.prg >> elfc.lib
+type linc8.prg linit16.prg lpdec16.prg lpinc16.prg lpush16.prg lpush8.prg >> elfc.lib
+type lset16.prg lstor16.prg lstor8.prg lt16.prg lte16.prg mcopy.prg mdsgn16.prg >> elfc.lib
+type mod16.prg mul16.prg ne16.prg neg16.prg not16.prg or16.prg pdec16.prg >> elfc.lib
+type pdec8.prg pdecptr.prg pinc16.prg pinc8.prg pincptr.prg psave.prg pstor16.prg >> elfc.lib
+type pstor8.prg sclsos2n.prg scltos2n.prg shl16.prg shr16.prg stkchk.prg sub16.prg >> elfc.lib
+type swap16.prg true16.prg uge16.prg ugt16.prg ule16.prg ult16.prg unscl2n.prg >> elfc.lib
+type vdec16.prg vdec8.prg vinc16.prg vinc8.prg vpdec16.prg vpinc16.prg >> elfc.lib
+type vpop16.prg vpush16.prg vpush8.prg vstor16.prg vstor8.prg xor16.prg >> elfc.lib
 
 copy elfc.lib ..\lib\elfc.lib

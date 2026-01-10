@@ -24,9 +24,10 @@
 ..\elfc -L unlink.c
 ..\elfc -L realloc.c
 
-type _init.prg _fdinit.prg _fildes.prg abort.prg exit.prg atexit.prg atoi.prg > stdlib.lib
-type calloc.prg malloc.prg free.prg itoa.prg itox.prg itou.prg realloc.prg >> stdlib.lib
-type creat.prg open.prg close.prg read.prg write.prg lseek.prg unlink.prg >> stdlib.lib
-type bsearch.prg qsort.prg rand.prg div.prg >> stdlib.lib
+type _fdinit.prg _fildes.prg _init.prg abort.prg atexit.prg > stdlib.lib
+type atoi.prg bsearch.prg calloc.prg close.prg creat.prg >> stdlib.lib
+type div.prg exit.prg free.prg itoa.prg itou.prg >> stdlib.lib
+type itox.prg lseek.prg malloc.prg open.prg qsort.prg >> stdlib.lib
+type rand.prg read.prg realloc.prg unlink.prg write.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib

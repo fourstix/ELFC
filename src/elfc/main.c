@@ -122,7 +122,7 @@ static void assemble(char *file, char *path) {
   char  *vb;
 
   //grw - add support for quiet flag
-  vb = (O_verbose > 0) ? "" : "-q";
+  vb = (O_verbose > 0) ? "" : "-q ";
 
   //grw - Asm/02 specifies object name
 	//file = newfilename(file, 's');
@@ -169,7 +169,7 @@ static void link(char *fname, char *path) {
   char  *vb;
 
   //grw - add support for quiet flag
-  vb = (O_verbose > 0) ? "" : "-q";
+  vb = (O_verbose > 0) ? "" : "-q ";
 
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");

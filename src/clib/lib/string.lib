@@ -94,6 +94,37 @@
 +003b
 }
 .big
+{Creverse
+?auto_err 000e
+:0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fa c3 00 00
+:0010 d9 12 00 00 d9 42 00 00 d9 b7 d9 09 9a 52 8a f1
+:0020 ca 00 26 c0 00 29 c0 00 ca d9 12 00 00 d9 3c ff
+/Cstrlen 0038 00
+\Cstrlen 0039
+?auto_err 003f
+:0030 fc d9 09 d9 42 00 00 d4 00 00 d9 03 00 02 c3 00
+:0040 00 d9 0c d9 12 00 01 d9 87 d9 3c ff fa d9 09 d9
+:0050 42 ff fc d9 42 ff fa d9 c0 d9 09 9a 52 8a f1 ca
+:0060 00 65 c0 00 ca c0 00 7f d9 42 ff fc d9 4e ff fc
+:0070 d9 09 d9 42 ff fa d9 54 ff fa d9 09 c0 00 4f d9
+:0080 42 ff fc d9 42 00 00 d9 84 d9 7b 00 d9 3c ff fe
+:0090 d9 09 d9 42 ff fc d9 42 00 00 d9 84 d9 42 ff fa
+:00a0 d9 42 00 00 d9 84 d9 7b 00 d9 81 d9 09 d9 60 d9
+:00b0 09 d9 42 ff fa d9 42 00 00 d9 84 d9 42 ff fe d9
+?auto_err 00cf
+:00c0 81 d9 09 d9 60 d9 09 c0 00 68 d9 03 00 06 c3 00
+?stk_err 00d5
+:00d0 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
++0021
++0024
++0027
++0060
++0063
++0066
++007d
++00c8
+}
+.big
 {Cstrcat
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 0f 9a
 :0010 52 8a f1 c2 00 1c d9 09 d9 42 00 02 d9 09 9a 52
@@ -269,6 +300,42 @@
 +00d3
 }
 .big
+{Cstrlcpy
+?auto_err 000e
+:0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fc c3 00 00
+:0010 d9 42 00 02 d9 3c ff fe d9 09 d9 42 00 04 d9 3c
+:0020 ff fc d9 09 d9 12 00 00 d9 42 ff fc d9 c6 d9 09
+:0030 9a 52 8a f1 ca 00 3a c0 00 85 d9 54 ff fc d9 42
+:0040 ff fc d9 12 00 00 d9 c6 d9 09 9a 52 8a f1 ca 00
+:0050 54 c0 00 85 d9 42 00 00 d9 4e 00 00 d9 42 00 02
+:0060 d9 4e 00 02 d9 7b 00 d9 81 d9 09 d9 60 d9 12 00
+:0070 00 d9 b7 d9 09 9a 52 8a f1 ca 00 7f c0 00 82 c0
+:0080 00 85 c0 00 3a d9 12 00 00 d9 42 ff fc d9 b7 d9
+:0090 09 9a 52 8a f1 ca 00 9b c0 00 d8 d9 12 00 00 d9
+:00a0 42 00 04 d9 c6 d9 09 9a 52 8a f1 ca 00 b1 c0 00
+:00b0 c1 d9 42 00 00 d9 12 00 00 d9 81 d9 09 d9 60 d9
+:00c0 09 d9 42 00 02 d9 4e 00 02 d9 7b 00 d9 09 9a 52
+:00d0 8a f1 c2 00 d8 c0 00 c1 d9 42 00 02 d9 42 ff fe
+?auto_err 00ef
+:00e0 d9 87 d9 12 00 01 d9 87 d9 09 d9 03 00 04 c3 00
+?stk_err 00f5
+:00f0 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
++0035
++0038
++004f
++0052
++007a
++007d
++0080
++0083
++0096
++0099
++00ac
++00af
++00d3
++00d6
+}
+.big
 {Cstrlen
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
@@ -348,42 +415,6 @@
 +0065
 +0076
 +008d
-}
-.big
-{Cstrlcpy
-?auto_err 000e
-:0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fc c3 00 00
-:0010 d9 42 00 02 d9 3c ff fe d9 09 d9 42 00 04 d9 3c
-:0020 ff fc d9 09 d9 12 00 00 d9 42 ff fc d9 c6 d9 09
-:0030 9a 52 8a f1 ca 00 3a c0 00 85 d9 54 ff fc d9 42
-:0040 ff fc d9 12 00 00 d9 c6 d9 09 9a 52 8a f1 ca 00
-:0050 54 c0 00 85 d9 42 00 00 d9 4e 00 00 d9 42 00 02
-:0060 d9 4e 00 02 d9 7b 00 d9 81 d9 09 d9 60 d9 12 00
-:0070 00 d9 b7 d9 09 9a 52 8a f1 ca 00 7f c0 00 82 c0
-:0080 00 85 c0 00 3a d9 12 00 00 d9 42 ff fc d9 b7 d9
-:0090 09 9a 52 8a f1 ca 00 9b c0 00 d8 d9 12 00 00 d9
-:00a0 42 00 04 d9 c6 d9 09 9a 52 8a f1 ca 00 b1 c0 00
-:00b0 c1 d9 42 00 00 d9 12 00 00 d9 81 d9 09 d9 60 d9
-:00c0 09 d9 42 00 02 d9 4e 00 02 d9 7b 00 d9 09 9a 52
-:00d0 8a f1 c2 00 d8 c0 00 c1 d9 42 00 02 d9 42 ff fe
-?auto_err 00ef
-:00e0 d9 87 d9 12 00 01 d9 87 d9 09 d9 03 00 04 c3 00
-?stk_err 00f5
-:00f0 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
-+0035
-+0038
-+004f
-+0052
-+007a
-+007d
-+0080
-+0083
-+0096
-+0099
-+00ac
-+00af
-+00d3
-+00d6
 }
 .big
 {Cstrpbrk
@@ -528,35 +559,4 @@
 +00ec
 +0104
 +0120
-}
-.big
-{Creverse
-?auto_err 000e
-:0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fa c3 00 00
-:0010 d9 12 00 00 d9 42 00 00 d9 b7 d9 09 9a 52 8a f1
-:0020 ca 00 26 c0 00 29 c0 00 ca d9 12 00 00 d9 3c ff
-/Cstrlen 0038 00
-\Cstrlen 0039
-?auto_err 003f
-:0030 fc d9 09 d9 42 00 00 d4 00 00 d9 03 00 02 c3 00
-:0040 00 d9 0c d9 12 00 01 d9 87 d9 3c ff fa d9 09 d9
-:0050 42 ff fc d9 42 ff fa d9 c0 d9 09 9a 52 8a f1 ca
-:0060 00 65 c0 00 ca c0 00 7f d9 42 ff fc d9 4e ff fc
-:0070 d9 09 d9 42 ff fa d9 54 ff fa d9 09 c0 00 4f d9
-:0080 42 ff fc d9 42 00 00 d9 84 d9 7b 00 d9 3c ff fe
-:0090 d9 09 d9 42 ff fc d9 42 00 00 d9 84 d9 42 ff fa
-:00a0 d9 42 00 00 d9 84 d9 7b 00 d9 81 d9 09 d9 60 d9
-:00b0 09 d9 42 ff fa d9 42 00 00 d9 84 d9 42 ff fe d9
-?auto_err 00cf
-:00c0 81 d9 09 d9 60 d9 09 c0 00 68 d9 03 00 06 c3 00
-?stk_err 00d5
-:00d0 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
-+0021
-+0024
-+0027
-+0060
-+0063
-+0066
-+007d
-+00c8
 }
