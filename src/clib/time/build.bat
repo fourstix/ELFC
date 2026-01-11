@@ -7,7 +7,7 @@
 ..\elfc -L utctime.c
 ..\elfc -L strftime.c
 
-type _dow.prg _doy.prg systime.prg asctime.prg cstime.prg > time.lib
-type timezone.prg utctime.prg strftime.prg >> time.lib
+type _dow.prg _doy.prg asctime.prg cstime.prg > time.lib
+type strftime.prg systime.prg timezone.prg utctime.prg >> time.lib
 
 copy time.lib ..\lib\time.lib

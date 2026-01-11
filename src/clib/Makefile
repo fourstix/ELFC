@@ -1,4 +1,4 @@
-SUBDIRS := assert crt0 ctype elfc stdarg stdio stdlib string time
+SUBDIRS := crt0 ctype elfc stdio stdlib string time
 
 .PHONY: all clean $(SUBDIRS)
 

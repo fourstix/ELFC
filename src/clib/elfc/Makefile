@@ -1,5 +1,5 @@
 ASM = asm02
-ASMFLAGS = -L
+ASMFLAGS = -q -L
 
 SRCS = $(wildcard *.asm)
 OBJS = $(SRCS:.asm=.prg)
