@@ -9,7 +9,21 @@
 *.dylib
 *.sym
 *.pdb
-
+# Dependency files
+*.d
+# ELFC output files
+*.lst
+*.prg
+*.build
+*.elfos
+src/clib/ctype/*.asm
+src/clib/stdio/*.asm
+src/clib/stdlib/*.asm
+src/clib/string/*.asm
+src/clib/time/*.asm
+src/examples/*.asm
+src/tests/*.asm
+src/elfc/elfc
 # Build directories
 obj/
 Debug/
