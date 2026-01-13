@@ -96,6 +96,7 @@
 
 ElfCpgm:  br     Elfstart
           ever
+.link .ever
   					db 'ElfC',0
 Elfstart: push   r6            ; save original return address on stack
           load   rf, ostack    ; save original SP

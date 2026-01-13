@@ -3,26 +3,28 @@
 =auto_err 2066
 =stk_err 209c
 =Elfexit 2054
-:2000 30 0d 81 0a 07 ea 01 50 45 6c 66 43 00 96 73 86
-:2010 73 f8 e1 af f8 21 bf 92 5f 1f 82 5f f8 62 a2 f8
-:2020 22 b2 f8 62 a7 f8 23 b7 87 ab 97 bb f8 01 a9 f8
+:2000 30 0d 81 0d 07 ea 01 50
+.ever
+:2008 45 6c 66 43 00 96 73 86 73 f8 e1 af f8 21 bf 92
+:2018 5f 1f 82 5f f8 62 a2 f8 22 b2 f8 62 a7 f8 23 b7
 /C_init 2033 00
 \C_init 2034
-:2030 21 b9 d4 00 00 d4 20 be f8 63 ad f8 23 bd f8 64
-:2040 af f8 23 bf e7 9f 73 8f 73 f8 00 73 0d 73 e2 d4
+:2028 87 ab 97 bb f8 01 a9 f8 21 b9 d4 00 00 d4 20 be
+:2038 f8 63 ad f8 23 bd f8 64 af f8 23 bf e7 9f 73 8f
 /Cmain 2050 00
 \Cmain 2051
-:2050 00 00 fc 00 f8 e1 af f8 21 bf 4f b2 0f a2 e2 60
-:2060 72 a6 f0 b6 8a d5 d4 03 4b 4f 75 74 20 6f 66 20
-:2070 53 74 61 63 6b 20 53 70 61 63 65 20 66 6f 72 20
-:2080 41 75 74 6f 20 56 61 72 69 61 62 6c 65 73 0a 0d
-:2090 00 f8 ff aa f8 ff ba ff 00 c0 20 54 d4 03 4b 53
-:20a0 74 61 63 6b 20 43 72 65 65 70 20 45 72 72 6f 72
-:20b0 0a 0d 00 f8 ff aa f8 ff ba ff 00 c0 20 54 f8 63
-:20c0 ad f8 23 bd f8 64 af f8 23 bf f8 00 ac f8 00 bc
-:20d0 f8 80 a8 f8 00 b8 48 c2 20 fb ff 20 c2 20 d6 28
-:20e0 88 5f 1f 98 5f 1f 1c 48 c2 20 fb ff 20 ca 20 e7
-:20f0 28 f8 00 58 18 8c ff 08 ca 20 d6 8c 5d d5
+:2048 73 f8 00 73 0d 73 e2 d4 00 00 fc 00 f8 e1 af f8
+:2058 21 bf 4f b2 0f a2 e2 60 72 a6 f0 b6 8a d5 d4 03
+:2068 4b 4f 75 74 20 6f 66 20 53 74 61 63 6b 20 53 70
+:2078 61 63 65 20 66 6f 72 20 41 75 74 6f 20 56 61 72
+:2088 69 61 62 6c 65 73 0a 0d 00 f8 ff aa f8 ff ba ff
+:2098 00 c0 20 54 d4 03 4b 53 74 61 63 6b 20 43 72 65
+:20a8 65 70 20 45 72 72 6f 72 0a 0d 00 f8 ff aa f8 ff
+:20b8 ba ff 00 c0 20 54 f8 63 ad f8 23 bd f8 64 af f8
+:20c8 23 bf f8 00 ac f8 00 bc f8 80 a8 f8 00 b8 48 c2
+:20d8 20 fb ff 20 c2 20 d6 28 88 5f 1f 98 5f 1f 1c 48
+:20e8 c2 20 fb ff 20 ca 20 e7 28 f8 00 58 18 8c ff 08
+:20f8 ca 20 d6 8c 5d d5
 ?esmove 2104
 ?stkchk 2107
 ?dpop16 210a
