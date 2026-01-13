@@ -15,6 +15,7 @@
 *.lst
 *.prg
 *.build
+*.lkb
 *.elfos
 src/clib/ctype/*.asm
 src/clib/stdio/*.asm

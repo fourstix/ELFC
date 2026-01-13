@@ -10,5 +10,5 @@ $(TARGET): $(SRCS)
 	$(ASM) $(ASMFLAGS) $^ && mv $(TARGET) ../lib
 
 clean:
-	rm -f *.lst *.build
+	rm -f *.lst *.build $(TARGET)
 
