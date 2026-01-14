@@ -35,9 +35,15 @@ void cgpostlude(void)	{
 	char* pname;
 	int   i;
 	gen(";---- cgpostlude");
-	/* print external symbols for program modules */
+	/* print external statements for program module */
 	if (!O_library) {
+		/* check global symbols for external references */
 		for (i = 0; i < Globs; i++) {
+			if (Stcls[i] != CEXTERN) continue;
+			sgen("\t%s %s", "extrn", gsym(Names[i]));
+		}
+		/* check local symbols for external references */
+		for (i = Locs; i < NSYMBOLS; i++) {
 			if (Stcls[i] != CEXTERN) continue;
 			sgen("\t%s %s", "extrn", gsym(Names[i]));
 		}
