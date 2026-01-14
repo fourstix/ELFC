@@ -1,7 +1,7 @@
 CC = elfc
 CFLAGS = -L
 
-SRCS = _dow.c _doy.c systime.c asctime.c cstime.c timezone.c utctime.c strftime.c
+SRCS = _dow.c _doy.c asctime.c cstime.c strftime.c systime.c timezone.c utctime.c
 OBJS = $(SRCS:.c=.prg)
 TARGET = time.lib
 
