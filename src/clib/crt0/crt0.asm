@@ -96,9 +96,10 @@
 
 ElfCpgm:  br     Elfstart
           ever
-  					db 'ElfC',0
-Elfstart: push   r6            ; save original return address on stack
-          load   rf, ostack    ; save original SP
+.link     .ever               ; tell linker to update header
+          db 'ElfC',0
+Elfstart: push   r6           ; save original return address on stack
+          load   rf, ostack   ; save original SP
           ghi    r2
           str    rf
           inc    rf
@@ -137,7 +138,7 @@ Elfexit:  load   rf, ostack   ; get original SP
           plo    r2
           sex    2            ; make sure X = SP for return
           pop    r6           ; restore original return
-          glo    ra						; get byte value for return
+          glo    ra           ; get byte value for return
           rtn                 ; return to Elf/OS
 
 ;----- error handling for when expression stack exhausted
@@ -275,7 +276,7 @@ cstk:   ds 127
 cstack: db 0          	; progam stack
 ;----------------------- Expression Stack ---------------------------
 estk:   ds 32           ; minimum stack for arithmetic operations
-es_min: ds 223					; auto variables and arithmetic operations
+es_min: ds 223          ; auto variables and arithmetic operations
 estack: db 0            ; Top of expression stack
 ;----------------------- Arguments for Main ---------------------------
 m_argc:   db   0        ; arguement count
