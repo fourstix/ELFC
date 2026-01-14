@@ -9,4 +9,4 @@ all:
 
 # A clean target to remove generated files
 clean:
-	rm -f *.prg *.asm *.lst *.build *.sym *.elfos
+	rm -f *.prg *.asm *.lst *.build *.lkb *.sym *.elfos
