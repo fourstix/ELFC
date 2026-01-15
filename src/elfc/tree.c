@@ -425,16 +425,28 @@ static void emittree1(node *a) {
 }
 
 void emittree(node *a) {
+  int y;
+	int prim;
+	/* assume node is not volatile */
+	int vltl = 0;
+
 #ifdef DEBUG
 	dumptree(a);
 #endif
 
-
-//grw - optimize only if volatile bit is not set
-  if (!((a->args[0]) & VLTL))
+  //grw - check for volatile variable or volatile function node
+  if (a->op == OP_IDENT || a->op == OP_CALL) {
+	  y = a->args[0];
+		/* get primative type */
+    prim = Prims[y];
+		//grw - if not struct/union, check volatile bit
+		vltl = !(prim & STCMASK) && (prim & VLTL);
+  }
+	/* don't optimize volatile nodes */
+  if (!vltl)
 	  a = optimize(a);
 #ifdef DEBUG
-    else warn("volatile type node not optimized.\n", NULL);
+	else warn("volatile type node not optimized.\n", NULL);
 #endif
-	emittree1(a);
+emittree1(a);
 }
