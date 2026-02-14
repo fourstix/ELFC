@@ -18,6 +18,7 @@
 *.lkb
 *.elfos
 src/clib/ctype/*.asm
+src/clib/math32/*.asm
 src/clib/stdio/*.asm
 src/clib/stdlib/*.asm
 src/clib/string/*.asm
