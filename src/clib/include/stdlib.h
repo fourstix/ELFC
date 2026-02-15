@@ -161,5 +161,6 @@ int	 close(int fd);
 int	 read(int fd, void *buf, size_t len);
 int	 write(int fd, void *buf, size_t len);
 int  unlink(char *path);
-int  lseek(int fd, int hi_off, int lo_off, int how);
+int  lseek(int fd, int offset, int whence);
+int  lseek32(int fd, int hi_off, int lo_off, int whence);
 #endif

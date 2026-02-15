@@ -161,7 +161,8 @@ FILE* tmpfile(void);
 /* file position functions */
 int fgetpos(FILE* f, pos_t* pos);
 int fsetpos(FILE* f, pos_t* pos);
-int fseek(FILE* f, int offset, int how);
+int fseek(FILE* f, int offset, int whence);
+int fseek32(FILE* f, int hi_off, int lo_off, int whence);
 int ftell(FILE* f);
 void rewind(FILE* f);
 
