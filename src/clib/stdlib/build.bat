@@ -21,6 +21,7 @@
 ..\elfc -L read.c
 ..\elfc -L write.c
 ..\elfc -L lseek.c
+..\elfc -L lseek32.c
 ..\elfc -L unlink.c
 ..\elfc -L realloc.c
 

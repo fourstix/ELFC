@@ -4,7 +4,7 @@
 #include <errno.h>
 
 #pragma             extrn Cerrno
-#pragma             extrn Clseek
+#pragma             extrn Clseek32
 
 int fsetpos(FILE *f, pos_t *pos) {
 	
@@ -23,5 +23,5 @@ int fsetpos(FILE *f, pos_t *pos) {
 	f->ch = EOF;
 	f->iom &= ~_FEOF;
 	
-	return lseek(f->fd, pos->hi, pos->lo, SEEK_SET);
+	return lseek32(f->fd, pos->hi, pos->lo, SEEK_SET);
 }
