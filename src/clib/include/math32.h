@@ -1,8 +1,12 @@
 #ifndef _MATH32_H_
 #define _MATH32_H_
 
+#ifndef _ELFCLIB_
+#pragma .link .library math32.lib
+#endif
+
 /* 32-bit number represented as two 16-bit values */
-typedef struct {
+typedef struct int32 {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
 } int32;

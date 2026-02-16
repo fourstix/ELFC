@@ -13,9 +13,9 @@ int ftell(FILE *f) {
   val = fgetpos(f, pos);
 
   /* return -1 if error or position out of range */
-  if (val || (pos->hi != 0) || (pos->lo < 0)) {
+  if (val || (pos->high != 0) || (pos->low < 0)) {
     return EOF;
   }
 
-  return pos->lo;
-  }
+  return pos->low;
+}

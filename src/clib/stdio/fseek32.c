@@ -9,9 +9,13 @@
 
 #pragma             extrn Cerrno
 #pragma             extrn Clseek32
+#pragma             extrn Cto_int32
+#pragma             extrn Ccmp32
 
-int fseek32(FILE *f, int hi_off, int lo_off, int whence) {
-	int hi;
+int fseek32(FILE *f, off_t *offset, int whence) {
+  int hi;
+  off_t pos;
+  off_t error;
 
   /* check for invalid file ptr (can't seek on system io streams) */
   if (f == NULL || f->mode == _IOSYS) {
@@ -26,27 +30,30 @@ int fseek32(FILE *f, int hi_off, int lo_off, int whence) {
   }
 	
   /* don't seek before start of file */
-  if ((whence == SEEK_SET) && ((hi_off & 0x8000) != 0)) {
+  if ((whence == SEEK_SET) && ((offset->high & 0x8000) != 0)) {
     errno = EINVAL;
     return -1;		
   }
 
   /* don't seek past the end of the file */
-  if ((whence == SEEK_END) && ((hi_off != 0) || (lo_off != 0))) {
+  if ((whence == SEEK_END) && ((offset->high != 0) || (offset->low != 0))) {
     errno = EINVAL;
     return -1;		
   }
   
   /* adjust offset for a character in ugetc buffer */
   if (whence == SEEK_CUR && _FREAD == f->last) {
-    if (f->ch != EOF) lo_off--;
+    if (f->ch != EOF) offset->low--;
   }
 
   /* seeking wipes out character push-back buffer and clears EOF */
   f->ch = EOF;
   f->iom &= ~_FEOF;
   
-  if ((lseek32(f->fd, hi_off, lo_off, whence)) < 0) {
+  pos = lseek32(f->fd, offset, whence);
+
+  error = to_int32(-1);
+  if (cmp32(&pos, &error) == 0) {
     errno = EIO;
     return -1;
   }

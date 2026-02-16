@@ -95,15 +95,15 @@ void test_stdio2(void) {
   pr("fgetpos");
   if (fgetpos(f, fpos) < 0)  fail("fgetpos-1");
   
-  if (fpos->hi != 0)  fail("fgetpos-2");
-  if (fpos->lo != 14)  fail("fgetpos-3");
+  if (fpos->high != 0)  fail("fgetpos-2");
+  if (fpos->low != 14)  fail("fgetpos-3");
   
   pr("ftell");
   if (ftell(f) != 14)  fail("ftell-1");
   
   pr("fsetpos");
-  fpos->lo = 20;
-  fpos->hi = 0;
+  fpos->low = 20;
+  fpos->high = 0;
   if (fsetpos(f, fpos) < 0)  fail("fsetpos-1");
   if (ftell(f) != 20)  fail("fsetpos-2");
   

@@ -2,6 +2,8 @@
 #ifndef _STDLIB_
 #define _STDLIB_
 
+#include <math32.h>
+
 #ifdef _STGROM_
 #pragma #define STGROM
 #define BRKPT asm("     brkpt    ;---- jump to routine in stg rom\n");
@@ -33,7 +35,6 @@
 #endif
 
 extern int _fdtable[FD_MAX];
-
 
 /* file position constnts */
 #ifndef SEEK_SET
@@ -154,13 +155,15 @@ void qsort(void *list, size_t count, size_t size, int (*cmp)());
 int rand(void);
 void srand(int n);
 
+typedef struct int32 off_t;
+
 /* unistd file functions */
-int	 creat(char *path, int mode);
-int	 open(char *path, int flags);
-int	 close(int fd);
-int	 read(int fd, void *buf, size_t len);
-int	 write(int fd, void *buf, size_t len);
-int  unlink(char *path);
-int  lseek(int fd, int offset, int whence);
-int  lseek32(int fd, int hi_off, int lo_off, int whence);
+int creat(char *path, int mode);
+int open(char *path, int flags);
+int close(int fd);
+int read(int fd, void *buf, size_t len);
+int write(int fd, void *buf, size_t len);
+int unlink(char *path);
+int lseek(int fd, int offset, int whence);
+off_t lseek32(int fd, off_t *offset, int whence);
 #endif

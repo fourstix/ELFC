@@ -73,8 +73,8 @@ int fgetpos(FILE *f, pos_t *pos) {
     }
   }
 
-  pos->hi = hi;
-  pos->lo = lo;
+  pos->high = hi;
+  pos->low = lo;
 
   return result;
 }
