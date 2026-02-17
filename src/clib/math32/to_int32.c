@@ -1,3 +1,4 @@
+#define _ELFCLIB_
 #include <math32.h>
 
 /* Convert 16-bit number to 32-bit number with sign extension */

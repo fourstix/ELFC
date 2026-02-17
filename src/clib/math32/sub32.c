@@ -1,3 +1,4 @@
+#define _ELFCLIB_
 #include <math32.h>
 
 /* 32-bit subtraction: result = a - b */
