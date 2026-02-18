@@ -31,7 +31,7 @@ int32 shl32(int32 *a);
 int32 shr32(int32 *a);
 
 /* 32-bit division: returns quotient, remainder in *rem */
-int32 div32(int32 *dividend, int32 *divisor, int32 *remainder);
+int32 div32(int32 *a, int32 *b, int32 *rem);
 
 /* Convert 16-bit number to 32-bit number with sign extension */
 int32 to_int32(int n);

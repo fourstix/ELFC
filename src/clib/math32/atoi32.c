@@ -3,7 +3,7 @@
 
 #pragma             extrn Cmul32
 #pragma             extrn Cadd32
-#pragma             extrn Csub32
+#pragma             extrn Cneg32
 
 /* Convert string to 32-bit integer (like atoi) */
 int32 atoi32(const char *str) {
@@ -52,9 +52,7 @@ int32 atoi32(const char *str) {
 
     /* Apply sign if negative */
     if (negative) {
-        zero.low = 0;
-        zero.high = 0;
-        result = sub32(&zero, &result);
+        result = neg32(&result);
     }
 
     return result;

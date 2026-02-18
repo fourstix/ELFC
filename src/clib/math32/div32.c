@@ -1,69 +1,97 @@
 #define _ELFCLIB_
+#include <stdlib.h>
 #include <math32.h>
+#include <stdbool.h>
 
-#pragma             extrn Cshl32
-#pragma             extrn Csub32
-#pragma             extrn Ccmp32
+#pragma             extrn Cneg32
 
 /* 32-bit division: returns quotient, remainder in *rem */
-int32 div32(int32 *dividend, int32 *divisor, int32 *remainder) {
+int32 div32(int32 *a, int32 *b, int32 *rem) {
     int32 quotient;
-    int32 rem;
-    int32 temp;
+    int32 dividend;
+    int32 divisor;
+    int32 remainder;
     int i;
+    bool sign_dividend;
+    bool sign_divisor;
+    bool ge;
 
-    /* Initialize */
-    quotient.low = 0;
-    quotient.high = 0;
-    rem.low = 0;
-    rem.high = 0;
-
-    /* Handle division by zero */
-    if (divisor->low == 0 && divisor->high == 0) {
-        if (remainder) {
-            remainder->low = 0;
-            remainder->high = 0;
-        }
-        quotient.low = 0xFFFF;
-        quotient.high = 0xFFFF;
-        return quotient;
+    if (a->high & 0x8000) {
+        dividend = neg32(a);
+        sign_dividend = true;
+    }
+    else {
+        dividend.high = a->high;
+        dividend.low = a->low;
+        sign_dividend = false;
     }
 
-    /* Shift and subtract algorithm */
-    for (i = 31; i >= 0; i--) {
-        /* Shift remainder left by 1 */
-        rem = shl32(&rem);
+    if (b->high & 0x8000) {
+        divisor = neg32(b);
+        sign_divisor = true;
+    }
+    else {
+        divisor.high = b->high;
+        divisor.low = b->low;
+        sign_divisor = false;
+    }
 
-        /* Bring down next bit from dividend */
-        if (i >= 16) {
-            /* Bit is in high word */
-            if (dividend->high & (1 << (i - 16))) {
-                rem.low |= 1;
-            }
-        } else {
-            /* Bit is in low word */
-            if (dividend->low & (1 << i)) {
-                rem.low |= 1;
+    remainder.high = 0;
+    remainder.low = 0;
+
+    // Check for division by zero
+    if (divisor.high == 0 && divisor.low == 0) {
+        // Handle error: division by zero
+        // Currently we return 0 and set the remainder to dividend
+        if (rem != NULL) {
+            rem->high = a->high;
+            rem->low = a->low;
+        }
+        return divisor;
+    }
+
+    // Binary long division algorithm (32 iterations for 32 bits)
+    for (i = 0; i < 32; i++) {
+        remainder.high = (remainder.high << 1) | (remainder.low >> 15);
+        remainder.low = (remainder.low << 1) | (dividend.high >> 15);
+        dividend.high = (dividend.high << 1) | (dividend.low >> 15);
+        dividend.low <<= 1;
+
+        ge = false;
+        if (remainder.high > divisor.high) {
+            ge = true;
+        }
+        else if (remainder.high == divisor.high) {
+            if (remainder.low >= divisor.low) {
+                ge = true;
             }
         }
 
-        /* Try to subtract divisor from remainder */
-        if (cmp32(&rem, divisor) >= 0) {
-            rem = sub32(&rem, divisor);
-
-            /* Set bit in quotient */
-            if (i >= 16) {
-                quotient.high |= (1 << (i - 16));
-            } else {
-                quotient.low |= (1 << i);
+        if (ge) {
+            if (remainder.low  < divisor.low) {
+                remainder.high--;
             }
+            remainder.low -= divisor.low;
+            remainder.high -= divisor.high;
+
+            dividend.low |= 1;
         }
     }
 
-    /* Store remainder if requested */
-    if (remainder) {
-        *remainder = rem;
+    // Dividend contains the quotient
+
+    if (sign_dividend != sign_divisor) {
+        dividend = neg32(&dividend);
     }
 
-    return quotient;
+    if (rem != NULL) {
+        if (sign_dividend) {
+            remainder = neg32(&remainder);
+        }
+
+        rem->high = remainder.high;
+        rem->low = remainder.low;
+    }
+  
+    return dividend;
 }

@@ -1,7 +1,7 @@
 #define _ELFCLIB_
 #include <math32.h>
 
-#pragma             extrn Csub32
+#pragma             extrn Cneg32
 #pragma             extrn Cdiv32
 
 /* Convert 32-bit integer to string (like itoa) */
@@ -22,7 +22,7 @@ char *itoa32(int32 *n, char *str) {
     /* Handle negative numbers (check if high bit is set) */
     if (n->high & 0x8000) {
         negative = 1;
-        *n = sub32(&zero, n);
+        *n = neg32(n);
     }
 
     /* Handle zero specially */

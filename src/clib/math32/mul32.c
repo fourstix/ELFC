@@ -12,7 +12,6 @@ int32 mul32(int32 *a, int32 *b) {
     int32 multiplicand;
     int i;
     bool negative = false;
-    unsigned int carry;
 
     if (a->high & 0x8000) {
         multiplier = neg32(a);
