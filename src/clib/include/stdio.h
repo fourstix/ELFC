@@ -19,8 +19,9 @@
 #define NULL (void*)0
 #endif
 
+/* Set max number open files to max number of File Descriptors */
 #ifndef FOPEN_MAX
-#define FOPEN_MAX 7
+#define FOPEN_MAX FD_MAX
 #endif
 
 #ifndef FILENAME_MAX
@@ -116,58 +117,58 @@ typedef struct {
 } pos_t;
 
 /* unbuffered system IO functions */
-char* gets(char* buf);
-int puts(const char* s);
-int putstr(const char* s);
+char *gets(char *buf);
+int puts(const char *s);
+int putstr(const char *s);
 int getch(void);
 int putch(int ch);
 
 /* buffered IO functions */
-int fgetc(FILE* f);
-int fputc(int c, FILE* f);
-char* fgets(char* s, int len, FILE* f);
-int fputs(const char* s, FILE* f);
-int ungetc(int c, FILE* f);
+int fgetc(FILE *f);
+int fputc(int c, FILE *f);
+char *fgets(char *s, int len, FILE *f);
+int fputs(const char *s, FILE *f);
+int ungetc(int c, FILE *f);
 
 /* buffered file functions */
-FILE* fdopen(int fd, int iomode);
-int fclose(FILE* f);
-FILE* fopen(const char* path, const char* mode);
-size_t fread(void* p, size_t size, size_t count, FILE* f);
-size_t fwrite(const void* p, size_t size, size_t count, FILE* f);
-int fflush(FILE* f);
+FILE *fdopen(int fd, int iomode);
+int fclose(FILE *f);
+FILE *fopen(const char *path, const char *mode);
+size_t fread(void *p, size_t size, size_t count, FILE *f);
+size_t fwrite(const void *p, size_t size, size_t count, FILE *f);
+int fflush(FILE *f);
 
 /* print functions */
-int fprintf(FILE* f, const char* fmt, ...);
-int printf(const char* fmt, ...);
-int sprintf(char* buf, const char* fmt, ...);
-int kprintf(int fd, const char* fmt, ...);
-int vfprintf(FILE* f, const char* fmt, void** args);
-int vprintf(const char* fmt, void** args);
-int vsprintf(char* buf, const char* fmt, void** args);
+int fprintf(FILE *f, const char *fmt, ...);
+int printf(const char *fmt, ...);
+int sprintf(char *buf, const char *fmt, ...);
+int kprintf(int fd, const char *fmt, ...);
+int vfprintf(FILE *f, const char *fmt, void **args);
+int vprintf(const char *fmt, void **args);
+int vsprintf(char *buf, const char *fmt, void **args);
 
 /* scan functions */
-int fscanf(FILE* f, const char* fmt, ...);
-int scanf(const char* fmt, ...);
-int sscanf(char* src, const char* fmt, ...);
+int fscanf(FILE *f, const char *fmt, ...);
+int scanf(const char *fmt, ...);
+int sscanf(char *src, const char *fmt, ...);
 
 /* file functions */
-int remove(const char* path);
-int rename(const char* old, const char* new);
-int fileno(FILE* f);
-char* tmpnam(char* buf);
+int remove(const char *path);
+int rename(const char *old, const char *new);
+int fileno(FILE *f);
+char* tmpnam(char *buf);
 FILE* tmpfile(void);
 
 /* file position functions */
-int fgetpos(FILE* f, pos_t* pos);
-int fsetpos(FILE* f, pos_t* pos);
-int fseek(FILE* f, int offset, int how);
-int ftell(FILE* f);
-void rewind(FILE* f);
+int fgetpos(FILE *f, pos_t *pos);
+int fsetpos(FILE *f, pos_t *pos);
+int fseek(FILE *f, int offset, int how);
+int ftell(FILE *f);
+void rewind(FILE *f);
 
 /* error functions */
-int ferror(FILE* f);
-int feof(FILE* f);
-void clearerr(FILE* f);
-void perror(const char* msg);
+int ferror(FILE *f);
+int feof(FILE *f);
+void clearerr(FILE *f);
+void perror(const char *msg);
 #endif
