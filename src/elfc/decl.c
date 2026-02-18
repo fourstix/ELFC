@@ -341,7 +341,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 {
 	int	type = TVARIABLE;
 	int	ptrptr = 0;
-	char	*unsupp;
+	char *unsupp;
 	//grw - added support to initialize global or static arrays
 	int  isize = 0;
 
@@ -383,17 +383,34 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		if (CTYPE == scls)
 			error(unsupp, NULL);
 		Token = scan();
-		*pval = constexpr();
-		//grw - convert to use chartype()
-		/* if (PCHAR == *pprim || PSCHAR == *pprim) */
+		/* check for initializing char ptr with string literal address */
+		if (*pprim == (PCHAR | 0x0010) && STRLIT == Token) {
+			/* generate string and set value to label number */
+			*pval = strexpr();
+			/* static string initialization has address as value */
+			gen(";---- init static string");
+			*pinit = -1;
+		} else if (CAUTO == scls) {
+			  gen(";---- local init");
+			  initexpr();
+			  commit();
+			  gen(";---- local init result is on stack");
+			  *pval = 0;
+			  *pinit = 2;
+		} else {
+		  *pval = constexpr();
+	  }
 
 		if (chartype(*pprim))
 			*pval &= 0xff;
 		//grw - allow non-zero pointer initialization
 	 	/*	if (*pval && !inttype(*pprim))
 		  error("non-zero pointer initialization", NULL);	*/
-		*pinit = 1;
-		//grw - added support for const keyword
+		if (*pinit == 0) {
+		  *pinit = 1;
+		}
+
+			//grw - added support for const keyword
 		if (CNST == (*pprim & CNSTMASK))
 			*pprim |= CINIT;
 	}
@@ -429,6 +446,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 							" pointer array not"
 							" supported",
 							NULL);
+
 					//grw - this is the unspecified size case []
 					*psize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
 
@@ -437,7 +455,11 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 							" local arrays"
 							" not supported: %s",
 							name);
-					*pinit = 1;
+
+					//grw - set ini to 1 for initialized global static and public arrays
+					if (isglobal(scls)) {
+  					*pinit = 1;
+					}
 
 					//grw - added support for const keyword
 					if (CNST == (*pprim & CNSTMASK))
@@ -472,19 +494,24 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
 				//grw - added initialization for local static arrays
 				isize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
+
 				if (CAUTO == scls)
 					error("initialization of"
 						" local arrays"
 						" not supported: %s",
 						name);
-				*pinit = 1;
+
+				//grw - set ini to 1 for initialized global static and public arrays
+				if (isglobal(scls)) {
+					*pinit = 1;
+				}
+				//grw - set value to 1 for initialized array
+				*pval  = 1;
 
 				//grw - added support for const keyword
 				if (CNST == (*pprim & CNSTMASK))
 					*pprim |= CINIT;
 
-				//grw - set value to 1 for initialized array
-				*pval  = 1;
 				if (isize != *psize)
 					error("initialization list size does not match size of array %s", name);
 			}	else if (*pprim & CNSTMASK) {
@@ -540,6 +567,8 @@ static int localdecls(void) {
 	//grw - added support for const keyword
 	int	stat, extn, cnst, rgstr, vltl;
 	int	pbase, rsize;
+	//grw - added support for dynamic init
+	int lab;
 
 	Nli = 0;
 	utype = 0;
@@ -688,6 +717,11 @@ static int localdecls(void) {
 		ini = val = 0;
 		//grw - add support to initialize local static arrays
 		if (stat) {
+			gen(";---- jump over local static declaration");
+			lab = label();
+			genjump(lab);
+			/* don't queue the jump */
+			commit();
 			type = declarator(0, CLSTATC, name, &prim, &size,	&val, &ini);
 		} else {
 		  type = declarator(0, CAUTO, name, &prim, &size,	&val, &ini);
@@ -704,6 +738,8 @@ static int localdecls(void) {
 			} else {
 				addloc(name, prim, type, CLSTATC, size,	label(), val);
       }
+			/* generate label for static declaration */
+			genlab(lab);
 		}	else if (extn) {
 			addloc(name, prim, type, CEXTERN, size,	0, val);
 		}	else {
@@ -711,6 +747,7 @@ static int localdecls(void) {
 			if (!addr && (prim & STCMASK)) {
 				addloc("_pad", PINT, TVARIABLE, CAUTO, 2, 0, 0);
 				addr -= BPW;
+				genstack(addr);
 			}
 			addr -= rsize;
 			addloc(name, prim, type, CAUTO, size, addr, 0);
@@ -718,13 +755,29 @@ static int localdecls(void) {
 			if (rsize > LGOBJSIZE)
 			  warn("Large local object %s should be declared static\n", name);
 		}
+		if (ini != 2 && !stat) {
+			gen(";---- move stack for auto variable");
+			/* adjust stack for size (dynamic int) */
+			genstack(-rsize);
+		}
+
+		/* process delayed inits */
 		if (ini && !stat) {
-			if (Nli >= MAXLOCINIT) {
+				if (Nli >= MAXLOCINIT) {
 				error("too many local initializers", NULL);
 				Nli = 0;
 			}
-			LIaddr[Nli] = addr;
-			LIval[Nli++] = val;
+
+			if (ini == -1) {
+			  gen(";----- local string init deferred");
+				/* if this is a string set addr value to positive */
+				LIaddr[Nli] = -addr;
+				LIval[Nli++] = val;
+			} else if (ini == 1) {
+				genraw(";----- debugging: local constant init (not used???)\n");
+				LIaddr[Nli] = addr;
+				LIval[Nli++] = val;
+      }
 		}
 		if (COMMA == Token)
 			Token = scan();
@@ -793,15 +846,12 @@ void decl(int clss, int prim, int utype) {
 				Thisfn = addglob(name, prim, type, clss, size,
 					0, NULL, 0);
 				Token = scan();
-				lsize = localdecls();
-				//grw - no need for text label in Asm/02
-				//gentext();
+
 				if (CPUBLIC == clss) genpublic(name);
-				//grw - no need for alignment
-				//genaligntext();
 				genname(name);
 				genentry();
-				genstack(lsize);
+
+				lsize = localdecls();
 				genlocinit();
 				Retlab = label();
 				compound(0);
@@ -1159,7 +1209,7 @@ void top(void) {
 			/* decl(clss, Prims[utype], utype); */
 		}
 		else {
-			//grw - added support for const amd volatile keywords
+			//grw - added support for const and volatile keywords
 			/* decl(clss, PINT, 0); */
 			prim = PINT;
 			if (cnst)

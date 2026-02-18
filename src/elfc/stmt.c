@@ -203,10 +203,15 @@ static void if_stmt(void) {
 static void asm_stmt(void) {
 	Token = scan();
 	lparen();
-	//grw - for now, only accept string literals
+	//grw - asm only accepts string literals
 	if (STRLIT == Token) {
-		genasm(Text);
-		Token = scan();
+		//grw - concatenate strings in asm statement
+		while(STRLIT == Token) {
+			genasm(Text);
+			Token = scan();
+		}
+		//grw - end asm statement
+		genraw("\n");
 	}	else
 	  error("asm statement requires string literal", NULL);
 	//grw - removed clear logic
