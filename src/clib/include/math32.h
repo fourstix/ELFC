@@ -36,4 +36,11 @@ int32 div32(int32 *dividend, int32 *divisor, int32 *remainder);
 /* Convert 16-bit number to 32-bit number with sign extension */
 int32 to_int32(int n);
 
+/* Convert string to 32-bit integer */
+int32 atoi32(const char *str);
+
+/* Convert 32-bit integer to string */
+/* Returns: pointer to beginning of string */
+char *itoa32(int32 *n, char *str);
+
 #endif

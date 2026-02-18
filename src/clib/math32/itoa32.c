@@ -6,7 +6,7 @@
 
 /* Convert 32-bit integer to string (like itoa) */
 /* Returns pointer to the beginning of the string */
-char *itoa32(int32 n, char *str) {
+char *itoa32(int32 *n, char *str) {
     char temp[12];  /* Max 10 digits + sign + null */
     int i = 0;
     int j = 0;
@@ -20,21 +20,21 @@ char *itoa32(int32 n, char *str) {
     ten.high = 0;
 
     /* Handle negative numbers (check if high bit is set) */
-    if (n.high & 0x8000) {
+    if (n->high & 0x8000) {
         negative = 1;
-        n = sub32(&zero, &n);
+        *n = sub32(&zero, n);
     }
 
     /* Handle zero specially */
-    if (n.low == 0 && n.high == 0) {
+    if (n->low == 0 && n->high == 0) {
         str[0] = '0';
         str[1] = '\0';
         return str;
     }
 
     /* Extract digits in reverse order */
-    while (n.low != 0 || n.high != 0) {
-        n = div32(&n, &ten, &remainder);
+    while (n->low != 0 || n->high != 0) {
+        *n = div32(n, &ten, &remainder);
         temp[i++] = '0' + remainder.low;
     }
 
