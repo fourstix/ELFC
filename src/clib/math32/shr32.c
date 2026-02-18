@@ -5,8 +5,14 @@
 int32 shr32(int32 *a) {
     int32 result;
 
-    result.low = (a->low >> 1) | (a->high << 15);
-    result.high = a->high >> 1;
+    result.low = a->low;
+    result.high = a->high;
+
+    result.low >>= 1;
+    if (result.high & 0x0001) {
+        result.low |= 0x8000;
+    }
+    result.high >>= 1;
 
     return result;
 }

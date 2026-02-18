@@ -1,19 +1,17 @@
 #define _ELFCLIB_
 #include <math32.h>
 
+#pragma             extrn Cneg32
+#pragma             extrn Cadd32
+
 /* 32-bit subtraction: result = a - b */
 int32 sub32(int32 *a, int32 *b) {
     int32 result;
-    unsigned int borrow;
+    int32 neg_b;
 
-    /* Subtract low words */
-    result.low = a->low - b->low;
+    neg_b = neg32(b);
 
-    /* Check for borrow (underflow in low word) */
-    borrow = (result.low > a->low) ? 1 : 0;
-
-    /* Subtract high words with borrow */
-    result.high = a->high - b->high - borrow;
+    result = add32(a, &neg_b);
 
     return result;
 }
