@@ -42,12 +42,12 @@
               ldn     r7          ; get integer value MSB
               phi     r8          ; put MSB into r8
 
-lshft16:      ghi     r8          ; get MSB for shifting
+lshft16:      glo     r8          ; get LSB for shifting
               shl                 ; shift left one bit position
-              phi     r8          ; save result
-              glo     r8          ; shift DF into LSB
+              plo     r8          ; save result
+              ghi     r8          ; shift DF into LSB
               shlc              
-              plo     r8  
+              phi     r8  
               dec     rc          ; decrement bit counter
               glo     rc          ; check counter
               lbnz    lshft16     ; keep going until shifted completely
