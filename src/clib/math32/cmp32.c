@@ -1,3 +1,4 @@
+#define _ELFCLIB_
 #include <math32.h>
 
 /* Compare two 32-bit numbers */
