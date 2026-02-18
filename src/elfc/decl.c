@@ -770,13 +770,13 @@ static int localdecls(void) {
 
 			if (ini == -1) {
 			  gen(";----- local string init deferred");
-				/* if this is a string set addr value to positive */
-				LIaddr[Nli] = -addr;
-				LIval[Nli++] = val;
-			} else if (ini == 1) {
-				genraw(";----- debugging: local constant init (not used???)\n");
 				LIaddr[Nli] = addr;
 				LIval[Nli++] = val;
+			} else if (ini == 1) {
+				//grw - removed unused constant initialization
+				error("Unsupported local initialization constant expression.", NULL);
+				//LIaddr[Nli] = addr;
+				//LIval[Nli++] = val;
       }
 		}
 		if (COMMA == Token)

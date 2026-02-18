@@ -860,17 +860,20 @@ void genstack(int n) {
 // grw - updated to add support to initialize local char ptr to strings
 void genlocinit(void) {
 	int	i;
-	int addr;
+	//int addr;
 
 	gen(";----- initialize local string variables");
-	for (i=0; i<Nli; i++) {
-		addr = LIaddr[i];
+  for (i=0; i<Nli; i++)
+	  cginitlpstr(LIval[i], LIaddr[i]);
+	//grw - removed unused constant initialization
+	//for (i=0; i<Nli; i++) {
+	//	addr = LIaddr[i];
 		/* if addr positive, this is a char ptr initialized with string */
-		if (addr > 0)
-		  cginitlpstr(LIval[i], addr);
-		else
-		  cginitlw(LIval[i], addr);
-	}
+	//	if (addr > 0)
+	//	  cginitlpstr(LIval[i], addr);
+	//	else
+	//	  cginitlw(LIval[i], addr);
+	//}
 }
 
 /* data definitions */
