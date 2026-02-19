@@ -6,12 +6,12 @@
 
 /* Convert 32-bit integer to string (like itoa) */
 /* Returns pointer to the beginning of the string */
-char *itoa32(int32 *n, char *str) {
+char *itoa32(int32_t *n, char *str) {
     char temp[12];  /* Max 10 digits + sign + null */
     int i = 0;
     int j = 0;
     int negative = 0;
-    int32 zero, ten, remainder;
+    int32_t zero, ten, remainder;
 
     /* Initialize constants */
     zero.low = 0;

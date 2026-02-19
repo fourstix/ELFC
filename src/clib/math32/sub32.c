@@ -2,8 +2,8 @@
 #include <math32.h>
 
 /* 32-bit subtraction: result = a - b */
-int32 sub32(int32 *a, int32 *b) {
-    int32 result;
+int32_t sub32(int32_t *a, int32_t *b) {
+    int32_t result;
 
     if (a->low < b->low) {
         a->high--;

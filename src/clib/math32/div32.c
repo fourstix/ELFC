@@ -6,11 +6,11 @@
 #pragma             extrn Cneg32
 
 /* 32-bit division: returns quotient, remainder in *rem */
-int32 div32(int32 *a, int32 *b, int32 *rem) {
-    int32 quotient;
-    int32 dividend;
-    int32 divisor;
-    int32 remainder;
+int32_t div32(int32_t *a, int32_t *b, int32_t *rem) {
+    int32_t quotient;
+    int32_t dividend;
+    int32_t divisor;
+    int32_t remainder;
     int i;
     bool sign_dividend;
     bool sign_divisor;
