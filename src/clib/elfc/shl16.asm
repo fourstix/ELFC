@@ -45,9 +45,9 @@
 lshft16:      glo     r8          ; get LSB for shifting
               shl                 ; shift left one bit position
               plo     r8          ; save result
-              ghi     r8          ; shift DF into MSB
-              shlc                ; shift MSB left one bit with carry
-              phi     r8          ; save result
+              ghi     r8          ; shift DF into LSB
+              shlc              
+              phi     r8  
               dec     rc          ; decrement bit counter
               glo     rc          ; check counter
               lbnz    lshft16     ; keep going until shifted completely

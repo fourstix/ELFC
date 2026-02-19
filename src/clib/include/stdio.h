@@ -111,10 +111,7 @@ extern FILE *stdin, *stdout, *stderr;
 #define SEEK_END 2
 #endif
 
-typedef struct {
-  int hi; /* position hi address word */
-  int lo; /* position lo address word */
-} pos_t;
+typedef struct int32 pos_t;
 
 /* unbuffered system IO functions */
 char *gets(char *buf);
@@ -160,11 +157,12 @@ char* tmpnam(char *buf);
 FILE* tmpfile(void);
 
 /* file position functions */
-int fgetpos(FILE *f, pos_t *pos);
-int fsetpos(FILE *f, pos_t *pos);
-int fseek(FILE *f, int offset, int how);
-int ftell(FILE *f);
-void rewind(FILE *f);
+int fgetpos(FILE* f, pos_t* pos);
+int fsetpos(FILE* f, pos_t* pos);
+int fseek(FILE* f, int offset, int whence);
+int fseek32(FILE* f, off_t *offset, int whence);
+int ftell(FILE* f);
+void rewind(FILE* f);
 
 /* error functions */
 int ferror(FILE *f);

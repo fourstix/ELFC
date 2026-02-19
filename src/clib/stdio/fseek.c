@@ -10,7 +10,7 @@
 #pragma             extrn Cerrno
 #pragma             extrn Clseek
 
-int fseek(FILE *f, int offset, int how) {
+int fseek(FILE *f, int offset, int whence) {
 	int hi;
   int lo;
   lo = offset;
@@ -21,40 +21,33 @@ int fseek(FILE *f, int offset, int how) {
 		return -1;    
   }
   /* check for valid arguments */
-	if (how < SEEK_SET || how > SEEK_END) {
+	if (whence < SEEK_SET || whence > SEEK_END) {
 		errno = EINVAL;
 		return -1;
 	}
 	
 	
 	/* don't seek before start of file */
-	if ((how == SEEK_SET) && offset < 0) {
+	if ((whence == SEEK_SET) && offset < 0) {
 		errno = EINVAL;
 		return -1;		
 	}
 	
 	/* don't seek past the end of the file */
-	if ((how == SEEK_END) && offset > 0) {
+	if ((whence == SEEK_END) && offset > 0) {
 		errno = EINVAL;
 		return -1;		
 	}
   
   /* adjust offset for a character in ugetc buffer */
-  if (how == SEEK_CUR && _FREAD == f->last) {
+  if (whence == SEEK_CUR && _FREAD == f->last) {
     if (f->ch != EOF) lo--;
    }
   /* seeking wipes out character push-back buffer and clears EOF */
   f->ch = EOF;
-	f->iom &= ~_FEOF;
+  f->iom &= ~_FEOF;
   
-  /* sign extend lo word offset into hi word */
-  if (lo < 0) {
-    hi = -1;
-  } else {
-    hi = 0;
-  }
-  
-  if ((lseek(f->fd, hi, lo, how)) < 0) {
+  if ((lseek(f->fd, offset, whence)) == -1) {
     errno = EIO;
     return -1;
   }

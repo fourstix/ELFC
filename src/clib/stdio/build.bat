@@ -34,6 +34,7 @@
 ..\elfc -L fgetpos.c
 ..\elfc -L fsetpos.c
 ..\elfc -L fseek.c
+..\elfc -L fseek32.c
 ..\elfc -L ftell.c
 ..\elfc -L perror.c
 ..\elfc -L rewind.c
