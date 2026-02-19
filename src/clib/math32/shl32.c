@@ -2,8 +2,8 @@
 #include <math32.h>
 
 /* Shift left by 1 bit */
-int32 shl32(int32 *a) {
-    int32 result;
+int32_t shl32(int32_t *a) {
+    int32_t result;
     unsigned int carry;
 
     result.low = a->low;

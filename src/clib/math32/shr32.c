@@ -2,8 +2,8 @@
 #include <math32.h>
 
 /* Shift right by 1 bit */
-int32 shr32(int32 *a) {
-    int32 result;
+int32_t shr32(int32_t *a) {
+    int32_t result;
 
     result.low = a->low;
     result.high = a->high;

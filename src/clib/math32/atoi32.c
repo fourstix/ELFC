@@ -6,13 +6,13 @@
 #pragma             extrn Cneg32
 
 /* Convert string to 32-bit integer (like atoi) */
-int32 atoi32(const char *str) {
-    int32 result;
-    int32 ten;
-    int32 digit;
+int32_t atoi32(const char *str) {
+    int32_t result;
+    int32_t ten;
+    int32_t digit;
     int negative = 0;
     const char *p;
-    int32 zero;
+    int32_t zero;
 
     p = str;
 

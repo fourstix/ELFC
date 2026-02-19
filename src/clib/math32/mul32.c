@@ -6,10 +6,10 @@
 #pragma             extrn Cadd32
 
 /* 32-bit multiplication: result = a * b */
-int32 mul32(int32 *a, int32 *b) {
-    int32 product;
-    int32 multiplier;
-    int32 multiplicand;
+int32_t mul32(int32_t *a, int32_t *b) {
+    int32_t product;
+    int32_t multiplier;
+    int32_t multiplicand;
     int i;
     bool negative = false;
 
