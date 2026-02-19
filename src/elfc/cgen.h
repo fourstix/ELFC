@@ -54,6 +54,8 @@ void cgdefl(int v);
 void cgdefp(int v);
 void cgdefs(char *s, int len);
 void cgdefw(int v);
+//grw - added function to initialize global char ptr with string value
+void cgdefpstr(int v);
 //grw - added support for signed and unsgined
 void cgdiv(int sgn);
 void cgentry(void);
@@ -81,6 +83,8 @@ void cgincsw(int a);
 void cgindb(int sgn);
 void cgindw(void);
 void cginitlw(int v, int a);
+//grw - added support for initializing local char ptr with string
+void cginitlpstr(int v, int a);
 void cgior(void);
 void cgjump(int n);
 void cglbss(char *s, int z);

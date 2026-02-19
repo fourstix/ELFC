@@ -12,22 +12,15 @@
 #endif
 
 /* file descriptor constants */
+
+/* Max number of 8 = 3 pre-defined + 5 system files */
 #ifndef FD_MAX
-#define FD_MAX  7
+#define FD_MAX  8
 #endif
 
 /* start of system file descriptors */
 #ifndef FD_SYS
 #define FD_SYS  3
-#endif
-
-#ifndef FD_SIZE
-#define FD_SIZE   534
-#endif
-
-/* file descriptor constants */
-#ifndef FD_MAX
-#define FD_MAX  7
 #endif
 
 #ifndef FD_SIZE
@@ -141,7 +134,7 @@ int _fildes(int fd);
 void abort(void);
 void exit(int n);
 int atexit(int (*fn)());
-void* malloc(size_t size);
+void *malloc(size_t size);
 void *calloc(size_t count, size_t size);
 void *realloc(void* p, size_t size);
 void free(void* p);

@@ -61,6 +61,8 @@ void	gendefb(int v);
 void	gendefp(int v);
 void	gendefs(char *s, int len);
 void	gendefw(int v);
+//grw - added function to initialize global char ptr with string
+void   gendefpstr(int v);
 //grw - added support for signed and unsigned
 void	gendiv(int sgn);
 void	genentry(void);
@@ -234,3 +236,9 @@ int trim(char *pb, int max);
 int stringify(char *pb, int max);
 //grw - test to see if a string is all whitespace or empty
 int blank(char *p);
+//grw - generate expression in string table
+int	strexpr(void);
+//grw - initialize local declarations
+void initexpr(void);
+//grw - global types are CSTATIC and CPUBLIC
+int isglobal(int scls);

@@ -37,10 +37,8 @@ static node *rvalue(node *n, int *lv) {
 
 static node *primary(int *lv) {
 	node	*n = NULL;
-	int	y, lab, k;
+	int	y, lbl;
 	char	name[NAMELEN+1];
-	//grw - add logic for inlined string literals
-	int    lab2;
 
 	lv[LVPRIM] = lv[LVSYM] = lv[LVADDR] = 0;
 	switch (Token) {
@@ -92,43 +90,8 @@ static node *primary(int *lv) {
 		lv[LVPRIM] = PINT;
 		return n;
 	case STRLIT:
-		//grw - removed gendata
-		//gendata();
-		//grw - add logic for jumping over inline strings
-		lab = label();
-		if (str_idx < MAXSTRTBL) {
-			/* set k to true for first string literal */
-			k = 1;
-			while (STRLIT == Token) {
-				if (k) {
-					addstr(lab, Text, Value);
-					/* set k to false to concatenate following string literals */
-					k = 0;
-				} else {
-					concatstr(Text, Value);
-				}
-				Token = scan();
-			}
-		} else {
-			/* If string table is full, inline strings */
-			gen(";---- inline string (table full)");
-			lab2 = label();
-			genjump(lab2);
-			genlab(lab);
-			//grw - removed genalign
-			//k = 0;
-			while (STRLIT == Token) {
-				gendefs(Text, Value);
-				//grw - removed genalign
-				//k += Value-2;
-				Token = scan();
-			}
-			gendefb(0);
-			genlab(lab2);
-	  }
-		//grw - removed genalign
-		//genalign(k+1);
-		n = mkleaf(OP_LDLAB, lab);
+	  lbl = strexpr();
+		n = mkleaf(OP_LDLAB, lbl);
 		//grw - added support for multiple pointer indirection
 		/* lv[LVPRIM] = CHARPTR; */
 		lv[LVPRIM] = (PCHAR | 0x0010);
@@ -1054,4 +1017,63 @@ int allowasgmnt(int *lv) {
 
 	/* consant already initialized, return no assignment allowed */
 	return 0;
+}
+/*
+ * Generate a string expression in the string table or
+ * inilne string if table is full.
+ * Returns lable value
+ */
+int strexpr(void) {
+ 	int	lab, lab2, k;
+
+	lab = label();
+	if (str_idx < MAXSTRTBL) {
+		/* set k to true for first string literal */
+		k = 1;
+		while (STRLIT == Token) {
+		  if (k) {
+				addstr(lab, Text, Value);
+				/* set k to false to concatenate following string literals */
+				k = 0;
+			} else {
+			  concatstr(Text, Value);
+			}
+			Token = scan();
+    }
+	} else {
+	  /* If string table is full, inline strings */
+		gen(";---- inline string (table full)");
+		lab2 = label();
+		genjump(lab2);
+		genlab(lab);
+		//grw - removed genalign
+		//k = 0;
+		while (STRLIT == Token) {
+		  gendefs(Text, Value);
+			//grw - removed genalign
+			//k += Value-2;
+			Token = scan();
+		}
+		gendefb(0);
+		genlab(lab2);
+	}
+	return lab;
+}
+//grw - add function for local initialization expression
+/*
+ * Initialize local declarations
+ */
+void initexpr(void) {
+	int	 lv[LV];
+	node *n;
+	int  p;
+
+	Ndtop = 1;
+	//grw - replaced exprlist (does not parse comma)
+	n = asgmnt(lv);
+	p = lv[LVPRIM];
+  notvoid(p);
+
+	n = rvalue(n, lv);
+	emittree(n);
 }

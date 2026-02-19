@@ -857,12 +857,23 @@ void genstack(int n) {
 	}
 }
 
+// grw - updated to add support to initialize local char ptr to strings
 void genlocinit(void) {
 	int	i;
-  //grw - removed gentext
-	//gentext();
-	for (i=0; i<Nli; i++)
-		cginitlw(LIval[i], LIaddr[i]);
+	//int addr;
+
+	gen(";----- initialize local string variables");
+  for (i=0; i<Nli; i++)
+	  cginitlpstr(LIval[i], LIaddr[i]);
+	//grw - removed unused constant initialization
+	//for (i=0; i<Nli; i++) {
+	//	addr = LIaddr[i];
+		/* if addr positive, this is a char ptr initialized with string */
+	//	if (addr > 0)
+	//	  cginitlpstr(LIval[i], addr);
+	//	else
+	//	  cginitlw(LIval[i], addr);
+	//}
 }
 
 /* data definitions */
@@ -909,6 +920,16 @@ void gendefp(int v) {
 		commit();
 
 	cgdefp(v);
+}
+//grw - added function to initialize global char ptr with string
+void gendefpstr(int v) {
+	//grw - removed gendata
+	//gendata();
+	//grw - commit jump to entry point in library object
+	if (O_library)
+		commit();
+
+	cgdefpstr(v);
 }
 
 void gendefs(char *s, int len) {
@@ -1229,7 +1250,7 @@ void genasm(char * strlit) {
 
 	/* print the asm buffer text directly to file as a line */
 	if (NULL == Outfile) return;
-	fprintf(Outfile, "%s\n", asmText);
+	fprintf(Outfile, "%s", asmText);
 }
 
 //grw - added string table

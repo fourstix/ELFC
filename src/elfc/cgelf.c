@@ -520,6 +520,11 @@ void cginitlw(int v, int a)	{gen(";----- cginitlw");
 	ngen("          %s  %d  ;--- offset", "dw", a);
 	ngen("          %s  %d  ;--- init value", "dw", v); }
 
+void cginitlpstr(int v, int a)	{gen(";----- cginitlpstr");
+	gen("          gosub s_linit16         ; put string address in local variable on ES");
+	ngen("          %s  %d  ;--- offset", "dw", -a);
+	ngen("          %s  L%d  ;--- string address", "dw", v); }
+
 void cgcall(char *s)	{gen(";----- cgcall"); sgen("%s  %s", "          call", s); }
 void cgcalr(int n)	{gen(";----- cgcalr");
 	gen("          gosub s_dpop16 ; get function pointer from expression stack into ra");
@@ -571,6 +576,11 @@ void cgdefc(int c)	{
 	else
 		ngen("%s\t$%02x    ;----- cgdefc (quote char)", "db", c);
 	}
+
+//grw - added function to initialize global char ptr with string value
+void cgdefpstr(int v)	{
+		ngen2("%s\tL%d.0, L%d.1    ;----- cgdefpstr LSB first, MSB second", "db", v, v); }
+
 void cggbss(char *s, int z)	{
 	ngenraw("%s:    ds %d    ;----- cggbss\n", s, z); }
 

@@ -142,12 +142,13 @@ static void defglob(char *name, int prim, int type, int size, int val,
 	int	st;
 
 	if (TCONSTANT == type || TFUNCTION == type) return;
-	//grw - removed gendata
-	//gendata();
+
 	st = scls == CSTATIC;
 	if (CPUBLIC == scls) genpublic(name);
+
 	if (init && TARRAY == type)
-		return;
+	  return;
+
 	if (TARRAY != type && !(prim & STCMASK)) genname(name);
 	if (prim & STCMASK) {
 		if (TARRAY == type)
@@ -155,20 +156,17 @@ static void defglob(char *name, int prim, int type, int size, int val,
 		else
 			genbss(gsym(name), objsize(prim, TVARIABLE, size), st);
 	}
-	//grw - update to use chartype
+	/* check to see if char ptr initialized with string */
+	if (prim == (PCHAR | 0x0010) && init == -1)
+		gendefpstr(val);
 	else if (chartype(prim)) {
-	/* else if (PCHAR == prim) { */
 		if (TARRAY == type)
 			genbss(gsym(name), size, st);
 		else {
-			gendefb(val);
-			//grw - removed genalign
-			//genalign(1);
+			  gendefb(val);
 		}
 	}
-	//grw - update to use pinttype
 	else if (pinttype(prim)) {
-	/* else if (PINT == prim) { */
 		if (TARRAY == type)
 			genbss(gsym(name), size*INTSIZE, st);
 		else
@@ -221,7 +219,6 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 		char *mtext, int init)
 {
 	int	y;
-
 	if (0 == *name)
 		y = 0;
 	else if ((y = findglob(name)) != 0) {
@@ -251,18 +248,20 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 }
 
 static void defloc(int prim, int type, int size, int val, int init) {
-	//grw - removed gendata
-	//gendata();
 	if (type != TARRAY && !(prim &STCMASK)) genlab(val);
 	if (prim & STCMASK) {
 		if (TARRAY == type)
 			genbss(labname(val), objsize(prim, TARRAY, size), 1);
 		else
 			genbss(labname(val), objsize(prim, TVARIABLE, size),1);
-	}
-	//grw - update to use chartype
-	else if (chartype(prim)) {
-	/* else if (PCHAR == prim) { */
+	} else if (prim == (PCHAR | 0x0010)) {
+		if (init) {
+			gendefpstr(init);
+		} else {
+			gendefw(init);
+		}
+
+  } else if (chartype(prim)) {
 	//grw - added support to iniitialze global and static arrays
 		/* if (TARRAY == type) */
 		if (TARRAY == type) {
@@ -325,40 +324,20 @@ int objsize(int prim, int type, int size) {
 
 	sp = prim & STCMASK;
 
-	//grw - convert to use chartype and pinttype
+	//grw - converted to use chartype and pinttype
 	if (chartype(prim))
 		k = CHARSIZE;
   else if (pinttype(prim))
   	k = INTSIZE;
-
-	/*
-	if (PINT == prim || PUINT == prim)
-		k = INTSIZE;
-	else if (PCHAR == prim || PSCHAR == prim)
-		k = CHARSIZE;
-	*/
-	//grw - added support for multiple pointer indirection
-	/*
-	else if (INTPTR == prim || CHARPTR == prim || UINTPTR == prim
-		|| SCHARPTR == prim ||VOIDPTR == prim)
-		k = PTRSIZE;
-	else if (INTPP == prim || CHARPP == prim || UINTPP == prim ||
-		SCHARPP == prim || VOIDPP == prim)
-		k = PTRSIZE;
-	*/
 	else if (STCPTR == sp || STCPP == sp)
 		k = PTRSIZE;
 	else if (UNIPTR == sp || UNIPP == sp)
 		k = PTRSIZE;
 	else if (PSTRUCT == sp || PUNION == sp)
 		k = Sizes[prim & ~STCMASK];
+	/* ptrlevel covers function pointer case */
 	else if (ptrlevel(prim) > 0)
 	  k = PTRSIZE;
-  //grw - ptrlevel covers function pointer
-	/*
-	else if (FUNPTR == (prim & TYPEMASK))
-		k = PTRSIZE;
-  */
 	if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
 		return -1;
 	if (TARRAY == type)
@@ -512,4 +491,11 @@ int findargs(int id) {
 		}
 	}
 	return count;
+}
+
+/*
+ * Test for global Types
+ */
+int isglobal(int scls) {
+	return (CPUBLIC == scls || CSTATIC == scls);
 }
