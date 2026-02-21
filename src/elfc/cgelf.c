@@ -10,8 +10,7 @@
 
 int entry = 0;
 
-//grw - removed gendata and gentext functions
-//void cgdata(void)	{gen(";----- cgdata");}
+//grw - removed gentext function (reworked gendata for 1802)
 //void cgtext(void)	{gen(";----- cgtext"); }
 
 void cgprelude()	{
@@ -522,7 +521,7 @@ void cginitlw(int v, int a)	{gen(";----- cginitlw");
 
 void cginitlpstr(int v, int a)	{gen(";----- cginitlpstr");
 	gen("          gosub s_linit16         ; put string address in local variable on ES");
-	ngen("          %s  %d  ;--- offset", "dw", -a);
+	ngen("          %s  %d  ;--- offset", "dw", a);
 	ngen("          %s  L%d  ;--- string address", "dw", v); }
 
 void cgcall(char *s)	{gen(";----- cgcall"); sgen("%s  %s", "          call", s); }
@@ -581,11 +580,14 @@ void cgdefc(int c)	{
 void cgdefpstr(int v)	{
 		ngen2("%s\tL%d.0, L%d.1    ;----- cgdefpstr LSB first, MSB second", "db", v, v); }
 
+//grw - removed cggbss and cglbss
+/*
 void cggbss(char *s, int z)	{
 	ngenraw("%s:    ds %d    ;----- cggbss\n", s, z); }
 
 void cglbss(char *s, int z)	{
 	ngenraw("%s:    ds %d    ;----- cglbss\n", s, z); }
+*/
 
 //grw - added cgpushd and cgpopd statements
 void cgpushd() {gen(";----- cgpushd");
@@ -683,4 +685,28 @@ void cgcopy(int n) {
   gen(";----- cgcopy");
 	gen(" 				gosub s_mcopy  ; copy structure memory block");
 	ngen(" 				  %s %d", "dw", n);
+}
+
+//grw - added routine to generate zero-filled static data
+/* static data is filled with zero's per ANSI C spec */
+void cgdata(int n) {
+	int i, k;
+	ngen(";----- %s (%d bytes)", "cgdata", n);
+	while(n > 0) {
+		genraw("\t db ");
+		/* pretty print: do up to 24 zero byte definitions per line */
+		if (n > 24) {
+			k = 24;
+		} else{
+			k = n;
+		}
+
+		for (i = 0; i < k; i++) {
+			if (0 == i) genraw("0");
+			else genraw(", 0");
+		}
+		/* decrement number of bytes printed */
+		n -= k;
+		genraw("\n");
+	}
 }

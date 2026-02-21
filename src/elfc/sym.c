@@ -139,42 +139,45 @@ char *locname(char *s) {
 static void defglob(char *name, int prim, int type, int size, int val,
 			int scls, int init)
 {
-	int	st;
+	//grw - removed static param from genbss
+	//int	st;
 
 	if (TCONSTANT == type || TFUNCTION == type) return;
 
-	st = scls == CSTATIC;
+	//grw - removed static param from genbss
+	//st = scls == CSTATIC;
 	if (CPUBLIC == scls) genpublic(name);
 
 	if (init && TARRAY == type)
 	  return;
 
 	if (TARRAY != type && !(prim & STCMASK)) genname(name);
+
 	if (prim & STCMASK) {
-		if (TARRAY == type)
-			genbss(gsym(name), objsize(prim, TARRAY, size), st);
-		else
-			genbss(gsym(name), objsize(prim, TVARIABLE, size), st);
-	}
+		//grw - removed static param from genbss
+	  if (TARRAY == type) {
+		  genbss(gsym(name), objsize(prim, TARRAY, size));
+	  }	else {
+		  genbss(gsym(name), objsize(prim, TVARIABLE, size));
+	  }
 	/* check to see if char ptr initialized with string */
-	if (prim == (PCHAR | 0x0010) && init == -1)
+  } else if (prim == (PCHAR | 0x0010) && init == -1) {
 		gendefpstr(val);
-	else if (chartype(prim)) {
+	}	else if (chartype(prim)) {
 		if (TARRAY == type)
-			genbss(gsym(name), size, st);
+			genbss(gsym(name), size);
 		else {
 			  gendefb(val);
 		}
-	}
-	else if (pinttype(prim)) {
+		//grw - removed static param from genbss
+	}	else if (pinttype(prim)) {
 		if (TARRAY == type)
-			genbss(gsym(name), size*INTSIZE, st);
+			genbss(gsym(name), size*INTSIZE);
 		else
 			gendefw(val);
-	}
-	else {
+	} else {
 		if (TARRAY == type)
-			genbss(gsym(name), size*PTRSIZE, st);
+			genbss(gsym(name), size*PTRSIZE);
 		else
 			gendefp(val);
 	}
@@ -219,6 +222,7 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 		char *mtext, int init)
 {
 	int	y;
+
 	if (0 == *name)
 		y = 0;
 	else if ((y = findglob(name)) != 0) {
@@ -250,11 +254,12 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 static void defloc(int prim, int type, int size, int val, int init) {
 	if (type != TARRAY && !(prim &STCMASK)) genlab(val);
 	if (prim & STCMASK) {
+		//grw - removed static param from genbss
 		if (TARRAY == type)
-			genbss(labname(val), objsize(prim, TARRAY, size), 1);
+			genbss(labname(val), objsize(prim, TARRAY, size));
 		else
-			genbss(labname(val), objsize(prim, TVARIABLE, size),1);
-	} else if (prim == (PCHAR | 0x0010)) {
+			genbss(labname(val), objsize(prim, TVARIABLE, size));
+	} else if (prim == (PCHAR | 0x0010) && TVARIABLE == type) {
 		if (init) {
 			gendefpstr(init);
 		} else {
@@ -263,34 +268,30 @@ static void defloc(int prim, int type, int size, int val, int init) {
 
   } else if (chartype(prim)) {
 	//grw - added support to iniitialze global and static arrays
-		/* if (TARRAY == type) */
 		if (TARRAY == type) {
 			/* if not initialized, reserve space */
+			//grw - removed static param from genbss
 			if(!init)
-			  genbss(labname(val), size, 1);
+			  genbss(labname(val), size);
 		} else {
 			gendefb(init);
-			//grw - removed genalign
-			//genalign(1);
 		}
-	}
-	//grw - update to use pinttype
-	else if (pinttype(prim)) {
-	/* else if (PINT == prim) { */
+		//grw - update to use pinttype (primitive int type)
+	}	else if (pinttype(prim)) {
 	//grw - added support to iniitialze global and static arrays
-		/* if (TARRAY == type) */
 		if (TARRAY == type) {
 			/* if not initialized, reserve space */
+			//grw - removed static param from genbss
 			if(!init)
-			  genbss(labname(val), size*INTSIZE, 1);
+			  genbss(labname(val), size*INTSIZE);
 		} else {
 			gendefw(init);
 		}
-	}
-	else {
+	}	else {
 		/* arrays of pointers are not initialized */
+		//grw - removed static param from genbss
 		if (TARRAY == type)
-			genbss(labname(val), size*PTRSIZE, 1);
+			genbss(labname(val), size*PTRSIZE);
 		else
 			gendefp(init);
 	}
@@ -304,7 +305,9 @@ int addloc(char *name, int prim, int type, int scls, int size, int val,
 	if (findloc(name))
 		error("redefinition of: %s", name);
  	y = newloc();
-	if (CLSTATC == scls) defloc(prim, type, size, val, init);
+	if (CLSTATC == scls) {
+		defloc(prim, type, size, val, init);
+	}
 	Names[y] = locname(name);
 	Prims[y] = prim;
 	Types[y] = type;

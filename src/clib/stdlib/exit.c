@@ -17,11 +17,11 @@ extern char *_lbuf;
 
 void exit(int n) {
   int i;
-  
+
   if (_exitfn) _exitfn();
-  
+
   /* close any open files */
-  for (i = 3; i < FOPEN_MAX; i++) {
+  for (i = FD_SYS; i < FOPEN_MAX; i++) {
     fclose(_files[i]);
   }
 

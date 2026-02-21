@@ -28,7 +28,7 @@
 type _fdinit.prg _fildes.prg _init.prg abort.prg atexit.prg > stdlib.lib
 type atoi.prg bsearch.prg calloc.prg close.prg creat.prg >> stdlib.lib
 type div.prg exit.prg free.prg itoa.prg itou.prg >> stdlib.lib
-type itox.prg lseek.prg malloc.prg open.prg qsort.prg >> stdlib.lib
+type itox.prg lseek.prg lseek32.prg malloc.prg open.prg qsort.prg >> stdlib.lib
 type rand.prg read.prg realloc.prg unlink.prg write.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib
