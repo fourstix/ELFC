@@ -71,8 +71,6 @@ static int initlist(char *name, int prim, int *pinit) {
 	int v = 0;
 	char	buf[30];
 
-	//grw - removed gendata
-	//gendata();
 	if (NULL != name) {
 		genname(name);
 	} else {
@@ -344,6 +342,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	char *unsupp;
 	//grw - added support to initialize global or static arrays
 	int  isize = 0;
+	int  rsize = 0;
 
 	unsupp = "unsupported typedef syntax";
 	if (STAR == Token) {
@@ -435,8 +434,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			Token = scan();
 			if (pmtr) {
 				*pprim = pointerto(*pprim, name);
-			}
-			else {
+			} else {
 				type = TARRAY;
 				*psize = 1;
 				if (ASSIGN == Token) {
@@ -512,8 +510,14 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 				if (CNST == (*pprim & CNSTMASK))
 					*pprim |= CINIT;
 
-				if (isize != *psize)
-					error("initialization list size does not match size of array %s", name);
+				if (isize < *psize) {
+					/* pad the rest of array elements with zero's */
+					isize = *psize - isize;
+					rsize = objsize(*pprim, type, isize);
+					gendata(isize, rsize);
+				}	else if (isize > *psize) {
+					error("initialization list size larger than size of array %s", name);
+				}
 			}	else if (*pprim & CNSTMASK) {
 			//grw - changed this to error instead of clearing bits
 			error("const keyword not supported for non-initialized array %s", name);
@@ -522,6 +526,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	}
 	if (PVOID == *pprim)
 		error("'void' is not a valid type: %s", name);
+
 	return type;
 }
 

@@ -32,14 +32,6 @@ int label(void) {
 	return id++;
 }
 
-//grw - removed spill
-//void spill(void) {
-//	if (Acc) {
-//		gentext();
-//		cgpush();
-//	}
-//}
-
 void genraw(char *s) {
 	if (NULL == Outfile) return;
 	fprintf(Outfile, "%s", s);
@@ -177,25 +169,8 @@ char *gsym(char *s) {
 	return name;
 }
 
-/* administrativa */
-
-//grw - removed gendata
-//void gendata(void) {
-//	if (Textseg) cgdata();
-//	Textseg = 0;
-//}
-
-//grw - removed gentext
-//void gentext(void) {
-//	if (!Textseg) cgtext();
-//	Textseg = 1;
-//}
-
 void genprelude(void) {
 	cgprelude();
-	//grw - removed gentext
-	//Textseg = 0;
-	//gentext();
 }
 
 void genpostlude(void) {
@@ -320,8 +295,6 @@ void queue_push() {
 }
 
 void genaddr(int y) {
-	//grw - removed gentext
-	//gentext();
 	//grw - added commit
 	commit();
 	if (CAUTO == Stcls[y])
@@ -339,18 +312,12 @@ void genaddr(int y) {
 }
 
 void genldlab(int id) {
-	//grw - remove queue
-	//gentext();
-	//queue(addr_label, id, NULL);
 	//grw - added commit
 	commit();
 	cgldlab(id);
 }
 
 void genlit(int v) {
-	//grw - remove queue
-	//gentext();
-	//queue(literal, v, NULL);
 	//grw - added commit
 	commit();
 	cglit(v);
@@ -359,26 +326,18 @@ void genlit(int v) {
 /* binary ops */
 
 void genand(void) {
-	//grw - removed gentext
-	//gentext();
 	cgand();
 }
 
 void genior(void) {
-	//grw - removed gentext
-	//gentext();
 	cgior();
 }
 
 void genxor(void) {
-	//grw - removed gentext
-	//gentext();
 	cgxor();
 }
 
 void genshl() {
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 from logic
 	//if (cgload2() || !swapped) cgswap();
 	//if (!swapped) cgswap();
@@ -386,8 +345,6 @@ void genshl() {
 }
 
 void genshr() {
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
 	cgshr();
@@ -443,8 +400,6 @@ return scale;
 
 int genadd(int p1, int p2, int swapped) {
  	int	rp = PINT, t;
-  //grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) {
 	if (!swapped) {
@@ -480,8 +435,6 @@ int genadd(int p1, int p2, int swapped) {
 
 int gensub(int p1, int p2, int swapped) {
 	int	rp = PINT;
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
 	if (!swapped) cgswap();
@@ -514,8 +467,6 @@ int gensub(int p1, int p2, int swapped) {
 }
 
 void genmul(int sgn) {
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 from logic
 	//cgload2();
 	//if (!swapped) cgswap();
@@ -524,8 +475,6 @@ void genmul(int sgn) {
 }
 
 void gendiv(int sgn) {
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
 	//if (!swapped) cgswap();
@@ -533,8 +482,6 @@ void gendiv(int sgn) {
 }
 
 void genmod(int sgn) {
-	//grw - removed gentext
-	//gentext();
 	//grw - removed cgload2 logic
 	//if (cgload2() || !swapped) cgswap();
 	//if (!swapped) cgswap();
@@ -641,8 +588,6 @@ void genlognot(void) {
 }
 
 void genind(int p) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	//grw - added support for signed and unsigned
 	//if (PCHAR == p)
@@ -653,36 +598,26 @@ void genind(int p) {
 }
 
 void genneg(void) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgneg();
 }
 
 void gennot(void) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgnot();
 }
 
 void genscale(void) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgscale();
 }
 
 void genscale2(void) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgscale2();
 }
 
 void genscaleby(int v) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgscaleby(v);
 }
@@ -690,8 +625,6 @@ void genscaleby(int v) {
 /* jump/call/function ops */
 
 void genjump(int dest) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	//grw - added logic to queue jump to label
 	//cgjump(dest);
@@ -754,8 +687,6 @@ void genlogbr(int dest, int inv) {
 
 
 void genbrfalse(int dest) {
-	//grw - removed gentext
-	//gentext();
 	//grw - trace
 	gen(";----- genbrfalse");
 	if (Q_cmp != cnone) {
@@ -771,8 +702,6 @@ void genbrfalse(int dest) {
 }
 
 void genbrtrue(int dest) {
-	//grw - removed gentext
-	//gentext();
 	//grw - trace
 	gen(";----- genbrtrue");
 	//ngen(";----- %s dest = %d", "genbrtrue", dest);
@@ -801,8 +730,6 @@ void genscfalse(int dest) {
 }
 
 void gencall(int y) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgcall(gsym(Names[y]));
 	//grw - remove load
@@ -811,8 +738,7 @@ void gencall(int y) {
 
 void gencalr(void) {
 	int n = label();
-	//grw - removed gentext
-	//gentext();
+
 	commit();
 	cgcalr(n);
 	//grw - remove laod
@@ -820,8 +746,6 @@ void gencalr(void) {
 }
 
 void genentry(void) {
-	//grw - removed gentext
-	//gentext();
 	cgentry();
 }
 
@@ -834,25 +758,17 @@ void genexit(int scope) {
 }
 
 void genpush(void) {
-	//grw - removed gentext
-	//gentext();
 	commit();
 	cgpush();
 }
 
 void genpushlit(int n) {
-	//grw - removed gentext
-	//gentext();
 	commit();
-	//grw - removed spill
-	//spill();
 	cgpushlit(n);
 }
 
 void genstack(int n) {
 	if (n) {
-		//grw - removed gentext
-		//gentext();
 		cgstack(n);
 	}
 }
@@ -876,35 +792,32 @@ void genlocinit(void) {
 	//}
 }
 
-/* data definitions */
-
-void genbss(char *name, int len, int statc) {
-	//grw - removed gendata
-	//gendata();
+/* static and public data definitions */
+void genbss(char *name, int len) {
   //grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
+  genraw(name);
+ 	genraw(":");
 
+  cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
+	//grw - removed static param from genbss
+  /*
 	if (statc)
 		cglbss(name, (len + INTSIZE-1) / INTSIZE * INTSIZE);
 	else
 		cggbss(name, (len + INTSIZE-1) / INTSIZE * INTSIZE);
+	*/
 }
-//grw - removed genalign
-//void genalign(int k) {
-	//grw - removed gendata
-	//gendata();
-//	while (k++ % INTSIZE)
-//		cgdefb(0);
-//}
-//grw - removed genaligntext
-//void genaligntext() {
-//	cgalign();
-//}
+/*
+ * generate zero-filled static data for partially initialized arrays
+ */
+void gendata(int el, int n) {
+	ngen2(";---- %s (%d elements with %d bytes)", "gendata", el, n);
+	cgdata(n);
+}
 
 void gendefb(int v) {
-	//grw - removed gendata
-	//gendata();
 	//grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
@@ -913,8 +826,6 @@ void gendefb(int v) {
 }
 
 void gendefp(int v) {
-	//grw - removed gendata
-	//gendata();
 	//grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
@@ -923,8 +834,6 @@ void gendefp(int v) {
 }
 //grw - added function to initialize global char ptr with string
 void gendefpstr(int v) {
-	//grw - removed gendata
-	//gendata();
 	//grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
@@ -933,18 +842,6 @@ void gendefpstr(int v) {
 }
 
 void gendefs(char *s, int len) {
-	//grw - replace with function for ASM/02
-	/*
-	int	i;
-
-	gendata();
-	for (i=1; i<len-1; i++) {
-		if (isalnum(s[i]))
-			cgdefc(s[i]);
-		else
-			cgdefb(s[i]);
-	}
-	*/
 	//grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
@@ -953,8 +850,6 @@ void gendefs(char *s, int len) {
 }
 
 void gendefw(int v) {
-	//grw - removed gendata
-	//gendata();
 	//grw - commit jump to entry point in library object
 	if (O_library)
 		commit();
@@ -968,8 +863,6 @@ static void genincptr(int *lv, int inc, int pre) {
 	int	y, size;
 
 	size = objsize(deref(lv[LVPRIM]), TVARIABLE, 1);
-	//grw - removed gentext
-	//gentext();
 	y = lv[LVSYM];
 	commit();
 	if (!y && !pre) cgldinc();
@@ -1017,8 +910,6 @@ static void genincptr(int *lv, int inc, int pre) {
 void geninc(int *lv, int inc, int pre) {
 	int	y, b;
 
-  //grw - removed gentext
-	//gentext();
 	y = lv[LVSYM];
 	if (needscale(lv[LVPRIM])) {
 		genincptr(lv, inc, pre);
@@ -1081,8 +972,6 @@ void genswitch(int *vals, int *labs, int nc, int dflt) {
 	int	i, ltbl;
 
 	ltbl = label();
-	//grw - removed gentext
-	//gentext();
 	cgldswtch(ltbl);
 	cgcalswtch();
 	genlab(ltbl);
@@ -1097,8 +986,6 @@ void genswitch(int *vals, int *labs, int nc, int dflt) {
 
 void genstore(int *lv) {
 	if (NULL == lv) return;
-  //grw - removed gentext
-	//gentext();
 	if (!lv[LVSYM]) {
 		cgpopptr();
 		//grw - added support for signed and unsigned
@@ -1149,8 +1036,7 @@ void gencopy(int *lv) {
 
 void genrval(int *lv) {
 	if (NULL == lv) return;
-	//grw - removed gentext
-	//gentext();
+
 	if (!lv[LVSYM]) {
 		genind(lv[LVPRIM]);
 	}

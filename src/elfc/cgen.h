@@ -4,8 +4,6 @@
  */
 
 void cgadd(void);
-//grw - removed cgalign
-//void cgalign(void);
 void cgand(void);
 void cgbool(void);
 void cgbreq(int n);
@@ -31,8 +29,6 @@ void cgcase(int v, int l);
 //grw - removed cgclear and cgclear2
 //void cgclear(void);
 //void cgclear2(void);
-//grw - removed cgdata
-//void cgdata(void);
 void cgdec1ib(void);
 void cgdec1iw(void);
 void cgdec1pi(int v);
@@ -61,7 +57,8 @@ void cgdiv(int sgn);
 void cgentry(void);
 void cgeq(void);
 void cgexit(void);
-void cggbss(char *s, int z);
+//grw - revmoed cggbss and cglbss
+//void cggbss(char *s, int z);
 void cgge(void);
 void cggt(void);
 void cginc1ib(void);
@@ -87,7 +84,8 @@ void cginitlw(int v, int a);
 void cginitlpstr(int v, int a);
 void cgior(void);
 void cgjump(int n);
-void cglbss(char *s, int z);
+//grw - revmoed cggbss and cglbss
+//void cglbss(char *s, int z);
 void cgldga(char *s);
 //grw - added support for signed and unsigned
 void cgldgb(char *s, int sgn);
@@ -163,3 +161,5 @@ void cgsetup(void);
 void cggoto(int n);
 //grw - added support to return struct/union types
 void cgcopy(int n);
+//grw - added function to generate zero-filled static data
+void cgdata(int n);

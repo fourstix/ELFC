@@ -51,12 +51,13 @@ void	genbrtrue(int dest);
 //grw - added short-circuit code generators
 void	genscfalse(int dest);
 void	gensctrue(int dest);
-void	genbss(char *name, int len, int statc);
+//grw - removed static param from genbss
+void	genbss(char *name, int len);
 void	gencall(int y);
 void	gencalr(void);
 void	gencmp(char *inst);
-//grw - removed gendata
-//void	gendata(void);
+//grw - updated gendata to create zero-filled static data
+void	gendata(int el, int n);
 void	gendefb(int v);
 void	gendefp(int v);
 void	gendefs(char *s, int len);
@@ -242,3 +243,5 @@ int	strexpr(void);
 void initexpr(void);
 //grw - global types are CSTATIC and CPUBLIC
 int isglobal(int scls);
+//grw - added function to pad partially initialized arrays
+void genzpad(int n);

@@ -45,8 +45,8 @@
 type _vformat.prg _vscan.prg clearerr.prg fclose.prg fdopen.prg feof.prg > stdio.lib
 type ferror.prg fflush.prg fgetc.prg fgetpos.prg fgets.prg fileno.prg >> stdio.lib
 type fopen.prg fprintf.prg fputc.prg fputs.prg fread.prg fscanf.prg >> stdio.lib
-type fseek.prg fsetpos.prg ftell.prg fwrite.prg getch.prg gets.prg >> stdio.lib
-type kprintf.prg perror.prg printf.prg putch.prg puts.prg putstr.prg >> stdio.lib
+type fseek.prg fseek32.prg fsetpos.prg ftell.prg fwrite.prg getch.prg >> stdio.lib
+type gets.prg kprintf.prg perror.prg printf.prg putch.prg puts.prg putstr.prg >> stdio.lib
 type remove.prg rename.prg rewind.prg scanf.prg sprintf.prg sscanf.prg >> stdio.lib
 type tmpfile.prg tmpnam.prg ungetc.prg vfprintf.prg vprintf.prg vsprintf.prg >> stdio.lib
 
