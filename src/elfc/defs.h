@@ -64,6 +64,9 @@
 /* Warning size for local objects */
 #define LGOBJSIZE  20
 
+/* Maximum integer literal */
+#define MAX_INTLIT  65535
+
 /* assert(NSYMBOLS < PSTRUCT) */
 #define NSYMBOLS	1024
 #define POOLSIZE	16384

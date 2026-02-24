@@ -2,13 +2,28 @@
 #ifndef _STDLIB_
 #define _STDLIB_
 
-#include <math32.h>
-
 #ifdef _STGROM_
-#pragma #define STGROM
+#define BRKPT_ADDR  $F000
+#pragma #define BRKPT_ADDR  $F000
+#endif
+
+#ifdef _MAXMON_
+#define BRKPT_ADDR  $F034
+#pragma #define BRKPT_ADDR $F034
+#endif
+
+#ifdef BRKPT_ADDR
 #define BRKPT asm("     brkpt    ;---- jump to routine in stg rom\n");
 #else
 #define BRKPT
+#endif
+
+
+#ifndef int32
+struct int32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
 #endif
 
 /* file descriptor constants */

@@ -582,7 +582,7 @@
 :04a0 d9 c9 d9 99 d9 09 9a 52 8a f1 c2 04 d2 d9 12 ff
 :04b0 ff d9 3c ff f0 d9 09 d9 78 ff fa d9 78 ff e4 d9
 ?Cerrno 04cb
-:04c0 de 00 04 d9 09 d9 12 00 09 d9 21 00 00 d9 09 c0
+:04c0 de 00 04 d9 09 d9 12 00 22 d9 21 00 00 d9 09 c0
 :04d0 05 3e d9 12 00 01 d9 3c ff f0 d9 09 d9 78 ff fa
 /Cmul32 04e9 00
 \Cmul32 04ea
@@ -607,7 +607,7 @@
 :0590 c9 d9 99 d9 09 9a 52 8a f1 c2 05 c1 d9 12 ff ff
 :05a0 d9 3c ff f0 d9 09 d9 78 ff fa d9 78 ff e8 d9 de
 ?Cerrno 05ba
-:05b0 00 04 d9 09 d9 12 00 09 d9 21 00 00 d9 09 c0 06
+:05b0 00 04 d9 09 d9 12 00 22 d9 21 00 00 d9 09 c0 06
 :05c0 2d d9 12 00 01 d9 3c ff f0 d9 09 d9 78 ff fa d9
 /Cmul32 05d8 00
 \Cmul32 05d9

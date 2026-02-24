@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <math32.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn Clseek32
