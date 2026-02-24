@@ -5,6 +5,7 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <stdio.h>
+#include <math32.h>
 #include <errno.h>
 
 #pragma             extrn Cerrno
@@ -20,27 +21,27 @@ int fseek32(FILE *f, off_t *offset, int whence) {
   /* check for invalid file ptr (can't seek on system io streams) */
   if (f == NULL || f->mode == _IOSYS) {
     errno = EBADF;
-    return -1;    
+    return -1;
   }
-  
+
   /* check for valid arguments */
   if (whence < SEEK_SET || whence > SEEK_END) {
     errno = EINVAL;
     return -1;
   }
-	
+
   /* don't seek before start of file */
   if ((whence == SEEK_SET) && ((offset->high & 0x8000) != 0)) {
     errno = EINVAL;
-    return -1;		
+    return -1;
   }
 
   /* don't seek past the end of the file */
   if ((whence == SEEK_END) && ((offset->high != 0) || (offset->low != 0))) {
     errno = EINVAL;
-    return -1;		
+    return -1;
   }
-  
+
   /* adjust offset for a character in ugetc buffer */
   if (whence == SEEK_CUR && _FREAD == f->last) {
     if (f->ch != EOF) offset->low--;
@@ -49,7 +50,7 @@ int fseek32(FILE *f, off_t *offset, int whence) {
   /* seeking wipes out character push-back buffer and clears EOF */
   f->ch = EOF;
   f->iom &= ~_FEOF;
-  
+
   pos = lseek32(f->fd, offset, whence);
 
   error = to_int32(-1);
@@ -58,5 +59,5 @@ int fseek32(FILE *f, off_t *offset, int whence) {
     return -1;
   }
 
-  return 0; 
+  return 0;
 }

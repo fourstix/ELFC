@@ -3,15 +3,20 @@
 
 extern int errno;
 
+/*
+ * Macros and values as defined by Posix standard
+ * See: https://en.wikipedia.org/wiki/Errno.h
+ */
+
 #define EOK     0
-#define ENOENT  1
-#define EACCESS 2
-#define EIO     3
-#define ENFILE  4
-#define EINVAL  5
-#define ENOMEM  6
-#define EBADF   7
-#define EMFILE  8
-#define ERANGE  9
+#define ENOENT  2
+#define EIO     5
+#define EBADF   9
+#define ENOMEM  12
+#define EACCES  13
+#define EINVAL  22
+#define ENFILE  23
+#define EMFILE  24
+#define ERANGE  34
 
 #endif

@@ -590,11 +590,12 @@ void genlognot(void) {
 void genind(int p) {
 	commit();
 	//grw - added support for signed and unsigned
-	//if (PCHAR == p)
+	/* Note: pointers to pointers to struct/union do get de-refed */
 	if (chartype(p))
 		cgindb(signtype(p));
-	else
-		cgindw();
+	else if (!comptype(p)) {
+	  cgindw();
+	}
 }
 
 void genneg(void) {
@@ -1042,39 +1043,23 @@ void genrval(int *lv) {
 	}
 	else if (CAUTO == Stcls[lv[LVSYM]]) {
 		//grw - add support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
 		if (chartype(lv[LVPRIM]))
-		  //grw - remove queue
-			//queue(auto_byte, Vals[lv[LVSYM]], NULL);
 			//grw - add support for signed and unsigned
 			cgldlb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
 		else
-		  //grw - remove queue
-			//queue(auto_word, Vals[lv[LVSYM]], NULL);
 			cgldlw(Vals[lv[LVSYM]]);
 	}
 	else if (CLSTATC == Stcls[lv[LVSYM]]) {
-		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
 		if (chartype(lv[LVPRIM]))
-		  //grw - remove queue
-			//queue(static_byte, Vals[lv[LVSYM]], NULL);
 			cgldsb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
 		else
-		  //grw - remove queue
-			//queue(static_word, Vals[lv[LVSYM]], NULL);
 			cgldsw(Vals[lv[LVSYM]]);
 	}
 	else {
 		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
 		if (chartype(lv[LVPRIM]))
-		  //grw - remove queue
-			//queue(globl_byte, 0, Names[lv[LVSYM]]);
 			cgldgb(gsym(Names[lv[LVSYM]]), signtype(lv[LVPRIM]));
 		else
-			//grw -remove queue
-			//queue(globl_word, 0, Names[lv[LVSYM]]);
 			cgldgw(gsym(Names[lv[LVSYM]]));
 	}
 }
@@ -1163,11 +1148,6 @@ void addstr(int label, char *text, int len) {
 		str_tbl[str_idx].label = label;
 		str_tbl[str_idx].text = ptext;
 		str_tbl[str_idx].len  = len;
-		/*
-		str_lab[str_idx] = label;
-		str_text[str_idx] = ptext;
-		str_len[str_idx] = len;
-		*/
 		str_idx++;
 }
 
@@ -1184,10 +1164,6 @@ void addstr(int label, char *text, int len) {
 	 if (len > 2) {
 	   prev_idx = str_idx - 1;
 		 //grw - convert string table to array of structures
-     /*
-		 prev_txt = str_text[prev_idx];
-	   prev_len = str_len[prev_idx];
-		 */
 		 prev_txt = str_tbl[prev_idx].text;
 	   prev_len = str_tbl[prev_idx].len;
 
@@ -1199,10 +1175,6 @@ void addstr(int label, char *text, int len) {
 		   memcpy(new_txt+prev_len-1, text+1, len-1);
 		   //grw - set previous string to concatenated text string
 			 //grw - convert string table to array of structures
-       /*
-		   str_text[prev_idx] = new_txt;
-			 str_len[prev_idx] = new_len;
-       */
 			 str_tbl[prev_idx].text = new_txt;
 			 str_tbl[prev_idx].len  = new_len;
 		 } else {
@@ -1224,11 +1196,6 @@ void addstr(int label, char *text, int len) {
 	 genraw("\n;----- string table\n");
 	 for (i = 0; i < str_idx; i++) {
 		 //grw - convert string table to array of structures
-		 /*
-		 lab = str_lab[i];
-		 txt = str_text[i];
-		 len = str_len[i];
-     */
 		 lab = str_tbl[i].label;
 		 txt = str_tbl[i].text;
 		 len = str_tbl[i].len;

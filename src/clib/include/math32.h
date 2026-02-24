@@ -1,15 +1,24 @@
 #ifndef _MATH32_H_
 #define _MATH32_H_
 
+/* include stdlib if not included already */
+#ifndef _STDLIB_
+#include <stdlib.h>
+#endif
+
 #ifndef _ELFCLIB_
 #pragma .link .library math32.lib
 #endif
 
-/* 32-bit number represented as two 16-bit values */
-typedef struct int32 {
+#ifndef int32
+struct int32 {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
-} int32_t;
+};
+#endif
+
+/* 32-bit number represented as two 16-bit values */
+typedef struct int32 int32_t;
 
 /* 32-bit addition: result = a + b */
 int32_t add32(int32_t *a, int32_t *b);
@@ -50,4 +59,3 @@ char *itoa32(int32_t *n, char *str);
 int32_t strtoi32(const char *nptr, char **endptr, int base);
 
 #endif
-

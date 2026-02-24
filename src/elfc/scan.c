@@ -138,6 +138,9 @@ static int scanint(int c) {
 	}
 	putback(c);
 	Text[i] = 0;
+
+	if (val > MAX_INTLIT)
+	  error("integer literal is too large to be represented in any integer type", NULL);
 	return val;
 }
 

@@ -47,7 +47,7 @@ FILE *fopen(const char *path, const char *mode) {
 			  errno = ENOENT;
 		  /* otherwise, then file access error */
 		  else
-			  errno = EACCESS;
+			  errno = EACCES;
 		}
 		return NULL;
 	}

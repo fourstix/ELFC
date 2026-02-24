@@ -165,6 +165,7 @@ static node *fnargs(int fn, int *na) {
 		n2 = rvalue(n2, lv);
 		n = mkbinop(OP_GLUE, n, n2);
 		if (comptype(lv[LVPRIM])) {
+			//grw - TODO replace with size warning?
 			error("struct/union passed by value", NULL);
 			lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
 		}
