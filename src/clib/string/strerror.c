@@ -12,6 +12,7 @@ char *strerror(int err) {
 	case ENOMEM:	return "out of memory";
 	case EBADF:  	return "bad file number";
 	case EMFILE:	return "out of file handles";
+        case ERANGE:    return "result out of range";
 	default:	return "unknown error";
 	}
 }

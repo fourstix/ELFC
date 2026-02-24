@@ -46,4 +46,8 @@ int32_t atoi32(const char *str);
 /* Returns: pointer to beginning of string */
 char *itoa32(int32_t *n, char *str);
 
+/* Convert string to 32-bit integer */
+int32_t strtoi32(const char *nptr, char **endptr, int base);
+
 #endif
+
