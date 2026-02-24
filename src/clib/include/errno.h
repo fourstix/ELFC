@@ -12,5 +12,6 @@ extern int errno;
 #define ENOMEM  6
 #define EBADF   7
 #define EMFILE  8
+#define ERANGE  9
 
 #endif
