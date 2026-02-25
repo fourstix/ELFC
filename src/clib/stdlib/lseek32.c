@@ -1,33 +1,35 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <errno.h>
+#include <math32.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fildes
 #pragma             extrn Cto_int32
 #pragma             extrn Ccmp32
+#pragma .link .library math32.lib
 
 off_t lseek32(int fd, off_t *offset, int how) {
   int fildes;
   off_t result;
   off_t eof;
-  
+
   eof = to_int32(EOF);
-  
+
   /* get system file descriptor */
   fildes = _fildes(fd);
-  
+
   /* don't seek invalid fd */
   if(fildes == EOF) {
     errno = EBADF;
     return eof;
   }
-  
+
   asm("         gosub s_lget16  ; get the fildes variable ");
-  asm("           dw -2         ; from local variable stack");           
+  asm("           dw -2         ; from local variable stack");
   asm("         copy ra, rd     ; copy fd to fildes register");
   asm("         gosub s_lget16  ; get the how to seek argument ");
-  asm("           dw 4          ; from argument stack");           
+  asm("           dw 4          ; from argument stack");
   asm("         copy ra, rc     ; copy how to seek value to register");
   asm("         gosub s_lget16  ; get the pointer to the offset");
   asm("           dw 2          ; from argument stack");
@@ -61,6 +63,6 @@ off_t lseek32(int fd, off_t *offset, int how) {
   if (cmp32(&result, &eof) == 0) {
     errno = EIO;
   }
-  
+
   return result;
 }

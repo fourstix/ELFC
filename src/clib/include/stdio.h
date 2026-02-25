@@ -6,11 +6,6 @@
 #include <stdlib.h>
 #endif
 
-/* math32 functions used by fseek32 and fsetpos */
-#ifndef _ELFCLIB_
-#pragma .link .library math32.lib
-#endif
-
 /* Maximum size of string in Elf/OS is 255 bytes */
 #ifndef _BUFLEN
 #define _BUFLEN 256

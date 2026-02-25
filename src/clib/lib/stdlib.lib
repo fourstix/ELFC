@@ -541,6 +541,7 @@ v0037
 }
 .big
 {Clseek32
+.library math32.lib
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015

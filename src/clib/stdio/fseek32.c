@@ -12,6 +12,7 @@
 #pragma             extrn Clseek32
 #pragma             extrn Cto_int32
 #pragma             extrn Ccmp32
+#pragma .link .library math32.lib
 
 int fseek32(FILE *f, off_t *offset, int whence) {
   int hi;

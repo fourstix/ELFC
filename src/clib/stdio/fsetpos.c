@@ -8,6 +8,7 @@
 #pragma             extrn Clseek32
 #pragma             extrn Cto_int32
 #pragma             extrn Ccmp32
+#pragma .link .library math32.lib
 
 int fsetpos(FILE *f, pos_t *pos) {
     off_t new_pos;
