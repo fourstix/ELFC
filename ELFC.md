@@ -555,18 +555,18 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
-* _add32(a, b)_ 32-bit addition: returns a + b
-* _sub32(a, b)_ 32-bit subtraction: returns a - b
-* _mul32(a, b)_ 32-bit subtraction: returns a - b
-* _cmp32(a, b)_ Compare two 32-bit numbers, returna -1 if a < b, 0 if a == b or 1 if a > b
-* _shl32(a)_ Shift 32-bit number left by 1 bit
-* _shr32(a)_ Shift Right by 1 bit
-* _div32(a, b, *rem)_ 32-bit division: returns quotient, remainder in *rem
-* _to_int32(int n)_ Convert 16-bit number to 32-bit number with sign extension
-* _neg32(a)_ Negate a 32-bit number
-* _atoi32(char *str)_ Convert a string into 32-bit integer
-* _char *itoa32(a, char *str)_ Convert 32-bit integer to string, returns pointer to beginning of string
-* _strtoi32(const char *nptr, char **endptr, int base)_ Convert string to 32-bit integer
+* _add32(a, b)_ - 32-bit addition: returns a + b
+* _sub32(a, b)_ - 32-bit subtraction: returns a - b
+* _mul32(a, b)_ - 32-bit subtraction: returns a - b
+* _cmp32(a, b)_ - Compare two 32-bit numbers, returna -1 if a < b, 0 if a == b or 1 if a > b
+* _shl32(a)_ - Shift 32-bit number left by 1 bit
+* _shr32(a)_ - Shift 32-bit number right by 1 bit
+* _div32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem
+* _to_int32(int n)_ - Convert 16-bit number to 32-bit number with sign extension
+* _neg32(a)_ - Negate a 32-bit number
+* _atoi32(char *str)_ - Convert a string into 32-bit integer
+* _char *itoa32(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
+* _strtoi32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit integer
 
 *Note: all variables and return values are type `int32_t`, unless typed differently*
 
