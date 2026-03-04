@@ -191,6 +191,25 @@ Compiler Option Changes
 -----------------------
 * The -P option will cause ElfC to output the macro text to stdio as each macro is expanded.
 
+Release 3.4
+-----------
+
+Release 3.4 adds support for localizations and 32-bit integer math, as well as support for file sizes larger than 32K and various bug fixes.
+
+* Dynamic local initializations are now supported.
+* Local array initializations are supported.
+* Character arrays may be initialized by a string.
+* Initializations for an array may define fewer elements than the array.
+* Static initializations are now padded with zeros.
+* The Math32 library, contributed by Tony Hefner, adds support for 32-bit integer arithmetic.
+* The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Math32 library. (Thanks to Tony Hefner)
+* The fsetpos and fgetpos functions now use the Math32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
+* The scanner no longer accepts integer literals that are greater than the largest possible 16-bit integer value of 65535.
+* Error number values were aligned with POSIX values.
+* A bug was fixed in the left-shift operation. (Thanks to Tony Hefner)
+* Assignments from a struct/union pointer to a struct/union variable now work correctly. The pointer to struct/union is now dereferenced correctly.
+* Breakpoints can now be configured for any ROM address.
+
 
 Stdlib Library
 --------------
@@ -245,8 +264,11 @@ Stdlib Library
 * int	 write(int fd, void *\buf, size_t len);
 * int  unlink(char \*path);
 * int  lseek(int fd, int hi_off, int lo_off, int how);
+* off_t lseek32(int fd, off_t *offset, int whence);
 
-*Note: The header file <unistd.h> is empty except for `#include <stdlib.h>`*
+*Notes:*
+*The header file <unistd.h> is empty except for `#include <stdlib.h>`*
+*The type `off_t` is an int32 structure used by the Math32 library*
 
 Stdio Library
 -------------
@@ -322,7 +344,10 @@ Stdio Library
 * int fgetpos(FILE \*f, pos_t \*pos);
 * int fsetpos(FILE \*f, pos_t \*pos);
 * int fseek(FILE \*f, int offset, int how);
+* int fseek32(FILE* f, off_t *offset, int whence);
 * int ftell(FILE \*f);
+
+*Note: The type `pos_t` is an int32 structure used by the Math32 library*
 
 **File Error Functions**
 
@@ -484,8 +509,7 @@ Differences Between ElfC and Full C89
 
 *  Pointers to `const` variables are supported, but neither `const` pointers to
    (varying) variables, nor `const` pointers to `const` variables are supported,
-   i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;`
-   are *not* supported.
+   i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;` are *not* supported.
 
 *  The `const` and `volatile` keywords are ignored for structures and unions, but
    may be used for their members.
@@ -510,11 +534,11 @@ Differences Between ElfC and Full C89
 *  Only ints, chars, and arrays of int and char can be initialized in their
    declarations; pointers can be initialized with NULL or a constant address value.
 
-*  Local arrays cannot have initializers.
+*  Initialization of a struct/union is not supported.
 
-*  The initializer list must have exactly the same elements as the gobal or static
-   array.  ElfC will not pad the array, nor will ElfC truncate the initializer list
-   or string.
+*  Character arrays must be large enough to accept an initialization string plus
+   its terminating NULL. ElfC will not silently remove the NULL at the end of an
+   initialization string, when the string is one character too long for an array.
 
 *  Local declarations are limited to the beginnings of function
    bodies (they do not work in other compound statements).
@@ -572,20 +596,23 @@ Repository Contents
 * **/src/clib/ctype**  -- Source files for ElfC ctype C library
 * **/src/clib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/clib/assert**  -- Source files for ElfC assert C library
+* **/src/clib/math32**  -- Source files for ElfC Math32 library contributed by Tony Hefner
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest4.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
 * **/bin**  -- Binary files for ElfC
-  * elfc_r336.zip** -- A zip file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * elfc_r336.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * elfc_r336.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r340.zip** -- A zip file with the Windows version of the Release 3.40 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * elfc_r340.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r340.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 * **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements
 -----------------
 
 Kudos to Tony Hefner for contributing the Linux builds, the Linux make files, and adding support for Cmake.
+
+Thank you to Tony Hefner for developing and contributing the Math32 library and for adding support to stdio and stdlib to support file sizes greater than 32K, up to 2GB.
 
 A big thank-you to David Madole for his suggestions to improve code performance, including designing a sub-routine scheme that doubled the code performance.
 
