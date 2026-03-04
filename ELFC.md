@@ -348,7 +348,11 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS*
+* *The math32 library provides equivalent functions as the long untility functions.*
+* *The _atoi32_ function in math32 library provides equivalent function as _atol_.*
+* *The _strtoi32_ function in math32 library provides equivalent function as _strtol_.*
+* *The _div32_ function in math32 library provides equivalent function as _ldiv_.*
+* *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS.*
 
 
 Unsupported Stdio Functions
@@ -365,6 +369,7 @@ The following functions were omitted from the ElfC stdio C library.
 Stdlib Modified Functions
 -------------------------
 *  Because long types are not supported, `lseek` takes two int arguments for the offset, and returns an int value, 0  for success or -1 for error.
+*  The `lseek32` function uses the int32 struct type `off_t`and can be used for file sizes greater than 32KB, up to 2GB.
 * `itox` and `itou` are available to convert int values to hexadecimal and unsigned integer ASCII strings.
 
 Stdio Modified Functions
@@ -374,6 +379,7 @@ Stdio Modified Functions
 * `tmpnam` creates a filename with form similar to `temp.00`.
 * `fclose` will delete a temporary file created by `tmpfile` after closing it.
 * Terminating a program by `abort` or without calling `fclose` to close a temporary file, may leave behind files created by `tmpfile`.
+* `fseek32`, `fgetpos` and `fsetpos`f functions use the int32 struct type `pos_t` and can be used for files sizes greater than 32KB, up to 2GB.
 
 String Modified Functions
 -------------------------
@@ -415,7 +421,6 @@ int example(int count, ...) {
 }
 ```
 
-
 Assert Macro
 --------------
 * ElfC supports the `assert` macro as specified by the ANSI C C89/C90 specification.
@@ -423,7 +428,7 @@ Assert Macro
 * The `__FILE__`, `__LINE__` and `__FUNCTION__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
 
 Time Library
----------------------------
+--------------
 
 **The standard C time structure tm is defined by the ElfC time C library.**
 ```
@@ -532,6 +537,38 @@ Strftime Conversions
 <tr><td>%%</td><td>percent sign (%)</td></tr>
 </table>
 
+
+Math32 Library
+--------------
+**The math2 library functions use the following structure and type.**
+
+```
+struct int32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit number represented as two 16-bit values */
+typedef struct int32 int32_t;
+```
+*Note: `off_t` in `<stdlib.h>` and `pos_t` in `<stdio.h>` are also defined by struct int32 typedefs.*
+
+**The following functions are supported in the ElfC math32 library.**
+
+* _add32(a, b)_ - 32-bit addition: returns a + b
+* _sub32(a, b)_ - 32-bit subtraction: returns a - b
+* _mul32(a, b)_ - 32-bit subtraction: returns a - b
+* _cmp32(a, b)_ - Compare two 32-bit numbers, returna -1 if a < b, 0 if a == b or 1 if a > b
+* _shl32(a)_ - Shift 32-bit number left by 1 bit
+* _shr32(a)_ - Shift 32-bit number right by 1 bit
+* _div32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem
+* _to_int32(int n)_ - Convert 16-bit number to 32-bit number with sign extension
+* _neg32(a)_ - Negate a 32-bit number
+* _atoi32(char *str)_ - Convert a string into 32-bit integer
+* _char *itoa32(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
+* _strtoi32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit integer
+
+*Note: all variables and return values are type `int32_t`, unless typed differently*
 
 Pre-Defined Macros
 -------------------

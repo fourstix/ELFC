@@ -91,16 +91,6 @@ static int initlist(char *name, int prim, int *pinit) {
 		}
 		gendefb(0);
 
-		//grw - update to allow concatenation of string literals
-		//gendefs(Text, Value);
-		//gendefb(0);
-
-		//grw - removed genalign
-		//genalign(Value-1);
-
-		//grw - update to allow concatenation of string literals
-		//Token = scan();
-		//return Value-1;
 		return v-1;
 	}
 	lbrace();
@@ -142,6 +132,140 @@ static int initlist(char *name, int prim, int *pinit) {
 	if (!n) error("too few initializers", NULL);
 	return n;
 }
+
+//grw - initialization for local arrays
+/*
+ * Local init list
+ * linitlist :=
+ *	  { const_list }
+ *	| STRLIT
+ *
+ * const_list :=
+ *	  constexpr
+ *	| constexpr , const_list
+ */
+
+static int linitlist(int size, int prim, int *pinit) {
+	int	 n = 0;
+	int  v = 0;
+	int  len = 0;
+	int  i = 0;
+	char buf[30];
+	int  ibuf[MAXLOCINIT];
+	char sbuf[MAXLOCSTR];
+	int  rsize;
+
+	//grw - need to stack align character arrays
+	if(chartype(prim)) {
+		rsize = (size + INTSIZE-1) / INTSIZE * INTSIZE;
+	} else {
+		rsize = size;
+	}
+
+	if (STRLIT == Token) {
+		// if (PCHAR != prim)
+		if (!chartype(prim))
+			error("initializer type mismatch", NULL);
+    //grw - update to allow concatenation of string literals
+		v = 0;
+		/* concatenate string literals */
+		while (STRLIT == Token) {
+			len = strlen(Text);
+			/* don't process empty strings */
+			if (len > 2) {
+			/* copy characters in string, skipping quote marks at end */
+			for(i = 1; i < len-1; i++){
+				sbuf[v+i-1] = Text[i];
+			}
+			v += (Value-2);
+		 }
+			Token = scan();
+		}
+		if (v >= MAXLOCSTR) {
+			v = MAXLOCSTR - 1;
+			error("Local string initializer is too long", NULL);
+		}
+		/* set null at end of concatenated string */
+		sbuf[v] = '\0';
+
+		/* if dynamically sized, calculate stack size for string + 1 for null */
+		if (0 == rsize)
+				rsize = ((v+1) + INTSIZE-1) / INTSIZE * INTSIZE;
+
+		if (v < rsize) {
+			/* subtract one for null written with string */
+			n = rsize - v - 1;
+			/* pad unitialized elements with zeros */
+			for(i=0; i < n; i++)
+				genbyte(0);
+		}
+		/* write string characters backwards on the stack */
+		genstr(sbuf, v);
+		/* mark init to not move stack */
+		*pinit = 2;
+		/* return size of string + 1 for null */
+		return v+1;
+	}
+	lbrace();
+	while (Token != RBRACE) {
+		v = constexpr();
+		//grw - add support for type qualifiers
+		/* if (PCHAR == prim) { */
+		/*
+		 * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+		 */
+		if (PCHAR == (prim & ~TQMASK)) {
+		  if (v < 0 || v > 255) {
+			  sprintf(buf, "%d", v);
+			  error("initializer out of range: %s", buf);
+		}
+			/* add to the array buffer */
+			sbuf[n] = v;
+		} else if (PSCHAR == (prim & ~TQMASK)) {
+			//grw - add support for type qualifiers
+		/* } else if (PSCHAR == prim) { */
+			if (v < -128 || v > 127) {
+				sprintf(buf, "%d", v);
+				error("initializer out of range: %s", buf);
+			}
+			/* add to the array buffer */
+			sbuf[n] = v;
+		} else {
+			/* add to the array buffer */
+			ibuf[n] = v;
+		}
+		n++;
+		if (COMMA == Token)
+			Token = scan();
+		else
+			break;
+		if (eofcheck()) return 0;
+	}
+	/* mark init to not move stack */
+	*pinit = 2;
+	Token = scan();
+	if (!n) error("no initializers", NULL);
+	if (n < rsize) {
+		v = rsize - n;
+		for (i = 0;  i < v; i++) {
+			//grw - pad with bytes for char arrays
+			if (chartype(prim))
+			  genbyte(0);
+			else
+			  genlit(0);
+		}
+	}
+	/* push array backwards onto stack */
+	for (i = 0; i < n; i++) {
+		if(chartype(prim))
+		  genbyte(sbuf[n-1-i]);
+		else
+		  genlit(ibuf[n-1-i]);
+	}
+	return n;
+}
+
 
 int primtype(int t, char *s) {
 	int	p, y;
@@ -446,14 +570,22 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 							NULL);
 
 					//grw - this is the unspecified size case []
-					*psize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
-
+					//grw - added support for initializaing local arrays
+					if (CAUTO == scls) {
+						sgen(";---- initialize local automatically sized %s %s", "array", name);
+					  *psize = linitlist(0, *pprim, pinit);
+						gen(";---- initialized array on stack");
+					} else {
+						gen(";---- initialize array");
+					  *psize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
+          }
+					/*
 					if (CAUTO == scls)
 						error("initialization of"
 							" local arrays"
 							" not supported: %s",
 							name);
-
+					*/
 					//grw - set ini to 1 for initialized global static and public arrays
 					if (isglobal(scls)) {
   					*pinit = 1;
@@ -491,13 +623,23 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 						NULL);
 
 				//grw - added initialization for local static arrays
-				isize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
+				//grw - added support for initialization of local arrays
+				if (CAUTO == scls) {
+					sgen(";---- initialize local %s %s", "array", name);
+				  isize = linitlist(*psize, *pprim, pinit);
+					gen(";---- initialized array on stack");
+				} else {
+					gen(";---- initialize array");
+					isize = initlist((CLSTATC == scls) ? NULL : name, *pprim, pinit);
+				}
 
+				/*
 				if (CAUTO == scls)
 					error("initialization of"
 						" local arrays"
 						" not supported: %s",
 						name);
+				 */
 
 				//grw - set ini to 1 for initialized global static and public arrays
 				if (isglobal(scls)) {
@@ -514,7 +656,10 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 					/* pad the rest of array elements with zero's */
 					isize = *psize - isize;
 					rsize = objsize(*pprim, type, isize);
-					gendata(isize, rsize);
+					if (CAUTO != scls) {
+						/* local objects already have padding */
+					  gendata(isize, rsize);
+					}
 				}	else if (isize > *psize) {
 					error("initialization list size larger than size of array %s", name);
 				}
@@ -575,7 +720,7 @@ static int localdecls(void) {
 	//grw - added support for dynamic init
 	int lab;
 
-	Nli = 0;
+	Nlsi = 0;
 	utype = 0;
 	//grw - added signed and unsigned types
 	//grw - added support for const keyword
@@ -754,8 +899,10 @@ static int localdecls(void) {
 				addr -= BPW;
 				genstack(addr);
 			}
+
 			addr -= rsize;
 			addloc(name, prim, type, CAUTO, size, addr, 0);
+			ngen(";---- local variable %s on the stack at %d", name, addr);
 
 			if (rsize > LGOBJSIZE)
 			  warn("Large local object %s should be declared static\n", name);
@@ -768,20 +915,20 @@ static int localdecls(void) {
 
 		/* process delayed inits */
 		if (ini && !stat) {
-				if (Nli >= MAXLOCINIT) {
+				if (Nlsi >= MAXLOCINIT) {
 				error("too many local initializers", NULL);
-				Nli = 0;
+				Nlsi = 0;
 			}
 
 			if (ini == -1) {
 			  gen(";----- local string init deferred");
-				LIaddr[Nli] = addr;
-				LIval[Nli++] = val;
+				LSaddr[Nlsi] = addr;
+				LSval[Nlsi++] = val;
 			} else if (ini == 1) {
 				//grw - removed unused constant initialization
 				error("Unsupported local initialization constant expression.", NULL);
-				//LIaddr[Nli] = addr;
-				//LIval[Nli++] = val;
+				//LSaddr[Nlsi] = addr;
+				//LSval[Nlsi++] = val;
       }
 		}
 		if (COMMA == Token)

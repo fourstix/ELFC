@@ -73,6 +73,13 @@ void cglit(int v)	{
 	gen(";----- cglit");
 	gen(" 				gosub s_epush16");
 	ngen(" 				  %s %d", "dw", v); }
+
+//grw - push byte value onto the stack
+void cgbyte(int b)	{
+	gen(";----- cgbyte");
+	gen(" 				gosub s_epush8");
+	ngen(" 				  %s %d", "db", b); }
+
 //grw - removed cglear and cglear2
 //void cgclear(void)	{gen(";----- cgclear"); }
 //void cgclear2(void)	{gen(";----- cgclear2"); }

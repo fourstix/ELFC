@@ -245,3 +245,9 @@ void initexpr(void);
 int isglobal(int scls);
 //grw - added function to pad partially initialized arrays
 void genzpad(int n);
+//grw - added function to push string onto stack for local intializations
+void genstr(char *s, int len);
+//grw -push multiple literals values onto the stack
+void genlits(int count, int v);
+//grw - push byte value onto stack
+void genbyte(int b);

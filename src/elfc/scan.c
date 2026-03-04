@@ -140,7 +140,7 @@ static int scanint(int c) {
 	Text[i] = 0;
 
 	if (val > MAX_INTLIT)
-	  error("integer literal is too large to be represented in any integer type", NULL);
+	  error("integer literal is too large to be represented in any 16-bit integer type", NULL);
 	return val;
 }
 

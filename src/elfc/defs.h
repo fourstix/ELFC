@@ -44,6 +44,8 @@
 #define MAXCASE		256
 #define MAXBREAK	16
 #define MAXLOCINIT	32
+//grw - number characters in local init string
+#define MAXLOCSTR 64
 //grw - decreased number of formal function args
 //#define MAXFNARGS	32
 #define MAXFNARGS	 8

@@ -4,9 +4,9 @@
  * In the public domain
  *
  * Test the file position functions
- * Test 2 of 
+ * Test 2 of
  */
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +34,7 @@ void test_stdio2(void) {
   int   i, fd;
   pos_t *fpos;
   char  c;
-  
+
   pr("fileno");
   if (fileno(stdin) != 0) fail("fileno-1");
   if (fileno(stdout) != 1) fail("fileno-2");
@@ -52,14 +52,14 @@ void test_stdio2(void) {
 
   pr("fflush");
   if (fflush(f) < 0) fail("fflush-1");
-  
+
   fclose(f);
-  
+
   if ((f = fopen(TSTFILE4, "r")) == NULL) {
     fail("fopen-2");
     return;
-  }    
-  
+  }
+
   pr("lseek");
   fd = fileno(f);
 
@@ -67,11 +67,11 @@ void test_stdio2(void) {
   if(lseek(fd, -1, SEEK_END) < 0) fail("lseek-1");
   else {
     c = fgetc(f);
-    if(c != 'Z') { 
+    if(c != 'Z') {
       fail("lseek-2");
       fclose(f);
       return;
-    }    
+    }
   }
 
   /* seek to beginning */
@@ -91,22 +91,22 @@ void test_stdio2(void) {
 
   /* set up position pointer */
   fpos = &filpos;
-  
+
   pr("fgetpos");
   if (fgetpos(f, fpos) < 0)  fail("fgetpos-1");
-  
+
   if (fpos->high != 0)  fail("fgetpos-2");
   if (fpos->low != 14)  fail("fgetpos-3");
-  
+
   pr("ftell");
   if (ftell(f) != 14)  fail("ftell-1");
-  
+
   pr("fsetpos");
   fpos->low = 20;
   fpos->high = 0;
   if (fsetpos(f, fpos) < 0)  fail("fsetpos-1");
   if (ftell(f) != 20)  fail("fsetpos-2");
-  
+
   pr("fseek");
   if(fseek(f, 2, SEEK_CUR) < 0) fail("fseek-1");
   if (ftell(f) != 22)  fail("fseek-2");

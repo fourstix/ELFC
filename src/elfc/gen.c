@@ -323,6 +323,22 @@ void genlit(int v) {
 	cglit(v);
 }
 
+//grw - push byte value onto stack
+void genbyte(int b) {
+	commit();
+	/* make sure int value is in byte range */
+	b &= 0x00FF;
+	cgbyte(b);
+}
+/* multiple literal values on stack */
+void genlits(int count, int v) {
+	int i;
+	//grw - added commit
+	commit();
+	for(i=0; i < count; i++)
+	  cglit(v);
+}
+
 /* binary ops */
 
 void genand(void) {
@@ -778,19 +794,13 @@ void genstack(int n) {
 void genlocinit(void) {
 	int	i;
 	//int addr;
+	if (Nlsi > 0)
+	  gen(";----- initialize local char pointers with strings");
 
-	gen(";----- initialize local string variables");
-  for (i=0; i<Nli; i++)
-	  cginitlpstr(LIval[i], LIaddr[i]);
-	//grw - removed unused constant initialization
-	//for (i=0; i<Nli; i++) {
-	//	addr = LIaddr[i];
-		/* if addr positive, this is a char ptr initialized with string */
-	//	if (addr > 0)
-	//	  cginitlpstr(LIval[i], addr);
-	//	else
-	//	  cginitlw(LIval[i], addr);
-	//}
+	for (i=0; i<Nlsi; i++) {
+		cginitlpstr(LSval[i], LSaddr[i]);
+	}
+	//grw - removed constant initialization
 }
 
 /* static and public data definitions */
@@ -1225,5 +1235,22 @@ void chklocals(int scope) {
   for (idx = 0; idx < llbl_idx; idx++) {
 		if (lcl_lbls[idx].scope == scope && lcl_lbls[idx].defined == 0)
 			error("goto target label %s is undefined", lcl_lbls[idx].text);
+	}
+}
+
+/*
+ * Push a string onto the expression Stack
+ */
+void genstr(char *s, int len) {
+	int i;
+	//grw - commit jump to entry point in library object
+	if (O_library)
+		commit();
+	genbyte(0);
+	if (len < 1)
+	  return;
+
+	for (i=0; i<len; i++) {
+		genbyte(s[len-1-i]);
 	}
 }

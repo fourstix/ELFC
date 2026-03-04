@@ -20,10 +20,11 @@ void _init(void) {
 	int	i;
 
 /* To use breakpoints before main, we must set up handler here */
+/*
 #ifdef _STGROM_
   asm("load   r1, $F000  ; set up handler for STG Breakpoint");
 #endif
-
+*/
 	/* set pre-defined file handles */
 
 	_fdtable[0] = 0;
