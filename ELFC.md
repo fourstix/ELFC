@@ -551,18 +551,30 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
-* int32_t add32(int32_t \*a, int32_t \*b); _/* 32-bit addition: result = a + b */_
-* int32_t sub32(int32_t \*a, int32_t \*b); _/* 32-bit subtraction: result = a - b */_
-* int32_t mul32(int32_t \*a, int32_t \*b); _/* 32-bit subtraction: result = a - b */_
-* int cmp32(int32_t \*a, int32_t \*b);* _/* Compare two 32-bit numbers, Returns -1 if a < b, 0 if a == b, 1 if a > b */_
-* int32_t shl32(int32_t \*a); _/* Shift left by 1 bit */_
-* int32_t shr32(int32_t \*a); _/* Shift Right by 1 bit */_
-* int32_t div32(int32_t \*a, int32_t \*b, int32_t \*rem); _/* 32-bit division: returns quotient, remainder in *rem */_
-* int32_t to_int32(int n); _/* Convert 16-bit number to 32-bit number with sign extension */_
-* int32_t neg32(int32_t \*n); _/* Negate a 32-bit number */_
-* int32_t atoi32(const char \*str); _/* Convert string to 32-bit integer */_
-* char \*itoa32(int32_t \*n, char \*str); _/* Convert 32-bit integer to string, Returns pointer to beginning of string */_
-* int32_t strtoi32(const char \*nptr, char \*\*endptr, int base); _/* Convert string to 32-bit integer */_
+* int32_t add32(int32_t \*a, int32_t \*b);
+_32-bit addition: result = a + b_
+* int32_t sub32(int32_t \*a, int32_t \*b);
+_32-bit subtraction: result = a - b_
+* int32_t mul32(int32_t \*a, int32_t \*b);
+_32-bit subtraction: result = a - b_
+* int cmp32(int32_t \*a, int32_t \*b);
+_Compare two 32-bit numbers, Returns -1 if a < b, 0 if a == b, 1 if a > b_
+* int32_t shl32(int32_t \*a);
+_Shift left by 1 bit_
+* int32_t shr32(int32_t \*a);
+_Shift Right by 1 bit_
+* int32_t div32(int32_t \*a, int32_t \*b, int32_t \*rem);
+ _32-bit division: returns quotient, remainder in *rem_
+* int32_t to_int32(int n);
+_Convert 16-bit number to 32-bit number with sign extension_
+* int32_t neg32(int32_t \*n);
+_Negate a 32-bit number_
+* int32_t atoi32(const char \*str);
+_Convert string to 32-bit integer_
+* char \*itoa32(int32_t \*n, char \*str);
+_Convert 32-bit integer to string, Returns pointer to beginning of string_
+* int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
+_Convert string to 32-bit integer_
 
 Pre-Defined Macros
 -------------------

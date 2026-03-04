@@ -268,8 +268,8 @@ Stdlib Library
 * off_t lseek32(int fd, off_t *offset, int whence);
 
 *Notes:*
-*The header file <unistd.h> is empty except for `#include <stdlib.h>`*
-*The type `off_t` is an int32 structure used by the Math32 library*
+* The header file <unistd.h> is empty except for `#include <stdlib.h>` *
+* The type `off_t` is an int32 structure used by the Math32 library *
 
 Stdio Library
 -------------
