@@ -194,11 +194,12 @@ Compiler Option Changes
 Release 3.4
 -----------
 
-Release 3.4 adds support for localizations and 32-bit integer math, as well as support for file sizes larger than 32K and various bug fixes.
+Release 3.4 adds support for initializations and 32-bit integer math, as well as support for file sizes larger than 32K and various bug fixes.
 
-* Dynamic local initializations are now supported.
+* Dynamic local initializations are now supported.  Initializations such as 'int len = strlen(x);' are now supported.
 * Local array initializations are supported.
-* Character arrays may be initialized by a string.
+* Character arrays may be initialized by a string or by a list of character constants.
+* Character pointers may be initialized by a string.
 * Initializations for an array may define fewer elements than the array.
 * Static initializations are now padded with zeros.
 * The Math32 library, contributed by Tony Hefner, adds support for 32-bit integer arithmetic.
@@ -468,6 +469,38 @@ struct tm {
 * The systime(struct tm \*tp) and utctime(struct tm \*tp) populate a time structure with values obtained from the kernel.
 * The ElfC time library provides a timezone function to manually set the locale timezone Information and dst values used by the utctime() and strftim() functions in the C time library.
 * The timezone() function should be called before to set the local values before calling other time functions.
+
+More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
+Math32 Library
+--------------
+**The math2 library functions use the following structure and type.**
+
+```
+struct int32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit number represented as two 16-bit values */
+typedef struct int32 int32_t;
+```
+
+**The following functions are supported in the ElfC math32 library.**
+
+* int32_t add32(int32_t \*a, int32_t \*b);
+* int32_t sub32(int32_t \*a, int32_t \*b);
+* int32_t mul32(int32_t \*a, int32_t \*b);
+* int cmp32(int32_t \*a, int32_t \*b);
+* int32_t shl32(int32_t \*a);
+* int32_t shr32(int32_t \*a);
+* int32_t div32(int32_t \*a, int32_t \*b, int32_t \*rem);
+* int32_t to_int32(int n);
+* int32_t neg32(int32_t \*n);
+* int32_t atoi32(const char \*str);
+* char \*itoa32(int32_t \*n, char \*str);
+* int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
