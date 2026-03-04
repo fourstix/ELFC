@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Installation
 -------------
-* Unzip the file elfc_r336.zip into the desired directory
+* Unzip the file elfc_r340.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -506,17 +506,15 @@ More information about unsupported library functions, header files and ElfC inte
 
 Next Release
 -------------
-* Local dynamic initializations
-* Multidimensional arrays
-* Extend -P (Play macro) option to output to text file
 * Walkthrough of ElfC compilation and output files
 * Housekeeping for 32-bit vs 16-bit versions
 
 Future Goals
 -------------
-
-* Convert library to 32-bit library and implement long, short and float data types.
+* Multidimensional arrays
+* Extend -P (Play macro) option to output to text file
 * Convert the rand function in stdlib to use inline assembly code.
+* Convert library to 32-bit library and implement long, short and float data types.
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float
 * Implement the C math library.
@@ -645,11 +643,11 @@ Acknowledgements
 
 Kudos to Tony Hefner for contributing the Linux builds, the Linux make files, and adding support for Cmake.
 
-Thank you to Tony Hefner for developing and contributing the Math32 library and for adding support to stdio and stdlib to support file sizes greater than 32K, up to 2GB.
-
 A big thank-you to David Madole for his suggestions to improve code performance, including designing a sub-routine scheme that doubled the code performance.
 
 Many thanks to Mike Riley for making his library code available and his patience in answering my questions.
+
+Another big shout out to thank Tony Hefner for developing and contributing the Math32 library and for adding support to stdio and stdlib libraries to support file sizes greater than 32K, up to 2GB.
 
 A debt of gratitude to Nils Holms for his excellent book, Practical Compiler Construction and for creating SubC, which provides the basis for ElfC.
 
