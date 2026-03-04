@@ -72,10 +72,10 @@ extern_ int	Breakstk[MAXBREAK], Bsp;
 extern_ int	Contstk[MAXBREAK], Csp;
 extern_ int	Retlab;
 
-/* local init structure */
-extern_ int	LIaddr[MAXLOCINIT];
-extern_ int	LIval[MAXLOCINIT];
-extern_ int	Nli;
+/* local string init structure */
+extern_ int	LSaddr[MAXLOCINIT];
+extern_ int	LSval[MAXLOCINIT];
+extern_ int	Nlsi;
 
 /* synthesizer operand queue */
 //grw - refactor Q_type to Q_jmp, Q_val to Q_dest

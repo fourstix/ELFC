@@ -163,3 +163,5 @@ void cggoto(int n);
 void cgcopy(int n);
 //grw - added function to generate zero-filled static data
 void cgdata(int n);
+//grw - push byte value onto the stack
+void cgbyte(int b);

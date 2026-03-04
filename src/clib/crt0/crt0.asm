@@ -13,6 +13,7 @@
 
           ;----- elfc subroutines
           extrn   epush16
+          extrn   epush8
           extrn   dpop16
           extrn   add16
           extrn   and16
@@ -268,6 +269,7 @@ s_scltos2n: lbr scltos2n
 s_sclsos2n: lbr sclsos2n
 s_unscl2n:  lbr unscl2n
 s_mcopy:    lbr mcopy
+s_epush8:   lbr epush8
 
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP
