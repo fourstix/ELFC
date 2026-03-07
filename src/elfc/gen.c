@@ -772,6 +772,8 @@ void genexit(int scope) {
 	cgexit();
 	/* write out string table after code */
 	genstrtbl();
+	/* write out the local objects */
+	genlocdef();
 }
 
 void genpush(void) {
@@ -823,8 +825,7 @@ void genbss(char *name, int len) {
 /*
  * generate zero-filled static data for partially initialized arrays
  */
-void gendata(int el, int n) {
-	ngen2(";---- %s (%d elements with %d bytes)", "gendata", el, n);
+void gendata(int n) {
 	cgdata(n);
 }
 
@@ -859,6 +860,27 @@ void gendefs(char *s, int len) {
 
 	cgdefs(s, len);
 }
+
+void genchars(char *s, int len) {
+	//grw - commit jump to entry point in library object
+	if (O_library)
+		commit();
+
+	cgchars(s, len);
+}
+
+void genints(int *a, int len) {
+	int v, i;
+	//grw - commit jump to entry point in library object
+	if (O_library)
+		commit();
+
+	for (i = 0; i < len; i++) {
+		v = a[i];
+		cgdefw(v);
+	}
+}
+
 
 void gendefw(int v) {
 	//grw - commit jump to entry point in library object
@@ -1253,4 +1275,26 @@ void genstr(char *s, int len) {
 	for (i=0; i<len; i++) {
 		genbyte(s[len-1-i]);
 	}
+}
+
+
+/*
+ * Write out definitions for local static objects
+ */
+void genlocdef(void) {
+	int i;
+  struct lstat_obj *p;
+
+	genraw("\n;----- local static objects\n");
+	for (i = 0; i < lso_idx; i++) {
+		//grw - convert string table to array of structures
+		p = &ls_objs[i];
+		defloc(p);
+
+		/* free the memory for the string */
+		//free(txt);
+	}
+	genraw("\n;----- end local static objects\n");
+	/* reset the string table */
+	lso_idx = 0;
 }

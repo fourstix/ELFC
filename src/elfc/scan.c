@@ -115,6 +115,10 @@ static int scanch(void) {
 
 static int scanint(int c) {
 	int	val, radix, k, i = 0;
+	//grw - add support for u suffix
+	int sgnd = 1;
+	//grw - add support for error and warning messages
+	char buf[20];
 
 	val = 0;
 	radix = 10;
@@ -136,11 +140,21 @@ static int scanint(int c) {
 		val = val * radix + k;
 		c = next();
 	}
+	//grw - check for unsigned suffix at end of literal
+	if ('u' == c || 'U' == c) {
+		sgnd = 0;
+		c = next();
+  }
 	putback(c);
 	Text[i] = 0;
 
-	if (val > MAX_INTLIT)
-	  error("integer literal is too large to be represented in any 16-bit integer type", NULL);
+	if (val > MAX_INTLIT) {
+		sprintf(buf, "\'%d\'", val);
+	  error("Integer literal %s is too large to be represented by any 16-bit integer type", buf);
+	} else if (val > MAX_SIGNED && 10 == radix && sgnd) {
+		sprintf(buf, "\'%d\'", val);
+		warn("Integer literal %s is too large for signed int; interpreted as unsigned int.\n", buf);
+	}
 	return val;
 }
 

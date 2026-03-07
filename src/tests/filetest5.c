@@ -47,7 +47,7 @@ void test_fscan(void) {
     fail("fopen-1");
 		return;
 	}
-  fprintf(f, "%d %x %o %u", -35, 0x0400, 0135, 60000);
+  fprintf(f, "%d %x %o %u", -35, 0x0400, 0135, 60000u);
   fprintf(f, "%s", "a\t100%  pass\n");
   rewind(f);
   /* read back test data we just wrote*/
@@ -61,7 +61,7 @@ void test_fscan(void) {
   if (i != -35) fail("fcanf-1 (int)");
   if (j != 1024) fail("fcanf-2 (hex)");
   if (k != 93) fail("fcanf-3 (octal)");
-  if (u != 60000) fail("fcanf-4 (unsigned int)");
+  if (u != 60000u) fail("fcanf-4 (unsigned int)");
   if (c != 'a') fail("fcanf-5 (char)");
   if (strcmp(s1, "100%")) fail("fcanf-6 (%%)");
   if (strcmp(s2, "pass")) fail("fcanf-7 (string)");

@@ -48,7 +48,7 @@
 #define MAXLOCSTR 64
 //grw - decreased number of formal function args
 //#define MAXFNARGS	32
-#define MAXFNARGS	 8
+#define MAXFNARGS	 16
 
 /* Maximum number of arguments per Macro */
 #define MAXMARGS	 8
@@ -68,6 +68,9 @@
 
 /* Maximum integer literal */
 #define MAX_INTLIT  65535
+
+/* Maximum signed literal (INTMAX + 1)) */
+#define MAX_SIGNED  32768
 
 /* assert(NSYMBOLS < PSTRUCT) */
 #define NSYMBOLS	1024

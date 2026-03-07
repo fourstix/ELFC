@@ -645,6 +645,48 @@ void cgdefs(char *s, int len) {
 	genraw("    ;----- cgdefs\n");
 }
 
+
+//grw - added cgdefs to generate string in ASM/02 format
+void cgchars(char *s, int len) {
+	int i;
+	int in_str = 0;
+	int start = 1;
+	char c;
+
+	//grw - don't output empty string (len includes quotes, so 2 or less is empty string)
+	genraw("  db ");
+
+	for (i=0; i<len; i++) {
+		c = s[i];
+		if (isprint(c) && c != '\'') {
+			if(!in_str) {
+				in_str = 1;
+				if (start)
+					start = 0;
+				else
+				  genraw(", ");
+				genraw("\'");
+			} /* if !in_str */
+			cgenraw("%c", c);
+		} else {
+			if (in_str) {
+				genraw("\'");
+				in_str = 0;
+			}
+			if (start)
+				start = 0;
+			else
+				genraw(", ");
+			cgenraw("%d", c);
+		} /* if-else */
+	} /* for */
+	if (in_str) {
+		genraw("\'");
+	}
+	genraw("    ;----- cgchars\n");
+}
+
+
 /* create a procedure name as the file name without extension */
 char *procname(char *bfile) {
 	size_t len;
