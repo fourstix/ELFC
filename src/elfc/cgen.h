@@ -165,3 +165,5 @@ void cgcopy(int n);
 void cgdata(int n);
 //grw - push byte value onto the stack
 void cgbyte(int b);
+//grw - print out an array of characters
+void cgchars(char *s, int len);

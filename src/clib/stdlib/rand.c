@@ -3,7 +3,7 @@
  *	rand() and srand()
  */
 
-static int _seed = 57005;
+static int _seed = 57005u;
 
 int rand(void) {
 	int	rot;
@@ -14,5 +14,5 @@ int rand(void) {
 }
 
 void srand(int n) {
-	_seed = n ? n & 0xffff: 57005;
+	_seed = n ? n & 0xffff : 57005u;
 }

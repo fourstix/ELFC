@@ -58,4 +58,7 @@ char *itoa32(int32_t *n, char *str);
 /* Convert string to 32-bit integer */
 int32_t strtoi32(const char *nptr, char **endptr, int base);
 
+/* Absolute value of a 32-bit number */
+int32_t abs32(int32_t *n);
+
 #endif

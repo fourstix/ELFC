@@ -3,10 +3,14 @@
  *	Function declarations
  */
 
+
 int	addglob(char *name, int prim, int type, int scls, int size, int val,
 		char *mval, int init);
 int	addloc(char *name, int prim, int type, int scls, int size, int val,
 		int init);
+//grw - made defloc public
+void defloc(struct lstat_obj *p);
+
 int	binoptype(int op, int p1, int p2);
 int	chrpos(char *s, int c);
 void	clear(int q);
@@ -57,7 +61,7 @@ void	gencall(int y);
 void	gencalr(void);
 void	gencmp(char *inst);
 //grw - updated gendata to create zero-filled static data
-void	gendata(int el, int n);
+void	gendata(int n);
 void	gendefb(int v);
 void	gendefp(int v);
 void	gendefs(char *s, int len);
@@ -251,3 +255,9 @@ void genstr(char *s, int len);
 void genlits(int count, int v);
 //grw - push byte value onto stack
 void genbyte(int b);
+//grw - generate local static object definitions
+void genlocdef(void);
+//grw - generate an arraoy of characters
+void	genchars(char *s, int len);
+//grw - generate an arraoy of integer valeus
+void	genints(int *a, int len);

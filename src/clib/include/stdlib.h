@@ -113,7 +113,7 @@ extern int _fdtable[FD_MAX];
 #endif
 
 #ifndef RAND_MAX
-#define RAND_MAX	65535
+#define RAND_MAX	65535u
 #endif
 
 /* typedef's from stddef.h */

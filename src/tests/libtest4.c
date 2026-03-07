@@ -174,18 +174,18 @@ void test_sprintf(void) {
 	spfs_test("65", "%1s", "foo", "foo");
 	spfs_test("66", "%-1s", "foo", "foo");
   //grw - tests for unsigned integer format
-  spfn_test("67", "%u", 54321, "54321");
+  spfn_test("67", "%u", 54321u, "54321");
   //grw - plus is ignored for unsigned types
-	spfn_test("68", "%+u", 54321, "54321");
-	spfn_test("69", "%10u", 54321, "     54321");
+	spfn_test("68", "%+u", 54321u, "54321");
+	spfn_test("69", "%10u", 54321u, "     54321");
   //grw - plus is ignored for unsigned types
-	spfn_test("70", "%+10u", 54321, "     54321");
-	spfn_test("71", "%-10u", 54321, "54321     ");
+	spfn_test("70", "%+10u", 54321u, "     54321");
+	spfn_test("71", "%-10u", 54321u, "54321     ");
   //grw - plus is ignored for unsigned types
-	spfn_test("72", "%-+10u", 54321, "54321     ");
-	spfn_test("73", "%+-10u", 54321, "54321     ");
-	spfn_test("74", "% 10u", 54321, "     54321");
-	spfn_test("75", "%010u", 54321, "0000054321");
+	spfn_test("72", "%-+10u", 54321u, "54321     ");
+	spfn_test("73", "%+-10u", 54321u, "54321     ");
+	spfn_test("74", "% 10u", 54321u, "     54321");
+	spfn_test("75", "%010u", 54321u, "0000054321");
   spfn_test("76", "%u", -1, "65535");
 
 }

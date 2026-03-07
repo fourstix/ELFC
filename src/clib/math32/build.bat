@@ -1,3 +1,4 @@
+..\elfc -L abs32.c
 ..\elfc -L add32.c
 ..\elfc -L atoi32.c
 ..\elfc -L cmp32.c
@@ -11,7 +12,7 @@
 ..\elfc -L sub32.c
 ..\elfc -L to_int32.c
 
-type add32.prg atoi32.prg cmp32.prg div32.prg itoa32.prg > math32.lib
+type abs32.prg add32.prg atoi32.prg cmp32.prg div32.prg itoa32.prg > math32.lib
 type mul32.prg neg32.prg shl32.prg shr32.prg strtoi32.prg >> math32.lib
 type sub32.prg to_int32.prg >> math32.lib
 

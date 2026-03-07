@@ -348,10 +348,11 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The math32 library provides equivalent functions as the long untility functions.*
+* *The math32 library provides equivalent functions as the long utility functions.*
 * *The _atoi32_ function in math32 library provides equivalent function as _atol_.*
 * *The _strtoi32_ function in math32 library provides equivalent function as _strtol_.*
 * *The _div32_ function in math32 library provides equivalent function as _ldiv_.*
+* *The _abs32_ function in math32 library provides equivalent function as _labs_.*
 * *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS.*
 
 

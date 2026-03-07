@@ -206,6 +206,8 @@ Release 3.4 adds support for initializations and 32-bit integer math, as well as
 * The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Math32 library. (Thanks to Tony Hefner)
 * The fsetpos and fgetpos functions now use the Math32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
 * The scanner no longer accepts integer literals that are greater than the largest possible 16-bit integer value of 65535.
+* ElfC supports the suffixes 'u' or 'U' to indicate an integer literal is an unsigned value.
+* The scanner will issue a warning if an integer literal is larger than the maximum signed value, unless the integer literal has the unsigned suffix.
 * Error number values were aligned with POSIX values.
 * A bug was fixed in the left-shift operation. (Thanks to Tony Hefner)
 * Assignments from a struct/union pointer to a struct/union variable now work correctly. The pointer to struct/union is now dereferenced correctly.
@@ -489,6 +491,7 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
+* int32_t abs32(int32_t \*n);
 * int32_t add32(int32_t \*a, int32_t \*b);
 * int32_t sub32(int32_t \*a, int32_t \*b);
 * int32_t mul32(int32_t \*a, int32_t \*b);
@@ -507,13 +510,14 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 * Walkthrough of ElfC compilation and output files
-* Housekeeping for 32-bit vs 16-bit versions
+* Document the ElfC stack frame layout.
 
 Future Goals
 -------------
 * Multidimensional arrays
 * Extend -P (Play macro) option to output to text file
 * Convert the rand function in stdlib to use inline assembly code.
+* Housekeeping for 32-bit vs 16-bit versions
 * Convert library to 32-bit library and implement long, short and float data types.
 * Upgrade the expression stack logic to handle 32-bit data types like long and float.
 * Implement double keyword as synonym for float

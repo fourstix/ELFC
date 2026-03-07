@@ -137,3 +137,19 @@ struct  llbl_entry {
 extern_ struct llbl_entry lcl_lbls[MAXUSRLBL];
 /* index for local labels */
 extern_ int llbl_idx;
+
+/* local static object structure */
+struct lstat_obj {
+  int  prim;
+  int  type;
+  int  size;
+  int  val;
+  int  init;
+  int  isize;
+  void *ilist;
+};
+
+/* table for local static objects */
+extern_ struct lstat_obj ls_objs[MAXLOCINIT];
+/* index for local static objects */
+extern_ int	lso_idx;
