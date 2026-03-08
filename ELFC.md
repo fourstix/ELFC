@@ -183,7 +183,7 @@ ElfC does not prevent the assignment of a pointer to a `const` or `volatile` var
 
 Functions may be declared to return a `volatile` value and arguments may be qualified as `volatile` but ElfC will ignore the `volatile` keyword, per the ANSI C C89/C90 specification.
 
-The `volatile` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.s
+The `volatile` keyword is ignored for structures and unions. ElfC will emit a warning message when `volatile` is ignored in these cases.
 
 The `volatile` keyword is supported for the members inside structures and unions.
 
@@ -556,6 +556,7 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
+* _abs32(a)_ - 32-bit absolute value of a
 * _add32(a, b)_ - 32-bit addition: returns a + b
 * _sub32(a, b)_ - 32-bit subtraction: returns a - b
 * _mul32(a, b)_ - 32-bit subtraction: returns a - b
