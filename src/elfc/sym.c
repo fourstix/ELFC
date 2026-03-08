@@ -251,49 +251,89 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 	return y;
 }
 
-static void defloc(int prim, int type, int size, int val, int init) {
-	if (type != TARRAY && !(prim &STCMASK)) genlab(val);
-	if (prim & STCMASK) {
-		//grw - removed static param from genbss
-		if (TARRAY == type)
-			genbss(labname(val), objsize(prim, TARRAY, size));
-		else
-			genbss(labname(val), objsize(prim, TVARIABLE, size));
-	} else if (prim == (PCHAR | 0x0010) && TVARIABLE == type) {
-		if (init) {
-			gendefpstr(init);
-		} else {
-			gendefw(init);
-		}
+/*
+ * Add information about local static objects
+ * into an array to be written out in the
+ * function's static object space.
+ */
+static void addlso(prim, type, size, val, init) {
+	if (lso_idx >= MAXLOCINIT)
+	  error("Local Static Object space is full", NULL);
 
-  } else if (chartype(prim)) {
-	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == type) {
-			/* if not initialized, reserve space */
-			//grw - removed static param from genbss
-			if(!init)
-			  genbss(labname(val), size);
+	ls_objs[lso_idx].prim = prim;
+	ls_objs[lso_idx].type = type;
+	ls_objs[lso_idx].size = size;
+	ls_objs[lso_idx].val = val;
+	ls_objs[lso_idx].init = init;
+	lso_idx++;
+}
+
+void defloc(struct lstat_obj *p) {
+	int n;
+	char *pc;
+	//int prim, int type, int size, int val, int init
+	if (p->type != TARRAY && !(p->prim &STCMASK)) genlab(p->val);
+	if (p->prim & STCMASK) {
+		//grw - removed static param from genbss
+		if (TARRAY == p->type)
+			genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
+		else
+			genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
+	} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
+		if (p->init) {
+			gendefpstr(p->init);
 		} else {
-			gendefb(init);
+			gendefw(p->init);
+		}
+  } else if (chartype(p->prim)) {
+	//grw - added support to iniitialze global and static arrays
+		if (TARRAY == p->type) {
+			genlab(p->val);
+
+			if (p->isize) {
+				pc = (char *) p->ilist;
+				genchars(pc, p->isize);
+
+				n = p->size - p->isize;
+				free(p->ilist);
+				p->ilist = NULL;
+			} else {
+				n = p->size;
+			}
+			/* pad the non-initialized space */
+			if (n) {
+				gendata(n);
+			}
+		} else {
+			gendefb(p->init);
 		}
 		//grw - update to use pinttype (primitive int type)
-	}	else if (pinttype(prim)) {
+	}	else if (pinttype(p->prim)) {
 	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == type) {
-			/* if not initialized, reserve space */
-			//grw - removed static param from genbss
-			if(!init)
-			  genbss(labname(val), size*INTSIZE);
+		if (TARRAY == p->type) {
+			genlab(p->val);
+			if (p->isize) {
+			  genints(p->ilist, p->isize);
+   			n = p->size - p->isize;
+	  		free(p->ilist);
+		  	p->ilist = NULL;
+		  } else {
+			  n = p->size;
+		  }
+		  /* pad the non-initialized space */
+		  if (n) {
+			  gendata(n*INTSIZE);
+		  }
 		} else {
-			gendefw(init);
+			gendefw(p->init);
 		}
 	}	else {
-		/* arrays of pointers are not initialized */
+		/* arrays of pointers and structures are not initialized */
 		//grw - removed static param from genbss
-		if (TARRAY == type)
-			genbss(labname(val), size*PTRSIZE);
+		if (TARRAY == p->type)
+			genbss(labname(p->val), (p->size)*PTRSIZE);
 		else
-			gendefp(init);
+			gendefp(p->init);
 	}
 }
 
@@ -306,7 +346,10 @@ int addloc(char *name, int prim, int type, int scls, int size, int val,
 		error("redefinition of: %s", name);
  	y = newloc();
 	if (CLSTATC == scls) {
-		defloc(prim, type, size, val, init);
+		//grw - add local static object to list
+		//defloc(prim, type, size, val, init);
+		addlso(prim, type, size, val, init);
+		lgen(";----- Local static object %s defined as %c%d", name, val);
 	}
 	Names[y] = locname(name);
 	Prims[y] = prim;

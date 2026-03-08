@@ -16,6 +16,31 @@ static char ignored[] = "type qualifier \'%s\' ignored";
 static char bad_cls[] = "storage class \'%s\' not valid for global scope";
 static char max_lvl[] = "too many levels of indirection in %s";
 
+/* stack move for local variables */
+static int mstack = 0;
+
+/*
+ * Commit the stack moves for previous local variables
+ */
+void commitmoves() {
+	if (mstack != 0) {
+		gen(";---- move stack for auto variables");
+		/* adjust stack for size (dynamic int) */
+		genstack(mstack);
+		mstack = 0;
+	}
+}
+/*
+ * Move stack for local variables
+ */
+void movestack(int n) {
+	mstack += n;
+}
+
+void clearmoves() {
+	mstack = 0;
+}
+
 /*
  * enumdecl := { enumlist } ;
  *
@@ -593,6 +618,14 @@ int pointerto(int prim, char *name) {
  *	| ( * IDENT ) ( )
  */
 
+ /*
+  * Init values used in functions
+  * -1 - string initialization deferred for string table
+  *  0 - uninitialized
+  *  1 - initialized static or global (public)
+  *  2 - initialized local (auto)
+  */
+
 static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			int *pval, int *pinit)
 {
@@ -649,6 +682,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 			lgen(";---- init pointer with %s %c%d", "string", *pval);
 			*pinit = -1;
 		} else if (CAUTO == scls) {
+			  //grw - commit stack moves for previous local variables
+				commitmoves();
 			  gen(";---- local init");
 			  initexpr();
 			  commit();
@@ -867,6 +902,10 @@ static int localdecls(void) {
 	utype = 0;
 	//grw - add support for local static objects
 	lso_idx = 0;
+
+	//grw -set stack to zero initially
+	clearmoves();
+
 	//grw - added signed and unsigned types
 	//grw - added support for const keyword
 	while ( AUTO == Token || EXTERN == Token || REGISTER == Token ||
@@ -1050,9 +1089,11 @@ static int localdecls(void) {
 			  warn("Large local object %s should be declared static\n", name);
 		}
 		if (ini != 2 && !stat) {
-			gen(";---- move stack for auto variable");
+			//grw - consolidate multiple local variable stack moves
+			//gen(";---- move stack for auto variable");
+			//genstack(-rsize);
 			/* adjust stack for size (dynamic int) */
-			genstack(-rsize);
+			movestack(-rsize);
 		}
 
 		/* process delayed inits */
@@ -1081,6 +1122,8 @@ static int localdecls(void) {
 	  semi();
 	  utype = 0;
 	}
+	//grw - commit any pending stack moves for local variables
+	commitmoves();
 	return addr;
 }
 
