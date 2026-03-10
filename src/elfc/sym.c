@@ -256,7 +256,7 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
  * into an array to be written out in the
  * function's static object space.
  */
-static void addlso(prim, type, size, val, init) {
+static void addlso(int prim, int type, int size, int val, int init) {
 	if (lso_idx >= MAXLOCINIT)
 	  error("Local Static Object space is full", NULL);
 
