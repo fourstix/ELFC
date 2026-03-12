@@ -211,7 +211,7 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><td>deref16</td><td>Replace a pointer on the expression stack with the 16-bit value it references</td></tr>
 <tr><td>deref8</td><td>Replace a pointer on the expression stack with the 8-bit value it references</td></tr>
 <tr><td>dget16</td><td>Get a 2-byte value from the expression stack (ESP is unchanged)</td></tr>
-<tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack<td></td></tr>
+<tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>dpush16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>epush16</td><td>Push a 2-byte constant onto expression stack</td></tr>
 <tr><td>epush8</td><td>Push 1-byte char value onto expression stack</td></tr>
