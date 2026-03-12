@@ -19,9 +19,9 @@ int main() {
 
 *The build process consists fo the following three major steps:*
 
-1. The ElfC program compiles the source file `hello.c` and the included header file `<stdio.h>` into the assembly code file hello.asm.
-2. The ElfC program invokes the Asm/02 assembler to assemble the `hello.asm` file into the hello.prg object file.  The assembler creates the assembly list file `hello.lst` and the assembly build file `hello.build`.
-3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the runtime startup module file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the linker build number, which servers as the version number for the binary program, and the symbol map for the linked object module and library routines.
+1. The ElfC program compiles the source file `hello.c` and the included header file `<stdio.h>` into the assembly code file `hello.asm`.
+2. The ElfC program invokes the Asm/02 assembler to assemble the `hello.asm` file into the `hello.prg` object file.  The assembler creates the assembly list file `hello.lst` and the assembly build file `hello.build`.
+3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the runtime startup module file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the `hello.lkb` file iwth linker build number, which servers as the version number for the binary program, and the symbol map `hello.sym` with the linked object module and library routine addresses.
 
 
 <table>
@@ -50,8 +50,7 @@ Stack Frame
 ------------
 
 When calling a function ElfC will push the function arguments from right to left onto the stack,
-and then set the register RB to one below the base of the stack frame.  Character arguments are
-promoted to integers when passed as arguments, and pointers are passed as integer values. This means that the stack size of every argument is 2 bytes.
+and then set the register RB to current value of R7, the expression stack pointer, to define the base of the stack frame.  Character arguments are promoted to integers when passed as arguments, and pointers are passed as integer values. This means that the stack size of every argument is 2 bytes.
 
 Inside the function, local (auto) variables are allocated on the stack.  The stack size for integers and pointers is two bytes.  Characters occupy one byte of two byte stack slot. Arrays, structures and unions are expanded to an even number of bytes when allocated on the stack.
 
@@ -123,15 +122,17 @@ struct scrabble_tile rack(int pos) {
 *Notes:*
 * The default stack size is 2 bytes, the integer size.
 * Arguments are pushed on the stack from right to left, so that the first argument is at offset 0.
-* The base pointer RB points to the base address of the stack frame, ie one below the first argument.
-* Arguments are referenced by positive offsets from RB.
-* Variables are referenced by positive offsets from RB.
-* RB is used as a reference to pop arguments and variables off the stack.
+* The base pointer RB defines the base address of the stack frame.
+* Arguments are referenced by positive offsets from the base address.
+* Variables are referenced by positive offsets from the base address.
+* RB is used as a reference to access arguments and variables on the stack frame.
 * Since they are stack pointers, R7 and RB point to the address one *below* the data on the stack.
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
 * Structures and unions have their fields padded to the stack size.
-* If a structure/union is the first local (auto) variable in the function, an integer size padding element is added so that the structure may be used for a return value.
+* If a structure/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the structure may be used for a return value.
+* At the end of a function, the value of R7 is checked with RB to validate the stack has returned to its base address.
+* If R7 does not equal RB at the end of a function, then a *stack creep error* is issued, and the program terminates.
 
 
 Registers Used
