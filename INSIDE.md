@@ -17,7 +17,7 @@ int main() {
 }
 '''
 
-*The build process consists fo the following three major steps:*
+*The build process consists of the following three major steps:*
 
 1. The ElfC program compiles the source file `hello.c` and the included header file `<stdio.h>` into the assembly code file `hello.asm`.
 2. The ElfC program invokes the Asm/02 assembler to assemble the `hello.asm` file into the `hello.prg` object file.  The assembler creates the assembly list file `hello.lst` and the assembly build file `hello.build`.
@@ -49,13 +49,11 @@ int main() {
 Stack Frame
 ------------
 
-When calling a function ElfC will push the function arguments from right to left onto the stack,
-and then set the register RB to current value of R7, the expression stack pointer, to define the base of the stack frame.  Character arguments are promoted to integers when passed as arguments, and pointers are passed as integer values. This means that the stack size of every argument is 2 bytes.
+When calling a function ElfC will push the function arguments from right to left onto the stack. ElfC then sets the register RB to current value of R7, the expression stack pointer, to define the base of the stack frame.  Character arguments are promoted to integers when passed as arguments, and pointers are passed as integer values. This means that the stack size of every argument is 2 bytes.
 
-Inside the function, local (auto) variables are allocated on the stack.  The stack size for integers and pointers is two bytes.  Characters occupy one byte of two byte stack slot. Arrays, structures and unions are expanded to an even number of bytes when allocated on the stack.
+Inside the function, local (auto) variables are allocated on the stack.  The stack size for integers and pointers is two bytes.  Characters occupy one byte of the two byte stack slot. Arrays, structures and unions are expanded to an even number of bytes when allocated on the stack.
 
-If the first local (auto) variable in a function is a structure or union, then an integer sized passing element is first, to allow the structure or union to exist on the structure in case it
-becomes the return value of the function.
+If the first local (auto) variable in a function is a structure or union, then an integer-sized padding element is added first, to allow the structure or union to exist on the structure in case it becomes the return value of the function.
 
 *Example 1:*
 ```
@@ -134,7 +132,7 @@ struct scrabble_tile rack(int pos) {
 * Structures and unions have their fields padded to the stack size.
 * If a structure/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the structure may be used for a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
-* If R7 does not equal RB when checked, then a *stack creep error* is issued, and the program terminates.
+* If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
 * Otherwise the function returns, and the program continues.
 
 
