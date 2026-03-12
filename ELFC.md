@@ -212,57 +212,6 @@ ElfC will emit a warning when a local label is defined within the body of an ite
 
 Local labels and `goto` should be used with caution, if used at all.
 
-Registers Used
----------------
-
-<table>
-<tr><th>Register</th><th>Purpose</th><th>Owner</th><th>Availability</th></tr>
-<tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R3</td><td>Program Instruction and Subroutine Argument Pointer</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R4</td><td>SCRT Call Routine</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R5</td><td>SCRT Return Routine</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R6</td><td>SCRT Argument and Return Point</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>R7</td><td>Expression Stack Pointer (ESP)</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>R8</td><td>Expression Temp Value</td><td>ElfC</td><td>General Use</td></tr>
-<tr><td>R9</td><td>Subroutine Pointer</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>RA</td><td>Accumulator and Return Value</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>RB</td><td>Caller Stack Frame Base Pointer</td><td>ElfC</td><td>Reserved</td></tr>
-<tr><td>RC</td><td>Counter</td><td>User</td><td>General Use</td></tr>
-<tr><td>RD</td><td>Destination Pointer or Data Value</td><td>User</td><td>General Use</td></tr>
-<tr><td>RE.1</td><td>Baud Rate Byte</td><td>OS</td><td>Reserved</td></tr>
-<tr><td>RE.0</td><td>SCRT Scratch Byte</td><td>OS</td><td>General Use</td></tr>
-<tr><td>RF</td><td>Buffer Pointer</td><td>User</td><td>General Use</td></tr>
-</table>
-
-*Notes:*
-* *SCRT stands for the "Standard Call and Return" routine.*
-* *'Reserved' means that the values of these registers should not be changed, even when not in use by its owner.*
-* *'General Use' means that the register value may be changed when not directly in use by its owner.*
-
-ElfC File Descriptor
---------------------
-<table>
-<tr><th>Byte Index</th><th>Description</th><th>Size</th></tr>
-<tr><td>0-3</td><td>Current Offset</td><td>4</td></tr>
-<tr><td>4-5</td><td>DTA Pointer</td><td>2</td></tr>
-<tr><td>6-7</td><td>EOF</td><td>2</td></tr>
-<tr><td>8</td><td>Flags Byte</td><td>1</td></tr>
-<tr><td>9-12</td><td>Directory Sector</td><td>4</td></tr>
-<tr><td>13-14</td><td>Directory Offset</td><td>2</td></tr>
-<tr><td>15-18</td><td>Current Sector</td><td>4</td></tr>
-<tr><td>19</td><td>Drive Number (Elf/OS v5)</td><td>1</td></tr>
-<tr><td>20</td><td>Drive FS Type (Elf/OS v5)</td><td>1</td></tr>
-<tr><td>21</td><td>1 Byte Padding</td><td>1</td></tr>
-<tr><td rowspan ="2">22-533</td><td rowspan ="2">DTA</td><td rowspan ="2">512</td></tr>
-</table>
-
-*Notes:*
-* *The total Size of ElfC File Descriptor is 534 bytes.*
-* *The DTA begins 22 bytes offset from the start of the FD.*
-* *This FD format is valid for Mini/DOS and Elf/OS v5*
-
 Additional Statements
 ---------------------
 
@@ -601,3 +550,5 @@ Header files
 * The `locale.h` header file is not supported.
 * The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
 * The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for a single `#include <stdlib.h>` statement.
+
+Details about the ElfC internal implementation can be found on the [ELFC Internal Information](INSIDE.md) page.

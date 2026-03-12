@@ -49,14 +49,14 @@ The stdlib, stdio, ctype, and string C libraries are supported as described in t
 
 * The header files use `#pragma` statements so the libraries link properly.
 
-More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about unsupported library functions and header files can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Release 2.5
 ------------
 
 This release adds an implementation of the C time library to ElfC, and a compiler option -N to compile without linking the C stdlib and stdio libraries.
 
-More information about the time library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about the time library functions and header files can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Release 2.1
 ------------
@@ -118,7 +118,7 @@ Version 2
 
 * A broader subset of C expression syntax is accepted in constant expression contexts. Pointer variables can be initialized with NULL.
 
-More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about unsupported library functions and header files can be found on the [ELFC Detailed Information](ELFC.md) page. Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 
 Compiler Option Changes
@@ -148,7 +148,7 @@ Version 3
 
 * The included files were cleaned up to eliminate unused definitions, and the kerneal api were moved to  a separate included file.
 
-More information about Version 3, signed and unsigned types, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about Version 3, signed and unsigned types and library functionscan be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Release 3.1
 ------------
@@ -172,7 +172,7 @@ Release 3.1
 
 * Static (and global) arrays may be initialized using an initializer list or a string. ElfC will emit an error message if the initializer list size does not match the size of the array.
 
-More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords, library functions and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about Version 3.1, labels, `goto`, `volatile` and `const` keywords and library functions can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals  can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Release 3.3
 -----------
@@ -212,6 +212,8 @@ Release 3.4 adds support for initializations and 32-bit integer math, as well as
 * A bug was fixed in the left-shift operation. (Thanks to Tony Hefner)
 * Assignments from a struct/union pointer to a struct/union variable now work correctly. The pointer to struct/union is now dereferenced correctly.
 * Breakpoints can now be configured for any ROM address.
+
+More information about Version 3.4 and library functions can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 
 Stdlib Library
@@ -601,6 +603,9 @@ Differences Between ElfC and Full C89
 
 *  The SubC compiler accepts `//` comments in addition to `/* */`.
 
+*  ElfC supports most, but not all, of the Translation Limits as defined
+   by the ANSI C89/C90 specification, Section 5.2.4.1. Details can be
+   found on the [ELFC Internal Information](INSIDE.md) page.
 
 Repository Contents
 -------------------
