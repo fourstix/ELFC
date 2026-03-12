@@ -244,7 +244,7 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 </table>
 
 <table>
-<tr><th colspan="2">Pointer Subroutines</th></tr>
+<tr><th colspan="2">Pointer Reference Subroutines</th></tr>
 <tr><th>Name</th><th>Description</th></tr>
 <tr><td>pdec16</td><td>Decrement a 2-byte value referenced by the pointer value in the RA register (ESP is unchanged)</td></tr>
 <tr><td>pdec8</td><td>Decrement a 1-byte value referenced by the pointer value in the RA register (ESP is unchanged)</td></tr>
@@ -274,11 +274,11 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 </table>
 
 *Notes:*
-* TOS = Top Of Stack
-* SOS = Second On Stack
-* ESP = Expression Stack Pointer
+* TOS stands for Top Of Stack.
+* SOS stands for Second On Stack.
+* ESP stands for Expression Stack Pointer.
 * Take care when using the Stack Manipulation routines to keep the stack 2-byte aligned.
-* All the Pointer Subroutines leave the ESP unchanged
+* All the Pointer Reference Subroutines leave the ESP unchanged
 * All other subroutines with names containing *get*, *init*, *set* or *stor* leave the ESP unchanged.
 * Local subroutine names begin with the letter *l*.
 * Pointer subroutine names begin with the letter *p*.
@@ -336,16 +336,15 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><td>127 members in a single structure or union</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
 <tr><td>127 enumeration constants in a single enumeration</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
 <tr><td>15 levels of nested structure or union definitions in a single declaration list</td><td>Not Supported</td><td>No</td><td>Structure declarations cannot be nested</td></tr>
-
 </table>
 
 *Notes:*
-* Up to 15 levels of indirection is supported in a declaration for pointers, arrays and structure/unions.
+* Up to 15 levels of indirection is supported in a declaration involving pointers, arrays and structure/unions.
 * ElfC does not support multi-dimensional arrays, e.g. `int a[3][4];` is not supported.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
-* ElfC does not support pointers to pointers to structure or unions pointers, e.g. `struct stc ***p;` is not supported.
+* ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.
 * Only the syntax `int (*f)()` is supported for declaring a function pointer.
-* Maximum number of total symbols in the ElfC symbol pool is 16348 (POOLSIZE)
-* Each of the various types of symbols have a limit of 1024 (NSYMBOLS) for symbols of that type in the symbol pool.
+* Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
+* Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.
 * ElfC does not support nested structure/union declarations.
