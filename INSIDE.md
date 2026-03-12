@@ -122,17 +122,20 @@ struct scrabble_tile rack(int pos) {
 *Notes:*
 * The default stack size is 2 bytes, the integer size.
 * Arguments are pushed on the stack from right to left, so that the first argument is at offset 0.
+* After the arguments are pushed to the expression stack, RB is set to the value of R7.
 * The base pointer RB defines the base address of the stack frame.
+* Local variables are the allocated onto the expression stack.
 * Arguments are referenced by positive offsets from the base address.
-* Variables are referenced by positive offsets from the base address.
-* RB is used as a reference to access arguments and variables on the stack frame.
+* Local variables are referenced by negative offsets from the base address.
+* RB is used as a reference to access a function's arguments and local variables on the stack frame.
 * Since they are stack pointers, R7 and RB point to the address one *below* the data on the stack.
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
 * Structures and unions have their fields padded to the stack size.
 * If a structure/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the structure may be used for a return value.
-* At the end of a function, the value of R7 is checked with RB to validate the stack has returned to its base address.
-* If R7 does not equal RB at the end of a function, then a *stack creep error* is issued, and the program terminates.
+* At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
+* If R7 does not equal RB when checked, then a *stack creep error* is issued, and the program terminates.
+* Otherwise the function returns, and the program continues.
 
 
 Registers Used
