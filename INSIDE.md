@@ -345,7 +345,7 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 * ElfC does not support multi-dimensional arrays, e.g. `int a[3][4];` is not supported.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
 * ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.
-* Only the syntax `int (*f)()` is supported for declaring a function pointer.
+* Only the supported parenthesized declaration syntax is `int (*f)()` which declares *f* as a function pointer.
 * Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
 * Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.
