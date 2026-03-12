@@ -21,7 +21,7 @@ int main() {
 
 1. The ElfC program compiles the source file `hello.c` and the included header file `<stdio.h>` into the assembly code file hello.asm.
 2. The ElfC program invokes the Asm/02 assembler to assemble the `hello.asm` file into the hello.prg object file.  The assembler creates the assembly list file `hello.lst` and the assembly build file `hello.build`.
-3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the bootstrap module object file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the linker build number, which servers as the version number for the binary program, and the symbol map for the linked object module and library routines.
+3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the runtime startup module file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the linker build number, which servers as the version number for the binary program, and the symbol map for the linked object module and library routines.
 
 
 <table>
@@ -32,7 +32,7 @@ int main() {
 <tr><td>hello.lst</td><td>Assembly Listing</td></tr>
 <tr><td>hello.build</td><td>Assembler Build Number</td></tr>
 <tr><td rowspan="4">3</td><td>hello.prg</td><td>Object File</td><td rowspan="4">Link/02 linker</td><td>hello.elfos</td><td>Elf/OS binary</td></tr>
-<tr><td>crt0.prg</td><td>Bootstrap Module</td><td rowspan="2">hello.lkb</td><td rowspan="2">Version Number (Linker Build Number)</td></tr>
+<tr><td>crt0.prg</td><td>Runtime Startup Module</td><td rowspan="2">hello.lkb</td><td rowspan="2">Version Number (Linker Build Number)</td></tr>
 <tr><td>stdlib.lib</td><td>C Library</td></tr>
 <tr><td>stdio.lib</td><td>C Library</td><td>hello.sym</td><td>Symbol Map</td></tr>
 </table>
@@ -40,10 +40,10 @@ int main() {
 *Notes:*
 * The option `-S` will compile to step one. The command `elfc -S` will compile, but not assemble and not link the code.
 * The option `-c` will comiple and assemble to step two.  The command `elfc -c` will compile and assemble, but not link the code.
-* The option `-N` will link the program code *without* the default standard C libraries.
+* The option `-N` will link the program code *without* the default standard C libraries, `stdlib` and `stdio`.
 * The option `-o` can be used to set the generated binary file program name.  The default name is the same as the C source file.
 * The linker build number is used to set the binary program Elf/OS version number.
-* The assembly list file and linker symbol map are useful for debugging.
+* The assembly list file and linker symbol map contain useful information for debugging.
 
 
 Stack Frame
