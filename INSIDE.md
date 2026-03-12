@@ -253,8 +253,8 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><td>pinc8</td><td>Increment a 1-byte value referenced by the pointer value in the RA register (ESP is unchanged)</td></tr>
 <tr><td>pincptr</td><td>Increment a pointer value referenced by the pointer value in the RA register (ESP is unchanged)</td></tr>
 <tr><td>psave</td><td>Get a pointer value from the expression stack and store it in the RA register (ESP is unchanged)</td></tr>
-<tr><td>pstor16</td><td>Get a 2-byte value from the expression stackand store it via a pointer value in RA (ESP is unchanged) </td></tr>
-<tr><td>pstor8</td><td>Get a 1-byte value from the expression stackand store it via a pointer value in RA (ESP is unchanged)</td></tr>
+<tr><td>pstor16</td><td>Get a 2-byte value from the expression stack and store it via a pointer value in RA (ESP is unchanged) </td></tr>
+<tr><td>pstor8</td><td>Get a 1-byte value from the expression stack and store it via a pointer value in RA (ESP is unchanged)</td></tr>
 </table>
 
 <table>
