@@ -92,7 +92,8 @@ void	gennot(void);
 void	genpostlude(void);
 void	genprelude(void);
 void	genpublic(char *name);
-void	genpush(void);
+//grw - add support to pass struct/union by value
+void	genpad(int n);
 void	genpushlit(int n);
 void	genraw(char *s);
 void	genrval(int *lv);
@@ -261,3 +262,5 @@ void genlocdef(void);
 void	genchars(char *s, int len);
 //grw - generate an arraoy of integer valeus
 void	genints(int *a, int len);
+//grw - add support to pass struct/union by value
+void genvalue(int y);

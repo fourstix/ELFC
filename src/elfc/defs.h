@@ -31,11 +31,15 @@
 #define INTSIZE		BPW
 #define PTRSIZE		INTSIZE
 #define CHARSIZE	1
+//grw - created macro for alignment size
+#define ALIGNED(X)    ((X + INTSIZE-1) / INTSIZE * INTSIZE)
 
 //grw - larger command size for linker
 #define CMDLEN    1024
 #define TEXTLEN		512
-#define NAMELEN		16
+//grw - increased size to match spec
+//#define NAMELEN		16
+#define NAMELEN		32
 
 #define MAXFILES	32
 
@@ -46,12 +50,16 @@
 #define MAXLOCINIT	32
 //grw - number characters in local init string
 #define MAXLOCSTR 64
+
 //grw - decreased number of formal function args
-//#define MAXFNARGS	32
-#define MAXFNARGS	 16
+//#define MAXFNARGS	 16
+//grw - changed back to meet spec
+#define MAXFNARGS	32
 
 /* Maximum number of arguments per Macro */
-#define MAXMARGS	 8
+//#define MAXMARGS	 8
+//grw - increased size to match spec
+#define MAXMARGS	 32
 
 /* Maximum length of macro parameter */
 #define MAXPARAMLEN	 40
@@ -156,7 +164,8 @@ enum {
 enum {
 	D_LSYM = 1,
 	D_GSYM = 2,
-	D_STAT = 4
+	D_STAT = 4,
+  D_TREE = 8
 };
 
 /* addressing modes */
@@ -252,5 +261,6 @@ enum {
   //grw - added support for signed and unsigned
   OP_UMUL, OP_UDIV, OP_UMOD, OP_ABV, OP_ABVEQ, OP_BLW, OP_BLWEQ,
   //grw - added support for assigning struct/union types
-  OP_COPY
+  //grw - add support to pass struct/union by value
+  OP_COPY, OP_VALUE, OP_PAD
 };

@@ -54,7 +54,7 @@ More information about unsupported library functions and header files can be fou
 Release 2.5
 ------------
 
-This release adds an implementation of the C time library to ElfC, and a compiler option -N to compile without linking the C stdlib and stdio libraries.
+This release adds an implementation of the C time library to ElfC, and a compiler option `-N` to compile without linking the C stdlib and stdio libraries.
 
 More information about the time library functions and header files can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
@@ -189,7 +189,7 @@ Release 3.3 adds support for parameterized macros.  The ElfC preprocessor meets 
 
 Compiler Option Changes
 -----------------------
-* The -P option will cause ElfC to output the macro text to stdio as each macro is expanded.
+* The `-P` option will cause ElfC to output the macro text to stdio as each macro is expanded.
 
 Release 3.4
 -----------
@@ -215,6 +215,20 @@ Release 3.4 adds support for initializations and 32-bit integer math, as well as
 
 More information about Version 3.4 and library functions can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
+Release 3.5
+-----------
+
+Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.
+
+* Structures and unions my be passed by value as an argument to the function.
+* A struct/union argument may be used as the return value of a function.
+* Several additional functions were added to the string library.
+* Some parameters for name length and number of arguments were increased to meet additional ANSI C89/C90 minimum translation limits.
+* An additional debug option was added to the compiler to support debugging the AST trees and optimizations.
+
+Compiler Option Changes
+-----------------------
+* The `-d tree` option will cause ElfC to output information about the AST tree as it compiles.
 
 Stdlib Library
 --------------
@@ -381,20 +395,40 @@ String Library
 * int strcmp(const char \*s1, const char \*s2);
 * char \*strcpy(char \*d, const char \*s);
 * size_t strcspn(const char \*s, const char \*set);
-* char \*strdup(const char \*s);
 * char \*strerror(int err);
 * size_t strlen(const char \*s);
 * char \*strncat(char \*d, const char \*a, size_t n);
 * int strncmp(const char \*s1, const char \*s2, size_t n);
 * char \*strncpy(char \*d, const char \*s, size_t n);
-* size_t strlcpy(char \*d, const char \*s, size_t n);
 * char \*strpbrk(const char \*s, const char \*set);
 * char \*strrchr(const char \*s, int c);
 * size_t strspn(const char \*s, const char \*set);
 * char \*strstr(const char \*s1, const char \*s2);
 * char \*strtok(char \*s, const char \*sep);
 
-*Note: `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.*
+**POSIX Functions**
+* char \*strcasecmp()
+* char \*strcasestr()
+* char \*strdup(const char \*s);
+* char \*strlcat()
+* size_t strlcpy(char \*d, const char \*s, size_t n);
+* char \*strlwr()
+* char \*strncasecmp()
+* char \*strndup(const char \*s);
+* size_t strnlen(const char \*s);
+* char \*strrev()
+* char \*strsep()
+* char \*strupr()
+* char \*strim()
+
+*Notes:*
+* `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.
+* `strlcat` is similar to `strncat`, except it always copies a null, so up to *(l-1).* characters are concatenated.
+* `strcasecmp`, `strncasecmp` and `strcasestr` are case *insensitive* comparisons.
+
+More information about the additional POSIX string functions can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
 
 Ctype Library
 --------------
@@ -563,9 +597,6 @@ Differences Between ElfC and Full C89
    to structures and unions, i.e. only pointers to a struct/union and pointers
    to pointers to a struct/union are supported.
 
-*  A struct/union cannot be passed as an argument to a function, but a
-   *pointer* to struct/union can be passed as an argument to a function.
-
 *  There is no support for bit fields.
 
 *  Only ints, chars, and arrays of int and char can be initialized in their
@@ -642,9 +673,9 @@ Repository Contents
   * libtest1.c to libtest4.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
 * **/bin**  -- Binary files for ElfC
-  * elfc_r341.zip** -- A zip file with the Windows version of the Release 3.40 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * elfc_r341.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * elfc_r341.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.30 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r350.zip** -- A zip file with the Windows version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * elfc_r350.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * elfc_r350.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 * **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements

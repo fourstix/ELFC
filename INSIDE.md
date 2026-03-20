@@ -212,6 +212,7 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><th>Name</th><th>Description</th></tr>
 <tr><td>deref16</td><td>Replace a pointer on the expression stack with the 16-bit value it references</td></tr>
 <tr><td>deref8</td><td>Replace a pointer on the expression stack with the 8-bit value it references</td></tr>
+<tr><td>derefm</td><td>Replace a pointer on the expression stack with the struct/union memory block it references</td></tr>
 <tr><td>dget16</td><td>Get a 2-byte value from the expression stack (ESP is unchanged)</td></tr>
 <tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>dpush16</td><td>Pop a 2-byte value from the expression stack</td></tr>
@@ -319,17 +320,17 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><td>15 nesting levels of compound statements</td><td>16</td><td>Yes</td><td>MAXBREAK</td></tr>
 <tr><td>8 nesting levels of conditional inclusion</td><td>16</td><td>Yes</td><td>MAXIFDEF</td></tr>
 <tr><td>12 pointer, array, and function declarators (in any combination) in a declaration</td><td>15</td><td>Yes, with Exceptions</td><td>MAXPTR (See Notes Below for Exceptions)</td></tr>
-<tr><td>31 nesting levels of parenthesized declarators</td><td>1</td><td>No</td><td>Parentheses in a declaration are only supported when declaring a function pointer.</td></tr>
+<tr><td>31 nesting levels of parenthesized declarators</td><td>1</td><td>No</td><td>Parentheses in a declaration are only supported for declaring a function pointer.</td></tr>
 <tr><td>32 nesting levels of parenthesized expressions within a full expression</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
-<tr><td>31 significant initial characters in an internal identifier or a macro name</td><td>16</td><td>No</td><td>NAMELEN</td></tr>
+<tr><td>31 significant initial characters in an internal identifier or a macro name</td><td>32</td><td>Yes</td><td>NAMELEN</td></tr>
 <tr><td>6 significant initial characters in an external identifier</td><td>16</td><td>Yes</td><td>NAMELEN</td></tr>
 <tr><td>511 external identifiers in one translation unit</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
 <tr><td>127 identifiers with block scope declared in one block</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
 <tr><td>1024 macro identifiers defined in one translation unit</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
-<tr><td>31 parameters in one function definition</td><td>16</td><td>No</td><td>MAXFNARGS</td></tr>
-<tr><td>31 arguments in one function call</td><td>16</td><td>No</td><td>MAXFNARGS</td></tr>
-<tr><td>31 parameters in one macro definition</td><td>8</td><td>No</td><td>MAXMARGS</td></tr>
-<tr><td>31 arguments in one macro invocation</td><td>8</td><td>No</td><td>MAXMARGS</td></tr>
+<tr><td>31 parameters in one function definition</td><td>32</td><td>Yes</td><td>MAXFNARGS</td></tr>
+<tr><td>31 arguments in one function call</td><td>32</td><td>Yes</td><td>MAXFNARGS</td></tr>
+<tr><td>31 parameters in one macro definition</td><td>32</td><td>Yes</td><td>MAXMARGS</td></tr>
+<tr><td>31 arguments in one macro invocation</td><td>32</td><td>Yes</td><td>MAXMARGS</td></tr>
 <tr><td>509 characters in a logical source line</td><td>512</td><td>Yes</td><td>TEXTLEN</td></tr>
 <tr><td>509 characters in a character string literal (after concatenation)</td><td>512</td><td>Yes</td><td>TEXTLEN</td></tr>
 <tr><td>32767 bytes in an object (in a hosted environment)</td><td>65535</td><td>Yes</td><td>Asm/02 and Link/02 Limit</td></tr>
@@ -344,8 +345,12 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 * Up to 15 levels of indirection is supported in a declaration involving pointers, arrays and structure/unions.
 * ElfC does not support multi-dimensional arrays, e.g. `int a[3][4];` is not supported.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
+* Elfc supports structures and unions and pointers to struct/union and pointers to struct/union pointers, eg. `struct stc`, `struct stc *p` and `struct stc **p` are supported.
 * ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.
 * Only the supported parenthesized declaration syntax is `int (*f)()` which declares *f* as a function pointer.
+* ElfC has an implementation defined limit of 32 local string initializations per function.
+* ElfC has an implementation defined limit of 32 integer values per initialization list.
+* ElfC has an implementation defined limit of 64 bytes (63 characters, plus NULL) for an initialization string.
 * Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
 * Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.

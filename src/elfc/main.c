@@ -11,8 +11,7 @@
 #include "modpath.h"
 
 static void cmderror(char *s, char *a) {
-  //grw
-  //fprintf(stderr, "scc: ");
+  //grw - use elfc as name of compiler
 	fprintf(stderr, "elfc: ");
 	fprintf(stderr, s, a);
 	fputc('\n', stderr);
@@ -22,8 +21,6 @@ static void cmderror(char *s, char *a) {
 void cleanup(void) {
 	if (!O_testonly && NULL != Basefile) {
     //grw - use extensions for Asm/02 and Link/02
-		//remove(newfilename(Basefile, 's'));
-		//remove(newfilename(Basefile, 'o'));
     remove(newfilename(Basefile, "asm"));
 		remove(newfilename(Basefile, "prg"));
 
@@ -75,15 +72,11 @@ static void compile(char *file, char *def) {
 	ofile = NULL;
 	if (file) {
     //grw change logic to support extension
-		//ofile = newfilename(file, 's');
     ofile = newfilename(file, "asm");
 		if ((in = fopen(file, "r")) == NULL)
 			cmderror("no such file: %s", file);
 		if (!O_testonly) {
-      //grw - overwrite should be okay?
-			//if ((out = fopen(ofile, "r")) != NULL)
-			//	cmderror("will not overwrite file: %s",
-			//		ofile);
+      //grw - overwriting is okay
 			if ((out = fopen(ofile, "w")) == NULL)
 				cmderror("cannot create file: %s", ofile);
 		}
@@ -95,11 +88,7 @@ static void compile(char *file, char *def) {
 		else
       printf("compiling %s\n", file);
 
-    //grw - removed old extra verbose messages
-  	//	if (O_verbose > 1)
-		//		printf("elfc -S -o %s %s\n", ofile, file);
-		//	else
-		//printf("compiling %s\n", file);
+  //grw - removed old extra verbose messages
 	}
 	program(file, in, out, def);
 	if (file) {
@@ -125,13 +114,6 @@ static void assemble(char *file, char *path) {
   vb = (O_verbose > 0) ? "" : "-q ";
 
   //grw - Asm/02 specifies object name
-	//file = newfilename(file, 's');
-	//if (O_componly && O_outfile)
-	//	ofile = O_outfile;
-	//else
-	//	collect(ofile = newfilename(file, 'o'), 1);
-  //if (O_componly && O_outfile)
-  //	ofile = O_outfile;
   ofile = newfilename(file, "asm");
 
 	if (strlen(ofile) + strlen(ASCMD) + strlen(vb) >= TEXTLEN)
@@ -148,11 +130,6 @@ static void assemble(char *file, char *path) {
   } else {
     collect(newfilename(file, "prg"), 1);
   }
-  //grw - don't delete files
-	//if (delete) {
-	//	if (O_verbose > 2) printf("rm %s\n", file);
-	//	remove(file);
-	//}
 }
 
 //arh - removed unused function concat
@@ -210,23 +187,12 @@ static void link(char *fname, char *path) {
      strcat(cmd, ELFLIBC);
 
   //grw - simplified logic to not remove files
-	//if (O_verbose > 2) printf("rm ");
-	//for (i=0; i<Nf; i++) {
-	//	if (Temp[i]) {
-	//		if (O_verbose > 2) printf(" %s", Files[i]);
-	//		remove(Files[i]);
-	//	}
-	//}
-	//if (O_verbose > 2) printf("\n");
   if (O_verbose > 0) printf("%s\n", cmd);
   if (system(cmd))
     cmderror("linker invocation failed", NULL);
 }
 
 static void usage(void) {
-  //grw
-	//printf("Usage: scc [-h] [-ctvNSV] [-d opt] [-o file] [-D macro[=text]]"
-	//	" file [...]\n");
   printf("Usage: elfc [-h] [-ctvLNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
@@ -273,6 +239,8 @@ static int dbgopt(int argc, char *argv[], int *pi, int *pj) {
 	if (!strcmp(s, "lsym")) return D_LSYM;
 	if (!strcmp(s, "gsym")) return D_GSYM;
 	if (!strcmp(s, "stat")) return D_STAT;
+  if (!strcmp(s, "tree")) return D_TREE;
+
 	printf(	"\n"
     //grw
 		//"scc: valid -d options are: \n\n"
@@ -280,6 +248,7 @@ static int dbgopt(int argc, char *argv[], int *pi, int *pj) {
 		"lsym - dump local symbol tables\n"
 		"gsym - dump global symbol table\n"
 		"stat - print usage statistics\n"
+    "tree - dump abstract symbol tree\n"
 		"\n");
 	exit(EXIT_FAILURE);
 }
@@ -407,7 +376,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	//grw - pass name to linker
-	//if (!O_componly && !O_testonly) link();
 	if (!O_componly && !O_testonly && !O_library) link(fname, Fpath);
 	return EXIT_SUCCESS;
 }

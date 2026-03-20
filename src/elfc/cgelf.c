@@ -759,3 +759,11 @@ void cgdata(int n) {
 		genraw("\n");
 	}
 }
+
+//grw - added support to pass struct/union by value
+void cgvalue(int n) {
+  gen(";----- cgvalue");
+	gen("          gosub s_derefm  ; push struct/union onto stack");
+	ngen(" 				    %s %d         ;--- size", "dw", n);
+	gen("          lbdf  auto_err  ; exit immediately if stack exhausted by argument");
+}
