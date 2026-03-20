@@ -407,19 +407,19 @@ String Library
 * char \*strtok(char \*s, const char \*sep);
 
 **POSIX Functions**
-* char \*strcasecmp()
-* char \*strcasestr()
+* int strcasecmp(const char \*s1, const char \*s2);
+* char \*strcasestr(const char \*s1, const char \*s2);
 * char \*strdup(const char \*s);
 * size_t \*strlcat(char \*d, const char \*s, size_t n);
 * size_t strlcpy(char \*d, const char \*s, size_t n);
-* char \*strlwr()
-* char \*strncasecmp()
-* char \*strndup(const char \*s);
+* char \*strlwr(char \*str)
+* int strncasecmp(const char \*s1, const char \*s2, size_t n);
+* char \*strndup(const char \*s, size_t n);
 * size_t strnlen(const char \*s, size_t n);
 * char \* strrev(char \*s);
-* char \*strsep()
-* char \*strupr()
-* char \*strim()
+* char \*strsep(char \*\*str, const char \*sep);
+* char \*strupr(char \*str);
+* char \*strim(char \*str);
 
 *Notes:*
 * `strlcpy` is similar to `strncpy`, except it always copies a null and it does not zero pad.

@@ -117,6 +117,41 @@ struct scrabble_tile rack(int pos) {
 <tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
 </table>
 
+
+*Example 3:*
+```
+struct point {
+  int x;
+  int y;
+};
+
+/* scale a point by a value */
+struct point scale(int n, struct point p) {
+    int f;
+
+    /* negative and zero is not valid */
+    f = (n < 1) ? 1 : n;
+
+    /* multiple (x,y) values by scaling factor */
+    p.x = f*(p.x);
+    p.y = f*(p.y);
+
+    /* return point */
+    return p;
+}
+```
+*Stackframe for Example 3*
+<table>
+<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
+<tr><td>6</td><td>xx</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
+<tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>int</td></tr>
+<tr><td>point.y</td><td>int</td></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>
+<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
+<tr><td>-2</td><td>f</td><td>2</td><td>integer</td><tr>
+<tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
+</table>
+
 *Notes:*
 * The default stack size is 2 bytes, the integer size.
 * Arguments are pushed on the stack from right to left, so that the first argument is at offset 0.
@@ -130,7 +165,9 @@ struct scrabble_tile rack(int pos) {
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
 * Structures and unions have their fields padded to the stack size.
-* If a structure/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the structure may be used for a return value.
+* If a struct/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the struct/union may be used for a return value.
+* If a structure/union is the last argument in the function call, an integer-sized padding element is
+pushed on the stack before the struct/union so that the argument may be used as a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
 * Otherwise the function returns, and the program continues.
