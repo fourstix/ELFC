@@ -410,13 +410,13 @@ String Library
 * char \*strcasecmp()
 * char \*strcasestr()
 * char \*strdup(const char \*s);
-* char \*strlcat()
+* size_t \*strlcat(char \*d, const char \*s, size_t n);
 * size_t strlcpy(char \*d, const char \*s, size_t n);
 * char \*strlwr()
 * char \*strncasecmp()
 * char \*strndup(const char \*s);
-* size_t strnlen(const char \*s);
-* char \*strrev()
+* size_t strnlen(const char \*s, size_t n);
+* char \* strrev(char \*s);
 * char \*strsep()
 * char \*strupr()
 * char \*strim()

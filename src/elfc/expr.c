@@ -368,7 +368,9 @@ static node *postfix(int *lv) {
 				n2 = exprlist(lv2, 1);
 				n2 = rvalue(n2, lv2);
 				p = lv[LVPRIM];
-				if (PINT != lv2[LVPRIM])
+				//grw - fixed for qualified (const/volatile) and unsigned int types
+				//if (PINT != lv2[LVPRIM])
+				if (!pinttype(lv2[LVPRIM]))
 					error("non-integer subscript", NULL);
 				//grw - added support for multiple pointer indirection
         /*
