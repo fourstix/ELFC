@@ -391,4 +391,4 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 * Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
 * Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.
-* ElfC does not support nested struct/union *definitions*, but struct/union *declarations* can be nested, ie. a struct/union *declaration* may contain fields that are struct/union types, that may contain struct/union fields, and so on.
+* ElfC does not support nested struct/union *definitions*, but struct/union *declarations* can be nested, ie. a struct/union *declaration* may contain fields that are struct/union types, that may in turn contain struct/union fields, and so on.

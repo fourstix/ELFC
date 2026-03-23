@@ -60,7 +60,7 @@ off_t lseek32(int fd, off_t *offset, int how) {
   asm("           dw -4         ; in the local variable");
 
   /* if error, set errno */
-  if (cmp32(&result, &eof) == 0) {
+  if (cmp32(result, eof) == 0) {
     errno = EIO;
   }
 

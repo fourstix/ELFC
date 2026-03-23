@@ -55,7 +55,7 @@ int fseek32(FILE *f, off_t *offset, int whence) {
   pos = lseek32(f->fd, offset, whence);
 
   error = to_int32(-1);
-  if (cmp32(&pos, &error) == 0) {
+  if (cmp32(pos, error) == 0) {
     errno = EIO;
     return -1;
   }

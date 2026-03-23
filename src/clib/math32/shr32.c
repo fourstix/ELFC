@@ -2,11 +2,11 @@
 #include <math32.h>
 
 /* Shift right by 1 bit */
-int32_t shr32(int32_t *a) {
+int32_t shr32(int32_t a) {
     int32_t result;
 
-    result.low = a->low;
-    result.high = a->high;
+    result.low = a.low;
+    result.high = a.high;
 
     result.low >>= 1;
     if (result.high & 0x0001) {

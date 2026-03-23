@@ -220,11 +220,14 @@ Release 3.5
 
 Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.
 
-* Structures and unions my be passed by value as an argument to the function.
+* Structures and unions may be passed by value as an argument to the function.
 * A struct/union argument may be used as the return value of a function.
 * Several additional functions were added to the string library.
 * Some parameters for name length and number of arguments were increased to meet additional ANSI C89/C90 minimum translation limits.
 * An additional debug option was added to the compiler to support debugging the AST trees and optimizations.
+* A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
+* Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
+* The functions in the Math32 library were converted to pass 32-bit numbers by value.
 
 Compiler Option Changes
 -----------------------
@@ -416,6 +419,7 @@ String Library
 * int strncasecmp(const char \*s1, const char \*s2, size_t n);
 * char \*strndup(const char \*s, size_t n);
 * size_t strnlen(const char \*s, size_t n);
+* char \*strnstr(const char \*s1, const char \*s2, size_t n);
 * char \* strrev(char \*s);
 * char \*strsep(char \*\*str, const char \*sep);
 * char \*strupr(char \*str);
@@ -527,37 +531,36 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
-* int32_t abs32(int32_t \*n);
-* int32_t add32(int32_t \*a, int32_t \*b);
-* int32_t sub32(int32_t \*a, int32_t \*b);
-* int32_t mul32(int32_t \*a, int32_t \*b);
-* int cmp32(int32_t \*a, int32_t \*b);
-* int32_t shl32(int32_t \*a);
-* int32_t shr32(int32_t \*a);
-* int32_t div32(int32_t \*a, int32_t \*b, int32_t \*rem);
+* int32_t abs32(int32_t n);
+* int32_t add32(int32_t a, int32_t b);
+* int32_t sub32(int32_t a, int32_t b);
+* int32_t mul32(int32_t a, int32_t b);
+* int cmp32(int32_t a, int32_t b);
+* int32_t shl32(int32_t a);
+* int32_t shr32(int32_t a);
+* int32_t div32(int32_t a, int32_t b, int32_t \*rem);
 * int32_t to_int32(int n);
-* int32_t neg32(int32_t \*n);
+* int32_t neg32(int32_t n);
 * int32_t atoi32(const char \*str);
-* char \*itoa32(int32_t \*n, char \*str);
+* char \*itoa32(int32_t n, char \*str);
 * int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Next Release
 -------------
-* Walkthrough of ElfC compilation and output files
-* Document the ElfC stack frame layout.
+* Multidimensional arrays
+* Simple Initialization for struct/union
+* Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
 -------------
-* Multidimensional arrays
-* Extend -P (Play macro) option to output to text file
-* Convert the rand function in stdlib to use inline assembly code.
-* Housekeeping for 32-bit vs 16-bit versions
-* Convert library to 32-bit library and implement long, short and float data types.
-* Upgrade the expression stack logic to handle 32-bit data types like long and float.
-* Implement double keyword as synonym for float
-* Implement the C math library.
+
+* Implement a 32-bit library with float data types.
+* Implement a version of the C math library to use the float data types.
+* Create a minimal runtime, stdlib and stdio libraries.
+* Provide an option for ElfC  to compile smaller binary code that uses these minimum libraries.
+* Create a native Elf/OS (and Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
 * Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
 
 
@@ -572,6 +575,8 @@ Differences Between ElfC and Full C89
    is limited support for `int(*)()` (pointers to functions
    of type int).
 
+*  There are no 32-bit primitive types. There are no long integers, no doubles, no floats.
+
 *  Arrays are limited to one dimension.
 
 *  Old K&R-style function declarations (with parameter declarations
@@ -585,13 +590,13 @@ Differences Between ElfC and Full C89
 *  The `const` and `volatile` keywords are ignored for structures and unions, but
    may be used for their members.
 
-*  There are no long integers.
-
-*  Struct/union declarations must be separate from the declarations of
+*  Struct/union definition declarations must be separate from the declarations of
    struct/union objects, i.e. `struct p { int x, y; } q;` will not work.
 
-*  Struct/union declarations must be global (struct and union
+*  Struct/union definition declarations must be global (struct and union
    objects may be declared locally, though).
+
+*  Struct/union definition declarations cannot be nested, but struct/union object declarations can be nested.
 
 *  No more than two levels of indirection are supported for pointers
    to structures and unions, i.e. only pointers to a struct/union and pointers
@@ -599,12 +604,16 @@ Differences Between ElfC and Full C89
 
 *  There is no support for bit fields.
 
-*  Only ints, chars, and arrays of int and char can be initialized in their
-   declarations; pointers can be initialized with NULL or a constant address value.
+*  Ints, chars, and arrays of int and char can be initialized in their
+   declarations.
+
+*  Pointers can be initialized with NULL or a constant address value.
+
+*  Pointer to character can be initialized with the address of a static string.
 
 *  Initialization of a struct/union is not supported.
 
-*  Character arrays must be large enough to accept an initialization string plus
+*  Character arrays must be large enough to accept the entire initialization string plus
    its terminating NULL. ElfC will not silently remove the NULL at the end of an
    initialization string, when the string is one character too long for an array.
 
@@ -676,7 +685,6 @@ Repository Contents
   * elfc_r350.zip** -- A zip file with the Windows version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
   * elfc_r350.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
   * elfc_r350.linux_64.tar.gz** -- A tar file with the Windows version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-* **/sample** -- Sample code for the walk-through documentation (TBD)
 
 Acknowledgements
 -----------------

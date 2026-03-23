@@ -1,29 +1,31 @@
 .big
 {Cabs32
-:0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 02 d9 42 00
-:0010 00 d9 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a 52 8a
-/Cneg32 0029 00
-\Cneg32 002a
-:0020 f1 c2 00 37 d9 42 00 00 d4 00 00 d9 03 00 02 c3
-?auto_err 0030
-:0030 00 00 d9 0c c0 00 3b d9 42 00 00 d9 09 e2 d9 06
-?stk_err 0041
-:0040 c3 00 00 60 72 ab f0 bb d5
+:0000 e2 9b 73 8b 73 87 ab 97 bb d9 78 00 00 d9 12 00
+:0010 02 d9 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a 52 8a
+:0020 f1 c2 00 42 d9 12 00 00 d9 78 00 00 d9 e4 00 04
+?auto_err 0031
+/Cneg32 0034 00
+\Cneg32 0035
+?auto_err 003b
+:0030 c3 00 00 d4 00 00 d9 03 00 06 c3 00 00 d9 0c c0
+?stk_err 004c
+:0040 00 46 d9 78 00 00 d9 09 e2 d9 06 c3 00 00 60 72
+:0050 ab f0 bb d5
 +0022
-+0035
++0040
 }
 .big
 {Cadd32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff fc c3 00 00 d9 78 ff fa d9 42 00 00 d9
-:0020 7e d9 42 00 02 d9 7e d9 84 d9 81 d9 09 d9 63 d9
-:0030 09 d9 78 ff fa d9 7e d9 42 00 00 d9 7e d9 cf d9
-:0040 09 9a 52 8a f1 ca 00 4b c0 00 5d d9 12 00 02 d9
-:0050 42 00 00 d9 84 d9 5d d9 7e d9 69 d9 09 d9 78 ff
-:0060 fa d9 12 00 02 d9 84 d9 12 00 02 d9 42 00 00 d9
-:0070 84 d9 7e d9 12 00 02 d9 42 00 02 d9 84 d9 7e d9
+:0010 d9 03 ff fc c3 00 00 d9 78 ff fa d9 78 00 00 d9
+:0020 7e d9 78 00 04 d9 7e d9 84 d9 81 d9 09 d9 63 d9
+:0030 09 d9 78 ff fa d9 7e d9 78 00 00 d9 7e d9 cf d9
+:0040 09 9a 52 8a f1 ca 00 4b c0 00 5d d9 78 00 00 d9
+:0050 12 00 02 d9 84 d9 5d d9 7e d9 69 d9 09 d9 78 ff
+:0060 fa d9 12 00 02 d9 84 d9 78 00 00 d9 12 00 02 d9
+:0070 84 d9 7e d9 78 00 04 d9 12 00 02 d9 84 d9 7e d9
 :0080 84 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 09 d9
 ?auto_err 0094
 ?stk_err 009a
@@ -57,30 +59,38 @@
 :0110 d9 84 d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 42
 :0120 ff ee d9 7b 00 d9 12 00 30 d9 cc d9 0f 9a 52 8a
 :0130 f1 c2 01 43 d9 09 d9 42 ff ee d9 7b 00 d9 12 00
-:0140 39 d9 d2 d9 09 9a 52 8a f1 c2 01 c4 d9 78 ff fa
-/Cmul32 0159 00
-\Cmul32 015a
-:0150 d9 78 ff f6 d9 78 ff fa d4 00 00 d9 03 00 04 c3
-?auto_err 0160
-:0160 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff f2 d9 42
-:0170 ff ee d9 7b 00 d9 12 00 30 d9 87 d9 81 d9 09 d9
-:0180 63 d9 09 d9 78 ff f2 d9 12 00 02 d9 84 d9 12 00
-:0190 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 78 ff
-/Cadd32 01a6 00
-\Cadd32 01a7
-?auto_err 01ad
-:01a0 f2 d9 78 ff fa d4 00 00 d9 03 00 04 c3 00 00 d9
-:01b0 0c d9 de 00 04 d9 09 d9 42 ff ee d9 4e ff ee d9
-:01c0 09 c0 01 1e d9 42 ff f0 d9 09 9a 52 8a f1 c2 01
-/Cneg32 01da 00
-\Cneg32 01db
-:01d0 eb d9 78 ff fa d9 78 ff fa d4 00 00 d9 03 00 02
-?auto_err 01e1
-:01e0 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff fa d9
-?auto_err 01f6
-?stk_err 01fc
-:01f0 09 d9 03 00 16 c3 00 00 e2 d9 06 c3 00 00 60 72
-:0200 ab f0 bb d5
+:0140 39 d9 d2 d9 09 9a 52 8a f1 c2 01 e8 d9 78 ff fa
+?auto_err 015d
+:0150 d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3 00 00 d9
+?auto_err 0168
+/Cmul32 016b 00
+\Cmul32 016c
+:0160 78 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00
+?auto_err 0172
+:0170 0a c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff f2
+:0180 d9 42 ff ee d9 7b 00 d9 12 00 30 d9 87 d9 81 d9
+:0190 09 d9 63 d9 09 d9 78 ff f2 d9 12 00 02 d9 84 d9
+:01a0 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
+?auto_err 01bc
+:01b0 12 00 00 d9 78 ff f2 d9 e4 00 04 c3 00 00 d9 78
+?auto_err 01c7
+/Cadd32 01ca 00
+\Cadd32 01cb
+:01c0 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 0a
+?auto_err 01d1
+:01d0 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 42 ff ee d9
+:01e0 4e ff ee d9 09 c0 01 1e d9 42 ff f0 d9 09 9a 52
+:01f0 8a f1 c2 02 1a d9 78 ff fa d9 12 00 00 d9 78 ff
+?auto_err 0206
+/Cneg32 0209 00
+\Cneg32 020a
+:0200 fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 06 c3
+?auto_err 0210
+:0210 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff fa d9 09
+?auto_err 0225
+?stk_err 022b
+:0220 d9 03 00 16 c3 00 00 e2 d9 06 c3 00 00 60 72 ab
+:0230 f0 bb d5
 +0066
 +007e
 +0096
@@ -92,24 +102,24 @@
 +00ec
 +0132
 +014a
-+01c2
-+01cf
++01e6
++01f3
 }
 .big
 {Ccmp32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fc c3 00 00
-:0010 d9 12 00 02 d9 42 00 00 d9 84 d9 7e d9 12 00 02
-:0020 d9 42 00 02 d9 84 d9 7e d9 c6 d9 09 9a 52 8a f1
-:0030 ca 00 36 c0 00 88 d9 12 00 02 d9 42 00 00 d9 84
-:0040 d9 7e d9 3c ff fe d9 09 d9 12 00 02 d9 42 00 02
+:0010 d9 78 00 00 d9 12 00 02 d9 84 d9 7e d9 78 00 04
+:0020 d9 12 00 02 d9 84 d9 7e d9 c6 d9 09 9a 52 8a f1
+:0030 ca 00 36 c0 00 88 d9 78 00 00 d9 12 00 02 d9 84
+:0040 d9 7e d9 3c ff fe d9 09 d9 78 00 04 d9 12 00 02
 :0050 d9 84 d9 7e d9 3c ff fc d9 09 d9 42 ff fe d9 42
 :0060 ff fc d9 c0 d9 09 9a 52 8a f1 ca 00 70 c0 00 7c
 :0070 d9 12 ff ff d9 09 c0 00 dd c0 00 85 d9 12 00 01
-:0080 d9 09 c0 00 dd c0 00 dd d9 42 00 00 d9 7e d9 42
-:0090 00 02 d9 7e d9 cf d9 09 9a 52 8a f1 ca 00 a2 c0
-:00a0 00 ae d9 12 ff ff d9 09 c0 00 dd c0 00 dd d9 42
-:00b0 00 00 d9 7e d9 42 00 02 d9 7e d9 c9 d9 09 9a 52
+:0080 d9 09 c0 00 dd c0 00 dd d9 78 00 00 d9 7e d9 78
+:0090 00 04 d9 7e d9 cf d9 09 9a 52 8a f1 ca 00 a2 c0
+:00a0 00 ae d9 12 ff ff d9 09 c0 00 dd c0 00 dd d9 78
+:00b0 00 00 d9 7e d9 78 00 04 d9 7e d9 c9 d9 09 9a 52
 :00c0 8a f1 ca 00 c8 c0 00 d4 d9 12 00 01 d9 09 c0 00
 :00d0 dd c0 00 dd d9 12 00 00 d9 09 c0 00 dd d9 03 00
 ?auto_err 00e2
@@ -138,119 +148,126 @@
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff e8 c3 00 00 d9 12 00 02 d9 42 00 00 d9
+:0010 d9 03 ff e8 c3 00 00 d9 78 00 00 d9 12 00 02 d9
 :0020 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a 52 8a f1 c2
-/Cneg32 003b 00
-\Cneg32 003c
-:0030 00 59 d9 78 ff f6 d9 42 00 00 d4 00 00 d9 03 00
-?auto_err 0042
-:0040 02 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 12 00 01
-:0050 d9 39 ff ea d9 09 c0 00 93 d9 78 ff f6 d9 12 00
-:0060 02 d9 84 d9 12 00 02 d9 42 00 00 d9 84 d9 7e d9
-:0070 81 d9 09 d9 63 d9 09 d9 78 ff f6 d9 42 00 00 d9
-:0080 7e d9 81 d9 09 d9 63 d9 09 d9 12 00 00 d9 39 ff
-:0090 ea d9 09 d9 12 00 02 d9 42 00 02 d9 84 d9 7e d9
-:00a0 12 80 00 d9 a2 d9 09 9a 52 8a f1 c2 00 d5 d9 78
-/Cneg32 00b7 00
-\Cneg32 00b8
-?auto_err 00be
-:00b0 ff f2 d9 42 00 02 d4 00 00 d9 03 00 02 c3 00 00
-:00c0 d9 0c d9 de 00 04 d9 09 d9 12 00 01 d9 39 ff e8
-:00d0 d9 09 c0 01 0f d9 78 ff f2 d9 12 00 02 d9 84 d9
-:00e0 12 00 02 d9 42 00 02 d9 84 d9 7e d9 81 d9 09 d9
-:00f0 63 d9 09 d9 78 ff f2 d9 42 00 02 d9 7e d9 81 d9
-:0100 09 d9 63 d9 09 d9 12 00 00 d9 39 ff e8 d9 09 d9
-:0110 78 ff ee d9 12 00 02 d9 84 d9 12 00 00 d9 81 d9
-:0120 09 d9 63 d9 09 d9 78 ff ee d9 12 00 00 d9 81 d9
-:0130 09 d9 63 d9 09 d9 78 ff f2 d9 12 00 02 d9 84 d9
-:0140 7e d9 12 00 00 d9 b7 d9 0f 9a 52 8a f1 c2 01 5e
-:0150 d9 09 d9 78 ff f2 d9 7e d9 12 00 00 d9 b7 d9 09
-:0160 9a 52 8a f1 c2 01 b6 d9 12 00 00 d9 42 00 04 d9
-:0170 c6 d9 09 9a 52 8a f1 ca 01 7d c0 01 ad d9 12 00
-:0180 02 d9 42 00 04 d9 84 d9 12 00 02 d9 42 00 00 d9
-:0190 84 d9 7e d9 81 d9 09 d9 63 d9 09 d9 42 00 04 d9
-:01a0 42 00 00 d9 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:01b0 f2 d9 09 c0 04 56 d9 12 00 00 d9 3c ff ec d9 09
-:01c0 d9 42 ff ec d9 12 00 20 d9 c0 d9 09 9a 52 8a f1
-:01d0 ca 01 d6 c0 03 b0 c0 01 e6 d9 42 ff ec d9 4e ff
-:01e0 ec d9 09 c0 01 c0 d9 78 ff ee d9 12 00 02 d9 84
-:01f0 d9 78 ff ee d9 12 00 02 d9 84 d9 7e d9 12 00 01
-:0200 d9 b1 d9 78 ff ee d9 7e d9 12 00 0f d9 b4 d9 a5
-:0210 d9 81 d9 09 d9 63 d9 09 d9 78 ff ee d9 78 ff ee
-:0220 d9 7e d9 12 00 01 d9 b1 d9 78 ff f6 d9 12 00 02
-:0230 d9 84 d9 7e d9 12 00 0f d9 b4 d9 a5 d9 81 d9 09
-:0240 d9 63 d9 09 d9 78 ff f6 d9 12 00 02 d9 84 d9 78
-:0250 ff f6 d9 12 00 02 d9 84 d9 7e d9 12 00 01 d9 b1
-:0260 d9 78 ff f6 d9 7e d9 12 00 0f d9 b4 d9 a5 d9 81
-:0270 d9 09 d9 63 d9 09 d9 78 ff f6 d9 78 ff f6 d9 7e
-:0280 d9 12 00 01 d9 b1 d9 81 d9 09 d9 63 d9 09 d9 12
-:0290 00 00 d9 39 ff e6 d9 09 d9 78 ff ee d9 12 00 02
-:02a0 d9 84 d9 7e d9 78 ff f2 d9 12 00 02 d9 84 d9 7e
-:02b0 d9 c9 d9 09 9a 52 8a f1 ca 02 be c0 02 cb d9 12
-:02c0 00 01 d9 39 ff e6 d9 09 c0 03 15 d9 78 ff ee d9
-:02d0 12 00 02 d9 84 d9 7e d9 78 ff f2 d9 12 00 02 d9
-:02e0 84 d9 7e d9 b7 d9 09 9a 52 8a f1 ca 02 f1 c0 03
-:02f0 15 d9 78 ff ee d9 7e d9 78 ff f2 d9 7e d9 cc d9
-:0300 09 9a 52 8a f1 ca 03 0b c0 03 15 d9 12 00 01 d9
-:0310 39 ff e6 d9 09 d9 3f ff e6 00 d9 09 9a 52 8a f1
-:0320 c2 03 ad d9 78 ff ee d9 7e d9 78 ff f2 d9 7e d9
-:0330 cf d9 09 9a 52 8a f1 ca 03 3d c0 03 4f d9 78 ff
-:0340 ee d9 12 00 02 d9 84 d9 5d d9 7e d9 6f d9 09 d9
-:0350 78 ff ee d9 78 ff ee d9 7e d9 78 ff f2 d9 7e d9
-:0360 87 d9 81 d9 09 d9 63 d9 09 d9 78 ff ee d9 12 00
-:0370 02 d9 84 d9 78 ff ee d9 12 00 02 d9 84 d9 7e d9
-:0380 78 ff f2 d9 12 00 02 d9 84 d9 7e d9 87 d9 81 d9
-:0390 09 d9 63 d9 09 d9 78 ff f6 d9 78 ff f6 d9 7e d9
-:03a0 12 00 01 d9 a5 d9 81 d9 09 d9 63 d9 09 c0 01 d9
-:03b0 d9 3f ff e8 00 d9 3f ff ea 00 d9 c6 d9 09 9a 52
-:03c0 8a f1 ca 03 c8 c0 03 e2 d9 78 ff f6 d9 78 ff f6
-/Cneg32 03d1 00
-\Cneg32 03d2
-?auto_err 03d8
-:03d0 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9 de 00 04
-:03e0 d9 09 d9 12 00 00 d9 42 00 04 d9 c6 d9 09 9a 52
-:03f0 8a f1 ca 03 f8 c0 04 50 d9 3f ff ea 00 d9 09 9a
-/Cneg32 040f 00
-:0400 52 8a f1 c2 04 20 d9 78 ff ee d9 78 ff ee d4 00
-\Cneg32 0410
-?auto_err 0416
-:0410 00 d9 03 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09
-:0420 d9 12 00 02 d9 42 00 04 d9 84 d9 78 ff ee d9 12
-:0430 00 02 d9 84 d9 7e d9 81 d9 09 d9 63 d9 09 d9 42
-:0440 00 04 d9 78 ff ee d9 7e d9 81 d9 09 d9 63 d9 09
-?auto_err 045b
-:0450 d9 78 ff f6 d9 09 d9 03 00 1a c3 00 00 e2 d9 06
-?stk_err 0461
-:0460 c3 00 00 60 72 ab f0 bb d5
+:0030 00 64 d9 78 ff f6 d9 12 00 00 d9 78 00 00 d9 e4
+?auto_err 0043
+/Cneg32 0046 00
+\Cneg32 0047
+?auto_err 004d
+:0040 00 04 c3 00 00 d4 00 00 d9 03 00 06 c3 00 00 d9
+:0050 0c d9 de 00 04 d9 09 d9 12 00 01 d9 39 ff ea d9
+:0060 09 c0 00 9e d9 78 ff f6 d9 12 00 02 d9 84 d9 78
+:0070 00 00 d9 12 00 02 d9 84 d9 7e d9 81 d9 09 d9 63
+:0080 d9 09 d9 78 ff f6 d9 78 00 00 d9 7e d9 81 d9 09
+:0090 d9 63 d9 09 d9 12 00 00 d9 39 ff ea d9 09 d9 78
+:00a0 00 04 d9 12 00 02 d9 84 d9 7e d9 12 80 00 d9 a2
+:00b0 d9 09 9a 52 8a f1 c2 00 eb d9 78 ff f2 d9 12 00
+?auto_err 00ca
+/Cneg32 00cd 00
+\Cneg32 00ce
+:00c0 00 d9 78 00 04 d9 e4 00 04 c3 00 00 d4 00 00 d9
+?auto_err 00d4
+:00d0 03 00 06 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 12
+:00e0 00 01 d9 39 ff e8 d9 09 c0 01 25 d9 78 ff f2 d9
+:00f0 12 00 02 d9 84 d9 78 00 04 d9 12 00 02 d9 84 d9
+:0100 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff f2 d9 78 00
+:0110 04 d9 7e d9 81 d9 09 d9 63 d9 09 d9 12 00 00 d9
+:0120 39 ff e8 d9 09 d9 78 ff ee d9 12 00 02 d9 84 d9
+:0130 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff ee d9
+:0140 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff f2 d9
+:0150 12 00 02 d9 84 d9 7e d9 12 00 00 d9 b7 d9 0f 9a
+:0160 52 8a f1 c2 01 74 d9 09 d9 78 ff f2 d9 7e d9 12
+:0170 00 00 d9 b7 d9 09 9a 52 8a f1 c2 01 cc d9 12 00
+:0180 00 d9 42 00 08 d9 c6 d9 09 9a 52 8a f1 ca 01 93
+:0190 c0 01 c3 d9 12 00 02 d9 42 00 08 d9 84 d9 78 00
+:01a0 00 d9 12 00 02 d9 84 d9 7e d9 81 d9 09 d9 63 d9
+:01b0 09 d9 42 00 08 d9 78 00 00 d9 7e d9 81 d9 09 d9
+:01c0 63 d9 09 d9 78 ff f2 d9 09 c0 04 82 d9 12 00 00
+:01d0 d9 3c ff ec d9 09 d9 42 ff ec d9 12 00 20 d9 c0
+:01e0 d9 09 9a 52 8a f1 ca 01 ec c0 03 c6 c0 01 fc d9
+:01f0 42 ff ec d9 4e ff ec d9 09 c0 01 d6 d9 78 ff ee
+:0200 d9 12 00 02 d9 84 d9 78 ff ee d9 12 00 02 d9 84
+:0210 d9 7e d9 12 00 01 d9 b1 d9 78 ff ee d9 7e d9 12
+:0220 00 0f d9 b4 d9 a5 d9 81 d9 09 d9 63 d9 09 d9 78
+:0230 ff ee d9 78 ff ee d9 7e d9 12 00 01 d9 b1 d9 78
+:0240 ff f6 d9 12 00 02 d9 84 d9 7e d9 12 00 0f d9 b4
+:0250 d9 a5 d9 81 d9 09 d9 63 d9 09 d9 78 ff f6 d9 12
+:0260 00 02 d9 84 d9 78 ff f6 d9 12 00 02 d9 84 d9 7e
+:0270 d9 12 00 01 d9 b1 d9 78 ff f6 d9 7e d9 12 00 0f
+:0280 d9 b4 d9 a5 d9 81 d9 09 d9 63 d9 09 d9 78 ff f6
+:0290 d9 78 ff f6 d9 7e d9 12 00 01 d9 b1 d9 81 d9 09
+:02a0 d9 63 d9 09 d9 12 00 00 d9 39 ff e6 d9 09 d9 78
+:02b0 ff ee d9 12 00 02 d9 84 d9 7e d9 78 ff f2 d9 12
+:02c0 00 02 d9 84 d9 7e d9 c9 d9 09 9a 52 8a f1 ca 02
+:02d0 d4 c0 02 e1 d9 12 00 01 d9 39 ff e6 d9 09 c0 03
+:02e0 2b d9 78 ff ee d9 12 00 02 d9 84 d9 7e d9 78 ff
+:02f0 f2 d9 12 00 02 d9 84 d9 7e d9 b7 d9 09 9a 52 8a
+:0300 f1 ca 03 07 c0 03 2b d9 78 ff ee d9 7e d9 78 ff
+:0310 f2 d9 7e d9 cc d9 09 9a 52 8a f1 ca 03 21 c0 03
+:0320 2b d9 12 00 01 d9 39 ff e6 d9 09 d9 3f ff e6 00
+:0330 d9 09 9a 52 8a f1 c2 03 c3 d9 78 ff ee d9 7e d9
+:0340 78 ff f2 d9 7e d9 cf d9 09 9a 52 8a f1 ca 03 53
+:0350 c0 03 65 d9 78 ff ee d9 12 00 02 d9 84 d9 5d d9
+:0360 7e d9 6f d9 09 d9 78 ff ee d9 78 ff ee d9 7e d9
+:0370 78 ff f2 d9 7e d9 87 d9 81 d9 09 d9 63 d9 09 d9
+:0380 78 ff ee d9 12 00 02 d9 84 d9 78 ff ee d9 12 00
+:0390 02 d9 84 d9 7e d9 78 ff f2 d9 12 00 02 d9 84 d9
+:03a0 7e d9 87 d9 81 d9 09 d9 63 d9 09 d9 78 ff f6 d9
+:03b0 78 ff f6 d9 7e d9 12 00 01 d9 a5 d9 81 d9 09 d9
+:03c0 63 d9 09 c0 01 ef d9 3f ff e8 00 d9 3f ff ea 00
+:03d0 d9 c6 d9 09 9a 52 8a f1 ca 03 de c0 04 03 d9 78
+?auto_err 03ef
+:03e0 ff f6 d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3 00
+/Cneg32 03f2 00
+\Cneg32 03f3
+?auto_err 03f9
+:03f0 00 d4 00 00 d9 03 00 06 c3 00 00 d9 0c d9 de 00
+:0400 04 d9 09 d9 12 00 00 d9 42 00 08 d9 c6 d9 09 9a
+:0410 52 8a f1 ca 04 19 c0 04 7c d9 3f ff ea 00 d9 09
+:0420 9a 52 8a f1 c2 04 4c d9 78 ff ee d9 12 00 00 d9
+?auto_err 0438
+/Cneg32 043b 00
+\Cneg32 043c
+:0430 78 ff ee d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00
+?auto_err 0442
+:0440 06 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 12 00 02
+:0450 d9 42 00 08 d9 84 d9 78 ff ee d9 12 00 02 d9 84
+:0460 d9 7e d9 81 d9 09 d9 63 d9 09 d9 42 00 08 d9 78
+:0470 ff ee d9 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff f6
+?auto_err 0487
+?stk_err 048d
+:0480 d9 09 d9 03 00 1a c3 00 00 e2 d9 06 c3 00 00 60
+:0490 72 ab f0 bb d5
 +0030
-+0057
-+00ac
-+00d3
-+014e
-+0165
-+0178
++0062
++00b7
++00e9
++0164
 +017b
-+01b4
-+01d1
-+01d4
-+01d7
-+01e4
-+02b9
-+02bc
-+02c9
-+02ec
-+02ef
-+0306
-+0309
-+0321
-+0338
-+033b
-+03ae
-+03c3
-+03c6
-+03f3
-+03f6
-+0404
++018e
++0191
++01ca
++01e7
++01ea
++01ed
++01fa
++02cf
++02d2
++02df
++0302
++0305
++031c
++031f
++0337
++034e
++0351
++03c4
++03d9
++03dc
++0414
++0417
++0425
 }
 .big
 {Citoa32
@@ -263,128 +280,141 @@
 :0040 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff e6 d9 12 00
 :0050 0a d9 81 d9 09 d9 63 d9 09 d9 78 ff e6 d9 12 00
 :0060 02 d9 84 d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9
-:0070 12 00 02 d9 42 00 00 d9 84 d9 7e d9 12 80 00 d9
-:0080 a2 d9 09 9a 52 8a f1 c2 00 ae d9 12 00 01 d9 3c
-/Cneg32 009d 00
-\Cneg32 009e
-:0090 ff ee d9 09 d9 42 00 00 d9 42 00 00 d4 00 00 d9
-?auto_err 00a4
-:00a0 03 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 42
-:00b0 00 00 d9 7e d9 12 00 00 d9 b7 d9 0f 9a 52 8a f1
-:00c0 c2 00 d7 d9 09 d9 12 00 02 d9 42 00 00 d9 84 d9
-:00d0 7e d9 12 00 00 d9 b7 d9 09 9a 52 8a f1 c2 01 0f
-:00e0 d9 42 00 02 d9 12 00 30 d9 81 d9 09 d9 60 d9 09
-:00f0 d9 12 00 01 d9 42 00 02 d9 84 d9 12 00 00 d9 81
-:0100 d9 09 d9 60 d9 09 d9 42 00 02 d9 09 c0 02 0b d9
-:0110 42 00 00 d9 7e d9 12 00 00 d9 c6 d9 0f 9a 52 8a
-:0120 f1 ca 01 38 d9 09 d9 12 00 02 d9 42 00 00 d9 84
-:0130 d9 7e d9 12 00 00 d9 c6 d9 09 9a 52 8a f1 c2 01
-:0140 88 d9 42 00 00 d9 78 ff e2 d9 78 ff e6 d9 42 00
-/Cdiv32 0152 00
-\Cdiv32 0153
-?auto_err 0159
-:0150 00 d4 00 00 d9 03 00 06 c3 00 00 d9 0c d9 de 00
-:0160 04 d9 09 d9 78 ff f4 d9 42 ff f2 d9 4e ff f2 d9
-:0170 84 d9 78 ff e2 d9 7e d9 12 00 30 d9 84 d9 81 d9
-:0180 09 d9 60 d9 09 c0 01 0f d9 42 ff ee d9 09 9a 52
-:0190 8a f1 c2 01 af d9 78 ff f4 d9 42 ff f2 d9 4e ff
-:01a0 f2 d9 84 d9 12 00 2d d9 81 d9 09 d9 60 d9 09 d9
-:01b0 42 ff f2 d9 12 00 00 d9 ba d9 09 9a 52 8a f1 ca
-:01c0 01 c5 c0 01 ef d9 42 ff f0 d9 4e ff f0 d9 42 00
-:01d0 02 d9 84 d9 78 ff f4 d9 54 ff f2 d9 42 ff f2 d9
-:01e0 84 d9 7b 00 d9 81 d9 09 d9 60 d9 09 c0 01 af d9
-:01f0 42 ff f0 d9 42 00 02 d9 84 d9 12 00 00 d9 81 d9
-:0200 09 d9 60 d9 09 d9 42 00 02 d9 09 d9 03 00 1e c3
-?auto_err 0210
-?stk_err 0216
-:0210 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
+:0070 78 00 00 d9 12 00 02 d9 84 d9 7e d9 12 80 00 d9
+:0080 a2 d9 09 9a 52 8a f1 c2 00 b9 d9 12 00 01 d9 3c
+:0090 ff ee d9 09 d9 78 00 00 d9 12 00 00 d9 78 00 00
+?auto_err 00a5
+/Cneg32 00a8 00
+\Cneg32 00a9
+?auto_err 00af
+:00a0 d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 06 c3 00
+:00b0 00 d9 0c d9 de 00 04 d9 09 d9 78 00 00 d9 7e d9
+:00c0 12 00 00 d9 b7 d9 0f 9a 52 8a f1 c2 00 e2 d9 09
+:00d0 d9 78 00 00 d9 12 00 02 d9 84 d9 7e d9 12 00 00
+:00e0 d9 b7 d9 09 9a 52 8a f1 c2 01 1a d9 42 00 04 d9
+:00f0 12 00 30 d9 81 d9 09 d9 60 d9 09 d9 12 00 01 d9
+:0100 42 00 04 d9 84 d9 12 00 00 d9 81 d9 09 d9 60 d9
+:0110 09 d9 42 00 04 d9 09 c0 02 24 d9 78 00 00 d9 7e
+:0120 d9 12 00 00 d9 c6 d9 0f 9a 52 8a f1 ca 01 43 d9
+:0130 09 d9 78 00 00 d9 12 00 02 d9 84 d9 7e d9 12 00
+:0140 00 d9 c6 d9 09 9a 52 8a f1 c2 01 a1 d9 78 00 00
+?auto_err 015d
+:0150 d9 78 ff e2 d9 78 ff e6 d9 e4 00 04 c3 00 00 d9
+?auto_err 0168
+/Cdiv32 016b 00
+\Cdiv32 016c
+:0160 78 00 00 d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00
+?auto_err 0172
+:0170 0a c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff f4
+:0180 d9 42 ff f2 d9 4e ff f2 d9 84 d9 78 ff e2 d9 7e
+:0190 d9 12 00 30 d9 84 d9 81 d9 09 d9 60 d9 09 c0 01
+:01a0 1a d9 42 ff ee d9 09 9a 52 8a f1 c2 01 c8 d9 78
+:01b0 ff f4 d9 42 ff f2 d9 4e ff f2 d9 84 d9 12 00 2d
+:01c0 d9 81 d9 09 d9 60 d9 09 d9 42 ff f2 d9 12 00 00
+:01d0 d9 ba d9 09 9a 52 8a f1 ca 01 de c0 02 08 d9 42
+:01e0 ff f0 d9 4e ff f0 d9 42 00 04 d9 84 d9 78 ff f4
+:01f0 d9 54 ff f2 d9 42 ff f2 d9 84 d9 7b 00 d9 81 d9
+:0200 09 d9 60 d9 09 c0 01 c8 d9 42 ff f0 d9 42 00 04
+:0210 d9 84 d9 12 00 00 d9 81 d9 09 d9 60 d9 09 d9 42
+?auto_err 0229
+?stk_err 022f
+:0220 00 04 d9 09 d9 03 00 1e c3 00 00 e2 d9 06 c3 00
+:0230 00 60 72 ab f0 bb d5
 +0088
-+00c1
-+00de
-+010d
-+0122
-+013f
-+0186
-+0193
-+01c0
-+01c3
-+01ed
++00cc
++00e9
++0118
++012d
++014a
++019f
++01ac
++01d9
++01dc
++0206
 }
 .big
 {Cmul32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff f2 c3 00 00 d9 12 00 00 d9 12 00 02 d9
-:0020 42 00 00 d9 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a
-/Cneg32 003f 00
-:0030 52 8a f1 c2 00 60 d9 78 ff f6 d9 42 00 00 d4 00
-\Cneg32 0040
-?auto_err 0046
-:0040 00 d9 03 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09
-:0050 d9 3f ff ee 00 d9 ab d9 39 ff ee d9 09 c0 00 90
-:0060 d9 78 ff f6 d9 12 00 02 d9 84 d9 12 00 02 d9 42
-:0070 00 00 d9 84 d9 7e d9 81 d9 09 d9 63 d9 09 d9 78
-:0080 ff f6 d9 42 00 00 d9 7e d9 81 d9 09 d9 63 d9 09
-:0090 d9 12 00 02 d9 42 00 02 d9 84 d9 7e d9 12 80 00
-:00a0 d9 a2 d9 09 9a 52 8a f1 c2 00 d5 d9 78 ff f2 d9
-/Cneg32 00b4 00
-\Cneg32 00b5
-?auto_err 00bb
-:00b0 42 00 02 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9
-:00c0 de 00 04 d9 09 d9 3f ff ee 00 d9 ab d9 39 ff ee
-:00d0 d9 09 c0 01 05 d9 78 ff f2 d9 12 00 02 d9 84 d9
-:00e0 12 00 02 d9 42 00 02 d9 84 d9 7e d9 81 d9 09 d9
-:00f0 63 d9 09 d9 78 ff f2 d9 42 00 02 d9 7e d9 81 d9
-:0100 09 d9 63 d9 09 d9 78 ff fa d9 12 00 02 d9 84 d9
-:0110 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
-:0120 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 12 00 00 d9
-:0130 3c ff f0 d9 09 d9 42 ff f0 d9 12 00 20 d9 c0 d9
-:0140 09 9a 52 8a f1 ca 01 4b c0 02 75 c0 01 5b d9 42
-:0150 ff f0 d9 4e ff f0 d9 09 c0 01 35 d9 78 ff f6 d9
-:0160 7e d9 12 00 01 d9 a2 d9 09 9a 52 8a f1 c2 01 8e
-/Cadd32 017d 00
-\Cadd32 017e
-:0170 d9 78 ff fa d9 78 ff f2 d9 78 ff fa d4 00 00 d9
-?auto_err 0184
-:0180 03 00 04 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78
-:0190 ff f6 d9 78 ff f6 d9 7e d9 12 00 01 d9 b4 d9 81
-:01a0 d9 09 d9 63 d9 09 d9 78 ff f6 d9 12 00 02 d9 84
-:01b0 d9 7e d9 12 00 01 d9 a2 d9 09 9a 52 8a f1 c2 01
-:01c0 d9 d9 78 ff f6 d9 78 ff f6 d9 7e d9 12 80 00 d9
-:01d0 a5 d9 81 d9 09 d9 63 d9 09 d9 78 ff f6 d9 12 00
-:01e0 02 d9 84 d9 78 ff f6 d9 12 00 02 d9 84 d9 7e d9
-:01f0 12 00 01 d9 b4 d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:0200 f2 d9 12 00 02 d9 84 d9 78 ff f2 d9 12 00 02 d9
-:0210 84 d9 7e d9 12 00 01 d9 b1 d9 81 d9 09 d9 63 d9
-:0220 09 d9 78 ff f2 d9 7e d9 12 80 00 d9 a2 d9 09 9a
-:0230 52 8a f1 c2 02 5a d9 78 ff f2 d9 12 00 02 d9 84
-:0240 d9 78 ff f2 d9 12 00 02 d9 84 d9 7e d9 12 00 01
-:0250 d9 a5 d9 81 d9 09 d9 63 d9 09 d9 78 ff f2 d9 78
-:0260 ff f2 d9 7e d9 12 00 01 d9 b1 d9 81 d9 09 d9 63
-:0270 d9 09 c0 01 4e d9 3f ff ee 00 d9 09 9a 52 8a f1
-/Cneg32 028c 00
-\Cneg32 028d
-:0280 c2 02 9d d9 78 ff fa d9 78 ff fa d4 00 00 d9 03
-?auto_err 0293
-:0290 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff
-?auto_err 02a8
-?stk_err 02ae
-:02a0 fa d9 09 d9 03 00 12 c3 00 00 e2 d9 06 c3 00 00
-:02b0 60 72 ab f0 bb d5
+:0010 d9 03 ff f2 c3 00 00 d9 12 00 00 d9 78 00 00 d9
+:0020 12 00 02 d9 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a
+:0030 52 8a f1 c2 00 6b d9 78 ff f6 d9 12 00 00 d9 78
+?auto_err 0047
+/Cneg32 004a 00
+\Cneg32 004b
+:0040 00 00 d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 06
+?auto_err 0051
+:0050 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 3f ff ee 00
+:0060 d9 ab d9 39 ff ee d9 09 c0 00 9b d9 78 ff f6 d9
+:0070 12 00 02 d9 84 d9 78 00 00 d9 12 00 02 d9 84 d9
+:0080 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff f6 d9 78 00
+:0090 00 d9 7e d9 81 d9 09 d9 63 d9 09 d9 78 00 04 d9
+:00a0 12 00 02 d9 84 d9 7e d9 12 80 00 d9 a2 d9 09 9a
+:00b0 52 8a f1 c2 00 eb d9 78 ff f2 d9 12 00 00 d9 78
+?auto_err 00c7
+/Cneg32 00ca 00
+\Cneg32 00cb
+:00c0 00 04 d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 06
+?auto_err 00d1
+:00d0 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 3f ff ee 00
+:00e0 d9 ab d9 39 ff ee d9 09 c0 01 1b d9 78 ff f2 d9
+:00f0 12 00 02 d9 84 d9 78 00 04 d9 12 00 02 d9 84 d9
+:0100 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff f2 d9 78 00
+:0110 04 d9 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
+:0120 12 00 02 d9 84 d9 12 00 00 d9 81 d9 09 d9 63 d9
+:0130 09 d9 78 ff fa d9 12 00 00 d9 81 d9 09 d9 63 d9
+:0140 09 d9 12 00 00 d9 3c ff f0 d9 09 d9 42 ff f0 d9
+:0150 12 00 20 d9 c0 d9 09 9a 52 8a f1 ca 01 61 c0 02
+:0160 9d c0 01 71 d9 42 ff f0 d9 4e ff f0 d9 09 c0 01
+:0170 4b d9 78 ff f6 d9 7e d9 12 00 01 d9 a2 d9 09 9a
+:0180 52 8a f1 c2 01 b6 d9 78 ff fa d9 12 00 00 d9 78
+?auto_err 0197
+:0190 ff f2 d9 e4 00 04 c3 00 00 d9 78 ff fa d9 e4 00
+?auto_err 01a2
+/Cadd32 01a5 00
+\Cadd32 01a6
+?auto_err 01ac
+:01a0 04 c3 00 00 d4 00 00 d9 03 00 0a c3 00 00 d9 0c
+:01b0 d9 de 00 04 d9 09 d9 78 ff f6 d9 78 ff f6 d9 7e
+:01c0 d9 12 00 01 d9 b4 d9 81 d9 09 d9 63 d9 09 d9 78
+:01d0 ff f6 d9 12 00 02 d9 84 d9 7e d9 12 00 01 d9 a2
+:01e0 d9 09 9a 52 8a f1 c2 02 01 d9 78 ff f6 d9 78 ff
+:01f0 f6 d9 7e d9 12 80 00 d9 a5 d9 81 d9 09 d9 63 d9
+:0200 09 d9 78 ff f6 d9 12 00 02 d9 84 d9 78 ff f6 d9
+:0210 12 00 02 d9 84 d9 7e d9 12 00 01 d9 b4 d9 81 d9
+:0220 09 d9 63 d9 09 d9 78 ff f2 d9 12 00 02 d9 84 d9
+:0230 78 ff f2 d9 12 00 02 d9 84 d9 7e d9 12 00 01 d9
+:0240 b1 d9 81 d9 09 d9 63 d9 09 d9 78 ff f2 d9 7e d9
+:0250 12 80 00 d9 a2 d9 09 9a 52 8a f1 c2 02 82 d9 78
+:0260 ff f2 d9 12 00 02 d9 84 d9 78 ff f2 d9 12 00 02
+:0270 d9 84 d9 7e d9 12 00 01 d9 a5 d9 81 d9 09 d9 63
+:0280 d9 09 d9 78 ff f2 d9 78 ff f2 d9 7e d9 12 00 01
+:0290 d9 b1 d9 81 d9 09 d9 63 d9 09 c0 01 64 d9 3f ff
+:02a0 ee 00 d9 09 9a 52 8a f1 c2 02 d0 d9 78 ff fa d9
+?auto_err 02bc
+/Cneg32 02bf 00
+:02b0 12 00 00 d9 78 ff fa d9 e4 00 04 c3 00 00 d4 00
+\Cneg32 02c0
+?auto_err 02c6
+:02c0 00 d9 03 00 06 c3 00 00 d9 0c d9 de 00 04 d9 09
+?auto_err 02db
+:02d0 d9 78 ff fa d9 09 d9 03 00 12 c3 00 00 e2 d9 06
+?stk_err 02e1
+:02e0 c3 00 00 60 72 ab f0 bb d5
 +0034
-+005e
-+00a9
-+00d3
-+0146
-+0149
-+014c
-+0159
-+016e
-+01bf
-+0234
-+0273
-+0281
++0069
++00b4
++00e9
++015c
++015f
++0162
++016f
++0184
++01e7
++025c
++029b
++02a9
 }
 .big
 {Cneg32
@@ -394,26 +424,29 @@
 :0010 d9 03 ff f8 c3 00 00 d9 78 ff f6 d9 12 00 02 d9
 :0020 84 d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff
 :0030 f6 d9 12 00 01 d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:0040 fa d9 12 00 02 d9 84 d9 12 00 02 d9 42 00 00 d9
+:0040 fa d9 12 00 02 d9 84 d9 78 00 00 d9 12 00 02 d9
 :0050 84 d9 7e d9 ae d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:0060 fa d9 42 00 00 d9 7e d9 ae d9 81 d9 09 d9 63 d9
-/Cadd32 007a 00
-\Cadd32 007b
-:0070 09 d9 78 ff f6 d9 78 ff fa d4 00 00 d9 03 00 04
-?auto_err 0081
-?auto_err 0088
-?stk_err 008e
-:0080 c3 00 00 d9 03 00 0a c3 00 00 e2 d9 06 c3 00 00
-:0090 60 72 ab f0 bb d5
+:0060 fa d9 78 00 00 d9 7e d9 ae d9 81 d9 09 d9 63 d9
+?auto_err 007e
+:0070 09 d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3 00 00
+?auto_err 0089
+/Cadd32 008c 00
+\Cadd32 008d
+:0080 d9 78 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03
+?auto_err 0093
+?auto_err 009a
+:0090 00 0a c3 00 00 d9 03 00 0a c3 00 00 e2 d9 06 c3
+?stk_err 00a0
+:00a0 00 00 60 72 ab f0 bb d5
 }
 .big
 {Cshl32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff fa c3 00 00 d9 78 ff fa d9 42 00 00 d9
+:0010 d9 03 ff fa c3 00 00 d9 78 ff fa d9 78 00 00 d9
 :0020 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 12 00
-:0030 02 d9 84 d9 12 00 02 d9 42 00 00 d9 84 d9 7e d9
+:0030 02 d9 84 d9 78 00 00 d9 12 00 02 d9 84 d9 7e d9
 :0040 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 12 00 02 d9
 :0050 84 d9 78 ff fa d9 12 00 02 d9 84 d9 7e d9 12 00
 :0060 01 d9 b1 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
@@ -433,9 +466,9 @@
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff fc c3 00 00 d9 78 ff fa d9 42 00 00 d9
+:0010 d9 03 ff fc c3 00 00 d9 78 ff fa d9 78 00 00 d9
 :0020 7e d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 12 00
-:0030 02 d9 84 d9 12 00 02 d9 42 00 00 d9 84 d9 7e d9
+:0030 02 d9 84 d9 78 00 00 d9 12 00 02 d9 84 d9 7e d9
 :0040 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 78 ff fa d9
 :0050 7e d9 12 00 01 d9 b4 d9 81 d9 09 d9 63 d9 09 d9
 :0060 78 ff fa d9 12 00 02 d9 84 d9 7e d9 12 00 01 d9
@@ -491,117 +524,149 @@
 :0210 d9 12 00 01 d9 81 d9 09 d9 63 d9 09 d9 78 ff f6
 :0220 d9 42 ff f2 d9 09 9a 52 8a f1 c2 02 34 d9 78 ff
 :0230 e4 c0 02 38 d9 78 ff e8 d9 de 00 04 d9 09 d9 78
-/Cdiv32 024b 00
-\Cdiv32 024c
-:0240 ff ec d9 78 ff e0 d9 78 ff f6 d4 00 00 d9 03 00
-?auto_err 0252
-:0250 06 c3 00 00 d9 78 ff f6 d9 12 00 00 d9 78 ff e0
-/Cdiv32 0265 00
-\Cdiv32 0266
-?auto_err 026c
-:0260 d9 78 ff f6 d4 00 00 d9 03 00 06 c3 00 00 d9 0c
-:0270 d9 de 00 04 d9 09 d9 42 ff f2 d9 09 9a 52 8a f1
-:0280 c2 02 fd d9 78 ff ec d9 12 00 02 d9 84 d9 7e d9
-:0290 12 80 00 d9 a2 d9 12 00 00 d9 b7 d9 09 9a 52 8a
-:02a0 f1 ca 02 a7 c0 02 e3 d9 78 ff ec d9 78 ff e0 d9
-/Csub32 02b4 00
-\Csub32 02b5
-?auto_err 02bb
-:02b0 78 ff ec d4 00 00 d9 03 00 04 c3 00 00 d9 0c d9
-:02c0 de 00 04 d9 09 d9 78 ff f6 d9 78 ff dc d9 78 ff
-/Cadd32 02d2 00
-\Cadd32 02d3
-?auto_err 02d9
-:02d0 f6 d4 00 00 d9 03 00 04 c3 00 00 d9 0c d9 de 00
-/Cneg32 02ec 00
-\Cneg32 02ed
-:02e0 04 d9 09 d9 78 ff ec d9 78 ff ec d4 00 00 d9 03
-?auto_err 02f3
-:02f0 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff
-:0300 fa d9 12 00 02 d9 84 d9 12 00 00 d9 81 d9 09 d9
-:0310 63 d9 09 d9 78 ff fa d9 12 00 00 d9 81 d9 09 d9
-:0320 63 d9 09 d9 12 00 00 d9 3c ff f0 d9 09 c0 03 44
-:0330 d9 42 ff fe d9 4e ff fe d9 7b 00 d9 3c ff f4 d9
-/Cisdigit 0349 00
-\Cisdigit 034a
-:0340 09 c0 03 2d d9 42 ff f4 d4 00 00 d9 03 00 02 c3
-?auto_err 0350
-:0350 00 00 d9 0c d9 09 9a 52 8a f1 c2 03 70 d9 42 ff
-:0360 f4 d9 12 00 30 d9 87 d9 3c ff f4 d9 09 c0 03 bf
-/Cisalpha 0375 00
-\Cisalpha 0376
-?auto_err 037c
-:0370 d9 42 ff f4 d4 00 00 d9 03 00 02 c3 00 00 d9 0c
-:0380 d9 09 9a 52 8a f1 c2 03 bc d9 42 ff f4 d9 42 ff
-/Cisupper 0392 00
-\Cisupper 0393
-?auto_err 0399
-:0390 f4 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9 09 9a
-:03a0 52 8a f1 c2 03 ad d9 12 00 37 c0 03 b1 d9 12 00
-:03b0 57 d9 87 d9 3c ff f4 d9 09 c0 03 bf c0 05 dc d9
-:03c0 42 ff f4 d9 42 00 04 d9 bd d9 09 9a 52 8a f1 ca
-:03d0 03 d5 c0 03 d8 c0 05 dc d9 42 ff f0 d9 12 00 00
-:03e0 d9 c0 d9 09 9a 52 8a f1 ca 03 ee c0 03 f1 c0 03
-:03f0 30 d9 42 ff f2 d9 09 9a 52 8a f1 c2 04 ed d9 78
-/Ccmp32 0407 00
-\Ccmp32 0408
-?auto_err 040e
-:0400 ff f6 d9 78 ff fa d4 00 00 d9 03 00 04 c3 00 00
-:0410 d9 0c d9 3c ff d6 d9 09 d9 42 ff d6 d9 12 00 00
-:0420 d9 c0 d9 0f 9a 52 8a f1 ca 04 50 d9 09 d9 12 00
-:0430 00 d9 42 ff d6 d9 b7 d9 0f 9a 52 8a f1 c2 04 4e
-:0440 d9 09 d9 42 ff f4 d9 78 ff ec d9 7e d9 c9 d9 99
-:0450 d9 09 9a 52 8a f1 c2 04 7e d9 12 ff ff d9 3c ff
-:0460 f0 d9 09 d9 78 ff fa d9 78 ff e4 d9 de 00 04 d9
-?Cerrno 0477
-:0470 09 d9 12 00 22 d9 21 00 00 d9 09 c0 04 ea d9 12
-:0480 00 01 d9 3c ff f0 d9 09 d9 78 ff fa d9 78 ff e0
-/Cmul32 0495 00
-\Cmul32 0496
-?auto_err 049c
-:0490 d9 78 ff fa d4 00 00 d9 03 00 04 c3 00 00 d9 0c
-:04a0 d9 de 00 04 d9 09 d9 78 ff d8 d9 12 00 02 d9 84
-:04b0 d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff d8
-:04c0 d9 42 ff f4 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa
-/Csub32 04d9 00
-\Csub32 04da
-:04d0 d9 78 ff d8 d9 78 ff fa d4 00 00 d9 03 00 04 c3
-?auto_err 04e0
-:04e0 00 00 d9 0c d9 de 00 04 d9 09 c0 05 d9 d9 78 ff
-/Ccmp32 04f6 00
-\Ccmp32 04f7
-?auto_err 04fd
-:04f0 f6 d9 78 ff fa d4 00 00 d9 03 00 04 c3 00 00 d9
-:0500 0c d9 3c ff d6 d9 09 d9 42 ff d6 d9 12 00 00 d9
-:0510 ba d9 0f 9a 52 8a f1 ca 05 3f d9 09 d9 12 00 00
-:0520 d9 42 ff d6 d9 b7 d9 0f 9a 52 8a f1 c2 05 3d d9
-:0530 09 d9 42 ff f4 d9 78 ff ec d9 7e d9 c9 d9 99 d9
-:0540 09 9a 52 8a f1 c2 05 6d d9 12 ff ff d9 3c ff f0
-:0550 d9 09 d9 78 ff fa d9 78 ff e8 d9 de 00 04 d9 09
-?Cerrno 0566
-:0560 d9 12 00 22 d9 21 00 00 d9 09 c0 05 d9 d9 12 00
-:0570 01 d9 3c ff f0 d9 09 d9 78 ff fa d9 78 ff e0 d9
-/Cmul32 0584 00
-\Cmul32 0585
-?auto_err 058b
-:0580 78 ff fa d4 00 00 d9 03 00 04 c3 00 00 d9 0c d9
-:0590 de 00 04 d9 09 d9 78 ff d8 d9 12 00 02 d9 84 d9
-:05a0 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff d8 d9
-:05b0 42 ff f4 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
-/Cadd32 05c8 00
-\Cadd32 05c9
-?auto_err 05cf
-:05c0 78 ff d8 d9 78 ff fa d4 00 00 d9 03 00 04 c3 00
-:05d0 00 d9 0c d9 de 00 04 d9 09 c0 03 30 d9 12 00 00
-:05e0 d9 42 00 02 d9 c6 d9 09 9a 52 8a f1 ca 05 f2 c0
-:05f0 06 28 d9 42 ff f0 d9 09 9a 52 8a f1 c2 06 18 d9
-:0600 42 00 02 d9 42 ff fe d9 12 00 01 d9 87 d9 81 d9
-:0610 09 d9 63 d9 09 c0 06 28 d9 42 00 02 d9 42 00 00
-:0620 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 09 d9 03
-?auto_err 0633
-?stk_err 0639
-:0630 00 2a c3 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb
-:0640 d5
+?auto_err 024b
+:0240 ff ec d9 78 ff e0 d9 e4 00 04 c3 00 00 d9 78 ff
+?auto_err 0256
+/Cdiv32 0259 00
+\Cdiv32 025a
+:0250 f6 d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 0a c3
+?auto_err 0260
+:0260 00 00 d9 78 ff f6 d9 12 00 00 d9 78 ff e0 d9 e4
+?auto_err 0273
+?auto_err 027e
+:0270 00 04 c3 00 00 d9 78 ff f6 d9 e4 00 04 c3 00 00
+/Cdiv32 0281 00
+\Cdiv32 0282
+?auto_err 0288
+:0280 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9 de 00 04
+:0290 d9 09 d9 42 ff f2 d9 09 9a 52 8a f1 c2 03 48 d9
+:02a0 78 ff ec d9 12 00 02 d9 84 d9 7e d9 12 80 00 d9
+:02b0 a2 d9 12 00 00 d9 b7 d9 09 9a 52 8a f1 ca 02 c3
+:02c0 c0 03 23 d9 78 ff ec d9 12 00 00 d9 78 ff e0 d9
+?auto_err 02d4
+?auto_err 02df
+:02d0 e4 00 04 c3 00 00 d9 78 ff ec d9 e4 00 04 c3 00
+/Csub32 02e2 00
+\Csub32 02e3
+?auto_err 02e9
+:02e0 00 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9 de 00
+:02f0 04 d9 09 d9 78 ff f6 d9 12 00 00 d9 78 ff dc d9
+?auto_err 0304
+?auto_err 030f
+:0300 e4 00 04 c3 00 00 d9 78 ff f6 d9 e4 00 04 c3 00
+/Cadd32 0312 00
+\Cadd32 0313
+?auto_err 0319
+:0310 00 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9 de 00
+:0320 04 d9 09 d9 78 ff ec d9 12 00 00 d9 78 ff ec d9
+?auto_err 0334
+/Cneg32 0337 00
+\Cneg32 0338
+?auto_err 033e
+:0330 e4 00 04 c3 00 00 d4 00 00 d9 03 00 06 c3 00 00
+:0340 d9 0c d9 de 00 04 d9 09 d9 78 ff fa d9 12 00 02
+:0350 d9 84 d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78
+:0360 ff fa d9 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 12
+:0370 00 00 d9 3c ff f0 d9 09 c0 03 8f d9 42 ff fe d9
+:0380 4e ff fe d9 7b 00 d9 3c ff f4 d9 09 c0 03 78 d9
+/Cisdigit 0394 00
+\Cisdigit 0395
+?auto_err 039b
+:0390 42 ff f4 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9
+:03a0 09 9a 52 8a f1 c2 03 bb d9 42 ff f4 d9 12 00 30
+:03b0 d9 87 d9 3c ff f4 d9 09 c0 04 0a d9 42 ff f4 d4
+/Cisalpha 03c0 00
+\Cisalpha 03c1
+?auto_err 03c7
+:03c0 00 00 d9 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a
+/Cisupper 03dd 00
+\Cisupper 03de
+:03d0 f1 c2 04 07 d9 42 ff f4 d9 42 ff f4 d4 00 00 d9
+?auto_err 03e4
+:03e0 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a f1 c2 03
+:03f0 f8 d9 12 00 37 c0 03 fc d9 12 00 57 d9 87 d9 3c
+:0400 ff f4 d9 09 c0 04 0a c0 06 93 d9 42 ff f4 d9 42
+:0410 00 04 d9 bd d9 09 9a 52 8a f1 ca 04 20 c0 04 23
+:0420 c0 06 93 d9 42 ff f0 d9 12 00 00 d9 c0 d9 09 9a
+:0430 52 8a f1 ca 04 39 c0 04 3c c0 03 7b d9 42 ff f2
+:0440 d9 09 9a 52 8a f1 c2 05 6e d9 12 00 00 d9 78 ff
+?auto_err 0456
+:0450 f6 d9 e4 00 04 c3 00 00 d9 78 ff fa d9 e4 00 04
+?auto_err 0461
+/Ccmp32 0464 00
+\Ccmp32 0465
+?auto_err 046b
+:0460 c3 00 00 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9
+:0470 3c ff d6 d9 09 d9 42 ff d6 d9 12 00 00 d9 c0 d9
+:0480 0f 9a 52 8a f1 ca 04 ad d9 09 d9 12 00 00 d9 42
+:0490 ff d6 d9 b7 d9 0f 9a 52 8a f1 c2 04 ab d9 09 d9
+:04a0 42 ff f4 d9 78 ff ec d9 7e d9 c9 d9 99 d9 09 9a
+:04b0 52 8a f1 c2 04 db d9 12 ff ff d9 3c ff f0 d9 09
+:04c0 d9 78 ff fa d9 78 ff e4 d9 de 00 04 d9 09 d9 12
+?Cerrno 04d4
+:04d0 00 22 d9 21 00 00 d9 09 c0 05 6b d9 12 00 01 d9
+:04e0 3c ff f0 d9 09 d9 78 ff fa d9 12 00 00 d9 78 ff
+?auto_err 04f6
+:04f0 e0 d9 e4 00 04 c3 00 00 d9 78 ff fa d9 e4 00 04
+?auto_err 0501
+/Cmul32 0504 00
+\Cmul32 0505
+?auto_err 050b
+:0500 c3 00 00 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9
+:0510 de 00 04 d9 09 d9 78 ff d8 d9 12 00 02 d9 84 d9
+:0520 12 00 00 d9 81 d9 09 d9 63 d9 09 d9 78 ff d8 d9
+:0530 42 ff f4 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9
+?auto_err 054c
+:0540 12 00 00 d9 78 ff d8 d9 e4 00 04 c3 00 00 d9 78
+?auto_err 0557
+/Csub32 055a 00
+\Csub32 055b
+:0550 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 0a
+?auto_err 0561
+:0560 c3 00 00 d9 0c d9 de 00 04 d9 09 c0 06 90 d9 12
+?auto_err 057b
+:0570 00 00 d9 78 ff f6 d9 e4 00 04 c3 00 00 d9 78 ff
+?auto_err 0586
+/Ccmp32 0589 00
+\Ccmp32 058a
+:0580 fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 0a c3
+?auto_err 0590
+:0590 00 00 d9 0c d9 3c ff d6 d9 09 d9 42 ff d6 d9 12
+:05a0 00 00 d9 ba d9 0f 9a 52 8a f1 ca 05 d2 d9 09 d9
+:05b0 12 00 00 d9 42 ff d6 d9 b7 d9 0f 9a 52 8a f1 c2
+:05c0 05 d0 d9 09 d9 42 ff f4 d9 78 ff ec d9 7e d9 c9
+:05d0 d9 99 d9 09 9a 52 8a f1 c2 06 00 d9 12 ff ff d9
+:05e0 3c ff f0 d9 09 d9 78 ff fa d9 78 ff e8 d9 de 00
+?Cerrno 05f9
+:05f0 04 d9 09 d9 12 00 22 d9 21 00 00 d9 09 c0 06 90
+:0600 d9 12 00 01 d9 3c ff f0 d9 09 d9 78 ff fa d9 12
+?auto_err 061b
+:0610 00 00 d9 78 ff e0 d9 e4 00 04 c3 00 00 d9 78 ff
+?auto_err 0626
+/Cmul32 0629 00
+\Cmul32 062a
+:0620 fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00 0a c3
+?auto_err 0630
+:0630 00 00 d9 0c d9 de 00 04 d9 09 d9 78 ff d8 d9 12
+:0640 00 02 d9 84 d9 12 00 00 d9 81 d9 09 d9 63 d9 09
+:0650 d9 78 ff d8 d9 42 ff f4 d9 81 d9 09 d9 63 d9 09
+:0660 d9 78 ff fa d9 12 00 00 d9 78 ff d8 d9 e4 00 04
+?auto_err 0671
+?auto_err 067c
+/Cadd32 067f 00
+:0670 c3 00 00 d9 78 ff fa d9 e4 00 04 c3 00 00 d4 00
+\Cadd32 0680
+?auto_err 0686
+:0680 00 d9 03 00 0a c3 00 00 d9 0c d9 de 00 04 d9 09
+:0690 c0 03 7b d9 12 00 00 d9 42 00 02 d9 c6 d9 09 9a
+:06a0 52 8a f1 ca 06 a9 c0 06 df d9 42 ff f0 d9 09 9a
+:06b0 52 8a f1 c2 06 cf d9 42 00 02 d9 42 ff fe d9 12
+:06c0 00 01 d9 87 d9 81 d9 09 d9 63 d9 09 c0 06 df d9
+:06d0 42 00 02 d9 42 00 00 d9 81 d9 09 d9 63 d9 09 d9
+?auto_err 06ea
+:06e0 78 ff fa d9 09 d9 03 00 2a c3 00 00 e2 d9 06 c3
+?stk_err 06f0
+:06f0 00 00 60 72 ab f0 bb d5
 +0042
 +0055
 +0058
@@ -620,52 +685,52 @@
 +0178
 +022b
 +0232
-+0281
-+02a2
-+02a5
-+032e
-+0342
-+035b
-+036e
-+0387
-+03a4
-+03ab
-+03ba
-+03bd
-+03d0
-+03d3
-+03d6
-+03e9
-+03ec
++029d
++02be
++02c1
++0379
++038d
++03a6
++03b9
++03d2
 +03ef
-+03fc
-+0429
-+043e
-+0457
-+047c
-+04eb
-+0518
-+052d
-+0546
-+056b
-+05da
-+05ed
-+05f0
-+05fd
-+0616
++03f6
++0405
++0408
++041b
++041e
++0421
++0434
++0437
++043a
++0447
++0486
++049b
++04b4
++04d9
++056c
++05ab
++05c0
++05d9
++05fe
++0691
++06a4
++06a7
++06b4
++06cd
 }
 .big
 {Csub32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff fc c3 00 00 d9 42 00 00 d9 7e d9 42 00
-:0020 02 d9 7e d9 cf d9 09 9a 52 8a f1 ca 00 31 c0 00
-:0030 43 d9 12 00 02 d9 42 00 00 d9 84 d9 5d d9 7e d9
-:0040 6f d9 09 d9 78 ff fa d9 42 00 00 d9 7e d9 42 00
-:0050 02 d9 7e d9 87 d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:0060 fa d9 12 00 02 d9 84 d9 12 00 02 d9 42 00 00 d9
-:0070 84 d9 7e d9 12 00 02 d9 42 00 02 d9 84 d9 7e d9
+:0010 d9 03 ff fc c3 00 00 d9 78 00 00 d9 7e d9 78 00
+:0020 04 d9 7e d9 cf d9 09 9a 52 8a f1 ca 00 31 c0 00
+:0030 43 d9 78 00 00 d9 12 00 02 d9 84 d9 5d d9 7e d9
+:0040 6f d9 09 d9 78 ff fa d9 78 00 00 d9 7e d9 78 00
+:0050 04 d9 7e d9 87 d9 81 d9 09 d9 63 d9 09 d9 78 ff
+:0060 fa d9 12 00 02 d9 84 d9 78 00 00 d9 12 00 02 d9
+:0070 84 d9 7e d9 78 00 04 d9 12 00 02 d9 84 d9 7e d9
 :0080 87 d9 81 d9 09 d9 63 d9 09 d9 78 ff fa d9 09 d9
 ?auto_err 0094
 ?stk_err 009a

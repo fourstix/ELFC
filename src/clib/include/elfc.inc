@@ -80,6 +80,7 @@ s_sclsos2n: equ  (SUBTBL + $D8)
 s_unscl2n:  equ  (SUBTBL + $DB)
 s_mcopy:    equ  (SUBTBL + $DE)
 s_epush8:   equ  (SUBTBL + $E1)
+s_derefm:   equ  (SUBTBL + $E4)
 
 ;----------------------------------
 ; ElfC crt0 - error vectors

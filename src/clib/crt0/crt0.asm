@@ -87,7 +87,7 @@
           extrn   lget16
           extrn   lset16
           extrn   mcopy
-
+          extrn   derefm
 
           ;----- C routines
           extrn  Cmain
@@ -270,6 +270,7 @@ s_sclsos2n: lbr sclsos2n
 s_unscl2n:  lbr unscl2n
 s_mcopy:    lbr mcopy
 s_epush8:   lbr epush8
+s_derefm:   lbr derefm
 
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP

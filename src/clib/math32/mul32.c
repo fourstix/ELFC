@@ -6,29 +6,29 @@
 #pragma             extrn Cadd32
 
 /* 32-bit multiplication: result = a * b */
-int32_t mul32(int32_t *a, int32_t *b) {
+int32_t mul32(int32_t a, int32_t b) {
     int32_t product;
     int32_t multiplier;
     int32_t multiplicand;
     int i;
     bool negative = false;
 
-    if (a->high & 0x8000) {
+    if (a.high & 0x8000) {
         multiplier = neg32(a);
         negative = !negative;
     }
     else {
-        multiplier.high = a->high;
-        multiplier.low = a->low;
+        multiplier.high = a.high;
+        multiplier.low = a.low;
     }
 
-    if (b->high & 0x8000) {
+    if (b.high & 0x8000) {
         multiplicand = neg32(b);
         negative = !negative;
     }
     else {
-        multiplicand.high = b->high;
-        multiplicand.low = b->low;
+        multiplicand.high = b.high;
+        multiplicand.low = b.low;
     }
 
     product.high = 0;
@@ -38,7 +38,7 @@ int32_t mul32(int32_t *a, int32_t *b) {
     for (i = 0; i < 32; i++) {
         // Check the least significant bit of the multiplier
         if (multiplier.low & 0x0001) {
-            product = add32(&product, &multiplicand);
+            product = add32(product, multiplicand);
         }
 
         // Right shift the multiplier
@@ -60,7 +60,7 @@ int32_t mul32(int32_t *a, int32_t *b) {
     }
 
     if (negative) {
-        product = neg32(&product);
+        product = neg32(product);
     }
 
     return product;
