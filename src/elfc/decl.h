@@ -264,3 +264,5 @@ void	genchars(char *s, int len);
 void	genints(int *a, int len);
 //grw - add support to pass struct/union by value
 void genvalue(int y);
+//grw - add support to struct/union from function call as argument
+void genderef(int y);

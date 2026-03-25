@@ -172,8 +172,14 @@ static node *fnargs(int fn, int *na, int *nsize) {
 
 	  //grw - add support to pass struct/union by value
 		if (comptype(lv[LVPRIM])) {
-			/* change node to pass by value */
-			n2->op = OP_VALUE;
+			if (n2->op == OP_ADDR) {
+				/* change argument node to pass by value */
+				n2->op = OP_VALUE;
+			} else if (n2->op == OP_CALL) {
+				/* change function node to pass returned structure by value */
+	    	n2->op = OP_CALLV;
+			}
+
 			/* set flag in case struct/union is last argument */
 			needpad = 1;
 
@@ -188,7 +194,10 @@ static node *fnargs(int fn, int *na, int *nsize) {
 			/* clear flag for struc/union at TOS */
 			needpad = 0;
 		}
+
+
 		n = mkbinop(OP_GLUE, n, n2);
+
 
 		if (types && *types) {
 			if (!typematch(*types, lv[LVPRIM])) {

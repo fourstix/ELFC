@@ -198,6 +198,7 @@ void dumptree(node *a) {
 	case OP_VALUE:	dumpleaf("value", a->args[0]); break;
 	//grw - add support to pass struct/union by value
 	case OP_PAD:	dumpleaf("pad", a->args[0]); break;
+	case OP_CALLV:	dumpunop2("(stc)x()", a); break;
 	}
 }
 
@@ -437,6 +438,19 @@ static void emittree1(node *a) {
 	//grw - add support to pass struct/union by value
 	case OP_PAD:
 	    genpad(a->args[0]);
+			break;
+	//grw - support function returning struct/union as an argument to another function
+	case OP_CALLV:
+	    emitargs(a->left);
+			commit();
+			/* call function  */
+			gencall(a->args[0]);
+			/* move stack back after call */
+			genstack(a->args[1]);
+			/* put the returned struct/union address on the stack after call */
+			genpushd();
+			/* dereference struct/union address on stack */
+			genderef(a->args[0]);
 			break;
 	}
 }

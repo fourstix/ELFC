@@ -10,7 +10,7 @@
 ; RC - number of bytes to copy
 ; RD - destination pointer
 ;
-; usage:   GOSUB derefmb
+; usage:   GOSUB derefm
 ;             dw  size      ; number of bytes to push
 ;
 ; returns: DF = 0, success with struct/union on TOS
@@ -43,39 +43,39 @@
           ldn     r7        ; get MSB for source
           phi     r8        ; R8 has source
 
-          ;---- move stack down before copying data
+          ;----- copy from top down
           glo     rc        ; get offset lo byte
           str     r2        ; save at M(X)
-          glo     r7        ; get lo byte of ESP
-          sm                ; subtract offset from stack
-          plo     r7        ; save updated value
+          glo     r8        ; get lo byte of ESP
+          add               ; offset to source pointer
+          plo     r8        ; save updated value
+
           ghi     rc        ; get offset hi byte
           str     r2        ; save at M(X)
-          ghi     r7        ; get hi byte of ESP
-          smb               ; subtract with borrow from hi byte
-          phi     r7        ; save updated value
+          ghi     r8        ; get hi byte of ESP
+          adc               ; add with carry from hi byte
+          phi     r8        ; save updated value
+          dec     r8        ; move back to point to top byte
 
-          ;---- check stack value after move
-          glo     r7        ; verify r7 did not go below minimum
-          sdi     es_min.0
-          ghi     r7        ; DF = 1, means r7 < es_min and is an error
-          sdbi    es_min.1
-          lbdf    mcdone    ; exit immediately without copy
-
-          ;---- set destination pointer and copy data
-          copy    r7, rd    ; set destination to new ESP
-          inc     rd        ; destination is at TOS (one above ESP)
+          ;---- set push data from top down from sourcCe
+          sex     r7        ; set x for copying data
 
 mcpy:     glo     rc        ; get low count byte
           lbnz    mcpy1     ; jump if not zero
           ghi     rc        ; get high count byte
           lbz     mcdone    ; if zero copying is done
-mcpy1:    lda     r8        ; get byte from source
-          str     rd        ; store into destination
-          inc     rd        ; point to next destination position
+mcpy1:    ldn     r8        ; get byte from source
+          stxd              ; push data on stack
+          dec     r8        ; point to next source position
           dec     rc        ; decrement count
-          lbr     mcpy      ; and continue copy
+          lbr     mcpy      ; and continue copying bytes
 
-mcdone:   sex     r2        ; make sure X = SP
+          ;---- check stack value after move
+mcdone:   glo     r7        ; verify r7 did not go below minimum
+          sdi     es_min.0
+          ghi     r7        ; DF = 1, means r7 < es_min and is an error
+          sdbi    es_min.1
+
+          sex     r2        ; make sure X = SP
           rsub              ; return from subroutine
             endp

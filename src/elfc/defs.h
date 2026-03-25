@@ -105,10 +105,6 @@ enum {
 	PINT,
   PUINT,
 	PVOID,
-  //grw - define future 32-bit types
-  PLONG,
-  PULONG,
-  PFLOAT,
   //grw - type for function pointer
   FUNPTR,
 
@@ -262,5 +258,5 @@ enum {
   OP_UMUL, OP_UDIV, OP_UMOD, OP_ABV, OP_ABVEQ, OP_BLW, OP_BLWEQ,
   //grw - added support for assigning struct/union types
   //grw - add support to pass struct/union by value
-  OP_COPY, OP_VALUE, OP_PAD
+  OP_COPY, OP_VALUE, OP_PAD, OP_CALLV
 };

@@ -323,6 +323,21 @@ void genvalue(int y) {
 	cgvalue(size);
 }
 
+//grw - dereference a stuct/union value on the stack
+void genderef(int y) {
+  int yt;
+	int size;
+
+	/* commit any pending operations */
+	commit();
+	gen(";----- struct/union argument returned from function call");
+	/* get the struct/union definition symbol index from function return primitive */
+  yt = Prims[y] & ~STCMASK;
+	size = Sizes[yt];
+	size = ALIGNED(size);
+	cgvalue(size);
+}
+
 void genldlab(int id) {
 	//grw - added commit
 	commit();

@@ -196,6 +196,9 @@ Release 3.4
 
 Release 3.4 adds support for initializations and 32-bit integer math, as well as support for file sizes larger than 32K and various bug fixes.
 
+* Ints, chars, and arrays of int and char can be initialized in their declarations.
+* Pointers can be initialized with NULL or a constant address value.
+* Character pointers can be initialized with the address of a static string.
 * Dynamic local initializations are now supported.  Initializations such as 'int len = strlen(x);' are now supported.
 * Local array initializations are supported.
 * Character arrays may be initialized by a string or by a list of character constants.
@@ -602,20 +605,15 @@ Differences Between ElfC and Full C89
    to structures and unions, i.e. only pointers to a struct/union and pointers
    to pointers to a struct/union are supported.
 
-*  There is no support for bit fields.
-
-*  Ints, chars, and arrays of int and char can be initialized in their
-   declarations.
-
-*  Pointers can be initialized with NULL or a constant address value.
-
-*  Pointer to character can be initialized with the address of a static string.
-
 *  Initialization of a struct/union is not supported.
+
+*  Initialization lists do not support mixed types and cannot be nested.
 
 *  Character arrays must be large enough to accept the entire initialization string plus
    its terminating NULL. ElfC will not silently remove the NULL at the end of an
    initialization string, when the string is one character too long for an array.
+
+ *  There is no support for bit fields.
 
 *  Local declarations are limited to the beginnings of function
    bodies (they do not work in other compound statements).
@@ -679,8 +677,10 @@ Repository Contents
 * **/src/clib/math32**  -- Source files for ElfC Math32 library contributed by Tony Hefner
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
-  * libtest1.c to libtest4.c  -- Functional tests for various library functions
+  * libtest1.c to libtest5.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
+  * math32test.c -- Functional tests for the math32 library functions
+  * stctest.c -- Functional tests for structures/union functions
 * **/bin**  -- Binary files for ElfC
   * elfc_r350.zip** -- A zip file with the Windows version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
   * elfc_r350.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.50 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
