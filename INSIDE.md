@@ -82,7 +82,7 @@ int fn1(int n, char c, int *p) {
 <tr><td>a[2]</td><td rowspan="3">array characters</td></tr>
 <tr><td>a[1]</td></tr>
 <tr><td>a[0]</td></tr>
-<tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
+<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
 </table>
 
 *Example 2:*
@@ -114,7 +114,7 @@ struct scrabble_tile rack(int pos) {
 <tr><td>integer (LSB)</td></tr>
 <tr><td>xx</td><td>padding byte</td></tr>
 <tr><td>scrabble_tile.letter</td><td>char</td></tr>
-<tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
+<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
 </table>
 
 
@@ -149,7 +149,7 @@ struct point scale(int n, struct point p) {
 <tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>
 <tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
 <tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
+<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
 </table>
 
 *Notes:*
@@ -375,7 +375,7 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><td>257 case labels for a switch statement (including label for default case)</td><td>257</td><td>Yes</td><td>MAXCASE + 1 for default case label</td></tr>
 <tr><td>127 members in a single structure or union</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
 <tr><td>127 enumeration constants in a single enumeration</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
-<tr><td>15 levels of nested structure or union definitions in a single declaration list</td><td>1024</td><td>Yes, with an Exception</td><td>Struct/union *definitions* cannot be nested, but struct/union *declarations* can be nested.</td></tr>
+<tr><td>15 levels of nested structure or union definitions in a single declaration list</td><td>1024</td><td>Yes, with some Exceptions</td><td>NSYMBOLS (See Notes Below for Exceptions)</td></tr>
 </table>
 
 *Notes:*
@@ -391,4 +391,6 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 * Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
 * Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.
-* ElfC does not support nested struct/union *definitions*, but struct/union *declarations* can be nested, ie. a struct/union *declaration* may contain fields that are struct/union types, that may in turn contain struct/union fields, and so on.
+* Struct/union definition declarations cannot be nested, but struct/union object declarations can be nested.
+* Struct/union definition declarations must be separate from the declarations of struct/union objects, i.e. `struct p { int x, y; } q;` will not work.
+*  Struct/union definition declarations must be global, however, struct/union objects may be declared locally.
