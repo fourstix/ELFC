@@ -40,5 +40,17 @@ char *strrchr(const char *s, int c);
 size_t strspn(const char *s, const char *set);
 char *strstr(const char *s1, const char *s2);
 char *strtok(char *s, const char *sep);
+char *strnstr(const char *s1, const char *s2, size_t n);
+char * strrev(char *s);
+size_t strnlen(const char *s, size_t n);
+size_t strlcat(char *d, const char *s, size_t n);
+char *strndup(const char *s, size_t n);
+int strcasecmp(const char *s1, const char *s2);
+int strncasecmp(const char *s1, const char *s2, size_t n);
+char *strcasestr(const char *s1, const char *s2);
+char *strsep(char **str, const char *sep);
+char * strlwr(char *str);
+char * strupr(char *str);
+char *strim(char *str);
 
 #endif

@@ -3,7 +3,7 @@
 
 #pragma             extrn Cadd32
 
-int32_t neg32(int32_t *n)
+int32_t neg32(int32_t n)
 {
     int32_t inverse;
     int32_t one;
@@ -11,8 +11,8 @@ int32_t neg32(int32_t *n)
     one.high = 0;
     one.low = 1;
 
-    inverse.high = ~n->high;
-    inverse.low = ~n->low;
+    inverse.high = ~n.high;
+    inverse.low = ~n.low;
 
-    return add32(&inverse, &one);
+    return add32(inverse, one);
 }

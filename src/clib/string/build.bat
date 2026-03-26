@@ -20,12 +20,24 @@
 ..\elfc -L strspn.c
 ..\elfc -L strstr.c
 ..\elfc -L strtok.c
-..\elfc -L reverse.c
+..\elfc -L strrev.c
+..\elfc -L strnlen.c
+..\elfc -L strlcat.c
+..\elfc -L strndup.c
+..\elfc -L strcasecmp.c
+..\elfc -L strncasecmp.c
+..\elfc -L strcasestr.c
+..\elfc -L strsep.c
+..\elfc -L strlwr.c
+..\elfc -L strupr.c
+..\elfc -L strim.c
+..\elfc -L strnstr.c
 
-type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg > string.lib
-type reverse.prg strcat.prg strchr.prg strcmp.prg strcpy.prg >> string.lib
-type strcspn.prg strdup.prg strerror.prg strlcpy.prg strlen.prg >> string.lib
-type strncat.prg strncmp.prg strncpy.prg strpbrk.prg strrchr.prg >> string.lib
-type strspn.prg strstr.prg strtok.prg >> string.lib
+type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg strcasecmp.prg> string.lib
+type strcasestr.prg strcat.prg strchr.prg strcmp.prg strcpy.prg strcspn.prg >> string.lib
+type strdup.prg strerror.prg strlcpy.prg strlcat.prg strlen.prg strlwr.prg >> string.lib
+type strncasecmp.prg strncat.prg strncmp.prg strncpy.prg strndup.prg strnlen.prg >> string.lib
+type strnstr.prg strpbrk.prg strrchr.prg strrev.prg strsep.prg strspn.prg strstr.prg >> string.lib
+type strim.prg strtok.prg strupr.prg >> string.lib
 
 copy string.lib ..\lib\string.lib

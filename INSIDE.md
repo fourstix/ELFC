@@ -110,10 +110,45 @@ struct scrabble_tile rack(int pos) {
 <tr><td>0</td><td>pos</td><td>2</td><td>integer</td><tr>
 <tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
 <tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
-<tr><td rowspan="4">-6</td><td rowspan="2">scrabble_tile.score</td><td rowspan="4">4</td><td>int (MSB)</td></tr>
-<tr><td>int (LSB)</td></tr>
+<tr><td rowspan="4">-6</td><td rowspan="2">scrabble_tile.score</td><td rowspan="4">4</td><td>integer (MSB)</td></tr>
+<tr><td>integer (LSB)</td></tr>
 <tr><td>xx</td><td>padding byte</td></tr>
 <tr><td>scrabble_tile.letter</td><td>char</td></tr>
+<tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
+</table>
+
+
+*Example 3:*
+```
+struct point {
+  int x;
+  int y;
+};
+
+/* scale a point by a value */
+struct point scale(int n, struct point p) {
+    int factor;
+
+    /* negative or zero is not valid */
+    factor = (n < 1) ? 1 : n;
+
+    /* multiple (x,y) values by scaling factor */
+    p.x = factor * (p.x);
+    p.y = factor * (p.y);
+
+    /* return point */
+    return p;
+}
+```
+*Stackframe for Example 3*
+<table>
+<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
+<tr><td>6</td><td>xx</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
+<tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td></tr>
+<tr><td>point.y</td><td>integer</td></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>
+<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
+<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><tr>
 <tr><th colspan="4">R7 points to the Bottom of Expression Stack</th></tr>
 </table>
 
@@ -130,7 +165,9 @@ struct scrabble_tile rack(int pos) {
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
 * Structures and unions have their fields padded to the stack size.
-* If a structure/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the structure may be used for a return value.
+* If a struct/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the struct/union may be used for a return value.
+* If a structure/union is the last argument in the function call, an integer-sized padding element is
+pushed on the stack before the struct/union so that the argument may be used as a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
 * Otherwise the function returns, and the program continues.
@@ -212,6 +249,7 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><th>Name</th><th>Description</th></tr>
 <tr><td>deref16</td><td>Replace a pointer on the expression stack with the 16-bit value it references</td></tr>
 <tr><td>deref8</td><td>Replace a pointer on the expression stack with the 8-bit value it references</td></tr>
+<tr><td>derefm</td><td>Replace a pointer on the expression stack with the struct/union memory block it references</td></tr>
 <tr><td>dget16</td><td>Get a 2-byte value from the expression stack (ESP is unchanged)</td></tr>
 <tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>dpush16</td><td>Pop a 2-byte value from the expression stack</td></tr>
@@ -318,18 +356,18 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><th>Description</th><th>ElfC Limit</th><th>Meets Spec?</th><th>Limiting Factor</th></tr>
 <tr><td>15 nesting levels of compound statements</td><td>16</td><td>Yes</td><td>MAXBREAK</td></tr>
 <tr><td>8 nesting levels of conditional inclusion</td><td>16</td><td>Yes</td><td>MAXIFDEF</td></tr>
-<tr><td>12 pointer, array, and function declarators (in any combination) in a declaration</td><td>15</td><td>Yes, with Exceptions</td><td>MAXPTR (See Notes Below for Exceptions)</td></tr>
-<tr><td>31 nesting levels of parenthesized declarators</td><td>1</td><td>No</td><td>Parentheses in a declaration are only supported when declaring a function pointer.</td></tr>
+<tr><td>12 pointer, array, and function declarators (in any combination) in a declaration</td><td>15</td><td>Yes, with some Exceptions</td><td>MAXPTR (See Notes Below for Exceptions)</td></tr>
+<tr><td>31 nesting levels of parenthesized declarators</td><td>1</td><td>No</td><td>Parentheses in a declaration are only supported for declaring a function pointer.</td></tr>
 <tr><td>32 nesting levels of parenthesized expressions within a full expression</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
-<tr><td>31 significant initial characters in an internal identifier or a macro name</td><td>16</td><td>No</td><td>NAMELEN</td></tr>
-<tr><td>6 significant initial characters in an external identifier</td><td>16</td><td>Yes</td><td>NAMELEN</td></tr>
+<tr><td>31 significant initial characters in an internal identifier or a macro name</td><td>32</td><td>Yes</td><td>NAMELEN</td></tr>
+<tr><td>6 significant initial characters in an external identifier</td><td>32</td><td>Yes</td><td>NAMELEN</td></tr>
 <tr><td>511 external identifiers in one translation unit</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
 <tr><td>127 identifiers with block scope declared in one block</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
 <tr><td>1024 macro identifiers defined in one translation unit</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td><tr>
-<tr><td>31 parameters in one function definition</td><td>16</td><td>No</td><td>MAXFNARGS</td></tr>
-<tr><td>31 arguments in one function call</td><td>16</td><td>No</td><td>MAXFNARGS</td></tr>
-<tr><td>31 parameters in one macro definition</td><td>8</td><td>No</td><td>MAXMARGS</td></tr>
-<tr><td>31 arguments in one macro invocation</td><td>8</td><td>No</td><td>MAXMARGS</td></tr>
+<tr><td>31 parameters in one function definition</td><td>32</td><td>Yes</td><td>MAXFNARGS</td></tr>
+<tr><td>31 arguments in one function call</td><td>32</td><td>Yes</td><td>MAXFNARGS</td></tr>
+<tr><td>31 parameters in one macro definition</td><td>32</td><td>Yes</td><td>MAXMARGS</td></tr>
+<tr><td>31 arguments in one macro invocation</td><td>32</td><td>Yes</td><td>MAXMARGS</td></tr>
 <tr><td>509 characters in a logical source line</td><td>512</td><td>Yes</td><td>TEXTLEN</td></tr>
 <tr><td>509 characters in a character string literal (after concatenation)</td><td>512</td><td>Yes</td><td>TEXTLEN</td></tr>
 <tr><td>32767 bytes in an object (in a hosted environment)</td><td>65535</td><td>Yes</td><td>Asm/02 and Link/02 Limit</td></tr>
@@ -337,16 +375,20 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><td>257 case labels for a switch statement (including label for default case)</td><td>257</td><td>Yes</td><td>MAXCASE + 1 for default case label</td></tr>
 <tr><td>127 members in a single structure or union</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
 <tr><td>127 enumeration constants in a single enumeration</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
-<tr><td>15 levels of nested structure or union definitions in a single declaration list</td><td>Not Supported</td><td>No</td><td>Structure declarations cannot be nested</td></tr>
+<tr><td>15 levels of nested structure or union definitions in a single declaration list</td><td>1024</td><td>Yes, with an Exception</td><td>Struct/union *definitions* cannot be nested, but struct/union *declarations* can be nested.</td></tr>
 </table>
 
 *Notes:*
 * Up to 15 levels of indirection is supported in a declaration involving pointers, arrays and structure/unions.
 * ElfC does not support multi-dimensional arrays, e.g. `int a[3][4];` is not supported.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
+* Elfc supports structures and unions and pointers to struct/union and pointers to struct/union pointers, eg. `struct stc`, `struct stc *p` and `struct stc **p` are supported.
 * ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.
 * Only the supported parenthesized declaration syntax is `int (*f)()` which declares *f* as a function pointer.
+* ElfC has an implementation defined limit of 32 local string initializations per function.
+* ElfC has an implementation defined limit of 32 integer values per initialization list.
+* ElfC has an implementation defined limit of 64 bytes (63 characters, plus NULL) for an initialization string.
 * Maximum total number of symbols in the ElfC symbol pool is 16348 (POOLSIZE)
 * Each of the various types of symbols in the symbol pool have a limit of 1024 (NSYMBOLS) for symbols of that type.
 * Both Asm/02 and Link/02 generate and link object files in a 16-bit address space, giving a maximum limit of 64K.
-* ElfC does not support nested structure/union declarations.
+* ElfC does not support nested struct/union *definitions*, but struct/union *declarations* can be nested, ie. a struct/union *declaration* may contain fields that are struct/union types, that may in turn contain struct/union fields, and so on.

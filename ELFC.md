@@ -331,10 +331,22 @@ Stdio Modified Functions
 * Terminating a program by `abort` or without calling `fclose` to close a temporary file, may leave behind files created by `tmpfile`.
 * `fseek32`, `fgetpos` and `fsetpos`f functions use the int32 struct type `pos_t` and can be used for files sizes greater than 32KB, up to 2GB.
 
-String Modified Functions
--------------------------
-* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.  Unlike `strncpy`, a null is *always* appened with `strlcpy`.
-* `strdup` will allocate memory for the size a string, copy the string into memory and then return a pointer to the duplicate string.
+Posix String Functions
+----------------------------
+* `strcasecmp` will compare two strings, ignoring case in both strings.
+* `strcasestr` will locate a string within another string, ignoring case in both strings.
+* `strdup` will allocate memory for a duplicate string, copy the characters, including the terminating null, into memory, and then return a pointer to the duplicate string.
+* `strlcpy` will concatenate up to a specified number (length - 1) of characters and then append a null.  Unlike `strncat`, `strlcat` *always* appends a null.
+* `strlcpy` will copy up to a specified number (length - 1) of characters and then append a null.  Unlike `strncpy`, `strlcpy` *always* appends a null.
+* `strlwr` will lowercase a string in place.
+* `strncasecmp` will compare up to n characters of two strings, ignoring case in both strings.
+* `strndup` will allocate memory for a string of n characters, the copy up to n characters of the original string into memory, *always* terminating with a null, and then return a pointer to the duplicate string.
+* `strnlen` will return the length of a string up to n, or n if the string is longer than n characters.
+* `strnstr` locate a string within the first n characters of another string.
+* `strrev` reverse the contents of a string in place.
+* `strsep` locate in a string pointed to by \*str the first occurrence of any character in the separator string and replace it with a '\0'. The location of the next character after the separator is returned in *str, or NULL when the end of string is reached.
+* `strupr` will uppercase a string in place.
+* `strim` will remove any whitespace from the beginning or end of string in place.
 
 Stdarg Macros
 -----------------
@@ -416,7 +428,7 @@ ElfC does not support the _locale.h_ header, so the following function should be
 *Notes:*
 * _tzname_ is a string abbreviation for the time zone name, such as "EST" for US Eastern Standard Time.
 * _tzoff_min_ is the offset from Universal Co-ordinated Time in minutes.  Offset values WEST of UTC should be negative, while offsets to the EAST are positive.
-* _tzdst_ indicates if daylight savings time is in effect. It should be 1 if daylingt savings time is in effect, and 0 if not.
+* _tzdst_ indicates if daylight savings time is in effect. It should be 1 if daylight savings time is in effect, and 0 if not.
 
 
 Equivalent Time Functions
@@ -509,7 +521,7 @@ typedef struct int32 int32_t;
 * _add32(a, b)_ - 32-bit addition: returns a + b
 * _sub32(a, b)_ - 32-bit subtraction: returns a - b
 * _mul32(a, b)_ - 32-bit subtraction: returns a - b
-* _cmp32(a, b)_ - Compare two 32-bit numbers, returna -1 if a < b, 0 if a == b or 1 if a > b
+* _cmp32(a, b)_ - Compare two 32-bit numbers, returns -1 if a < b, 0 if a == b or 1 if a > b
 * _shl32(a)_ - Shift 32-bit number left by 1 bit
 * _shr32(a)_ - Shift 32-bit number right by 1 bit
 * _div32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem

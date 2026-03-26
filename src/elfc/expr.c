@@ -151,24 +151,54 @@ int typematch(int p1, int p2) {
  *	| asgmnt , fnargs
  */
 
-static node *fnargs(int fn, int *na) {
-	int	lv[LV];
-	int	*types;
-	char	msg[100];
-	int	sgn[MAXFNARGS+1];
-	node	*n = NULL, *n2;
+static node *fnargs(int fn, int *na, int *nsize) {
+	int	 lv[LV];
+	int	 *types;
+	char msg[100];
+	int	 sgn[MAXFNARGS+1];
+	node *n = NULL, *n2;
+	//grw - add support to pass struct/union by value
+	int  size;
+	int  needpad = 0;
 
 	types = (int *) (fn? Mtext[fn]: NULL);
+	/* init arg count and stack size */
 	*na = 0;
+	*nsize = 0;
+
 	while (RPAREN != Token) {
 		n2 = asgmnt(lv);
 		n2 = rvalue(n2, lv);
-		n = mkbinop(OP_GLUE, n, n2);
+
+	  //grw - add support to pass struct/union by value
 		if (comptype(lv[LVPRIM])) {
-			//grw - TODO replace with size warning?
-			error("struct/union passed by value", NULL);
-			lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
+			if (n2->op == OP_ADDR) {
+				/* change argument node to pass by value */
+				n2->op = OP_VALUE;
+			} else if (n2->op == OP_CALL) {
+				/* change function node to pass returned structure by value */
+	    	n2->op = OP_CALLV;
+			}
+
+			/* set flag in case struct/union is last argument */
+			needpad = 1;
+
+			/* check size for warning */
+			size = objsize(lv[LVPRIM], TVARIABLE, 1);
+			size = ALIGNED(size);
+			if (size > LGOBJSIZE)
+				warn("Large objects should be passed to a function by reference, not by value.", NULL);
+		} else {
+			/* every other type has an integer size */
+			size = INTSIZE;
+			/* clear flag for struc/union at TOS */
+			needpad = 0;
 		}
+
+
+		n = mkbinop(OP_GLUE, n, n2);
+
+
 		if (types && *types) {
 			if (!typematch(*types, lv[LVPRIM])) {
 				sprintf(msg, "wrong type in argument %d"
@@ -179,7 +209,10 @@ static node *fnargs(int fn, int *na) {
 			types++;
 		}
 		if (*na < MAXFNARGS) sgn[*na] = lv[LVPRIM], sgn[*na+1] = 0;
+		/* update arg count and size */
 		(*na)++;
+		(*nsize) += size;
+
 		if (COMMA == Token) {
 			Token = scan();
 			if (RPAREN == Token)
@@ -193,6 +226,15 @@ static node *fnargs(int fn, int *na) {
 		memcpy(Mtext[fn], sgn, (*na+1) * sizeof(int));
 	}
 	rparen();
+	/*
+	* If a struct/union was the last argument pushed onto the stack,
+	* pad the stack in case that argument becomes the return value
+	*/
+	if (needpad) {
+		n2 = mkleaf(OP_PAD, 0);
+		n = mkbinop(OP_GLUE, n, n2);
+		(*nsize) += INTSIZE;
+	}
 	return n;
 }
 
@@ -323,6 +365,8 @@ static node *stc_access(node *n, int *lv, int ptr) {
 static node *postfix(int *lv) {
 	node	*n = NULL, *n2, *fn;
 	int	lv2[LV], p, na;
+	//grw - add support to pass struct/union by value
+	int nsize;
 	n = primary(lv);
 	for (;;) {
 		switch (Token) {
@@ -333,7 +377,9 @@ static node *postfix(int *lv) {
 				n2 = exprlist(lv2, 1);
 				n2 = rvalue(n2, lv2);
 				p = lv[LVPRIM];
-				if (PINT != lv2[LVPRIM])
+				//grw - fixed for qualified (const/volatile) and unsigned int types
+				//if (PINT != lv2[LVPRIM])
+				if (!pinttype(lv2[LVPRIM]))
 					error("non-integer subscript", NULL);
 				//grw - added support for multiple pointer indirection
         /*
@@ -361,19 +407,24 @@ static node *postfix(int *lv) {
 		case LPAREN:
 			Token = scan();
 			fn = n;
-			n = fnargs(lv[LVSYM], &na);
+			n = fnargs(lv[LVSYM], &na, &nsize);
 			if (lv[LVSYM] && TFUNCTION == Types[lv[LVSYM]]) {
 				if (!argsok(na, Sizes[lv[LVSYM]]))
 					error("wrong number of arguments: %s",
 						Names[lv[LVSYM]]);
-				n = mkunop2(OP_CALL, lv[LVSYM], na, n);
+				//grw - add support to pass struct/union by value
+				//n = mkunop2(OP_CALL, lv[LVSYM], na, n);
+				n = mkunop2(OP_CALL, lv[LVSYM], nsize, n);
 			}
 			else {
 				//grw - added support for multiple pointer indirection
 				/* if (lv[LVPRIM] != FUNPTR) badcall(lv); */
 				if (!isfunptr(lv[LVPRIM])) badcall(lv);
 				n = mkbinop(OP_GLUE, n, fn);
-				n = mkunop2(OP_CALR, lv[LVSYM], na, n);
+				//grw - add support to pass struct/union by value
+				//n = mkunop2(OP_CALR, lv[LVSYM], na, n);
+				n = mkunop2(OP_CALR, lv[LVSYM], nsize, n);
+
 				lv[LVPRIM] = PINT;
 			}
 			lv[LVADDR] = 0;
@@ -825,6 +876,7 @@ static node *cond3(int *lv) {
 
 	n = cond2(lv, LOGOR);
 	p = 0;
+
 	while (QMARK == Token) {
 		n = rvalue(n, lv);
 		if (tv) notvoid(lv[LVPRIM]), tv = 0;
@@ -891,6 +943,7 @@ static node *asgmnt(int *lv) {
 	int	lv2[LV], lvs[LV], op;
 
 	n = cond3(lv);
+
 	if (ASSIGN == Token || ASDIV == Token || ASMUL == Token ||
 		ASMOD == Token || ASPLUS == Token || ASMINUS == Token ||
 		ASLSHIFT == Token || ASRSHIFT == Token || ASAND == Token ||

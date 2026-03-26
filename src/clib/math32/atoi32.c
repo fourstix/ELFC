@@ -40,19 +40,19 @@ int32_t atoi32(const char *str) {
     /* Process digits */
     while (*p >= '0' && *p <= '9') {
         /* result = result * 10 + digit */
-        result = mul32(&result, &ten);
+        result = mul32(result, ten);
 
         digit.low = *p - '0';
         digit.high = 0;
 
-        result = add32(&result, &digit);
+        result = add32(result, digit);
 
         p++;
     }
 
     /* Apply sign if negative */
     if (negative) {
-        result = neg32(&result);
+        result = neg32(result);
     }
 
     return result;

@@ -10,14 +10,15 @@
  * by Brian W. Kernighan and Dennis M. Ritchie
  * Copyright 1988 by Prentice Hall
  */
-void reverse(char *s) {
+char * strrev(char *s) {
   int c, i, j;
-  
-  if (s == NULL) return;
-  
-  for(i = 0, j = strlen(s)-1; i < j; i++, j--) {
-    c = s[i];
-    s[i] = s[j];
-    s[j] = c;
+
+  if (s != NULL) {
+    for(i = 0, j = strlen(s)-1; i < j; i++, j--) {
+      c = s[i];
+      s[i] = s[j];
+      s[j] = c;
+    }
   }
+  return s;
 }

@@ -185,7 +185,9 @@ static int linitlist(int size, int prim, int *pinit) {
 
 	//grw - need to stack align character arrays
 	if(chartype(prim)) {
-		rsize = (size + INTSIZE-1) / INTSIZE * INTSIZE;
+		//grw - created macro for alignment size
+		//rsize = (size + INTSIZE-1) / INTSIZE * INTSIZE;
+		rsize = ALIGNED(size);
 	} else {
 		rsize = size;
 	}
@@ -217,9 +219,11 @@ static int linitlist(int size, int prim, int *pinit) {
 		sbuf[v] = '\0';
 
 		/* if dynamically sized, calculate stack size for string + 1 for null */
-		if (0 == rsize)
-				rsize = ((v+1) + INTSIZE-1) / INTSIZE * INTSIZE;
-
+		if (0 == rsize) {
+				//grw - created macro for alignment size
+				//rsize = ((v+1) + INTSIZE-1) / INTSIZE * INTSIZE;
+				rsize = ALIGNED(v+1);
+    }
 		if (v < rsize) {
 			/* subtract one for null written with string */
 			n = rsize - v - 1;
@@ -554,9 +558,19 @@ static int pmtrdecls(void) {
 			prim = pointerto(prim, name);
 			type = TVARIABLE;
 		}
+
 		addloc(name, prim, type, CAUTO, size, addr, 0);
-		addr += BPW;
+		//grw - add support to pass struct/union by value
+		if (comptype(prim)) {
+			size = objsize(prim, type, size);
+			size = ALIGNED(size);
+			addr += size;
+		} else {
+			addr += BPW;
+		}
+
 		na++;
+
 		if (COMMA == Token) {
 			Token = scan();
 			//grw - added support for const keyword
@@ -565,6 +579,7 @@ static int pmtrdecls(void) {
 		}	else
 			break;
 	}
+
 	return na;
 }
 
@@ -673,6 +688,12 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	if (!pmtr && ASSIGN == Token) {
 		if (CTYPE == scls)
 			error(unsupp, NULL);
+
+		/* need to emit error for struct/union */
+		if (comptype(*pprim)) {
+			error("Initialization of struct/union %s is not supported", name);
+		}
+
 		Token = scan();
 		/* check for initializing char ptr with string literal address */
 		if (*pprim == (PCHAR | 0x0010) && STRLIT == Token) {
@@ -808,14 +829,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 					sgen(";---- initialize global %s %s", "array", name);
 					isize = initlist(name, *pprim, pinit);
 				}
-
-				/*
-				if (CAUTO == scls)
-					error("initialization of"
-						" local arrays"
-						" not supported: %s",
-						name);
-				 */
 
 				//grw - set ini to 1 for initialized global static and public arrays
 				if (isglobal(scls)) {
@@ -1064,7 +1077,10 @@ static int localdecls(void) {
 		}
 		type = upgrade_array(utype, type, &size);
 		rsize = objsize(prim, type, size);
-		rsize = (rsize + INTSIZE-1) / INTSIZE * INTSIZE;
+		//grw - created macro for alignment size
+		//rsize = (rsize + INTSIZE-1) / INTSIZE * INTSIZE;
+		rsize = ALIGNED(rsize);
+
 
 		//grw - and pass new label, value to addloc for uninitialized array
 		if (stat) {
@@ -1074,7 +1090,7 @@ static int localdecls(void) {
 		}	else if (extn) {
 			addloc(name, prim, type, CEXTERN, size,	0, val);
 		}	else {
-			//grw - need to pad struct/union at top of list in case its returned
+			/* need to pad struct/union at top of list in case its returned */
 			if (!addr && (prim & STCMASK)) {
 				addloc("_pad", PINT, TVARIABLE, CAUTO, 2, 0, 0);
 				addr -= BPW;
@@ -1336,7 +1352,10 @@ void structdecl(int clss, int uniondecl) {
 			}
 			else {
 				addr += size;
-				addr = (addr + INTSIZE-1) / INTSIZE * INTSIZE;
+				//grw - created macro for alignment size
+				//addr = (addr + INTSIZE-1) / INTSIZE * INTSIZE;
+				addr = ALIGNED(addr);
+
 			}
 			if (Token != COMMA) break;
 			Token = scan();

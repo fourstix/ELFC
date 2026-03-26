@@ -246,7 +246,7 @@ void commit(void) {
 		cgpushd();
 		Q_push = pnone;
 	}
-	// grw - remove logic to queue address modes
+	// grw - removed logic to queue address modes
   /*
   spill();
 	switch (Q_type) {
@@ -309,6 +309,33 @@ void genaddr(int y) {
 		cgldga(gsym(Names[y]));
 	  //grw - remove queue
 		//queue(addr_globl, 0, Names[y]);
+}
+
+//grw - add support to pass struct/union by value
+void genvalue(int y) {
+	int size;
+	/* commit() is done in genaddr */
+	gen(";----- pass struct/union argument by value");
+	/* put source address on stack */
+	genaddr(y);
+	size = objsize(Prims[y], Types[y], Sizes[y]);
+	size = ALIGNED(size);
+	cgvalue(size);
+}
+
+//grw - dereference a stuct/union value on the stack
+void genderef(int y) {
+  int yt;
+	int size;
+
+	/* commit any pending operations */
+	commit();
+	gen(";----- struct/union argument returned from function call");
+	/* get the struct/union definition symbol index from function return primitive */
+  yt = Prims[y] & ~STCMASK;
+	size = Sizes[yt];
+	size = ALIGNED(size);
+	cgvalue(size);
 }
 
 void genldlab(int id) {
@@ -776,9 +803,11 @@ void genexit(int scope) {
 	genlocdef();
 }
 
-void genpush(void) {
+//grw - add support to pass struct/union by value
+void genpad(n) {
 	commit();
-	cgpush();
+	gen(";----- padding the stack for struct/union argument");
+	cglit(n);
 }
 
 void genpushlit(int n) {
@@ -805,6 +834,7 @@ void genlocinit(void) {
 	//grw - removed constant initialization
 }
 
+//grw - removed static param from genbss
 /* static and public data definitions */
 void genbss(char *name, int len) {
   //grw - commit jump to entry point in library object
@@ -813,15 +843,11 @@ void genbss(char *name, int len) {
   genraw(name);
  	genraw(":");
 
-  cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
-	//grw - removed static param from genbss
-  /*
-	if (statc)
-		cglbss(name, (len + INTSIZE-1) / INTSIZE * INTSIZE);
-	else
-		cggbss(name, (len + INTSIZE-1) / INTSIZE * INTSIZE);
-	*/
+	//grw - created macro for alignment size
+  //cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
+	cgdata(ALIGNED(len));
 }
+
 /*
  * generate zero-filled static data for partially initialized arrays
  */

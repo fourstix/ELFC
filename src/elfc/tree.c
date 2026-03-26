@@ -8,9 +8,7 @@
 #include "decl.h"
 
 #define	MAXBARS	100
-/*
-#define DEBUG
-*/
+
 int	Level = 0;
 char	Bars[MAXBARS];
 
@@ -78,8 +76,7 @@ node *mkbinop2(int op, int n1, int n2, node *left, node *right) {
 	return mknode(op, 2, a, left, right);
 }
 
-#ifdef DEBUG
-
+/* Dump information about  the AST */
 static void dumpleaf(char *s, int n) {
 	printf("%s %d\n", s, n);
 }
@@ -135,6 +132,7 @@ static void dumpbinop2(char *s, node *a) {
 	Level--;
 }
 
+/* Dump the entire AST */
 void dumptree(node *a) {
 	int	i;
 
@@ -194,10 +192,15 @@ void dumptree(node *a) {
 	case OP_ASSIGN:	dumpbinop2("x=y", a); break;
 	case OP_CALL:	dumpunop2("x()", a); break;
 	case OP_CALR:	dumpunop2("(*x)()", a); break;
+	//grw - copy a complex type
+	case OP_COPY:	dumpbinop2("copy", a); break;
+	//grw - add support to pass struct/union by value
+	case OP_VALUE:	dumpleaf("value", a->args[0]); break;
+	//grw - add support to pass struct/union by value
+	case OP_PAD:	dumpleaf("pad", a->args[0]); break;
+	case OP_CALLV:	dumpunop2("(stc)x()", a); break;
 	}
 }
-
-#endif /* DEBUG */
 
 void emitcond(node *a, int ex) {
 
@@ -376,7 +379,10 @@ static void emittree1(node *a) {
 			//grw - removed spill
 			//spill();
 			gencall(a->args[0]);
-			genstack((a->args[1]) * BPW);
+			//grw - add support to pass struct/union by value
+			//genstack((a->args[1]) * BPW);
+			/* move stack back after call */
+			genstack(a->args[1]);
 			//grw - put the return value on the stack after call
 			genpushd();
 			break;
@@ -392,7 +398,11 @@ static void emittree1(node *a) {
 			//grw - commit pushd for rvalue
 			commit();
 			gencalr();
-			genstack((a->args[1]) * BPW);
+			//grw - add support to pass struct/union by value
+			//genstack((a->args[1]) * BPW);
+			/* move stack back after call */
+			genstack(a->args[1]);
+
 			//grw - put the return value on the stack after call
 			genpushd();
 			break;
@@ -421,6 +431,27 @@ static void emittree1(node *a) {
 			lv[LVSYM] = a->args[1];
 			gencopy(lv);
 			break;
+	//grw - add support to pass struct/union by value
+	case OP_VALUE:
+      genvalue(a->args[0]);
+			break;
+	//grw - add support to pass struct/union by value
+	case OP_PAD:
+	    genpad(a->args[0]);
+			break;
+	//grw - support function returning struct/union as an argument to another function
+	case OP_CALLV:
+	    emitargs(a->left);
+			commit();
+			/* call function  */
+			gencall(a->args[0]);
+			/* move stack back after call */
+			genstack(a->args[1]);
+			/* put the returned struct/union address on the stack after call */
+			genpushd();
+			/* dereference struct/union address on stack */
+			genderef(a->args[0]);
+			break;
 	}
 }
 
@@ -430,9 +461,9 @@ void emittree(node *a) {
 	/* assume node is not volatile */
 	int vltl = 0;
 
-#ifdef DEBUG
-	dumptree(a);
-#endif
+//grw - added debug tree option
+  if (O_debug & D_TREE)
+	  dumptree(a);
 
   //grw - check for volatile variable or volatile function node
   if (a->op == OP_IDENT || a->op == OP_CALL) {
@@ -445,8 +476,7 @@ void emittree(node *a) {
 	/* don't optimize volatile nodes */
   if (!vltl)
 	  a = optimize(a);
-#ifdef DEBUG
-	else warn("volatile type node not optimized.\n", NULL);
-#endif
+  else if (O_debug & D_TREE)
+	  warn("volatile type node not optimized.\n", NULL);
 emittree1(a);
 }

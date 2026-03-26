@@ -6,7 +6,7 @@
 #pragma             extrn Cneg32
 
 /* 32-bit division: returns quotient, remainder in *rem */
-int32_t div32(int32_t *a, int32_t *b, int32_t *rem) {
+int32_t div32(int32_t a, int32_t b, int32_t *rem) {
     int32_t quotient;
     int32_t dividend;
     int32_t divisor;
@@ -16,23 +16,23 @@ int32_t div32(int32_t *a, int32_t *b, int32_t *rem) {
     bool sign_divisor;
     bool ge;
 
-    if (a->high & 0x8000) {
+    if (a.high & 0x8000) {
         dividend = neg32(a);
         sign_dividend = true;
     }
     else {
-        dividend.high = a->high;
-        dividend.low = a->low;
+        dividend.high = a.high;
+        dividend.low = a.low;
         sign_dividend = false;
     }
 
-    if (b->high & 0x8000) {
+    if (b.high & 0x8000) {
         divisor = neg32(b);
         sign_divisor = true;
     }
     else {
-        divisor.high = b->high;
-        divisor.low = b->low;
+        divisor.high = b.high;
+        divisor.low = b.low;
         sign_divisor = false;
     }
 
@@ -44,8 +44,8 @@ int32_t div32(int32_t *a, int32_t *b, int32_t *rem) {
         // Handle error: division by zero
         // Currently we return 0 and set the remainder to dividend
         if (rem != NULL) {
-            rem->high = a->high;
-            rem->low = a->low;
+            rem->high = a.high;
+            rem->low = a.low;
         }
         return divisor;
     }
@@ -81,17 +81,17 @@ int32_t div32(int32_t *a, int32_t *b, int32_t *rem) {
     // Dividend contains the quotient
 
     if (sign_dividend != sign_divisor) {
-        dividend = neg32(&dividend);
+        dividend = neg32(dividend);
     }
 
     if (rem != NULL) {
         if (sign_dividend) {
-            remainder = neg32(&remainder);
+            remainder = neg32(remainder);
         }
 
         rem->high = remainder.high;
         rem->low = remainder.low;
     }
-  
+
     return dividend;
 }

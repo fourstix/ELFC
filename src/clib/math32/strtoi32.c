@@ -82,20 +82,20 @@ int32_t strtoi32(const char *nptr, char **endptr, int base)
 
 	cutoff = neg ? int32_min : int32_max;
 	/* cutlim = cutoff % base; */
-	div32(&cutoff, &base_int, &cutlim);
+	div32(cutoff, base_int, &cutlim);
 
 	/* cutoff /= base; */
-	cutoff = div32(&cutoff, &base_int, NULL);
+	cutoff = div32(cutoff, base_int, NULL);
 	if (neg) {
 		/* if (cutlim > 0) */
 		if ((cutlim.high & 0x8000) == 0) {
 			/* cutlim -= base; */
-			cutlim = sub32(&cutlim, &base_int);
+			cutlim = sub32(cutlim, base_int);
 			/* cutoff += 1; */
-			cutoff = add32(&cutoff, &one);
+			cutoff = add32(cutoff, one);
 		}
 		/* cutlim = -cutlim; */
-		cutlim = neg32(&cutlim);
+		cutlim = neg32(cutlim);
 	}
 	acc.high = 0;
 	acc.low = 0;
@@ -112,7 +112,7 @@ int32_t strtoi32(const char *nptr, char **endptr, int base)
 			continue;
 		if (neg) {
 			/* if (acc < cutoff || (acc == cutoff && c > cutlim)) { */
-			cmp = cmp32(&acc, &cutoff);
+			cmp = cmp32(acc, cutoff);
 			if (cmp < 0 || (cmp == 0 && c > cutlim.low)) {
 				any = -1;
 				acc = int32_min;
@@ -120,15 +120,15 @@ int32_t strtoi32(const char *nptr, char **endptr, int base)
 			} else {
 				any = 1;
 				/* acc *= base; */
-				acc = mul32(&acc, &base_int);
+				acc = mul32(acc, base_int);
 				/* acc -= c; */
 				c_int.high = 0;
 				c_int.low = c;
-				acc = sub32(&acc, &c_int);
+				acc = sub32(acc, c_int);
 			}
 		} else {
 			/* if (acc > cutoff || (acc == cutoff && c > cutlim)) { */
-			cmp = cmp32(&acc, &cutoff);
+			cmp = cmp32(acc, cutoff);
 			if (cmp > 0 || (cmp == 0 && c > cutlim.low)) {
 				any = -1;
 				acc = int32_max;
@@ -136,11 +136,11 @@ int32_t strtoi32(const char *nptr, char **endptr, int base)
 			} else {
 				any = 1;
 				/* acc *= base; */
-				acc = mul32(&acc, &base_int);
+				acc = mul32(acc, base_int);
 				/* acc += c; */
 				c_int.high = 0;
 				c_int.low = c;
-				acc = add32(&acc, &c_int);
+				acc = add32(acc, c_int);
 			}
 		}
 	}

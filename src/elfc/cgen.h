@@ -167,3 +167,5 @@ void cgdata(int n);
 void cgbyte(int b);
 //grw - print out an array of characters
 void cgchars(char *s, int len);
+//grw - added support to pass struct/union by value
+void cgvalue(int n);
