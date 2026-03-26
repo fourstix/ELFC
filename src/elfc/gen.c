@@ -804,7 +804,7 @@ void genexit(int scope) {
 }
 
 //grw - add support to pass struct/union by value
-void genpad(n) {
+void genpad(int n) {
 	commit();
 	gen(";----- padding the stack for struct/union argument");
 	cglit(n);
