@@ -226,8 +226,7 @@ int skip(void) {
 			while ((c = next()) != EOF) {
 				if (c == '\n') break;
 			}
-                }
-                else {
+    } else {
 			p = 0;
 			while ((c = next()) != EOF) {
 				if ('/' == c && '*' == p) {
@@ -375,9 +374,9 @@ static int macro(char *name) {
 			mparamc = scanparams(name);
 
 			/* verify margc matches count of args */
-			if (margcnt != mparamc)
+			if (margcnt != mparamc) {
 			  error("Invalid number of parameters in marco %s", name);
-
+      }
 			/* verify empty list does not match single (non-blank) parameter */
 			if ((margcnt == 1) && !Mhide[0] && !blank(Mshow[0]))
   			error("Non-empty parameter list in marco %s", name);
@@ -686,9 +685,12 @@ static int scanpp(void) {
 				} // if keyword(Text)
         //grw - added support for local labels and goto
 				c = next();
-				/* a local label is an identifier that ends in a colon */
-				/* but not inside a ternary statement */
-				if (':' == c && !ternary) {
+				/*
+				 * A local label (user label) is an identifier that ends in a colon
+				 * but is not inside a ternary statement, and does not
+				 * match any of the local or global symbols already defined
+				 */
+				if (':' == c && !ternary && !findsym(Text)) {
 					return ULABEL;
 				} else {
 					putback(c);
@@ -745,6 +747,14 @@ int scanparams(char *name) {
 	int idx = 0;
 	int cnt = 0;
 	char ch;
+	/* previous character to check for char literal */
+	char before = 0;
+	/* peek at next character to check for char literal */
+	char after = 0;
+	/* flag to stop scanning parameters after error */
+	int  scanerr = 0;
+	/* flag to ignore parenteses and commas inside a string */
+	int  instr = 0;
 
 
 	ch = next();
@@ -755,38 +765,97 @@ int scanparams(char *name) {
 
 	do {
 		while((ch = next())) {
-			if (ch == '(')
-			  nest++;
-			if (ch == ')') {
-				if (nest) {
-				  --nest;
+			/*
+			 * Handles literal parenthesis like ')' and '('
+       * as well as parenthesis inside a string literal.
+			 */
+			if (!instr && ch == '(') {
+				/* check if this is a character literal */
+				if (before == '\'') {
+					/* peek at next char to check for char literal */
+					after = next();
+					putback(after);
+					/* if not literal this is a nesting parenthesis */
+					if (after != '\'') {
+						nest++;
+					}
 				} else {
-					/* unnested rparen marks end of parameter list */
-				  break;
-				} //if-else
+					nest++;
+				}
+			} else if (!instr && ch == ')') {
+				if (before == '\'') {
+					/* peek at next char to check for char literal */
+					after = next();
+					putback(after);
+					/* if not literal this is a closing parenthesis */
+					if (after != '\'') {
+  				  if (nest) {
+	  			    --nest;
+		  		  } else {
+			  		  /* unnested rparen marks end of parameter list */
+				      break;
+				    } //if-else
+			    }
+		    } else {
+					if (nest) {
+						--nest;
+					} else {
+						/* unnested rparen marks end of parameter list */
+						break;
+					} //if-else
+				}
 			}
-			/* ignore commas in nested parameters */
-			if (!nest && ch == ',')
-			  break;
+			/* ignore commas in nested parameters and inside strings */
+			if (!nest && !instr && ch == ',') {
+				/* need to ignore  commas in literal ',' */
+				if (before == '\'') {
+					/* peek at next char to check for char literal */
+					after = next();
+					putback(after);
+					if(after != '\'') {
+						break;
+					}
+				} else {
+ 				  break;
+				}
+			}
 			/* if we hit end of line something went wrong */
 			if (ch == '\n') {
 				error("Invalid parameter list for macro %s\n", name);
+				scanerr = 1;
 				break;
 			}
 			pbuf[idx++] = ch;
 			if (idx >= MAXPARAMLEN) {
 				error("Parameter too long in marco %s\n", name);
+				scanerr = 1;
 				break;
 			}
-
+			/* set previous character */
+			before = ch;
+			if (ch == '\"') {
+				/* peek at next char to check for char literal */
+				after = next();
+				putback(after);
+				/* \"  and '"' are literals and do not mark strings */
+				if (before != '\\' && (before != '\'' || after != '\'')) {
+					/* otherwise toggle the in string flag */
+					if (instr) {
+						instr = 0;
+					} else {
+						instr = 1;
+					}
+				}
+			}
 		} //while
 		/* end string for param */
 		pbuf[idx] = '\0';
 		Mshow[cnt++] = strdup(pbuf);
-
+		/* reset previous character */
+		before = 0;
 		/* reset character index for next parameter */
 		idx = 0;
-  } while(ch != ')');
+  } while(ch != ')' && !scanerr);
 
 	return cnt;
 }

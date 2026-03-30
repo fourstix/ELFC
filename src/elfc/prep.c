@@ -74,7 +74,7 @@ static void defmac(void) {
 				prev = 0;
 				/* handle empty (void) parameter list */
 				if (margc == 0) {
-					margs[margc] = 0;
+					margs[margc] = NULL;
 					margc++;
 				}
 				getln(mbuf, TEXTLEN-1);

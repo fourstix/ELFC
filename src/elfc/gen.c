@@ -1200,7 +1200,7 @@ void addstr(int label, char *text, int len) {
 		else 		//grw - if we ran out of memory, exit immediately
 		  fatal("Unable to add string to table.");
 	} else
-	  ptext = 0;
+	  ptext = NULL;
 
 		//grw - convert string table to array of structures
 		str_tbl[str_idx].label = label;

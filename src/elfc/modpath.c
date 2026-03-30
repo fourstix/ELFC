@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-#if defined(__linux__)
+#ifdef __linux__
 #include <unistd.h>
-#elif defined(_WIN32)
+#else
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #endif
 #include "modpath.h"
 
@@ -36,7 +38,7 @@ void get_module_path(char *path_buf, size_t size) {
     // If the path cannot be determined, an empty string is returned.
     *path_buf = '\0';
 
-#if defined(__linux__)
+#ifdef __linux__
     ssize_t len = readlink("/proc/self/exe", path_buf, size - 1);
     if (len != -1) {
         path_buf[len] = '\0';  // Null-terminate the string
@@ -45,11 +47,13 @@ void get_module_path(char *path_buf, size_t size) {
     } else {
         perror("readlink");
     }
-#elif defined(_WIN32)
+#else
+#ifdef _WIN32
     if (GetModuleFileName(NULL, path_buf, (DWORD)size) != 0) {
         trim_filename_from_path(path_buf);
     } else {
         fprintf(stderr, "Error getting module file name.\n");
     }
+#endif
 #endif
 }

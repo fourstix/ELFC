@@ -39,8 +39,9 @@ int synch(int syn) {
 	int	t;
 
 	t = scan();
+
 	while (t != syn) {
-		if (EOF == t)
+		if (XEOF == t)
 			fatal("error recovery failed");
 		t = scan();
 	}

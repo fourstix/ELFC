@@ -650,6 +650,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 	//grw - added support to initialize global or static arrays
 	int  isize = 0;
 	int  rsize = 0;
+	//grw - fixed error where array of structures falsely considered const
+	int stc = (*pprim & STCMASK);
 
 	unsupp = "unsupported typedef syntax";
 	if (STAR == Token) {
@@ -725,7 +727,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 		}
 
 			//grw - added support for const keyword
-		if (CNST == (*pprim & CNSTMASK))
+		if (!stc && CNST == (*pprim & CNSTMASK))
 			*pprim |= CINIT;
 	}
 	else if (!pmtr && LPAREN == Token) {
@@ -786,7 +788,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 					}
 
 					//grw - added support for const keyword
-					if (CNST == (*pprim & CNSTMASK))
+					if (!stc && CNST == (*pprim & CNSTMASK))
 						*pprim |= CINIT;
 
 					//grw - set value to 1 for initialized arrays
@@ -838,7 +840,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 				*pval  = 1;
 
 				//grw - added support for const keyword
-				if (CNST == (*pprim & CNSTMASK))
+				if (!stc && CNST == (*pprim & CNSTMASK))
 					*pprim |= CINIT;
 
 				if (isize < *psize) {
@@ -853,7 +855,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 				}	else if (isize > *psize) {
 					error("initialization list size larger than size of array %s", name);
 				}
-			}	else if (*pprim & CNSTMASK) {
+			}	else if (!stc && (*pprim & CNSTMASK)) {
 			//grw - changed this to error instead of clearing bits
 			error("const keyword not supported for non-initialized array %s", name);
 			}
