@@ -14,7 +14,7 @@
 #pragma             extrn Ccmp32
 #pragma .link .library math32.lib
 
-int fseek32(FILE *f, off_t *offset, int whence) {
+int fseek32(FILE *f, off_t offset, int whence) {
   int hi;
   off_t pos;
   off_t error;
@@ -32,20 +32,20 @@ int fseek32(FILE *f, off_t *offset, int whence) {
   }
 
   /* don't seek before start of file */
-  if ((whence == SEEK_SET) && ((offset->high & 0x8000) != 0)) {
+  if ((whence == SEEK_SET) && ((offset.high & 0x8000) != 0)) {
     errno = EINVAL;
     return -1;
   }
 
   /* don't seek past the end of the file */
-  if ((whence == SEEK_END) && ((offset->high != 0) || (offset->low != 0))) {
+  if ((whence == SEEK_END) && ((offset.high != 0) || (offset.low != 0))) {
     errno = EINVAL;
     return -1;
   }
 
   /* adjust offset for a character in ugetc buffer */
   if (whence == SEEK_CUR && _FREAD == f->last) {
-    if (f->ch != EOF) offset->low--;
+    if (f->ch != EOF) offset.low--;
   }
 
   /* seeking wipes out character push-back buffer and clears EOF */

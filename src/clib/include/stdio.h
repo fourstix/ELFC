@@ -160,7 +160,7 @@ FILE* tmpfile(void);
 int fgetpos(FILE* f, pos_t* pos);
 int fsetpos(FILE* f, pos_t* pos);
 int fseek(FILE* f, int offset, int whence);
-int fseek32(FILE* f, off_t *offset, int whence);
+int fseek32(FILE* f, off_t offset, int whence);
 int ftell(FILE* f);
 void rewind(FILE* f);
 

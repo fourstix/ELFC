@@ -13,6 +13,7 @@
 int fsetpos(FILE *f, pos_t *pos) {
     off_t new_pos;
     off_t error;
+    off_t tmp;
 
     if (f == NULL || pos == NULL) {
         errno = EINVAL;
@@ -29,7 +30,9 @@ int fsetpos(FILE *f, pos_t *pos) {
     f->ch = EOF;
     f->iom &= ~_FEOF;
 
-    new_pos = lseek32(f->fd, pos, SEEK_SET);
+    /* temporary workaround for error in deref pointer argument */
+    tmp = *pos;
+    new_pos = lseek32(f->fd, tmp, SEEK_SET);
 
     error = to_int32(-1);
     if (cmp32(new_pos, error) == 0) {

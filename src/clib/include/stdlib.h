@@ -173,5 +173,5 @@ int read(int fd, void *buf, size_t len);
 int write(int fd, void *buf, size_t len);
 int unlink(char *path);
 int lseek(int fd, int offset, int whence);
-off_t lseek32(int fd, off_t *offset, int whence);
+off_t lseek32(int fd, off_t offset, int whence);
 #endif
