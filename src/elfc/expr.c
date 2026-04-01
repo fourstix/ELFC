@@ -176,8 +176,11 @@ static node *fnargs(int fn, int *na, int *nsize) {
 				/* change argument node to pass by value */
 				n2->op = OP_VALUE;
 			} else if (n2->op == OP_CALL) {
-				/* change function node to pass returned structure by value */
+				/* change function node to pass returned structure from function call by value */
 	    	n2->op = OP_CALLV;
+			} else if (n2->op == OP_RVAL) {
+				/* change function node to pass structure deref from pointer by value */
+	    	n2->op = OP_PTRV;
 			}
 
 			/* set flag in case struct/union is last argument */

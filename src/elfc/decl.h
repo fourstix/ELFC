@@ -265,6 +265,8 @@ void	genints(int *a, int len);
 //grw - add support to pass struct/union by value
 void genvalue(int y);
 //grw - add support to struct/union from function call as argument
-void genderef(int y);
+void genderefc(int y);
 //grw - add support for zero as null
 int isnull(int p1, node *n);
+//grw - add support to deref struct/union ptr as argument
+void genderefp(int y);

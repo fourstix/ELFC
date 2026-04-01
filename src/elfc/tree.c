@@ -198,7 +198,8 @@ void dumptree(node *a) {
 	case OP_VALUE:	dumpleaf("value", a->args[0]); break;
 	//grw - add support to pass struct/union by value
 	case OP_PAD:	dumpleaf("pad", a->args[0]); break;
-	case OP_CALLV:	dumpunop2("(stc)x()", a); break;
+	case OP_CALLV:	dumpunop2("(stc)x() as arg", a); break;
+	case OP_PTRV:	dumpunop2("deref (stc *ptr)", a); break;
 	}
 }
 
@@ -431,7 +432,7 @@ static void emittree1(node *a) {
 			lv[LVSYM] = a->args[1];
 			gencopy(lv);
 			break;
-	//grw - add support to pass struct/union by value
+	//grw - add support to pass struct/union by value as an argument to a fucntion
 	case OP_VALUE:
       genvalue(a->args[0]);
 			break;
@@ -449,8 +450,16 @@ static void emittree1(node *a) {
 			genstack(a->args[1]);
 			/* put the returned struct/union address on the stack after call */
 			genpushd();
-			/* dereference struct/union address on stack */
-			genderef(a->args[0]);
+			/* dereference struct/union address from call on stack */
+			genderefc(a->args[0]);
+			break;
+	//grw - support deref struct/union pointer as an argument to a function
+	case OP_PTRV:
+	    emittree1(a->left);
+			/* deref struct/union pointer on stack */
+			genderefp(a->args[0]);
+			//grw - commit pushd for rvalue
+			commit();
 			break;
 	}
 }
