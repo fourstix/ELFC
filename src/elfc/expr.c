@@ -176,8 +176,11 @@ static node *fnargs(int fn, int *na, int *nsize) {
 				/* change argument node to pass by value */
 				n2->op = OP_VALUE;
 			} else if (n2->op == OP_CALL) {
-				/* change function node to pass returned structure by value */
+				/* change function node to pass returned structure from function call by value */
 	    	n2->op = OP_CALLV;
+			} else if (n2->op == OP_RVAL) {
+				/* change function node to pass structure deref from pointer by value */
+	    	n2->op = OP_PTRV;
 			}
 
 			/* set flag in case struct/union is last argument */
@@ -956,9 +959,10 @@ static node *asgmnt(int *lv) {
 		if (!allowasgmnt(lv))
 			error("cannot assign value to initialized const variable", NULL);
 		if (ASSIGN == op) {
-			if (!typematch(lv[LVPRIM], lv2[LVPRIM]))
-				error("assignment from incompatible type",
-					NULL);
+			if (!typematch(lv[LVPRIM], lv2[LVPRIM])) {
+				if (!isnull(lv[LVPRIM], n2))
+				  error("assignment from incompatible type",NULL);
+			}
 			if(comptype(lv[LVPRIM])) {
 				//grw - added support to assign struct/union
 				n = mkbinop2(OP_COPY, lv[LVPRIM], lv[LVSYM], n, n2);
@@ -1131,3 +1135,20 @@ void initexpr(void) {
 	n = rvalue(n, lv);
 	emittree(n);
 }
+
+/*
+ * Check for zero assigned to pointer as NULL value.
+ *
+ * This is the one exception, to the rule that
+ * integers and pointers are not interchangeable.
+ *
+ * See K&R, 2nd ed, page 102 for details.
+ */
+ int isnull(int p1, node *n) {
+	 /* if the assigned value is a literal zero */
+	 if (n->op == OP_LIT  && n->args[0] == 0) {
+		 /* if the lvalue is any pointer, then it's allowed */
+		 return (ptrlevel(p1) > 0);
+	 }
+	return 0;
+ }

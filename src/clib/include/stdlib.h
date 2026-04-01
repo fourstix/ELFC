@@ -134,13 +134,13 @@ typedef struct {
 #endif
 
 /* Minimum value */
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
+#ifndef MIN
+#define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
 /* Maximum value */
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
+#ifndef MAX
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
 void _init(void);
@@ -173,5 +173,5 @@ int read(int fd, void *buf, size_t len);
 int write(int fd, void *buf, size_t len);
 int unlink(char *path);
 int lseek(int fd, int offset, int whence);
-off_t lseek32(int fd, off_t *offset, int whence);
+off_t lseek32(int fd, off_t offset, int whence);
 #endif

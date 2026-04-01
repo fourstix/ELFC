@@ -12,9 +12,9 @@
 #include <string.h>
 #include <limits.h>
 
-#define MAX		10
+/* Sample size for Random Number Test */
+#define SAMPLES		10
 
-int	rns[MAX];
 char	buf[64];
 int	Errors = 0;
 int result = EXIT_SUCCESS;
@@ -31,7 +31,7 @@ void pr(char *s) {
 
 void test_math(void) {
 	int	i, j, k;
-	int	rns[MAX];
+	int	rns[SAMPLES];
 
   i = 12345;
 
@@ -54,7 +54,7 @@ void test_math(void) {
  	pr("rand");
   //grw - not sure if this is a valid test,since  pseudo-random numbers may repeat
   //grw - 10 out of 65,000 is fairly low probability of collision, but it could happen...
-	for (i=0; i<MAX; i++) {
+	for (i=0; i<SAMPLES; i++) {
 		k = rand();
 		for (j=0; j<i; j++)
 			if (rns[j] == k) {
@@ -67,7 +67,7 @@ void test_math(void) {
 	}
 
   //grw - print the numbers to validate randomness
-  for (i=0; i<MAX; i++) {
+  for (i=0; i<SAMPLES; i++) {
     if ((i % 5) == 0)
       printf("\n% 5d", rns[i]);
     else

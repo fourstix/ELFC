@@ -33,7 +33,7 @@ int main() {
   i = TEST((13+2),2,6);
 
   /* nested macros */
-  k = min(LIMIT, min(i, j));
+  k = MIN(LIMIT, MIN(i, j));
 
   printf("i = %d, j = %d, k = %d\n", i, j, k);
 

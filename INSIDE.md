@@ -8,20 +8,19 @@ ElfC creates an Elf/OS binary from a C source file using the following build pro
 "Hello World" example file `hello.c`.
 
 *hello.c*
-'''
+```c
 #include <stdio.h>
-
 
 int main() {
   printf("Hello, World!");
 }
-'''
+```
 
 *The build process consists of the following three major steps:*
 
 1. The ElfC program compiles the source file `hello.c` and the included header file `<stdio.h>` into the assembly code file `hello.asm`.
 2. The ElfC program invokes the Asm/02 assembler to assemble the `hello.asm` file into the `hello.prg` object file.  The assembler creates the assembly list file `hello.lst` and the assembly build file `hello.build`.
-3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the runtime startup module file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the `hello.lkb` file iwth linker build number, which servers as the version number for the binary program, and the symbol map `hello.sym` with the linked object module and library routine addresses.
+3. The ElfC program invokes the Link/02 linker to link the `hello.prg` object file to the runtime startup module file `crt0.prg`and the default C library files `stdlib.lib` and `stdio.lib` to create the Elf/OS binary file `hello.elfos`.  The linker outputs the `hello.lkb` file with linker build number, which serves as the version number for the binary program, and the symbol map `hello.sym` with the linked object module and library routine addresses.
 
 
 <table>
@@ -56,7 +55,7 @@ Inside the function, local (auto) variables are allocated on the stack.  The sta
 If the first local (auto) variable in a function is a structure or union, then an integer-sized padding element is added first, to allow the structure or union to exist on the structure in case it becomes the return value of the function.
 
 *Example 1:*
-```
+```c
 int fn1(int n, char c, int *p) {
    int  i1;
    char c1;
@@ -64,10 +63,9 @@ int fn1(int n, char c, int *p) {
    ...
    return i1;
 }
-
 ```
 
-*Stackframe 1:*
+*Stackframe for Example 1:*
 <table>
 <tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
 <tr><td>+4</td><td>p</td><td>2</td><td>pointer</td></tr>
@@ -78,7 +76,7 @@ int fn1(int n, char c, int *p) {
 <tr><td>integer (LSB)</td></tr>
 <tr><td rowspan="2">-4</td><td>xx</td><td rowspan="2">2</td><td >padding byte</td></tr>
 <tr><td>c1</td><td>character</td></tr
-<tr><td rowspan="4">-4</td><td>xx</td><td rowspan="4">4</td><td>padding byte</td></tr>
+<tr><td rowspan="4">-8</td><td>xx</td><td rowspan="4">4</td><td>padding byte</td></tr>
 <tr><td>a[2]</td><td rowspan="3">array characters</td></tr>
 <tr><td>a[1]</td></tr>
 <tr><td>a[0]</td></tr>
@@ -86,7 +84,7 @@ int fn1(int n, char c, int *p) {
 </table>
 
 *Example 2:*
-```
+```c
 struct scrabble_tile {
   char letter;
   int  score;
@@ -101,10 +99,9 @@ struct scrabble_tile rack(int pos) {
     /* return tile at position in rack */
     return tile;
 }
-
 ```
 
-*Stackframe for Example 2*
+*Stackframe for Example 2:*
 <table>
 <tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
 <tr><td>0</td><td>pos</td><td>2</td><td>integer</td><tr>
@@ -119,7 +116,7 @@ struct scrabble_tile rack(int pos) {
 
 
 *Example 3:*
-```
+```c
 struct point {
   int x;
   int y;
@@ -140,10 +137,10 @@ struct point scale(int n, struct point p) {
     return p;
 }
 ```
-*Stackframe for Example 3*
+*Stackframe for Example 3:*
 <table>
 <tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>6</td><td>xx</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
+<tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
 <tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td></tr>
 <tr><td>point.y</td><td>integer</td></tr>
 <tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>

@@ -323,8 +323,8 @@ void genvalue(int y) {
 	cgvalue(size);
 }
 
-//grw - dereference a stuct/union value on the stack
-void genderef(int y) {
+//grw - dereference a stuct/union value from a call on the stack
+void genderefc(int y) {
   int yt;
 	int size;
 
@@ -333,6 +333,21 @@ void genderef(int y) {
 	gen(";----- struct/union argument returned from function call");
 	/* get the struct/union definition symbol index from function return primitive */
   yt = Prims[y] & ~STCMASK;
+	size = Sizes[yt];
+	size = ALIGNED(size);
+	cgvalue(size);
+}
+
+//grw - dereference a stuct/union pointer on the stack
+void genderefp(int y) {
+  int yt;
+	int size;
+
+	/* commit any pending operations */
+	commit();
+	gen(";----- struct/union argument from pointer deref");
+	/* get the struct/union definition symbol index */
+  yt = y & ~STCMASK;
 	size = Sizes[yt];
 	size = ALIGNED(size);
 	cgvalue(size);
@@ -1200,7 +1215,7 @@ void addstr(int label, char *text, int len) {
 		else 		//grw - if we ran out of memory, exit immediately
 		  fatal("Unable to add string to table.");
 	} else
-	  ptext = 0;
+	  ptext = NULL;
 
 		//grw - convert string table to array of structures
 		str_tbl[str_idx].label = label;

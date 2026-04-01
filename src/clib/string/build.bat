@@ -35,9 +35,9 @@
 
 type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg strcasecmp.prg> string.lib
 type strcasestr.prg strcat.prg strchr.prg strcmp.prg strcpy.prg strcspn.prg >> string.lib
-type strdup.prg strerror.prg strlcpy.prg strlcat.prg strlen.prg strlwr.prg >> string.lib
+type strdup.prg strerror.prg strim.prg strlcat.prg strlcpy.prg strlen.prg strlwr.prg >> string.lib
 type strncasecmp.prg strncat.prg strncmp.prg strncpy.prg strndup.prg strnlen.prg >> string.lib
 type strnstr.prg strpbrk.prg strrchr.prg strrev.prg strsep.prg strspn.prg strstr.prg >> string.lib
-type strim.prg strtok.prg strupr.prg >> string.lib
+type strtok.prg strupr.prg >> string.lib
 
 copy string.lib ..\lib\string.lib

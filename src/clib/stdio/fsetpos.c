@@ -29,7 +29,7 @@ int fsetpos(FILE *f, pos_t *pos) {
     f->ch = EOF;
     f->iom &= ~_FEOF;
 
-    new_pos = lseek32(f->fd, pos, SEEK_SET);
+    new_pos = lseek32(f->fd, *pos, SEEK_SET);
 
     error = to_int32(-1);
     if (cmp32(new_pos, error) == 0) {

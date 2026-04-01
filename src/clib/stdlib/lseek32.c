@@ -9,7 +9,7 @@
 #pragma             extrn Ccmp32
 #pragma .link .library math32.lib
 
-off_t lseek32(int fd, off_t *offset, int how) {
+off_t lseek32(int fd, off_t offset, int how) {
   int fildes;
   off_t result;
   off_t eof;
@@ -24,15 +24,16 @@ off_t lseek32(int fd, off_t *offset, int how) {
     errno = EBADF;
     return eof;
   }
-
   asm("         gosub s_lget16  ; get the fildes variable ");
   asm("           dw -2         ; from local variable stack");
   asm("         copy ra, rd     ; copy fd to fildes register");
   asm("         gosub s_lget16  ; get the how to seek argument ");
-  asm("           dw 4          ; from argument stack");
+  asm("           dw 6          ; from argument stack");
   asm("         copy ra, rc     ; copy how to seek value to register");
-  asm("         gosub s_lget16  ; get the pointer to the offset");
-  asm("           dw 2          ; from argument stack");
+  asm("         copy rb, ra     ; get pointer to stack frame into ra");
+  asm("         inc  ra         ; adjust pointer");
+  asm("         inc  ra         ; to point to the offset");
+  asm("         inc  ra         ; on the stack");
   asm("         push r7         ; save stack pointer before setting low offset");
   asm("         lda  ra         ; get low byte of low offset");
   asm("         plo  r7         ; save in r7.0");
