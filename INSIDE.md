@@ -52,35 +52,36 @@ When calling a function ElfC will push the function arguments from right to left
 
 Inside the function, local (auto) variables are allocated on the stack.  The stack size for integers and pointers is two bytes.  Characters occupy one byte of the two byte stack slot. Arrays, structures and unions are expanded to an even number of bytes when allocated on the stack.
 
-If the first local (auto) variable in a function is a structure or union, then an integer-sized padding element is added first, to allow the structure or union to exist on the structure in case it becomes the return value of the function.
+If the first local (auto) variable in a function is a structure or union, then a two byte padding element is before it, to preserve the structure or union data on the stack in case that data is used in the return value of the function.
 
 *Example 1:*
 ```c
 int fn1(int n, char c, int *p) {
-   int  i1;
-   char c1;
-   char a[3];
-   ...
-   return i1;
+  int  i1 = 4;
+  char c1 = c+3;
+  char a[3] = "xy";
+
+  return i1;
 }
 ```
 
 *Stackframe for Example 1:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>+4</td><td>p</td><td>2</td><td>pointer</td></tr>
-<tr><td>+2</td><td>c</td><td>2</td><td>char promoted to int</td></tr>
-<tr><td>0</td><td>n</td><td>2</td><td>integer</td></tr>
-<tr><th colspan="4">RB points to the Base of the Stack Frame</th></tr>
-<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (MSB)</td></tr>
-<tr><td>integer (LSB)</td></tr>
-<tr><td rowspan="2">-4</td><td>xx</td><td rowspan="2">2</td><td >padding byte</td></tr>
-<tr><td>c1</td><td>character</td></tr
-<tr><td rowspan="4">-8</td><td>xx</td><td rowspan="4">4</td><td>padding byte</td></tr>
-<tr><td>a[2]</td><td rowspan="3">array characters</td></tr>
-<tr><td>a[1]</td></tr>
-<tr><td>a[0]</td></tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><tr>
+<tr><th colspan="5">R7 points to the Expression Stack</th></tr>
+<tr><td rowspan="4">-8</td><td>a[0]</td><td rowspan="4">4</td><td rowspan="3">array characters</td><td>Lowest Memory Address (TOS)</td></tr>
+<tr><td>a[1]</td><td rowspan="3">Padded to even byte size</td></tr>
+<tr><td>a[2]</td></tr>
+<tr><td>xx</td><td>padding byte</td></tr>
+<tr><td rowspan="2">-4</td><td>c1</td><td rowspan="2">2</td><td>character</td>><td rowspan="2
+">Padded to even byte size</td></tr
+<tr><td>xx</td><td>padding byte</td></tr>
+<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (LSB)</td><td rowspan="2"></td></tr>
+<tr><td>integer (MSB)</td></tr>
+<tr><th colspan="5">RB points to the Base of the Stack Frame</th></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td></td></tr>
+<tr><td>+2</td><td>c</td><td>2</td><td>character</td><td>promoted to int</td></tr>
+<tr><td>+4</td><td>p</td><td>2</td><td>pointer</td><td>Highest Memory Address</tr>
 </table>
 
 *Example 2:*
@@ -93,8 +94,10 @@ struct scrabble_tile {
 /* get the tile from a player's rack */
 struct scrabble_tile rack(int pos) {
     struct scrabble_tile tile;
-    /* get the scrabble tile from rack, draw new tile if needed */
-    ...
+
+    /* get the scrabble tile from rack */
+    tile.letter = 'D';  /* Pretend it is 'D' for demo */
+    tile.score = 2;
 
     /* return tile at position in rack */
     return tile;
@@ -103,15 +106,15 @@ struct scrabble_tile rack(int pos) {
 
 *Stackframe for Example 2:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
-<tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
-<tr><td rowspan="4">-6</td><td rowspan="2">scrabble_tile.score</td><td rowspan="4">4</td><td>integer (MSB)</td></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><tr>
+<tr><th colspan="5">R7 points to the Expression Stack</th></tr>
+<tr><td rowspan="4">-6</td><td>scrabble_tile.letter</td><td rowspan="4">4</td><td>char</td><td>Lowest Memory Address (TOS)</tr>
+<tr><td>xx</td><td>padding byte</td><td>field padded to even byte size</td></tr>
+<tr><td rowspan="2">scrabble_tile.score</td><td>integer (MSB)</td><td rowspan="2"></td></tr>
 <tr><td>integer (LSB)</td></tr>
-<tr><td>xx</td><td>padding byte</td></tr>
-<tr><td>scrabble_tile.letter</td><td>char</td></tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding</td><td>padded to preserve structure data</td><tr>
+<tr><th colspan="5">RB points to the Base of Stack Frame</th></tr>
+<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><td>Highest Memory Address<tr>
 </table>
 
 
@@ -139,17 +142,20 @@ struct point scale(int n, struct point p) {
 ```
 *Stackframe for Example 3:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
-<tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td></tr>
-<tr><td>point.y</td><td>integer</td></tr>
-<tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
-<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><tr>
+<tr><th colspan="5">R7 points to the Expression Stack</th></tr>
+<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><td>Lowest Memory Addres (TOS)</td><tr>
+<tr><th colspan="5">RB points to the Base of Stack Frame</th></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td></td><tr>
+<tr><td rowspan="2">2</td><td>point.y</td><td rowspan="2">4</td><td>integer</td><td rowspan="2"></td></tr>
+<tr><td>point.x</td><td>integer</td></tr>
+<tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding to preserve structure data</td><td>Highest Memory Address</td><tr>
 </table>
 
 *Notes:*
+* The Stack grows downwards in memory.
+* The Bottom of Stack is at the highest memory address
+* The Top of Stack (TOS) is at the lowest memory address.
 * The default stack size is 2 bytes, the integer size.
 * Arguments are pushed on the stack from right to left, so that the first argument is at offset 0.
 * After the arguments are pushed to the expression stack, RB is set to the value of R7.
@@ -161,20 +167,19 @@ struct point scale(int n, struct point p) {
 * Since they are stack pointers, R7 and RB point to the address one *below* the data on the stack.
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
-* Structures and unions have their fields padded to the stack size.
-* If a struct/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the struct/union may be used for a return value.
-* If a structure/union is the last argument in the function call, an integer-sized padding element is
-pushed on the stack before the struct/union so that the argument may be used as a return value.
+* Structures and unions have their fields padded to the stack size (2 bytes).
+* If a struct/union is the first local (auto) variable in the function, an 2-byte padding element is added so that the struct/union is preserved in case it is needed for a return value.
+* If a structure/union is the last argument in the function call, a 2-byte padding element is pushed on the stack before the struct/union so that the argument data is preserved in case it is needed for a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
-* Otherwise the function returns, and the program continues.
+* Otherwise the function returns, R7 and R8 are restored to their previous values, and the program continues.
 
 
 Registers Used
 ---------------
 
 <table>
-<tr><th>Input Files</th><th>Description</th><th>Output Files</th><th>Description</th></tr>
+<tr><th>Input Files</th><th>Description</th><th>Owner</th><th>Availability</th></tr>
 <tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>
