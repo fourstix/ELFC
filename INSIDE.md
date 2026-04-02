@@ -84,6 +84,22 @@ int fn1(int n, char c, int *p) {
 <tr><td>+4</td><td>p</td><td>2</td><td>pointer</td><td>Highest Memory Address</tr>
 </table>
 
+Running the program stackframe.c yields the following data at the breakpoint in Example 1:
+
+```
+BREAK AT XP=23 D=78 DF=0
+R0=0000 R1=0000 R2=2260 R3=23A0
+R4=FFC6 R5=FFD8 R6=24D6 R7=2344
+R8=2352 R9=2101 RA=2363 RB=234C
+RC=0001 RD=234F RE=0100 RF=236A
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  00 00 00 00 00 78 79 7A 00 64 00 04 00 2A 00 61  .....xyz.d...*.a
+2350>  00 63 23 00 00 00 00 00 00 D6 EE 04 00 D6 EE D6  .c#......Vn..VnV
+>>>
+```
+
 *Example 2:*
 ```c
 struct scrabble_tile {
@@ -117,6 +133,20 @@ struct scrabble_tile rack(int pos) {
 <tr><td>0</td><td>pos</td><td>2</td><td>integer</td><td>Highest Memory Address<tr>
 </table>
 
+Running the program stackframe.c yields the following data at the breakpoint in Example 2:
+```
+BREAK AT XP=23 D=00 DF=0
+R0=0000 R1=0000 R2=2260 R3=23F8
+R4=FFC6 R5=FFD8 R6=2502 R7=2348
+R8=2348 R9=2101 RA=0002 RB=234E
+RC=0001 RD=0002 RE=01FF RF=EDDF
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  00 13 40 0B 40 4B 23 02 00 44 EE 02 00 53 23 03  ..@.@K#..Dn..S#.
+2350>  00 5B 23 00 00 00 00 00 00 D6 EE 04 00 D6 EE 04  .[#......Vn..Vn.
+>>>
+```
 
 *Example 3:*
 ```c
@@ -152,6 +182,20 @@ struct point scale(int n, struct point p) {
 <tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding to preserve structure data</td><td>Highest Memory Address</td><tr>
 </table>
 
+Running the program stackframe.c yields the following data at the breakpoint in Example 3:
+```
+BREAK AT XP=23 D=07 DF=0
+R0=0000 R1=0000 R2=2260 R3=248A
+R4=FFC6 R5=FFD8 R6=2572 R7=2346
+R8=2346 R9=2101 RA=07D0 RB=2348
+RC=0FA0 RD=07D0 RE=0100 RF=07D0
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  40 02 00 4D 23 D0 07 02 00 02 00 FE FF D0 07 00  @..M#P.....~.P..
+2350>  00 53 23 00 00 00 00 FF FF E8 03 44 EE 02 00 04  .S#......h.Dn...
+>>>
+```
 *Notes:*
 * The Stack grows downwards in memory.
 * The Bottom of Stack is at the highest memory address
