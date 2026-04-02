@@ -484,7 +484,7 @@ Time Library
 -------------
 
 **The standard C time structure tm is defined by the ElfC time C library.**
-```
+```c
 struct tm {
     int tm_sec;       /* seconds after the minute (0 to 60) */
     int tm_min;       /* minutes after the hour (0 to 60) */
@@ -522,7 +522,7 @@ Math32 Library
 --------------
 **The math2 library functions use the following structure and type.**
 
-```
+```c
 struct int32 {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */

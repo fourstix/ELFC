@@ -59,7 +59,7 @@ If the first local (auto) variable in a function is a structure or union, then a
 int fn1(int n, char c, int *p) {
   int  i1 = 4;
   char c1 = c+3;
-  char a[3] = "xy";
+  char a[3] = {'x','y','z'};
 
   return i1;
 }
@@ -173,6 +173,7 @@ struct point scale(int n, struct point p) {
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
 * Otherwise the function returns, R7 and R8 are restored to their previous values, and the program continues.
+
 
 
 Registers Used

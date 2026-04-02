@@ -57,7 +57,7 @@ ElfC follows the C "usual arithmetic conversions" The C Programming Language, 2n
 
 *Examples:*
 These examples are in the promote.c example program.
-```
+```c
 #include <stdio.h>
 
 unsigned char uc =  77;
@@ -77,7 +77,7 @@ char c = 'F' (70)
 The value uc promotes to int 77 and sc promotes to int -7, and 77 + (-7) = int 70, which is then assigned
 back to unsigned char c as 'F' or 70.
 
-```
+```c
 #include <stdio.h>
 
 unsigned int  ui1 =  7;
@@ -244,7 +244,7 @@ Library Compiler Option
 Example:
 
 The C file `cstime.c` containing the function:
-```
+```c
 static struct tm _tm;
 
 char *cstime(void) {
@@ -357,7 +357,7 @@ Stdarg Macros
 * The `va_end` should be called after all variable arguments have been processed.
 * The argument pointer is invalid after `va_end` is called.
 
-```
+```c
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -393,7 +393,7 @@ Time Library
 --------------
 
 **The standard C time structure tm is defined by the ElfC time C library.**
-```
+```c
 struct tm {
     int tm_sec;       /* seconds after the minute (0 to 60) */
     int tm_min;       /* minutes after the hour (0 to 60) */
@@ -504,7 +504,7 @@ Math32 Library
 --------------
 **The math2 library functions use the following structure and type.**
 
-```
+```c
 struct int32 {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
