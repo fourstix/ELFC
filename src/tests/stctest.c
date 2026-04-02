@@ -13,6 +13,9 @@ struct point {
 /* global point */
 struct point gp;
 
+/* array of points */
+struct point a[2];
+
 void fail(char *name) {
 	printf("%s failed\n", name);
 	Errors++;
@@ -132,9 +135,22 @@ ret = t2;
 //printf("ret.x = %d ret.y = %d\n", ret.x, ret.y);
 if (ret.x != 20 || ret.y != 23) fail("testglobal-3");
 
-printf("Test passing and returning pointers to struct\n");
+printf("Test assigning structure to array elements\n");
+
 t2.x = 16;
 t2.y = 64;
+
+a[0] = ret;
+a[1] = t2;
+
+if (a[0].x != 20 || a[0].y != 23) fail("testarray-1");
+if (a[1].x != 16 || a[1].y != 64) fail("testarray-2");
+
+printf("Test assigning array element returned by function\n");
+a[0] = getpt();
+if (a[0].x != 19 || a[0].y != -41) fail("testarray-3");
+
+printf("Test passing and returning pointers to struct\n");
 //printf("Passing t2.x = %d t2.y = %d as pointer argument\n", t2.x, t2.y);
 p = testptr(&t2);
 //printf("p->x = %d p->y = %d\n", p->x, p->y);
@@ -179,6 +195,7 @@ p = &t2;
 if (testxy(p->x, p->y)) fail("testptr-1");
 if (testxy((&t2)->x, (&t2)->y)) fail("testptr-2");
 if(testpxy(p)) fail("testptr-3");
+if(testpt(*p)) fail("testptr-4");
 
 printf("Test structure argument doesn't step on other arguments\n");
 ret.x = -120;
@@ -191,8 +208,10 @@ if(testpt(t2)) fail("testguard-4");
 printf("Test argument as function returning structure\n");
 if(testpt(getpt())) fail("testfunc-1");
 
-if(testpt(testguard(19, ret, -41))) fail("testfunc-1");
+if(testpt(testguard(19, ret, -41))) fail("testfunc-2");
 
+printf("Test passing structure from array element as argument\n");
+if(testpt(a[0])) fail("testfunc-3");
 
 if (!Errors)
   printf("All tests passed.\n");
