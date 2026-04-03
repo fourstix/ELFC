@@ -612,6 +612,8 @@ void cgdefs(char *s, int len) {
 	//grw - don't output empty string (len includes quotes, so 2 or less is empty string)
 	if (len < 3)
 	  return;
+	else if (len > 200)
+		error("String too long", NULL);
 
 	genraw("  db ");
 
