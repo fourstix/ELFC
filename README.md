@@ -221,8 +221,10 @@ More information about Version 3.4 and library functions can be found on the [EL
 Release 3.5
 -----------
 
-Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.
+Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  In addition several issues found during self-compiling where fixed in this release.
 
+New Features
+-------------
 * Structures and unions may be passed by value as an argument to the function.
 * A struct/union argument may be used as the return value of a function.
 * Several additional functions were added to the string library.
@@ -230,7 +232,19 @@ Release 3.5 adds support for passing structures and unions by value to a functio
 * An additional debug option was added to the compiler to support debugging the AST trees and optimizations.
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
+
+Issues Fixed
+-------------
 * The functions in the Math32 library were converted to pass 32-bit numbers by value.
+* MIN and MAX macros should be capitalized.
+* Array of structures falsely considered as constant.
+* Enum value failed in first case of switch statement.
+* Zero was not treated as NULL when assigned to pointer.
+* Macro preprocessor did not properly handle parenthesis inside strings and character literals.
+* Updated modpath logic to compile with ElfC.
+* Scanner did not terminate correctly after syntax error.
+* Structure pointer was not correctly de-referenced when used as argument to function.
+* ElfC could emit strings too long for Asm/02 assembler.
 
 Compiler Option Changes
 -----------------------
