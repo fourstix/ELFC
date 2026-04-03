@@ -52,36 +52,56 @@ When calling a function ElfC will push the function arguments from right to left
 
 Inside the function, local (auto) variables are allocated on the stack.  The stack size for integers and pointers is two bytes.  Characters occupy one byte of the two byte stack slot. Arrays, structures and unions are expanded to an even number of bytes when allocated on the stack.
 
-If the first local (auto) variable in a function is a structure or union, then an integer-sized padding element is added first, to allow the structure or union to exist on the structure in case it becomes the return value of the function.
+If the first local (auto) variable in a function is a structure or union, then a two byte padding element is before it, to preserve the structure or union data on the stack in case that data is used in the return value of the function.
 
 *Example 1:*
 ```c
 int fn1(int n, char c, int *p) {
-   int  i1;
-   char c1;
-   char a[3];
-   ...
-   return i1;
+  int  i1 = 4;
+  char c1 = c+3;
+  char a[3] = {'x','y','z'};
+
+  /* Example 1 Breakpoint */
+  BRKPT
+
+  return i1;
 }
 ```
 
 *Stackframe for Example 1:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>+4</td><td>p</td><td>2</td><td>pointer</td></tr>
-<tr><td>+2</td><td>c</td><td>2</td><td>char promoted to int</td></tr>
-<tr><td>0</td><td>n</td><td>2</td><td>integer</td></tr>
-<tr><th colspan="4">RB points to the Base of the Stack Frame</th></tr>
-<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (MSB)</td></tr>
-<tr><td>integer (LSB)</td></tr>
-<tr><td rowspan="2">-4</td><td>xx</td><td rowspan="2">2</td><td >padding byte</td></tr>
-<tr><td>c1</td><td>character</td></tr
-<tr><td rowspan="4">-8</td><td>xx</td><td rowspan="4">4</td><td>padding byte</td></tr>
-<tr><td>a[2]</td><td rowspan="3">array characters</td></tr>
-<tr><td>a[1]</td></tr>
-<tr><td>a[0]</td></tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
+<tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2344 + 1</td></tr>
+<tr><td rowspan="4">-8</td><td>a[0]</td><td rowspan="4">4</td><td rowspan="3">Array characters 'x','y','z'</td><td>Lowest Memory Address (TOS)</td><td>2345</td></tr>
+<tr><td>a[1]</td><td rowspan="3">Array padded to even byte size</td><td>2346</td></tr>
+<tr><td>a[2]</td><td>2347</td></tr>
+<tr><td>xx</td><td>padding byte</td><td>2348</td></tr>
+<tr><td rowspan="2">-4</td><td>c1</td><td rowspan="2">2</td><td>character</td>><td rowspan="2
+">Character 'd' padded to even byte size</td><td>2349</td></tr>
+<tr><td>xx</td><td>padding byte</td><td>234A</td></tr>
+<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (LSB)</td><td rowspan="2">i1 = 4</td><td>234B</td></tr>
+<tr><td>integer (MSB)</td><td>234C</td></tr>
+<tr><th colspan="5">RB points to the Base of the Stack Frame</th><td>234C + 1</td></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td>n = 42</td><td>234D</td></tr>
+<tr><td>+2</td><td>c</td><td>2</td><td>character</td><td>Char 'a' promoted to int</td><td>234F</td></tr>
+<tr><td>+4</td><td>p</td><td>2</td><td>pointer</td><td>Highest Memory Address</td><td>2351</td></tr>
 </table>
+
+Running the example program stackframe.c with `_STGROM_` defined yields the following data at the Breakpoint for Example 1:
+
+```
+BREAK AT XP=23 D=78 DF=0
+R0=0000 R1=0000 R2=2260 R3=23A0
+R4=FFC6 R5=FFD8 R6=24D6 R7=2344
+R8=2352 R9=2101 RA=2363 RB=234C
+RC=0001 RD=234F RE=0100 RF=236A
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  00 00 00 00 00 78 79 7A 00 64 00 04 00 2A 00 61  .....xyz.d...*.a
+2350>  00 63 23 00 00 00 00 00 00 D6 EE 04 00 D6 EE D6  .c#......Vn..VnV
+>>>
+```
 
 *Example 2:*
 ```c
@@ -93,8 +113,13 @@ struct scrabble_tile {
 /* get the tile from a player's rack */
 struct scrabble_tile rack(int pos) {
     struct scrabble_tile tile;
-    /* get the scrabble tile from rack, draw new tile if needed */
-    ...
+
+    /* get the scrabble tile from rack */
+    tile.letter = 'D';  /* Pretend it is 'D' for demo */
+    tile.score = 2;
+
+    /* Example 2 Breakpoint */
+     BRKPT
 
     /* return tile at position in rack */
     return tile;
@@ -103,17 +128,31 @@ struct scrabble_tile rack(int pos) {
 
 *Stackframe for Example 2:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
-<tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
-<tr><td rowspan="4">-6</td><td rowspan="2">scrabble_tile.score</td><td rowspan="4">4</td><td>integer (MSB)</td></tr>
-<tr><td>integer (LSB)</td></tr>
-<tr><td>xx</td><td>padding byte</td></tr>
-<tr><td>scrabble_tile.letter</td><td>char</td></tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
+<tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2348 + 1</td></tr>
+<tr><td rowspan="4">-6</td><td>scrabble_tile.letter</td><td rowspan="4">4</td><td>char </td><td>Lowest Memory Address (TOS), letter = 'D'</td><td>2349</td></tr>
+<tr><td>xx</td><td>padding byte</td><td>field padded to even byte size</td><td>234A</td></tr>
+<tr><td rowspan="2">scrabble_tile.score</td><td>integer (LSB)</td><td rowspan="2">score = 2</td><td>234B</td></tr>
+<tr><td>integer (MSB)</td><td>234C</td></tr>
+<tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding</td><td>padded to preserve structure data</td><td>234D</td><tr>
+<tr><th colspan="5">RB points to the Base of Stack Frame</th><td>234E + 1</td></tr>
+<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><td>Highest Memory Address, pos = 3</td><td>234F</td><tr>
 </table>
 
+Running the example program stackframe.c with ` _STGROM_` defined yields the following data at the Breakpoint for Example 2:
+```
+BREAK AT XP=23 D=00 DF=0
+R0=0000 R1=0000 R2=2260 R3=23F8
+R4=FFC6 R5=FFD8 R6=2502 R7=2348
+R8=2348 R9=2101 RA=0002 RB=234E
+RC=0001 RD=0002 RE=01FF RF=EDDF
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  00 13 40 0B 40 4B 23 02 00 44 EE 02 00 53 23 03  ..@.@K#..Dn..S#.
+2350>  00 5B 23 00 00 00 00 00 00 D6 EE 04 00 D6 EE 04  .[#......Vn..Vn.
+>>>
+```
 
 *Example 3:*
 ```c
@@ -133,23 +172,43 @@ struct point scale(int n, struct point p) {
     p.x = factor * (p.x);
     p.y = factor * (p.y);
 
+    /* Example 3 Breakpoint */
+     BRKPT
+
     /* return point */
     return p;
 }
 ```
 *Stackframe for Example 3:*
 <table>
-<tr><th>Stack Offset</th><th>object</th><th>Stack Size</th><th>Description</th><tr>
-<tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding for possible structure return</td><tr>
-<tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td></tr>
-<tr><td>point.y</td><td>integer</td></tr>
-<tr><td>0</td><td>n</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">RB points to the Base of Stack Frame</th></tr>
-<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><tr>
-<tr><th colspan="4">R7 points to the Expression Stack</th></tr>
+<tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
+<tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2346 + 1</td></tr>
+<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><td>Lowest Memory Address (TOS), factor = 2</td><td>2347</td><tr>
+<tr><th colspan="5">RB points to the Base of Stack Frame</th><td>2348 + 1</td></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td>n = 2</td><td>2349</td><tr>
+<tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td><td>x = -2</td><td>234B</tr>
+<tr><td>point.y</td><td>integer</td><td>y = 2000</td><td>234D</tr>
+<tr><td>6</td><td>_pad</td><td>2</td><td>2 byte padding to preserve structure data</td><td>Highest Memory Address</td><td>234F<tr>
 </table>
 
+Running the example program stackframe.c with `_STGROM_` defined yields the following data at the Breakpoint for Example 3:
+```
+BREAK AT XP=23 D=07 DF=0
+R0=0000 R1=0000 R2=2260 R3=248A
+R4=FFC6 R5=FFD8 R6=2572 R7=2346
+R8=2346 R9=2101 RA=07D0 RB=2348
+RC=0FA0 RD=07D0 RE=0100 RF=07D0
+
+>>>E 2340 2350
+        0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+2340>  40 02 00 4D 23 D0 07 02 00 02 00 FE FF D0 07 00  @..M#P.....~.P..
+2350>  00 53 23 00 00 00 00 FF FF E8 03 44 EE 02 00 04  .S#......h.Dn...
+>>>
+```
 *Notes:*
+* The Stack grows downwards in memory.
+* The Bottom of Stack is at the highest memory address
+* The Top of Stack (TOS) is at the lowest memory address.
 * The default stack size is 2 bytes, the integer size.
 * Arguments are pushed on the stack from right to left, so that the first argument is at offset 0.
 * After the arguments are pushed to the expression stack, RB is set to the value of R7.
@@ -161,20 +220,20 @@ struct point scale(int n, struct point p) {
 * Since they are stack pointers, R7 and RB point to the address one *below* the data on the stack.
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
-* Structures and unions have their fields padded to the stack size.
-* If a struct/union is the first local (auto) variable in the function, an integer-sized padding element is added so that the struct/union may be used for a return value.
-* If a structure/union is the last argument in the function call, an integer-sized padding element is
-pushed on the stack before the struct/union so that the argument may be used as a return value.
+* Structures and unions have their fields padded to the stack size (2 bytes).
+* If a struct/union is the first local (auto) variable in the function, an 2-byte padding element is added so that the struct/union data is preserved in case it is needed for a return value.
+* If a structure/union is the last argument in the function call, a 2-byte padding element is pushed on the stack before the struct/union so that the argument data is preserved in case it is needed for a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
-* Otherwise the function returns, and the program continues.
+* Otherwise the function returns to the caller, with R7 and R8 restored to their previous values, and the program continues.
+
 
 
 Registers Used
 ---------------
 
 <table>
-<tr><th>Input Files</th><th>Description</th><th>Output Files</th><th>Description</th></tr>
+<tr><th>Input Files</th><th>Description</th><th>Owner</th><th>Availability</th></tr>
 <tr><td>R0</td><td>DMA Pointer</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R1</td><td>Interrupt Handler</td><td>OS</td><td>Reserved</td></tr>
 <tr><td>R2</td><td>System Stack Pointer (SP)</td><td>OS</td><td>Reserved</td></tr>

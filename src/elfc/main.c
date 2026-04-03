@@ -203,12 +203,14 @@ static void longusage(void) {
 		"-c       compile and assemble only, do not link\n"
 		"-d opt   activate debug option OPT, ? = list\n"
 		"-o file  write linker output to FILE\n"
-		"-t       test only, generate no code\n"
+		"-t       test only, generate no code\n");
+  printf(
 		"-v       verbose output\n"
 		"-D m=v   define macro M with optional value V\n"
   	"-L       compile and assemble a library object file\n"
 		//grw - added no c libs option
-    "-N       do not link stdlib and stdio by default\n"
+    "-N       do not link stdlib and stdio by default\n");
+  printf(
     //grw - added play macro option
     "-P       print expanded macro text\n"
 		"-S       compile to assembly language\n"
