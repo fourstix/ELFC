@@ -72,18 +72,18 @@ int fn1(int n, char c, int *p) {
 <table>
 <tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
 <tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2344 + 1</td></tr>
-<tr><td rowspan="4">-8</td><td>a[0]</td><td rowspan="4">4</td><td rowspan="3">array characters</td><td>Lowest Memory Address (TOS)</td><td>2345</td></tr>
-<tr><td>a[1]</td><td rowspan="3">Padded to even byte size</td><td>2346</td></tr>
+<tr><td rowspan="4">-8</td><td>a[0]</td><td rowspan="4">4</td><td rowspan="3">Array characters 'x','y','z'</td><td>Lowest Memory Address (TOS)</td><td>2345</td></tr>
+<tr><td>a[1]</td><td rowspan="3">Array padded to even byte size</td><td>2346</td></tr>
 <tr><td>a[2]</td><td>2347</td></tr>
 <tr><td>xx</td><td>padding byte</td><td>2348</td></tr>
 <tr><td rowspan="2">-4</td><td>c1</td><td rowspan="2">2</td><td>character</td>><td rowspan="2
-">Padded to even byte size</td><td>2349</td></tr>
+">Character 'd' padded to even byte size</td><td>2349</td></tr>
 <tr><td>xx</td><td>padding byte</td><td>234A</td></tr>
-<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (LSB)</td><td rowspan="2"></td><td>234B</td></tr>
+<tr><td rowspan="2">-2</td><td rowspan="2">i1</td><td rowspan="2">2</td><td>integer (LSB)</td><td rowspan="2">i1 = 4</td><td>234B</td></tr>
 <tr><td>integer (MSB)</td><td>234C</td></tr>
 <tr><th colspan="5">RB points to the Base of the Stack Frame</th><td>234C + 1</td></tr>
-<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td></td><td>234D</td></tr>
-<tr><td>+2</td><td>c</td><td>2</td><td>character</td><td>promoted to int</td><td>234F</td></tr>
+<tr><td>0</td><td>n</td><td>2</td><td>integer</td><td>n = 42</td><td>234D</td></tr>
+<tr><td>+2</td><td>c</td><td>2</td><td>character</td><td>Char 'a' promoted to int</td><td>234F</td></tr>
 <tr><td>+4</td><td>p</td><td>2</td><td>pointer</td><td>Highest Memory Address</td><td>2351</td></tr>
 </table>
 
@@ -130,13 +130,13 @@ struct scrabble_tile rack(int pos) {
 <table>
 <tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
 <tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2348 + 1</td></tr>
-<tr><td rowspan="4">-6</td><td>scrabble_tile.letter</td><td rowspan="4">4</td><td>char</td><td>Lowest Memory Address (TOS)</td><td>2349</td></tr>
+<tr><td rowspan="4">-6</td><td>scrabble_tile.letter</td><td rowspan="4">4</td><td>char </td><td>Lowest Memory Address (TOS), letter = 'D'</td><td>2349</td></tr>
 <tr><td>xx</td><td>padding byte</td><td>field padded to even byte size</td><td>234A</td></tr>
-<tr><td rowspan="2">scrabble_tile.score</td><td>integer (LSB)</td><td rowspan="2"></td><td>234B</td></tr>
+<tr><td rowspan="2">scrabble_tile.score</td><td>integer (LSB)</td><td rowspan="2">score = 2</td><td>234B</td></tr>
 <tr><td>integer (MSB)</td><td>234C</td></tr>
 <tr><td>-2</td><td>_pad</td><td>2</td><td>2 byte padding</td><td>padded to preserve structure data</td><td>234D</td><tr>
 <tr><th colspan="5">RB points to the Base of Stack Frame</th><td>234E + 1</td></tr>
-<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><td>Highest Memory Address</td><td>234F</td><tr>
+<tr><td>0</td><td>pos</td><td>2</td><td>integer</td><td>Highest Memory Address, pos = 3</td><td>234F</td><tr>
 </table>
 
 Running the example program stackframe.c with ` _STGROM_` defined yields the following data at the Breakpoint for Example 2:
@@ -183,7 +183,7 @@ struct point scale(int n, struct point p) {
 <table>
 <tr><th>Base Offset</th><th>Object</th><th>Stack Size</th><th>Description</th><th>Note</th><th>Example Address</th><tr>
 <tr><th colspan="5">R7 points to the Top of Expression Stack</th><td>2346 + 1</td></tr>
-<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><td>Lowest Memory Address (TOS)</td><td>2347</td><tr>
+<tr><td>-2</td><td>factor</td><td>2</td><td>integer</td><td>Lowest Memory Address (TOS), factor = 2</td><td>2347</td><tr>
 <tr><th colspan="5">RB points to the Base of Stack Frame</th><td>2348 + 1</td></tr>
 <tr><td>0</td><td>n</td><td>2</td><td>integer</td><td>n = 2</td><td>2349</td><tr>
 <tr><td rowspan="2">2</td><td>point.x</td><td rowspan="2">4</td><td>integer</td><td>x = -2</td><td>234B</tr>
@@ -221,11 +221,11 @@ RC=0FA0 RD=07D0 RE=0100 RF=07D0
 * Character arguments are promoted to int on the expression stack.
 * Arrays are padded to an even byte size on the expression stack.
 * Structures and unions have their fields padded to the stack size (2 bytes).
-* If a struct/union is the first local (auto) variable in the function, an 2-byte padding element is added so that the struct/union is preserved in case it is needed for a return value.
+* If a struct/union is the first local (auto) variable in the function, an 2-byte padding element is added so that the struct/union data is preserved in case it is needed for a return value.
 * If a structure/union is the last argument in the function call, a 2-byte padding element is pushed on the stack before the struct/union so that the argument data is preserved in case it is needed for a return value.
 * At the end of a function, R7 is moved back by the size of the local variables, and the value of R7 is checked with RB to validate that the expression stack has returned to its base address.
 * If R7 does not equal RB when checked, then a *Stack Creep Error* is issued, and the program terminates.
-* Otherwise the function returns, with R7 and R8 are restored to their previous values, and the program continues.
+* Otherwise the function returns to the caller, with R7 and R8 restored to their previous values, and the program continues.
 
 
 
