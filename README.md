@@ -232,10 +232,10 @@ New Features
 * An additional debug option was added to the compiler to support debugging the AST trees and optimizations.
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
+* The functions in the Math32 library were converted to pass 32-bit numbers by value.
 
 Issues Fixed
 -------------
-* The functions in the Math32 library were converted to pass 32-bit numbers by value.
 * MIN and MAX macros should be capitalized.
 * Array of structures falsely considered as constant.
 * Enum value failed in first case of switch statement.
