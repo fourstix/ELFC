@@ -7,6 +7,7 @@ int fn1(int n, char c, int *p) {
    char c1 = c+3;
    char a[3] = {'x','y','z'};
 
+   /* Example 1 Breakpoint */
    BRKPT
 
    return i1;
@@ -25,7 +26,9 @@ struct scrabble_tile rack(int pos) {
     tile.letter = 'D';  /* Pretend it is 'D' for demo */
     tile.score = 2;
 
+   /* Example 2 Breakpoint */
     BRKPT
+
     /* return tile at position in rack */
     return tile;
   }
@@ -46,7 +49,9 @@ struct scrabble_tile rack(int pos) {
       p.x = factor * (p.x);
       p.y = factor * (p.y);
 
+      /* Example 3 Breakpoint */
       BRKPT
+
       /* return point */
       return p;
   }
