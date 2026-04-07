@@ -6,14 +6,15 @@
 #include <stdlib.h>
 #endif
 
- /* don't define all external functions inside C library procdures to prevent dupes */
+/* don't define all external functions inside C library procdures to prevent dupes */
 #ifndef _ELFCLIB_
 #pragma .link .library ctype.lib
-#pragma .link .requires Cctype
 #endif
 
 int	isalnum(int c);
 int	isalpha(int c);
+int	isascii(int c);
+int	isblank(int c);
 int	iscntrl(int c);
 int	isdigit(int c);
 int	isgraph(int c);
