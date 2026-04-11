@@ -4,9 +4,9 @@
  * In the public domain
  *
  * Test the character type functions
- * Test 2 of 
+ * Test 2 of
  */
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -91,7 +91,28 @@ void test_chrfn(void) {
 		if (islower(c) && tolower(toupper(c)) != c) fail("tolower-2");
 		if (islower(c) && !isupper(toupper(c))) fail("toupper-1");
 		if (isupper(c) && toupper(tolower(c)) != c) fail("toupper-2");
+    //grw - added checks for isblank and isascii
+    if (isblank(c) && c != ' ' && c != '\t') fail("isblank-1");
+    if (!isblank(c) && (c == ' ' || c == '\t')) fail("isblank-2");
+    if (!isascii(c)) fail("isascii-1");
 	}
+  /* c = 128, is not an ascii char, so all tests are false */
+  printf("isChar Tests for non-ascii char(%d)\n", c);
+  if (isalnum(c)) fail("isalnum-3");
+  if (isalpha(c)) fail("isalpha-3");
+  if (isascii(c)) fail("isascii-2");
+  if (isblank(c)) fail("isblank-3");
+  if (iscntrl(c)) fail("iscntrl-3");
+  if (isdigit(c)) fail("isdigit-3");
+  if (isgraph(c)) fail("isgraph-3");
+  if (islower(c)) fail("islower-3");
+  if (isprint(c)) fail("isprint-3");
+  if (ispunct(c)) fail("ispunct-3");
+  if (isspace(c)) fail("isspace-3");
+  if (isupper(c)) fail("isupper-3");
+  if (isxdigit(c)) fail("isxdigit-3");
+  if (tolower(c) != c) fail("tolower-3");
+  if (toupper(c) != c) fail("toupper-3");
 }
 
 

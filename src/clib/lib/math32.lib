@@ -484,6 +484,7 @@
 }
 .big
 {Cstrtoi32
+.library ctype.lib
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff d6 c3 00 00
 :0010 d9 42 00 00 d9 3c ff fe d9 09 d9 42 ff fe d9 4e

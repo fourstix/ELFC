@@ -48,7 +48,7 @@ void test_fscan(void) {
 		return;
 	}
   fprintf(f, "%d %x %o %u", -35, 0x0400, 0135, 60000u);
-  fprintf(f, "%s", "a\t100%  pass\n");
+	fprintf(f, "%s", "a\t100%  pass\n");
   rewind(f);
   /* read back test data we just wrote*/
   fscanf(f, "%d %x %o %u", &i, &j, &k, &u);

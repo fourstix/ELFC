@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-/* define only extern procedures required */
-#pragma           extrn Cisspace
+#pragma             extrn Cisspace
+
+#pragma .link .library ctype.lib
+
 
 int atoi(const char *s) {
   int i;

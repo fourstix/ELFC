@@ -95,6 +95,7 @@
 }
 .big
 {Cstrcasecmp
+.library ctype.lib
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 42 00
 :0010 02 d9 42 ff fe d9 7b 00 d9 0f 9a 52 8a f1 c2 00
 :0020 7a d9 09 d9 42 ff fc d9 7b 00 d9 0f 9a 52 8a f1
@@ -337,6 +338,7 @@
 }
 .big
 {Cstrim
+.library ctype.lib
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fc c3 00 00
 :0010 d9 42 00 00 d9 3c ff fe d9 09 d9 42 ff fe d9 7b
@@ -464,6 +466,7 @@
 }
 .big
 {Cstrlwr
+.library ctype.lib
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 42 ff
 :0010 fe d9 7b 00 d9 09 9a 52 8a f1 c2 00 49 d9 42 ff
 /Ctolower 0029 00
@@ -481,6 +484,7 @@
 }
 .big
 {Cstrncasecmp
+.library ctype.lib
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 42 00
 :0010 02 d9 42 00 04 d9 54 00 04 d9 09 9a 52 8a f1 ca
 :0020 00 2b d9 12 00 00 d9 09 c0 00 fd d9 42 ff fe d9
@@ -868,6 +872,7 @@
 }
 .big
 {Cstrupr
+.library ctype.lib
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 42 ff
 :0010 fe d9 7b 00 d9 09 9a 52 8a f1 c2 00 49 d9 42 ff
 /Ctoupper 0029 00

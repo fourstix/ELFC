@@ -1,8 +1,10 @@
 #define _ELFCLIB_
 #include <string.h>
-#include <ctype.h>
+#include <ctype.h.>
 
-#pragma           extrn Ctolower
+#pragma             extrn Ctolower
+
+#pragma .link .library ctype.lib
 
 int strcasecmp(const char *s1, const char *s2) {
   const unsigned char *p1=(void *)s1, *p2=(void *)s2;

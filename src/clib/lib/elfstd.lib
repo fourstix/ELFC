@@ -169,6 +169,7 @@
 }
 .big
 {Catoi
+.library ctype.lib
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 :0010 d9 12 00 00 d9 42 00 00 d9 b7 d9 09 9a 52 8a f1
@@ -503,32 +504,33 @@ v0024
 :0040 d9 12 ff ff d9 42 ff fe d9 b7 d9 09 9a 52 8a f1
 ?Cerrno 005c
 :0050 ca 00 56 c0 00 69 d9 12 00 09 d9 21 00 00 d9 09
-:0060 d9 78 ff f6 d9 09 c0 00 fb d9 45 ff fe 8a ad 9a
-:0070 bd d9 45 00 04 8a ac 9a bc d9 45 00 02 97 73 87
-:0080 73 4a a7 4a b7 4a a8 0a b8 d4 03 0f 87 aa 97 ba
-:0090 60 72 a7 f0 b7 88 ac 98 bc c3 00 a7 d9 48 ff fa
-:00a0 8c aa 9c ba c0 00 af f8 ff ba aa d9 48 ff fa d9
-:00b0 48 ff fc d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3
-?auto_err 00c0
-?auto_err 00cb
-/Ccmp32 00ce 00
-\Ccmp32 00cf
-:00c0 00 00 d9 78 ff fa d9 e4 00 04 c3 00 00 d4 00 00
-?auto_err 00d5
-:00d0 d9 03 00 0a c3 00 00 d9 0c d9 12 00 00 d9 b7 d9
-:00e0 09 9a 52 8a f1 ca 00 eb c0 00 f5 d9 12 00 05 d9
-?Cerrno 00f1
-:00f0 21 00 00 d9 09 d9 78 ff fa d9 09 d9 03 00 0a c3
-?auto_err 0100
-?stk_err 0106
-:0100 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
+:0060 d9 78 ff f6 d9 09 c0 00 fe d9 45 ff fe 8a ad 9a
+:0070 bd d9 45 00 06 8a ac 9a bc 8b aa 9b ba 1a 1a 1a
+:0080 97 73 87 73 4a a7 4a b7 4a a8 0a b8 d4 03 0f 87
+:0090 aa 97 ba 60 72 a7 f0 b7 88 ac 98 bc c3 00 aa d9
+:00a0 48 ff fa 8c aa 9c ba c0 00 b2 f8 ff ba aa d9 48
+:00b0 ff fa d9 48 ff fc d9 12 00 00 d9 78 ff f6 d9 e4
+?auto_err 00c3
+?auto_err 00ce
+:00c0 00 04 c3 00 00 d9 78 ff fa d9 e4 00 04 c3 00 00
+/Ccmp32 00d1 00
+\Ccmp32 00d2
+?auto_err 00d8
+:00d0 d4 00 00 d9 03 00 0a c3 00 00 d9 0c d9 12 00 00
+:00e0 d9 b7 d9 09 9a 52 8a f1 ca 00 ee c0 00 f8 d9 12
+?Cerrno 00f4
+:00f0 00 05 d9 21 00 00 d9 09 d9 78 ff fa d9 09 d9 03
+?auto_err 0103
+?stk_err 0109
+:0100 00 0a c3 00 00 e2 d9 06 c3 00 00 60 72 ab f0 bb
+:0110 d5
 +0051
 +0054
 +0067
-+009a
-+00a5
-+00e6
++009d
++00a8
 +00e9
++00ec
 }
 .big
 {Cmalloc

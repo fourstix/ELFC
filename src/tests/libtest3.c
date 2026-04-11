@@ -4,9 +4,9 @@
  * In the public domain
  *
  * Test the string functions
- * Test 3 of 
+ * Test 3 of
  */
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -115,6 +115,11 @@ void test_str(void) {
 	if (strcmp(strtok(NULL, sep), "goo")) fail("strtok-4");
 	if (strtok(NULL, sep) != NULL) fail("strtok-5");
 	if (strtok(NULL, sep) != NULL) fail("strtok-6");
+
+  pr("strstr");
+  strcpy(v1, "abcdefgh");
+  if (strncmp(strstr(v1, "def"), "def", 3)) fail("strstr-1");
+  if (strstr(v1, "ghi") != NULL) fail("strstr-2");
 }
 
 int main(int argc, char **argv) {
