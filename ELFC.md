@@ -299,7 +299,7 @@ Elfio Scan Conversions (-E option)
 * The width specification is supported.
 * The suppression operator `*` is supported.
 * The `%d, %u, %x, %c, %s, %p, %n and %%` conversions are supported.
-* The `%i, %u, %o` conversions are *not* supported.
+* The `%i and %o` conversions are *not* supported.
 * The charset operators `%[...]` and `%[^...]` are *not* supported.
 * The %f, %e, and %g conversions are *not* supported.
 
