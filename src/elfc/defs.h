@@ -107,6 +107,10 @@ enum {
 	PVOID,
   //grw - type for function pointer
   FUNPTR,
+  //grw - added special type for unsigned char cast to unsigned int
+  UC2UINT,
+  //grw - added special type for signed char cast to unsigned int
+  SC2UINT,
 
   //grw - bits 0-3 are for the primitive types
   TYPEMASK = 0x000F,

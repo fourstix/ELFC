@@ -265,7 +265,7 @@ type systime.prg asctime.prg cstime.prg > time.lib
 Print Conversions
 ------------------
 * The flags `-, +, space, 0 and #` are supported.
-* The width specification is suppored.
+* The width specification is supported.
 * The suppression operator `*` is supported.
 * The decimal precision is not supported.
 * The length modifiers h, l (el) and L are not supported.
@@ -274,11 +274,24 @@ Print Conversions
 
 Scan Conversions
 -----------------
-* The width specification is suppored.
+* The width specification is supported.
 * The suppression operator `*` is supported.
 * The `%d, %i, %u, %o, %x, %c, %s, %p, %n and %%` conversions are supported.
 * The charset operators `%[...]` and `%[^...]` are supported.
 * The %f, %e, and %g conversions are not supported.
+
+When the `-E` option is specified, the following conversions are supported.
+
+Print Conversions
+------------------
+* The flags `-, +, space, 0 and #` are *not* supported.
+* The width specification is *not* supported.
+* The suppression operator `*` is supported.
+* The decimal precision is not supported.
+* The length modifiers h, l (el) and L are not supported.
+* The `%d, %i, %u, %o, %x, %X, %c, %s, %p, %n and %%` conversions are supported.
+* The %f, %e, %E, %g and %G conversions are not supported.
+
 
 Unsupported Stdlib Functions
 ----------------------------

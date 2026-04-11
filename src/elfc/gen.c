@@ -603,6 +603,8 @@ void queue_cmp(int op) {
 }
 
 int binoptype(int op, int p1, int p2) {
+	//grw - added support for signed and unsigned
+	int unsgn = unsgnop(p1, p2);
 	binopchk(op, p1, p2);
 	if (PLUS == op) {
 		if (!inttype(p1)) return p1;
@@ -610,11 +612,11 @@ int binoptype(int op, int p1, int p2) {
 	}
 	else if (MINUS == op) {
 		if (!inttype(p1)) {
-			if (!inttype(p2)) return PINT;
+			if (!inttype(p2)) return unsgn ? PUINT : PINT;
 			return p1;
 		}
 	}
-	return PINT;
+	return unsgn ? PUINT : PINT;
 }
 
 /* unary ops */
@@ -1109,31 +1111,32 @@ void gencopy(int *lv) {
 /* genrval computation */
 
 void genrval(int *lv) {
+	int y;
+
 	if (NULL == lv) return;
 
-	if (!lv[LVSYM]) {
+	y = lv[LVSYM];
+
+	if (!y) {
 		genind(lv[LVPRIM]);
-	}
-	else if (CAUTO == Stcls[lv[LVSYM]]) {
+	}	else if (CAUTO == Stcls[y]) {
 		//grw - add support for signed and unsigned
 		if (chartype(lv[LVPRIM]))
 			//grw - add support for signed and unsigned
-			cgldlb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
+			cgldlb(Vals[y], signtype(lv[LVPRIM]));
 		else
-			cgldlw(Vals[lv[LVSYM]]);
-	}
-	else if (CLSTATC == Stcls[lv[LVSYM]]) {
+			cgldlw(Vals[y]);
+	} else if (CLSTATC == Stcls[y]) {
 		if (chartype(lv[LVPRIM]))
-			cgldsb(Vals[lv[LVSYM]], signtype(lv[LVPRIM]));
+			cgldsb(Vals[y], signtype(lv[LVPRIM]));
 		else
-			cgldsw(Vals[lv[LVSYM]]);
-	}
-	else {
+			cgldsw(Vals[y]);
+	}	else {
 		//grw - added support for signed and unsigned
 		if (chartype(lv[LVPRIM]))
-			cgldgb(gsym(Names[lv[LVSYM]]), signtype(lv[LVPRIM]));
+			cgldgb(gsym(Names[y]), signtype(lv[LVPRIM]));
 		else
-			cgldgw(gsym(Names[lv[LVSYM]]));
+			cgldgw(gsym(Names[y]));
 	}
 }
 

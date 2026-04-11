@@ -233,6 +233,9 @@ New Features
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
 * The functions in the Math32 library were converted to pass 32-bit numbers by value.
+* Smaller versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-E` compiler option.
+* The elflib and elfio libraries have fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
+* The Ctype library was rewritten to provide the same functions with smaller library code.
 
 Issues Fixed
 -------------
@@ -245,10 +248,15 @@ Issues Fixed
 * Scanner did not terminate correctly after syntax error.
 * Structure pointer was not correctly de-referenced when used as argument to function.
 * ElfC could emit strings too long for Asm/02 assembler.
+* Character types cast to to int or unsigned int, now yield the expected values.
+* Fixed a bug where unsigned operations were not propagated.
 
 Compiler Option Changes
 -----------------------
 * The `-d tree` option will cause ElfC to output information about the AST tree as it compiles.
+* The `-E` option will cause ElfC to use smaller versions of the stdlib and stdio libraries, named elflib and elfio.
+
+*Note: Information about supported print and scanning conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 Stdlib Library
 --------------
@@ -459,6 +467,8 @@ Ctype Library
 
 * int	isalnum(int c);
 * int	isalpha(int c);
+* int	isascii(int c);
+* int	isblank(int c);
 * int	iscntrl(int c);
 * int	isdigit(int c);
 * int	isgraph(int c);
