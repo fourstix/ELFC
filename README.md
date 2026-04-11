@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Installation
 -------------
-* Unzip the file elfc_r352.zip into the desired directory
+* Unzip the file elfc_r355.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -234,8 +234,9 @@ New Features
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
 * The functions in the Math32 library were converted to pass 32-bit numbers by value.
 * Smaller versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-E` compiler option.
-* The elflib and elfio libraries have fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
-* The Ctype library was rewritten to provide the same functions with smaller library code.
+* The elfstd library provides the same functions as stdlib, but uses the Elf BIOS, when possible, rather than C library code.
+* The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
+* The Ctype library was re-written to provide the same functions with smaller library code.
 
 Issues Fixed
 -------------
@@ -249,7 +250,7 @@ Issues Fixed
 * Structure pointer was not correctly de-referenced when used as argument to function.
 * ElfC could emit strings too long for Asm/02 assembler.
 * Character types cast to to int or unsigned int, now yield the expected values.
-* Fixed a bug where unsigned operations were not propagated.
+* Fixed a bug where unsigned operations were not always propagated in arithmetic and logic expressions.
 
 Compiler Option Changes
 -----------------------
@@ -684,6 +685,7 @@ Repository Contents
   * tqdemo.c -- Demo of type qualifiers `volatile` and `const`
   * macros.c -- Demo of various macro mechanisms
   * vargs.c -- Demo of variable argument mechanisms
+  * casting.c -- Demo of showing the results of casting various character and integer values.
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/clib/lib**  -- Compiled ElfC C Library files
@@ -706,9 +708,9 @@ Repository Contents
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r352.zip** -- A zip file with the Windows version of the Release 3.52 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r352.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.52 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r352.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.52 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r355.zip** -- A zip file with the Windows version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r355.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r355.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
