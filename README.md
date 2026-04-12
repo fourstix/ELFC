@@ -229,14 +229,15 @@ New Features
 * A struct/union argument may be used as the return value of a function.
 * Several additional functions were added to the string library.
 * Some parameters for name length and number of arguments were increased to meet additional ANSI C89/C90 minimum translation limits.
-* An additional debug option was added to the compiler to support debugging the AST trees and optimizations.
+* An additional debug option `-d tree` was added to the compiler to support debugging AST trees and optimizations.
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
 * The functions in the Math32 library were converted to pass 32-bit numbers by value.
 * Smaller versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-E` compiler option.
 * The elfstd library provides the same functions as stdlib, but uses the Elf BIOS, when possible, rather than C library code.
 * The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
-* The Ctype library was re-written to provide the same functions with smaller library code.
+* The ctype library was re-written to provide the same functions with smaller library code.
+* Upgraded Asm/02 to the latest version.
 
 Issues Fixed
 -------------
