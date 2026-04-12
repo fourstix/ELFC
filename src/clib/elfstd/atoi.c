@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#pragma             extrn Cisspace
+
+#pragma .link .library ctype.lib
+
 /* define bios API used */
 #pragma #define f_atoi 0ff5dh
 

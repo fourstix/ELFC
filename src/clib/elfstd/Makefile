@@ -3,7 +3,7 @@ CFLAGS = -L
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.prg)
-TARGET = elfio.lib
+TARGET = elfstd.lib
 
 all: $(TARGET)
 
