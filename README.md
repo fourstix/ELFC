@@ -146,9 +146,9 @@ Version 3
 
 * Several functions were replaced by inline assembly code to remove dependencies on BIOS functions.
 
-* The included files were cleaned up to eliminate unused definitions, and the kerneal api were moved to  a separate included file.
+* The included files were cleaned up to eliminate unused definitions, and the kernel api were moved to a separate included file.
 
-More information about Version 3, signed and unsigned types and library functionscan be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
+More information about Version 3, signed and unsigned types and library functions can be found on the [ELFC Detailed Information](ELFC.md) page.  Information about ElfC internals can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Release 3.1
 ------------
