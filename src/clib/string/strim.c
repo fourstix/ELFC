@@ -1,10 +1,14 @@
 #define _ELFCLIB_
 #include <string.h>
-#include <ctype.h>
+#include <ctype.h.>
 
-#pragma           extrn Cisspace
+
+
 #pragma           extrn Cmemmove
 #pragma           extrn Cstrlen
+#pragma           extrn Cisspace
+
+#pragma .link .library ctype.lib
 
 char *strim(char *str) {
   char *start, *end;

@@ -126,8 +126,9 @@ int inttype(int p) {
 	//grw - added support for const keyword
 	/* remove any type qualifier before comparing */
 	p &= ~TQMASK;
-
-	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p;
+  //grw - added support for casting char types to unsigned int
+	return PINT == p || PUINT == p || PCHAR == p || PSCHAR == p ||
+	       SC2UINT == p || UC2UINT == p;
 }
 
 int comptype(int p) {
@@ -145,7 +146,8 @@ int chartype(int p) {
 	//grw - added support for const keyword
 	/* remove any type qualifier bits before comparing */
 	p &= ~TQMASK;
-	return PCHAR == p || PSCHAR == p;
+	//grw - added support for casting char types to unsigned int
+	return PCHAR == p || PSCHAR == p || UC2UINT == p || SC2UINT == p;
 }
 
 /* primitive int type */
@@ -160,8 +162,9 @@ int signtype(int p) {
 	//grw - added support for const keyword
 	/* remove any type qualifier before comparing */
 	p &= ~TQMASK;
-	/* only chararacter and unsigned integer are signed */
-	return PCHAR != p && PUINT != p;
+	//grw - added support for casting char to unsigned int
+	/* original char type is used when char cast to unsinged int */
+	return PCHAR != p && PUINT != p && UC2UINT != p;
 }
 
 /* returns 1 if an unsgined opertor should be used */
@@ -170,8 +173,10 @@ int unsgnop(int p1, int p2) {
 	/* remove any type qualifier before comparing */
 	p1 &= ~TQMASK;
 	p2 &= ~TQMASK;
+	//grw - added support for casting char types to unsigned int
 	/* unsigned op if either argument is an unsigned type */
-	return (p1 == PUINT || p2 == PUINT || p1 == PCHAR || p2 == PCHAR);
+	return (p1 == PUINT   || p2 == PUINT   || p1 == PCHAR   || p2 == PCHAR ||
+				  p1 == SC2UINT || p2 == SC2UINT || p1 == UC2UINT || p2 == UC2UINT);
 }
 
 /* returns the level of pointer indirection  */

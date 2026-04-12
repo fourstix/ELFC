@@ -16,8 +16,7 @@ static node *rvalue(node *n, int *lv) {
 	if (lv[LVADDR]) {
 		lv[LVADDR] = 0;
 		return mkunop2(OP_RVAL, lv[LVPRIM], lv[LVSYM], n);
-	}
-	else {
+	}	else {
 		return n;
 	}
 }
@@ -280,8 +279,8 @@ int deref(int p) {
 
 static node *indirection(node *n, int *lv) {
 	int	p;
-
 	n = rvalue(n, lv);
+
 	//grw - added support for multiple pointer indirection
 	if (isvoidptr(lv[LVPRIM]))
 		error("dereferencing void pointer", NULL);
@@ -381,19 +380,9 @@ static node *postfix(int *lv) {
 				n2 = rvalue(n2, lv2);
 				p = lv[LVPRIM];
 				//grw - fixed for qualified (const/volatile) and unsigned int types
-				//if (PINT != lv2[LVPRIM])
 				if (!pinttype(lv2[LVPRIM]))
 					error("non-integer subscript", NULL);
 				//grw - added support for multiple pointer indirection
-        /*
-				if (    PINT == p || INTPTR == p ||
-					CHARPTR == p || VOIDPTR == p ||
-					STCPTR == (p & STCMASK) ||
-					UNIPTR == (p & STCMASK)
-				) {
-				*/
-				//grw - changed to use pinttype
-				/* if (PINT == p || ptrlevel(p) > 0) { */
 				if (pinttype(p) || ptrlevel(p) > 0) {
 					n2 = mkunop(OP_SCALE, n2);
 				}
@@ -692,7 +681,24 @@ static node *cast(int *lv) {
 		}
 		rparen();
 		n = prefix(lv);
-		lv[LVPRIM] = t;
+		/*
+		 * Ignore casting char types to signed int type, since handled by promotion rules,
+		 * but when casting char to unsigned int set to special type that is treated
+		 * as character type for generating code, but unsigned int for arithmetic and logic
+		 * operations. Any other cast is just updates the primitive type.
+		 */
+		if (!(chartype(lv[LVPRIM]) && pinttype(t))) {
+			lv[LVPRIM] = t;
+		} else if (PUINT == t) {
+			/* set char types to special type */
+			if (lv[LVPRIM] == PSCHAR) {
+				lv[LVPRIM] = SC2UINT;
+			}	else {
+        lv[LVPRIM] = UC2UINT;
+			}
+		}
+		/* ignore cast when char type cast to (signed) int */
+
 		return n;
 	}
 	else {

@@ -1,8 +1,10 @@
 #define _ELFCLIB_
 #include <string.h>
-#include <ctype.h>
+#include <ctype.h.>
 
-#pragma           extrn Ctolower
+#pragma             extrn Ctolower
+
+#pragma .link .library ctype.lib
 
 char * strlwr(char *str) {
   char *p = str;

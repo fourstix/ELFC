@@ -102,6 +102,7 @@ extern_ int	O_asmonly;
 extern_ int	O_testonly;
 //grw - added no c libs option
 extern_ int	O_clibs;
+extern_ int	O_elflibs;
 extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action

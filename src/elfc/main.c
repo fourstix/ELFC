@@ -183,8 +183,11 @@ static void link(char *fname, char *path) {
   //grw - added no c libs option
   if (O_clibs)
     strcat(cmd, SYSLIBC);
+    //grw - added smaller elf libraries
+  else if (O_elflibs)
+    strcat(cmd, ELFLIBC);
   else
-     strcat(cmd, ELFLIBC);
+    strcat(cmd, NOLIBC);
 
   //grw - simplified logic to not remove files
   if (O_verbose > 0) printf("%s\n", cmd);
@@ -193,7 +196,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvLNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvLENSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -202,12 +205,15 @@ static void longusage(void) {
 	printf(	"\n"
 		"-c       compile and assemble only, do not link\n"
 		"-d opt   activate debug option OPT, ? = list\n"
-		"-o file  write linker output to FILE\n"
-		"-t       test only, generate no code\n");
+		"-o file  write linker output to FILE\n");
   printf(
+    "-t       test only, generate no code\n"
 		"-v       verbose output\n"
-		"-D m=v   define macro M with optional value V\n"
+		"-D m=v   define macro M with optional value V\n");
+  printf(
   	"-L       compile and assemble a library object file\n"
+    //grw - added smaller elf libraries
+    "-E       use smaller elfstd and elfio libraries\n"
 		//grw - added no c libs option
     "-N       do not link stdlib and stdio by default\n");
   printf(
@@ -271,6 +277,7 @@ int main(int argc, char *argv[]) {
 	O_testonly = 0;
     //grw - added no c libs option
 	O_clibs = 1;
+  O_elflibs = 0;
 	O_outfile = "";
   //grw - added library option
   O_library = 0;
@@ -314,6 +321,11 @@ int main(int argc, char *argv[]) {
 				if (def) cmderror("too many -D's", NULL);
 				def = nextarg(argc, argv, &i, &j);
 				break;
+      case 'E':
+       //grw - added smaller elf libraries
+				O_clibs = 0;
+        O_elflibs = 1;
+  			break;
       case 'L':
 				O_library = 1;
 				break;
@@ -321,6 +333,7 @@ int main(int argc, char *argv[]) {
       case 'N':
 				//grw - don't link stdlib and stdio
 				O_clibs = 0;
+        O_elflibs = 0;
 				break;
       case 'P':
         //grw - don't link stdlib and stdio

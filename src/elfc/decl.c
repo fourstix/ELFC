@@ -765,6 +765,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 					//grw - this is the unspecified size case []
 					//grw - added support for initializaing local arrays
 					if (CAUTO == scls) {
+						//grw - commit stack moves for previous local variables
+						commitmoves();
 						sgen(";---- initialize local automatically sized %s %s", "array", name);
 					  *psize = linitlist(0, *pprim, pinit);
 						gen(";---- initialized array on stack");
@@ -821,6 +823,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 				//grw - added initialization for local static arrays
 				//grw - added support for initialization of local arrays
 				if (CAUTO == scls) {
+					//grw - commit stack moves for previous local variables
+					commitmoves();
 					sgen(";---- initialize local %s %s", "array", name);
 				  isize = linitlist(*psize, *pprim, pinit);
 					gen(";---- initialized array on stack");

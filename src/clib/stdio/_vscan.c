@@ -10,14 +10,14 @@
 #pragma             extrn Cfgetc
 #pragma             extrn Cungetc
 #pragma             extrn Cstrchr
+#pragma             extrn C_lbuf
 #pragma             extrn Cisspace
 #pragma             extrn Cisdigit
 #pragma             extrn Ctolower
-#pragma             extrn C_lbuf
 
 #pragma .link .library string.lib
 #pragma .link .library ctype.lib
-#pragma .link .requires Cctype
+
 
 extern char *_lbuf;
 
@@ -50,7 +50,7 @@ static int skip(void) {
 
 static int scanchar(char *p, int len) {
 	int	c;
-	
+
 	if (0 == len) len = 1;
 	while (len--) {
 		if ((c = next()) == EOF)
@@ -65,10 +65,10 @@ static int scanstr(char *p, int len) {
 	k = len;
 	//grw - spec says %s should skip any leading whitespace
 	skip();
- 	
+
 	while (0 == len || k--) {
 	  c = next();
-		if (isspace(c) || EOF == c) 
+		if (isspace(c) || EOF == c)
 			break;
 		if (p) *p++ = c;
 	}
@@ -82,10 +82,10 @@ static char *mkclass(char *fmt) {
 	//static char	clss[128];
 	int		i = 0, j;
 	char *clss;
-	
+
 	//grw - use line buffer for class
 	clss = _lbuf;
-	
+
 	clss[0] = 0;
 	if ('^' == *fmt) fmt++, clss[0] = 1;
 	i = 1;
@@ -115,9 +115,9 @@ static int scanclass(char *p, char *clss, int len) {
 	in = *clss++? nstrchr: strchr;
 	while ((0 == len || k--) && in(clss, c = next()))
 		if (p) *p++ = c;
-		
+
 	//grw - spec says [] always adds null
-	if (p) *p = 0;	
+	if (p) *p = 0;
 	return 1;
 }
 
@@ -222,7 +222,7 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 				//if (!noasg) p = *varg--;
 				if (!noasg) p = *varg++;
 				if (scannum(p, 10, len)) na++;
-				break;	
+				break;
 			case 'n':
 				//grw - vargs go up not down
 				//if (!noasg) p = *varg--;
@@ -262,7 +262,7 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 		else {
 			if ('%' == *fmt) fmt++;
 			if (isspace(*fmt)) {
-				//grw - original code here was incorrect 
+				//grw - original code here was incorrect
 				//grw - c would always be 1 or 0, rather than char from next()
 				//while ((c = isspace(next())) != 0)
 				//	;

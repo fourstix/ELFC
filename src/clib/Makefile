@@ -1,4 +1,4 @@
-SUBDIRS := crt0 ctype elfc math32 stdio stdlib string time
+SUBDIRS := crt0 ctype elfc elfio elfstd math32 stdio stdlib string time
 
 .PHONY: all clean $(SUBDIRS)
 
@@ -11,4 +11,3 @@ clean:
 	for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
-

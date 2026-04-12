@@ -3,10 +3,6 @@
 #include <errno.h>
 #include <math32.h>
 
-#pragma             extrn Cisspace
-#pragma             extrn Cisdigit
-#pragma             extrn Cisalpha
-#pragma             extrn Cisupper
 #pragma             extrn Ccmp32
 #pragma             extrn Csub32
 #pragma             extrn Cadd32
@@ -14,6 +10,13 @@
 #pragma             extrn Cmul32
 #pragma             extrn Cdiv32
 #pragma             extrn Cerrno
+#pragma             extrn Cisspace
+#pragma             extrn Cisdigit
+#pragma             extrn Cisalpha
+#pragma             extrn Cisupper
+
+#pragma .link .library ctype.lib
+
 
 int32_t strtoi32(const char *nptr, char **endptr, int base)
 {

@@ -3,7 +3,6 @@
 .requires Cfwrite
 .library string.lib
 .library ctype.lib
-.requires Cctype
 :0000 c0 02 e4 00 00 00 00 00 00 00 00 00 00 00 00 e2
 :0010 9b 73 8b 73 87 ab 97 bb d9 12 00 00 d9 12 00 61
 ?auto_err 0025
@@ -514,7 +513,6 @@ v0c1e
 {C_vscan
 .library string.lib
 .library ctype.lib
-.requires Cctype
 :0000 c0 08 e2 00 00 00 00 00 00 e2 9b 73 8b 73 87 ab
 :0010 97 bb d9 1b 00 07 d9 27 00 07 d9 09 d9 1b 00 03
 /Cfgetc 002e 00
@@ -1865,53 +1863,52 @@ v02c1
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 ?auto_err 0015
-:0010 d9 03 ff f4 c3 00 00 d9 12 00 00 d9 42 00 00 d9
+:0010 d9 03 ff f8 c3 00 00 d9 12 00 00 d9 42 00 00 d9
 :0020 b7 d9 0f 9a 52 8a f1 ca 00 36 d9 09 d9 12 00 00
 :0030 d9 42 00 02 d9 b7 d9 09 9a 52 8a f1 c2 00 52 d9
 ?Cerrno 0045
 :0040 12 00 16 d9 21 00 00 d9 09 d9 12 ff ff d9 09 c0
-:0050 01 57 d9 12 00 06 d9 42 00 00 d9 84 d9 7e d9 12
+:0050 01 49 d9 12 00 06 d9 42 00 00 d9 84 d9 7e d9 12
 :0060 00 01 d9 b7 d9 09 9a 52 8a f1 ca 00 70 c0 00 83
 ?Cerrno 0076
 :0070 d9 12 00 09 d9 21 00 00 d9 09 d9 12 ff ff d9 09
-:0080 c0 01 57 d9 12 00 08 d9 42 00 00 d9 84 d9 12 ff
+:0080 c0 01 49 d9 12 00 08 d9 42 00 00 d9 84 d9 12 ff
 :0090 ff d9 81 d9 09 d9 63 d9 09 d9 42 00 00 d9 12 00
 :00a0 02 d9 84 d9 42 00 00 d9 12 00 02 d9 84 d9 7e d9
 :00b0 12 ff f7 d9 a2 d9 81 d9 09 d9 63 d9 09 d9 78 ff
-:00c0 f2 d9 42 00 02 d9 de 00 04 d9 09 d9 78 ff fa d9
-?auto_err 00dc
-:00d0 12 00 00 d9 78 ff f2 d9 e4 00 04 c3 00 00 d9 42
-/Clseek32 00e5 00
-\Clseek32 00e6
-?auto_err 00ec
-:00e0 00 00 d9 7e d4 00 00 d9 03 00 08 c3 00 00 d9 0c
-/Cto_int32 00ff 00
-:00f0 d9 de 00 04 d9 09 d9 78 ff f6 d9 12 ff ff d4 00
-\Cto_int32 0100
-?auto_err 0106
-:0100 00 d9 03 00 02 c3 00 00 d9 0c d9 de 00 04 d9 09
-?auto_err 011d
-:0110 d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3 00 00 d9
-?auto_err 0128
-/Ccmp32 012b 00
-\Ccmp32 012c
-:0120 78 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9 03 00
-?auto_err 0132
-:0130 0a c3 00 00 d9 0c d9 12 00 00 d9 b7 d9 09 9a 52
-:0140 8a f1 ca 01 48 c0 01 51 d9 12 ff ff d9 09 c0 01
-?auto_err 015c
-:0150 57 d9 12 00 00 d9 09 d9 03 00 0e c3 00 00 e2 d9
-?stk_err 0162
-:0160 06 c3 00 00 60 72 ab f0 bb d5
+?auto_err 00ce
+:00c0 fa d9 12 00 00 d9 42 00 02 d9 e4 00 04 c3 00 00
+/Clseek32 00d7 00
+\Clseek32 00d8
+?auto_err 00de
+:00d0 d9 42 00 00 d9 7e d4 00 00 d9 03 00 08 c3 00 00
+:00e0 d9 0c d9 de 00 04 d9 09 d9 78 ff f6 d9 12 ff ff
+/Cto_int32 00f1 00
+\Cto_int32 00f2
+?auto_err 00f8
+:00f0 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9 de 00 04
+?auto_err 010f
+:0100 d9 09 d9 12 00 00 d9 78 ff f6 d9 e4 00 04 c3 00
+?auto_err 011a
+/Ccmp32 011d 00
+\Ccmp32 011e
+:0110 00 d9 78 ff fa d9 e4 00 04 c3 00 00 d4 00 00 d9
+?auto_err 0124
+:0120 03 00 0a c3 00 00 d9 0c d9 12 00 00 d9 b7 d9 09
+:0130 9a 52 8a f1 ca 01 3a c0 01 43 d9 12 ff ff d9 09
+?auto_err 014e
+:0140 c0 01 49 d9 12 00 00 d9 09 d9 03 00 0a c3 00 00
+?stk_err 0154
+:0150 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
 +0028
 +003d
 +0050
 +006b
 +006e
 +0081
-+0143
-+0146
-+014f
++0135
++0138
++0141
 }
 .big
 {Cftell

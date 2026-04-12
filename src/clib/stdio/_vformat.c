@@ -27,10 +27,11 @@
 #pragma             extrn Cfree
 #pragma             extrn Cerrno
 #pragma             extrn Cisdigit
+
 #pragma .link .requires Cfwrite
 #pragma .link .library string.lib
 #pragma .link .library ctype.lib
-#pragma .link .requires Cctype
+
 
 int _fwrite(void *buf, int len, FILE *f);
 
