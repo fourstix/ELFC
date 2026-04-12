@@ -13,6 +13,9 @@ call build
 cd ..\string
 call clean
 call build
+cd ..\ctype
+call clean
+call build
 cd ..\time
 call clean
 call build
