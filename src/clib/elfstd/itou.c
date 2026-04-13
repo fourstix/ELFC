@@ -19,5 +19,7 @@ void itou(unsigned int n, char *s) {
   asm("         copy  ra, rf        ; set buffer pointer for bios call");
   asm("         sex   r2            ; make sure X points to stack");
   asm("         call f_uintout      ; call elf bios function");
+  asm("         ldi  0              ; terminate unsigned int string");
+  asm("         str  rf             ; rf points to one past digits");
   return;
 }

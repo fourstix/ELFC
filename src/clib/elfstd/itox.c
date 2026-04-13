@@ -15,5 +15,7 @@ void itox(int n, char *s) {
   asm("         copy  ra, rf    ; set buffer pointer for bios call");
   asm("         sex   r2        ; make sure X points to stack");
   asm("         call f_hexout4  ; call elf bios function");
+  asm("         ldi  0          ; terminate hex string");
+  asm("         str  rf         ; rf points to one past hex digits");
   return;
 }

@@ -438,10 +438,10 @@ v0024
 {Citou
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 00 d9 42 00
 :0010 02 d9 b7 d9 09 9a 52 8a f1 ca 00 1f c0 00 22 c0
-:0020 00 36 d9 45 00 00 8a ad 9a bd d9 45 00 02 8a af
-?stk_err 003a
-:0030 9a bf e2 d4 ff 60 e2 d9 06 c3 00 00 60 72 ab f0
-:0040 bb d5
+:0020 00 39 d9 45 00 00 8a ad 9a bd d9 45 00 02 8a af
+?stk_err 003d
+:0030 9a bf e2 d4 ff 60 f8 00 5f e2 d9 06 c3 00 00 60
+:0040 72 ab f0 bb d5
 +001a
 +001d
 +0020
@@ -450,10 +450,10 @@ v0024
 {Citox
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 00 d9 42 00
 :0010 02 d9 b7 d9 09 9a 52 8a f1 ca 00 1f c0 00 22 c0
-:0020 00 36 d9 45 00 00 8a ad 9a bd d9 45 00 02 8a af
-?stk_err 003a
-:0030 9a bf e2 d4 ff 4b e2 d9 06 c3 00 00 60 72 ab f0
-:0040 bb d5
+:0020 00 39 d9 45 00 00 8a ad 9a bd d9 45 00 02 8a af
+?stk_err 003d
+:0030 9a bf e2 d4 ff 4b f8 00 5f e2 d9 06 c3 00 00 60
+:0040 72 ab f0 bb d5
 +001a
 +001d
 +0020
