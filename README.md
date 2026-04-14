@@ -3,7 +3,7 @@ A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC
 
 Installation
 -------------
-* Unzip the file elfc_r355.zip into the desired directory
+* Unzip the file elfc_r356.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -221,7 +221,7 @@ More information about Version 3.4 and library functions can be found on the [EL
 Release 3.5
 -----------
 
-Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  In addition several issues found during self-compiling where fixed in this release.
+Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  A new compiler option `-E` supports smaller code size versions of stdlib and stdio, named elfstd and elfio. In addition to these features, several issues found during self-compiling ElfC were fixed in this release.
 
 New Features
 -------------
@@ -238,6 +238,7 @@ New Features
 * The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
 * The ctype library was re-written to provide the same functions with smaller library code.
 * Upgraded Asm/02 to the latest version.
+* ElfC can now self-compile, but the object code files created are too large for the linker Link/02 to link and resolve.
 
 Issues Fixed
 -------------
@@ -252,6 +253,7 @@ Issues Fixed
 * ElfC could emit strings too long for Asm/02 assembler.
 * Character types cast to to int or unsigned int, now yield the expected values.
 * Fixed a bug where unsigned operations were not always propagated in arithmetic and logic expressions.
+* Fixed a but in the elfstd library version of itoa.
 
 Compiler Option Changes
 -----------------------
@@ -579,18 +581,15 @@ More information about unsupported library functions, header files and ElfC inte
 Next Release
 -------------
 * Multidimensional arrays
-* Simple Initialization for struct/union
+* Implement a 32-bit library with float data types.
 * Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
 -------------
-
-* Implement a 32-bit library with float data types.
+* Initialization for struct/union objects
 * Implement a version of the C math library to use the float data types.
-* Create a minimal runtime, stdlib and stdio libraries.
-* Provide an option for ElfC  to compile smaller binary code that uses these minimum libraries.
-* Create a native Elf/OS (and Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
-* Create a native Elf/OS (and Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
+* Create a native OS (Elf/OS or Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
+* Create a native OS (Elf/OS or Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
 
 
 Differences Between ElfC and Full C89
@@ -709,9 +708,9 @@ Repository Contents
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r355.zip** -- A zip file with the Windows version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r355.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r355.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.55 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r356.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r356.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r356.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
