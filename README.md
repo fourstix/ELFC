@@ -253,7 +253,7 @@ Issues Fixed
 * ElfC could emit strings too long for Asm/02 assembler.
 * Character types cast to to int or unsigned int, now yield the expected values.
 * Fixed a bug where unsigned operations were not always propagated in arithmetic and logic expressions.
-* Fixed a but in the elfstd library version of itoa.
+* Fixed a bug in the elfstd library version of itoa.
 
 Compiler Option Changes
 -----------------------
