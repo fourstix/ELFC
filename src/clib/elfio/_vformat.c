@@ -137,11 +137,12 @@ int _vformat(int mode, void *dest, char *fmt, void **varg) {
 
 	  if (outf && err) break;
 
+		//grw - fix changed incorrect references to vbuf to p
 	  if (mode != 0) {
 		  olen = strlen(p);
 		  /* write out buffer to file */
 		  if (ofd != -1) {
-			  if (write(ofd, vbuf, olen) != olen) {
+			  if (write(ofd, p, olen) != olen) {
 				  errno = EIO;
 				  na = -1;
 			  }
@@ -150,8 +151,8 @@ int _vformat(int mode, void *dest, char *fmt, void **varg) {
 			  /* short-circuit to speed up printf output */
 			  if (_IOSYS == outf->mode) {
 				/* print direct to stdout */
-				putstr(vbuf);
-		  	} else if (_fwrite(vbuf, olen, outf) != olen) {
+				putstr(p);
+		  	} else if (_fwrite(p, olen, outf) != olen) {
 					errno = EIO;
 					outf->iom |= _FERROR;
 					na = -1;
