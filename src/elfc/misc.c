@@ -49,6 +49,9 @@ void init(void) {
 	else
 		addglob("__unix", 0, TMACRO, 0, 0, 0, globname(""), 0);
 
+	//grw - add flag for Elfio and Elfstd libraries
+	addglob("__ELFIO__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+
 	//grw - add predefined macros for line number and file name
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
