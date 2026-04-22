@@ -303,6 +303,8 @@ Elfio Scan Conversions (-E option)
 * The charset operators `%[...]` and `%[^...]` are *not* supported.
 * The %f, %e, and %g conversions are *not* supported.
 
+*Note:* The `__ELFIO__` macro is defined when the `-E` option is used to compile code.
+
 
 Unsupported Stdlib Functions
 ----------------------------
@@ -569,9 +571,10 @@ Pre-Defined Macros
 * The <assert.h> header file defines the `assert` macro.
 * The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
-* The <stdlib.h> header file defines the `abs`, `min` and `max` macros.
+* The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
+* The `__ELFIO__` macro is defined when the `-E` option is used to compile code.
 
-*Note: The `__LINE__`, `__FILE__` and `__FUNCTION__` macros begin and end with **two** underscores.*
+*Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__ELFIO__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
