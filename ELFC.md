@@ -572,7 +572,7 @@ Pre-Defined Macros
 * The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
 * The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
-* The `__ELFIO__` macro is defined when the `-E` option is used to compile code.
+* The `__ELFIO__` macro is defined when the `-M` option is used to compile code.
 
 *Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__ELFIO__` macros begin and end with **two** underscores.*
 

@@ -196,7 +196,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvLENSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvLMNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -213,7 +213,7 @@ static void longusage(void) {
   printf(
   	"-L       compile and assemble a library object file\n"
     //grw - added smaller elf libraries
-    "-E       use smaller elfstd and elfio libraries\n"
+    "-M       use smaller elfstd and elfio libraries\n"
 		//grw - added no c libs option
     "-N       do not link stdlib and stdio by default\n");
   printf(
