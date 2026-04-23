@@ -609,7 +609,7 @@ Compiler Options
 <tr><td>-V </td><td>print version and exit</td></tr>
 <tr><th colspan="2">Debug Options</th></tr>
 <tr><td>-d gsym</td><td>dump global symbols</td></tr>
-<tr><td>-d lsym</td><td>dump global symbols</td></tr>
+<tr><td>-d lsym</td><td>dump local symbols</td></tr>
 <tr><td>-d stat</td><td>print usage statistics</td></tr>
 <tr><td>-d tree</td><td>dump abstract symbol tree (AST)</td></tr>
 </table>
