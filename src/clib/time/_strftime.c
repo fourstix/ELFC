@@ -6,7 +6,6 @@
 
 /* define only extern procedures required */
 #pragma           extrn Csprintf
-#pragma           extrn Cabs
 #pragma           extrn C_tzname
 #pragma           extrn C_tz_min
 #pragma           extrn C_tz_hr
@@ -231,7 +230,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   return pt;
 }
 
-int  strftime(char *s, int maxsize, const char *format, struct tm *tp) {
+int  _strftime(char *s, int maxsize, const char *format, struct tm *tp) {
   char *p;
 
   p = _fmt(((format == NULL) ? "%c" : format), tp, s, s + maxsize);

@@ -6,14 +6,14 @@
 
 /* define only extern procedures required */
 #pragma           extrn Csystime
-#pragma           extrn Casctime
+#pragma           extrn C_asctime2
 
 static struct tm _tm;
 
 /*
- * Generate the standard ASCII date-time string 
+ * Generate the standard ASCII date-time string
  */
-char *cstime(void) {  
+char *_cstime2(void) {
   systime(&_tm);
-  return asctime(&_tm);  
+  return _asctime2(&_tm);
 }

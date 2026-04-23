@@ -44,9 +44,10 @@ void _doy(struct tm *tp);
 int  systime(struct tm *tp);
 char *_asctime(struct tm *tp);
 char *_cstime(void);
+int  _strftime(char* s, int smax, const char * fmt, struct tm *tp);
 char *_asctime2(struct tm *tp);
 char *_cstime2(void);
-int  strftime(char* s, int smax, const char * fmt, struct tm *tp);
+int  _strftime2(char* s, int smax, const char * fmt, struct tm *tp);
 void timezone(char *tzname, int tzoff_min, int tzdst);
 int  utctime(struct tm *tp);
 
