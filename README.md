@@ -221,7 +221,7 @@ More information about Version 3.4 and library functions can be found on the [EL
 Release 3.5
 -----------
 
-Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  A new compiler option `-E` supports smaller code size versions of stdlib and stdio, named elfstd and elfio. In addition to these features, several issues found during self-compiling ElfC were fixed in this release.
+Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  A new compiler option `-M` supports smaller memory size versions of stdlib and stdio, named elfstd and elfio. In addition to these features, several issues found during self-compiling ElfC were fixed in this release.
 
 New Features
 -------------
@@ -233,13 +233,13 @@ New Features
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
 * The functions in the Math32 library were converted to pass 32-bit numbers by value.
-* Smaller versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-E` compiler option.
+* Smaller memory versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-M` compiler option.
 * The elfstd library provides the same functions as stdlib, but uses the Elf BIOS, when possible, rather than C library code.
 * The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
 * The ctype library was re-written to provide the same functions with smaller library code.
 * Upgraded Asm/02 to the latest version.
 * ElfC can now self-compile, but the object code files created are too large for the linker Link/02 to link and resolve.
-* Added macro `__ELFIO__` that is defined when `-E` is used.
+* Added macro `__ELFIO__` that is defined when `-M` is used.
 
 Issues Fixed
 -------------
@@ -255,13 +255,13 @@ Issues Fixed
 * Character types cast to to int or unsigned int, now yield the expected values.
 * Fixed a bug where unsigned operations were not always propagated in arithmetic and logic expressions.
 * Fixed a bug in the elfstd library version of itoa.
-* Fixed errors in time library when `-E` option was used.
-* Fixed a problem with %s print format option when `-E` option was used.
+* Fixed errors in time library when `-M` option was used.
+* Fixed a problem with %s print format option when `-M` option was used.
 
 Compiler Option Changes
 -----------------------
 * The `-d tree` option will cause ElfC to output information about the AST tree as it compiles.
-* The `-E` option will cause ElfC to use smaller versions of the stdlib and stdio libraries, named elflib and elfio.
+* The `-M` option will cause ElfC to use smaller memory versions of the stdlib and stdio libraries, named elflib and elfio.
 
 *Note: Information about supported print and scanning conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
