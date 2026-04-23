@@ -562,8 +562,9 @@ typedef struct int32 int32_t;
 Pre-Defined Macros
 -------------------
 * If `_ELFCLIB_` is defined, C code is compiled for an Elf/OS library procedure.
-* If `_STGROM_`  is defined, assembly code to support the STG ROM is created.
-* `BRKPT` inserts assembly code in the code file to invoke the STG break point handler, when `_STGROM_` is defined.
+* If `_STGROM_`  is defined, assembly code to support STG ROM breakpoints is created.
+* If `_MAXMON_` is defined, assembly code to support MAXMON ROM breakpoints is created.
+* `BRKPT` inserts assembly code in the code file to invoke the break point handler, when `_STGROM_` or `_MAXMON_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
 * `__FUNCTION__` insert the current function name in the code file.
