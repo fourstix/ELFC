@@ -321,14 +321,14 @@ int main(int argc, char *argv[]) {
 				if (def) cmderror("too many -D's", NULL);
 				def = nextarg(argc, argv, &i, &j);
 				break;
-      case 'E':
-       //grw - added smaller elf libraries
-				O_clibs = 0;
-        O_elflibs = 1;
-  			break;
       case 'L':
 				O_library = 1;
 				break;
+        //grw - added smaller memory library option
+      case 'M':
+				O_clibs = 0;
+        O_elflibs = 1;
+  			break;
 				//grw - added no c lib option
       case 'N':
 				//grw - don't link stdlib and stdio

@@ -11,6 +11,15 @@
 #pragma .link .library time.lib
 #endif
 
+#ifndef __ELFIO__
+#define asctime _asctime
+#define cstime _cstime
+#define strftime _strftime
+#else
+#define asctime _asctime2
+#define cstime _cstime2
+#define strftime _strftime2
+#endif
 
 extern char *_tzname;  /* Time Zone Name */
 extern int _tz_min;    /* minutes difference from GMT (West negative, East positive) */
@@ -33,9 +42,12 @@ struct tm {
 void _dow(struct tm *tp);
 void _doy(struct tm *tp);
 int  systime(struct tm *tp);
-char *asctime(struct tm *tp);
-char *cstime(void);
-int  strftime(char* s, int smax, const char * fmt, struct tm *tp);
+char *_asctime(struct tm *tp);
+char *_cstime(void);
+int  _strftime(char* s, int smax, const char * fmt, struct tm *tp);
+char *_asctime2(struct tm *tp);
+char *_cstime2(void);
+int  _strftime2(char* s, int smax, const char * fmt, struct tm *tp);
 void timezone(char *tzname, int tzoff_min, int tzdst);
 int  utctime(struct tm *tp);
 

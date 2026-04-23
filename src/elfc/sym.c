@@ -95,7 +95,7 @@ int newloc(void) {
 	return p;
 }
 
-#ifdef __SUBC__
+#ifdef __ELFC__
  #define PTR_INT_CAST	(int)
 #else
  #define PTR_INT_CAST	(int) (long long)

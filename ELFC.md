@@ -280,10 +280,10 @@ Stdio Scan Conversions
 * The charset operators `%[...]` and `%[^...]` are supported.
 * The %f, %e, and %g conversions are *not* supported.
 
-When the `-E` option is specified, only the following conversions are supported. Using the
+When the `-M` option is specified, only the following conversions are supported. Using the
 Elfio and Elfstd libraries, reduces the binary code size by about 2K bytes.
 
-Elfio Print Conversions  (-E option)
+Elfio Print Conversions  (-M option)
 ------------------------------------
 * Only the `%d, %u,  %x,  %c, %s, %p, %n and %%` conversions are supported.
 * The suppression operator `*` is supported.
@@ -294,7 +294,7 @@ Elfio Print Conversions  (-E option)
 * The length modifiers h, l (el) and L are *not* supported.
 * The %f, %e, %E, %g and %G conversions are *not* supported.
 
-Elfio Scan Conversions (-E option)
+Elfio Scan Conversions (-M option)
 -----------------------------------
 * The width specification is supported.
 * The suppression operator `*` is supported.
@@ -302,6 +302,8 @@ Elfio Scan Conversions (-E option)
 * The `%i and %o` conversions are *not* supported.
 * The charset operators `%[...]` and `%[^...]` are *not* supported.
 * The %f, %e, and %g conversions are *not* supported.
+
+*Note:* The `__ELFIO__` macro is defined when the `-M` option is used to compile code.
 
 
 Unsupported Stdlib Functions
@@ -569,9 +571,10 @@ Pre-Defined Macros
 * The <assert.h> header file defines the `assert` macro.
 * The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
-* The <stdlib.h> header file defines the `abs`, `min` and `max` macros.
+* The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
+* The `__ELFIO__` macro is defined when the `-E` option is used to compile code.
 
-*Note: The `__LINE__`, `__FILE__` and `__FUNCTION__` macros begin and end with **two** underscores.*
+*Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__ELFIO__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
