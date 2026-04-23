@@ -590,4 +590,28 @@ Header files
 * The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
 * The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for a single `#include <stdlib.h>` statement.
 
+Compiler Options
+----------------
+
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>-c </td><td>compile and assemble only, do not link</td></tr>
+<tr><td>-d opt</td><td>activate debug option OPT, ? = list</td></tr>
+<tr><td>-o file</td><td>write linker output to FILE</td></tr>
+<tr><td>-t </td><td>test only, generate no code</td></tr>
+<tr><td>-v </td><td>verbose output</td></tr>
+<tr><td>-D m=v</td><td>define macro M with optional value V</td></tr>
+<tr><td>-L </td><td>compile and assemble a library object file</td></tr>
+<tr><td>-N </td><td>do not link stdlib and stdio by default</td></tr>
+<tr><td>-M </td><td>use smaller elfstd and elfio libraries</td></tr>
+<tr><td>-P </td><td>print expanded macro text</td></tr>
+<tr><td>-S </td><td>compile to assembly language</td></tr>
+<tr><td>-V </td><td>print version and exit</td></tr>
+<tr><th colspan="2">Debug Options</th></tr>
+<tr><td>-d gsym</td><td>dump global symbols</td></tr>
+<tr><td>-d lsym</td><td>dump global symbols</td></tr>
+<tr><td>-d stat</td><td>print usage statistics</td></tr>
+<tr><td>-d tree</td><td>dump abstract symbol tree (AST)</td></tr>
+</table>
+
 Details about the ElfC internal implementation can be found on the [ELFC Internal Information](INSIDE.md) page.
