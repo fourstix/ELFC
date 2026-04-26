@@ -7,7 +7,6 @@
 #pragma        extrn C_dow
 #pragma        extrn C_doy
 #pragma        extrn C_tz_dst
-#pragma        extrn C_tzname
 
 /* Kernel defines 8 bytes for RTC, we only need first 6 */
 static   char _ts[8];
@@ -28,7 +27,7 @@ int systime(struct tm *tp) {
   asm("            phi   rf\n\n");
   asm("            call  O_GETTOD              ; read the RTC\n");
   asm("            load  ra, $0001             ; set RA to true\n");
-  asm("            lbnz  clkdone               ; if successful we're done\n\n");
+  asm("            lbnf  clkdone               ; if successful we're done\n\n");
 
   asm("nortc:      ldi   low C_ts              ; pointer to date buffer\n");
   asm("            plo   rd\n");
