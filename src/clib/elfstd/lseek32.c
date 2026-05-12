@@ -1,20 +1,20 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <errno.h>
-#include <math32.h>
+#include <mathi32.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fildes
-#pragma             extrn Cto_int32
-#pragma             extrn Ccmp32
-#pragma .link .library math32.lib
+#pragma             extrn Ctoi32
+#pragma             extrn Ccmpi32
+#pragma .link .library mathi32.lib
 
 off_t lseek32(int fd, off_t offset, int how) {
   int fildes;
   off_t result;
   off_t eof;
 
-  eof = to_int32(EOF);
+  eof = toi32(EOF);
 
   /* get system file descriptor */
   fildes = _fildes(fd);
@@ -61,7 +61,7 @@ off_t lseek32(int fd, off_t offset, int how) {
   asm("           dw -4         ; in the local variable");
 
   /* if error, set errno */
-  if (cmp32(result, eof) == 0) {
+  if (cmpi32(result, eof) == 0) {
     errno = EIO;
   }
 
