@@ -18,3 +18,5 @@ type absi32.prg addi32.prg asri32.prg atoi32.prg  > mathi32.lib
 type cmpi32.prg divi32.prg i32toa.prg muli32.prg >> mathi32.lib
 type muli32x16.prg negi32.prg shli32.prg shri32.prg >> mathi32.lib
 type strtoi32.prg subi32.prg toi32.prg >> mathi32.lib
+
+copy mathi32.lib ..\lib\mathi32.lib
