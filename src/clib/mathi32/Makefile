@@ -3,7 +3,7 @@ CFLAGS = -L
 
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.prg)
-TARGET = math32.lib
+TARGET = mathi32.lib
 
 all: $(TARGET)
 

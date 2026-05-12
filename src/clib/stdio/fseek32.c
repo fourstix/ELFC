@@ -5,14 +5,14 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <stdio.h>
-#include <math32.h>
+#include <mathi32.h>
 #include <errno.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn Clseek32
-#pragma             extrn Cto_int32
-#pragma             extrn Ccmp32
-#pragma .link .library math32.lib
+#pragma             extrn Ctoi32
+#pragma             extrn Ccmpi32
+#pragma .link .library mathi32.lib
 
 int fseek32(FILE *f, off_t offset, int whence) {
   int hi;
@@ -54,8 +54,8 @@ int fseek32(FILE *f, off_t offset, int whence) {
 
   pos = lseek32(f->fd, offset, whence);
 
-  error = to_int32(-1);
-  if (cmp32(pos, error) == 0) {
+  error = toi32(-1);
+  if (cmpi32(pos, error) == 0) {
     errno = EIO;
     return -1;
   }
