@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#include <math32.h>
+#include <mathi32.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn Clseek32
-#pragma             extrn Cto_int32
-#pragma             extrn Ccmp32
-#pragma .link .library math32.lib
+#pragma             extrn Ctoi32
+#pragma             extrn Ccmpi32
+#pragma .link .library mathi32.lib
 
 int fsetpos(FILE *f, pos_t *pos) {
     off_t new_pos;
@@ -31,8 +31,8 @@ int fsetpos(FILE *f, pos_t *pos) {
 
     new_pos = lseek32(f->fd, *pos, SEEK_SET);
 
-    error = to_int32(-1);
-    if (cmp32(new_pos, error) == 0) {
+    error = toi32(-1);
+    if (cmpi32(new_pos, error) == 0) {
         return -1;
     }
 
