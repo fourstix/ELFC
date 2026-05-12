@@ -153,21 +153,21 @@ v0151
 :0050 00 bc f8 20 ac 8a a8 9a b8 f8 00 f6 08 7e 58 18
 :0060 08 7e 58 18 08 7e 58 18 08 7e 58 9c 7e bc ff 0a
 :0070 cb 00 78 bc 0a f9 01 5a 2c 8c ca 00 55 9c e7 73
-:0080 e2 9d fc 01 bd 0a ca 00 4f 1a 0a ca 00 4f 1a 0a
-:0090 ca 00 4f 1a 0a ca 00 4f 8b aa 9b ba 1a e7 60 9d
-:00a0 ff 01 bd c2 00 ae 72 fc 30 5f 1f c0 00 9f f0 fc
-:00b0 30 5f 1f e2 f8 00 5f d9 42 00 04 d9 09 e2 d9 06
-?stk_err 00c1
-:00c0 c3 00 00 60 72 ab f0 bb d5
+:0080 e2 9d fc 01 bd 8a a8 9a b8 08 ca 00 4f 18 08 ca
+:0090 00 4f 18 08 ca 00 4f 18 08 ca 00 4f e7 60 9d ff
+:00a0 01 bd c2 00 ad 72 fc 30 5f 1f c0 00 9e f0 fc 30
+:00b0 5f 1f e2 f8 00 5f d9 42 00 04 d9 09 e2 d9 06 c3
+?stk_err 00c0
+:00c0 00 00 60 72 ab f0 bb d5
 +0026
 +0071
 +007b
-+0087
-+008c
-+0091
-+0096
-+00a4
-+00ac
++008b
++0090
++0095
++009a
++00a3
++00ab
 }
 .big
 {Cmuli32
