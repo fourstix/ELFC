@@ -12,15 +12,26 @@ int main(int argc, char *argv[])
     char op2_buf[12];
     char result_buf[12];
     int comp;
+    char *end;
 
     if (argc != 4) {
         puts("Usage: calc <num> <op> <num>");
         return 1;
     }
 
-    op1 = atoi32(argv[1]);
+    op1 = strtoi32(argv[1], &end, 0);
+    if (*end != '\0') {
+        printf("'%s' is not a number\n", argv[1]);
+        return -1;
+    }
+
     operation = argv[2];
-    op2 = atoi32(argv[3]);
+
+    op2 = strtoi32(argv[3], &end, 0);
+    if (*end != '\0') {
+        printf("'%s' is not a number\n", argv[3]);
+        return -1;
+    }
 
     if (strcmp(operation, "+") == 0) {
         result = addi32(op1, op2);
