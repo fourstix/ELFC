@@ -234,7 +234,7 @@ undergoes a conversion to the non-lvalue pointer to its first element. The resul
 int a[2][3] = {1,2,3,4,5,6};
 
 <table>
-<tr><th>Reference</th><th>Type</th><th>Value</th></tr>
+<tr><th>Reference</th><th>Assignable Type</th><th>Value</th></tr>
 <tr><td>a[0][0]</td><td>int</td><td>1</td></tr>
 <tr><td>&a[0][0]</td><td rowspan="5">int * (via pointer decay)</td><td rowspan="5">Address of a[0][0]</td></tr>
 <tr><td>a</td></tr>
