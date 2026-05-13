@@ -202,7 +202,7 @@ Multi-dimensional Arrays
 
 Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form.
 
-If a multi-dimensional array is an incomplete array, the only the first dimension is unspecified.
+If a multi-dimensional array is an incomplete array, only the first dimension is unspecified, eg. `int a[][3];` declares an incomplete array with two dimensions.
 
 When an array reference is converted to an address reference, the process is called *pointer decay*.
 
@@ -210,11 +210,11 @@ When pointer decay is applied, a multi-dimensional array is converted to a point
 
 When an array is used as the parameter to a function, it is passed by pointer decay.
 
-ElfC supports array pointers internally, so a multi-dimensional array function parameter decays into a pointer to an array of one dimension less.
+ElfC supports array pointers internally, so a multi-dimensional array function parameter decays into a pointer to an array of one dimension less, eg. `int a[2][3]` decays into `int (*)a[3]`, a pointer to an array of three elements.
 
-A one dimensional array decays into a pointer to its element type.
+A one dimensional array decays into a pointer to its element type, eg. `int a[4]` decays into `int *`, a pointer to int.
 
-Outside of function parameters, ElfC will decay an array reference into a pointer to the element type.
+Outside of function parameters, ElfC will decay an array reference into a pointer to the element base type.
 
 The word *decay* indicates that information is lost when the array is converted to a pointer.
 
@@ -250,7 +250,7 @@ int a[2][3] = {1,2,3,4,5,6};
 
 Notes:
 * Multi-dimensional arrays are arrays of arrays.
-* The array `a` is an array of two arrays of three elements, ie a[2] of a[3].
+* The array `a` is an array of two arrays of three integer elements, ie array[2] of array[3] of int.
 * The references `a`, `&a`, `a[0]`, `&a[0]`, and `&a[0][0]` all yield the same value, the address of the first element (a[0][0]) of the array.
 * The references `a[1]`, `&a[1]`, and `&a[1][0]` all yield the same value, the address of the first element of the second array of thee elements, ie. the first element of the array `a[1]` is `a[1][0]`.
 
@@ -266,13 +266,13 @@ The array `a` may be passed to a function as a parameter by declaring the functi
 2. As a function declared with an incompletely specified array parameter:
 `int function2(int arr[][3], int rows);`
 
-3. As a function declared with a pointer to the element type:
-`int function3(int *arr, int rows, int cols)`
+3. As a function declared with a pointer to the element base type:
+`int function3(int *p, int rows, int cols)`
 
 Notes:
 * The array parameters in function1 and function2 are the same, since the array parameter decays into a pointer to an array of three integers in both cases.
 * The first index in the array parameter in function1 is ignored, which is why the rows value must be passed as a separate parameter, even though it was specified.
-* An element pointer can be used instead, as in function3, but in that case both the rows and columns values must be passed as parameter so the user can do the pointer arithmetic manually.
+* A pointer to the element base type can be used instead, as in function3, but in that case one needs to pass the rows and columns values to do the pointer arithmetic manually.
 
 **Implementation Defined Behavior**
 

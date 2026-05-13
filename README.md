@@ -269,23 +269,23 @@ Compiler Option Changes
 Release 3.6
 -----------
 
-* Release 3.6 adds support for multi-dimensional arrays, e.g. `int a[3][4];` is now supported.
+Release 3.6 adds support for multi-dimensional arrays to ElfC.
 
+New features
+------------
+
+* ElfC supports multi-dimensional arrays, e.g. `int a[3][4];` is now supported.
 * ElfC supports typedefs with array types.
-
 * ElfC supports passing multi-dimensional array to functions and supports pointer decay.
-
 * ElfC allows references to arrays to be assigned to pointers that match the base type through pointer decay.
-
 * ElfC now allows any pointers that point to the same base type to be assigned, even if the levels of indirection are different.s
-
 * ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
 
+Issues Fixed
+-------------
+
 * ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
-
 * ElfC allows this assignment in accordance with future versions of the specification, C99 and C11, that clarify that this assignment is allowed.
-
-
 
 *Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
