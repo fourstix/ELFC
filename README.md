@@ -265,6 +265,30 @@ Compiler Option Changes
 
 *Note: Information about supported print and scanning conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
+
+Release 3.6
+-----------
+
+* Release 3.6 adds support for multi-dimensional arrays, e.g. `int a[3][4];` is now supported.
+
+* ElfC supports typedefs with array types.
+
+* ElfC supports passing multi-dimensional array to functions and supports pointer decay.
+
+* ElfC allows references to arrays to be assigned to pointers that match the base type through pointer decay.
+
+* ElfC now allows any pointers that point to the same base type to be assigned, even if the levels of indirection are different.s
+
+* ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
+
+* ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
+
+* ElfC allows this assignment in accordance with future versions of the specification, C99 and C11, that clarify that this assignment is allowed.
+
+
+
+*Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
 Stdlib Library
 --------------
 **The following functions are supported in the ElfC stdlib C library.**
@@ -565,31 +589,32 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
-* int32_t abs32(int32_t n);
-* int32_t add32(int32_t a, int32_t b);
-* int32_t sub32(int32_t a, int32_t b);
-* int32_t mul32(int32_t a, int32_t b);
-* int cmp32(int32_t a, int32_t b);
-* int32_t shl32(int32_t a);
-* int32_t shr32(int32_t a);
-* int32_t div32(int32_t a, int32_t b, int32_t \*rem);
-* int32_t to_int32(int n);
-* int32_t neg32(int32_t n);
+* int32_t absi32(int32_t n);
+* int32_t addi32(int32_t a, int32_t b);
+* int32_t subi32(int32_t a, int32_t b);
+* int32_t muli32(int32_t a, int32_t b);
+* int32_t muli32x16(int32_t a, int b);
+* int cmpi32(int32_t a, int32_t b);
+* int32_t shli32(int32_t a);
+* int32_t shri32(int32_t a);
+* int32_t asri32(int32_t a, int n);
+* int32_t divi32(int32_t a, int32_t b, int32_t \*rem);
+* int32_t toit32(int n);
+* int32_t negi32(int32_t n);
 * int32_t atoi32(const char \*str);
-* char \*itoa32(int32_t n, char \*str);
+* char \*i32toa(int32_t n, char \*str);
 * int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
 
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Next Release
 -------------
-* Multidimensional arrays
+* Initialization for structure objects
 * Implement a 32-bit library with float data types.
 * Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
 -------------
-* Initialization for struct/union objects
 * Implement a version of the C math library to use the float data types.
 * Create a native OS (Elf/OS or Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
 * Create a native OS (Elf/OS or Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
@@ -608,7 +633,10 @@ Differences Between ElfC and Full C89
 
 *  There are no 32-bit primitive types. There are no long integers, no doubles, no floats.
 
-*  Arrays are limited to one dimension.
+*  ElfC does not support declaring a variable as a pointer to an arbitrary array.
+   IE, the syntax `int (*) a[];` is not supported.
+
+*  An array type may be declared in a `typedef` or in a variable declaration, but not both.
 
 *  Old K&R-style function declarations (with parameter declarations
    between the parameter list and function body) are not

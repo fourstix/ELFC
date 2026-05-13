@@ -412,7 +412,7 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 <tr><th>Description</th><th>ElfC Limit</th><th>Meets Spec?</th><th>Limiting Factor</th></tr>
 <tr><td>15 nesting levels of compound statements</td><td>16</td><td>Yes</td><td>MAXBREAK</td></tr>
 <tr><td>8 nesting levels of conditional inclusion</td><td>16</td><td>Yes</td><td>MAXIFDEF</td></tr>
-<tr><td>12 pointer, array, and function declarators (in any combination) in a declaration</td><td>15</td><td>Yes, with some Exceptions</td><td>MAXPTR (See Notes Below for Exceptions)</td></tr>
+<tr><td>12 pointer, array, and function declarators (in any combination) in a declaration</td><td>15</td><td>Yes</td><td>MAXPTR</td></tr>
 <tr><td>31 nesting levels of parenthesized declarators</td><td>1</td><td>No</td><td>Parentheses in a declaration are only supported for declaring a function pointer.</td></tr>
 <tr><td>32 nesting levels of parenthesized expressions within a full expression</td><td>1024</td><td>Yes</td><td>NSYMBOLS</td></tr>
 <tr><td>31 significant initial characters in an internal identifier or a macro name</td><td>32</td><td>Yes</td><td>NAMELEN</td></tr>
@@ -436,7 +436,6 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 
 *Notes:*
 * Up to 15 levels of indirection is supported in a declaration involving pointers, arrays and structure/unions.
-* ElfC does not support multi-dimensional arrays, e.g. `int a[3][4];` is not supported.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
 * Elfc supports structures and unions and pointers to struct/union and pointers to struct/union pointers, eg. `struct stc`, `struct stc *p` and `struct stc **p` are supported.
 * ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.

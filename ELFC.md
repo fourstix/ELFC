@@ -197,6 +197,93 @@ Neither `const` pointers to (varying) variables, nor `const` pointers to `const`
 
 The `const` keyword is *not* supported for local (auto) arrays, because ElfC does not support initializing local arrays.
 
+Multi-dimensional Arrays
+-------------------------
+
+Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form.
+
+If a multi-dimensional array is an incomplete array, the only the first dimension is unspecified.
+
+When an array reference is converted to an address reference, the process is called *pointer decay*.
+
+When pointer decay is applied, a multi-dimensional array is converted to a pointer to its first element.
+
+When an array is used as the parameter to a function, it is passed by pointer decay.
+
+ElfC supports array pointers internally, so a multi-dimensional array function parameter decays into a pointer to an array of one dimension less.
+
+A one dimensional array decays into a pointer to its element type.
+
+Outside of function parameters, ElfC will decay an array reference into a pointer to the element type.
+
+The word *decay* indicates that information is lost when the array is converted to a pointer.
+
+Pointer decay is formerly defined as:
+```
+Any lvalue expression of array type, when used in any context other than
+
+* as the operand of the address-of operator
+* as the operand of sizeof
+* as the string literal used for array initialization
+
+undergoes a conversion to the non-lvalue pointer to its first element. The result is not an lvalue.
+```
+
+**Example 1:**
+
+int a[2][3] = {1,2,3,4,5,6};
+
+<table>
+<tr><th>Reference</th><th>Type</th><th>Value</th></tr>
+<tr><td>a[0][0]</td><td>int</td><td>1</td></tr>
+<tr><td>&a[0][0]</td><td rowspan="5">int * (pointer decay)</td><td rowspan="5">Address of a[0][0]</td></tr>
+<tr><td>a</td></tr>
+<tr><td>&a</td></tr>
+<tr><td>a[0]</td></tr>
+<tr><td>&a[0]</td></tr>
+<tr><td>a[1][0]</td><td>int</td><td>4</td></tr>
+<tr><td>&a[1][0]</td><td rowspan="3">int * (pointer decay)</td><td rowspan="3">Address of a[1][0]</td></tr>
+<tr><td>a[1]</td></tr>
+<tr><td>&a[1]</td></tr>
+
+</table>
+
+Notes:
+* Multi-dimensional arrays are arrays of arrays.
+* The array `a` is an array of two arrays of three elements, ie a[2] of a[3].
+* The references `a`, `&a`, `a[0]`, `&a[0]`, and `&a[0][0]` all yield the same value, the address of the first element (a[0][0]) of the array.
+* The references `a[1]`, `&a[1]`, and `&a[1][0]` all yield the same value, the address of the first element of the second array of thee elements, ie. the first element of the array `a[1]` is `a[1][0]`.
+
+**Example 2:**
+
+int a[2][3] = {1,2,3,4,5,6};
+
+The array `a` may be passed to a function as a parameter by declaring the function one of three ways:
+
+1. As a function declared with fully specified array parameter:
+`int function1(int arr[2][3], int rows);`
+
+2. As a function declared with an incompletely specified array parameter:
+`int function2(int arr[][3], int rows);`
+
+3. As a function declared with a pointer to the element type:
+`int function3(int *arr, int rows, int cols)`
+
+Notes:
+* The array parameters in function1 and function2 are the same, since the array parameter decays into a pointer to an array of three integers in both cases.
+* The first index in the array parameter in function1 is ignored, which is why the rows value must be passed as a separate parameter, even though it was specified.
+* An element pointer can be used instead, as in function3, but in that case both the rows and columns values must be passed as parameter so the user can do the pointer arithmetic manually.
+
+**Implementation Defined Behavior**
+
+* ElfC supports array pointers internally only for passing arrays as function parameters.
+* Array references, outside of function parameters, decay into a pointer to the base type, with the address value of the first element.
+
+**Differences from ANSI C89/C90**
+
+* Declaring a variable as a pointer to an array type is not supported., e.g. `int (*)a[];` is not supported.
+* An array type may be declared in a `typedef` or in a variable declaration, but not both.
+
 Local Labels and `goto`
 -----------------------
 
@@ -543,18 +630,20 @@ typedef struct int32 int32_t;
 
 **The following functions are supported in the ElfC math32 library.**
 
-* _abs32(a)_ - 32-bit absolute value of a
-* _add32(a, b)_ - 32-bit addition: returns a + b
-* _sub32(a, b)_ - 32-bit subtraction: returns a - b
-* _mul32(a, b)_ - 32-bit subtraction: returns a - b
-* _cmp32(a, b)_ - Compare two 32-bit numbers, returns -1 if a < b, 0 if a == b or 1 if a > b
-* _shl32(a)_ - Shift 32-bit number left by 1 bit
-* _shr32(a)_ - Shift 32-bit number right by 1 bit
-* _div32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem
-* _to_int32(int n)_ - Convert 16-bit number to 32-bit number with sign extension
-* _neg32(a)_ - Negate a 32-bit number
+* _absi32(a)_ - 32-bit absolute value of a
+* _addi32(a, b)_ - 32-bit addition: returns a + b
+* _subi32(a, b)_ - 32-bit subtraction: returns a - b
+* _muli32(a, b)_ - 32-bit multiplication: returns a *
+* _muli32x16(a, int b)_ - 32 x 16-bit multiplication: returns a * b
+* _cmpi32(a, b)_ - Compare two 32-bit numbers, returns -1 if a < b, 0 if a == b or 1 if a > b
+* _shli32(a, int n)_ - Shift 32-bit number left by n bits
+* _shri32(a, int n)_ - Shift 32-bit number right by n bits
+* _asri32(a, int n)_ - Arithmetic shift right by n bits
+* _divi32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem
+* _toi32(int n)_ - Convert 16-bit number to 32-bit number with sign extension
+* _negi32(a)_ - Negate a 32-bit number
 * _atoi32(char *str)_ - Convert a string into 32-bit integer
-* _char *itoa32(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
+* _char *i32toa(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
 * _strtoi32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit integer
 
 *Note: all variables and return values are type `int32_t`, unless typed differently*
