@@ -299,7 +299,8 @@ static void return_stmt(void) {
 	if (Token != SEMI) {
 		expr(lv, 1);
 		if (!typematch(lv[LVPRIM], Prims[Thisfn]))
-			error("incompatible type in 'return'", NULL);
+		  if (!decaymatch(lv, Prims[Thisfn]))
+			  error("incompatible type in 'return'", NULL);
 	}
 	else {
 		if (Prims[Thisfn] != PVOID)

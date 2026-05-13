@@ -353,6 +353,16 @@ void genderefp(int y) {
 	cgvalue(size);
 }
 
+//grw - dereference an array pointer on the stack
+void genderefa(void) {
+
+	/* commit any pending operations */
+	commit();
+	gen(";----- deref pointer for array argument");
+	/* get the struct/union definition symbol index */
+	cgindw();
+}
+
 void genldlab(int id) {
 	//grw - added commit
 	commit();
@@ -650,7 +660,7 @@ void genlognot(void) {
 void genind(int p) {
 	commit();
 	//grw - added support for signed and unsigned
-	/* Note: pointers to pointers to struct/union do get de-refed */
+	/* Note: pointers to pointers to struct/union do not get de-refed */
 	if (chartype(p))
 		cgindb(signtype(p));
 	else if (!comptype(p)) {

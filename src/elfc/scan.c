@@ -339,7 +339,8 @@ static int macro(char *name) {
 
 	y = findmac(name);
 
-	if (!y || Types[y] != TMACRO)
+	//if (!y || Types[y] != TMACRO)
+	if (!y || !isMacro(Types[y]))
 		return 0;
 	if (!strcmp(name, "__LINE__")) {
 		//grw - print line number as raw number in source

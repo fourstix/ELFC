@@ -313,3 +313,101 @@ int blank(char *p) {
 	/* if entire string was whitespace, then it was blank */
 	return (*p == 0);
 }
+
+/*
+ * Get the dimension scaling factor
+ */
+int dimscale(int atype) {
+	int scale = 1;
+	int y = 0;
+
+	/* make sure type is really an array */
+	if (atype & TARRMASK) {
+		y = atype & ~TARRMASK;
+		if (y)  {
+			scale = Sizes[y];
+		}
+	}
+	return scale;
+}
+/*
+ * Return the number of dimensions in an array
+ * 0 => not an array
+ * 1 => a[]
+ * 2 => a[][]
+ * 3 => a[][][]
+ * etc.
+ */
+int arrayorder(int atype) {
+  int order = 0;
+	int y = 0;
+
+	/* make sure type is really an array */
+	while (atype & TARRMASK) {
+		order++;
+		y = atype & ~TARRMASK;
+		if (y)  {
+			atype = Types[y];
+		} else {
+			/* y = 0 means end of type chain */
+			break;
+		}
+	}
+	return order;
+}
+/*
+ * Get a pointer to a multidimensional array
+ * Pointer level is order of array, ie the
+ * pointer to int a[][] is int**
+ */
+int arrayptr(int aprim, int atype, char *name){
+	int y = 0;
+
+	/* make sure type is really an array */
+	while (atype & TARRMASK) {
+		y = atype & ~TARRMASK;
+		/* decay pointer by one level for each dimension */
+		aprim = pointerto(aprim, name);
+		if (y)  {
+			atype = Types[y];
+		} else {
+			/* y = 0 means end of type chain */
+			break;
+		}
+	}
+	return aprim;
+}
+
+/*
+ * Return the type value for next array dimension
+ */
+int nextdim(int atype) {
+	int y = 0;
+	if (atype & TARRMASK) {
+		y = atype & ~TARRMASK;
+		if (y)  {
+			atype = Types[y];
+		} else {
+			/* extra dimensions decay into pointer variable */
+			atype = TVARIABLE;
+		}
+	}
+	return atype;
+}
+
+/*
+ * Decay an array into a pointer to an element type
+ * and see if that matches the other type
+ */
+int decaymatch(int *lv, int prim) {
+	int y = lv[LVSYM];
+	int eprim = Prims[y];
+	int type  = Types[y];
+
+	/* for an array, decay into a pointer to element primitive type */
+	if (y && isArray(type)) {
+		eprim = pointerto(eprim, NULL);
+	}
+	/* if this isn't an array, then still no match */
+	return (eprim == prim);
+}

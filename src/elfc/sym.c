@@ -12,7 +12,8 @@ int findglob(char *s) {
 	int	i;
 
 	for (i=0; i<Globs; i++) {
-		if (	Types[i] != TMACRO && Stcls[i] != CMEMBER &&
+		//if (Types[i] != TMACRO && Stcls[i] != CMEMBER &&
+		if (!isMacro(Types[i]) && Stcls[i] != CMEMBER &&
 			*s == *Names[i] && !strcmp(s, Names[i])
 		)
 			return i;
@@ -43,7 +44,8 @@ int findmac(char *s) {
 	int	i;
 
 	for (i=0; i<Globs; i++)
-		if (	TMACRO == Types[i] &&
+		//if (	TMACRO == Types[i] &&
+		if (isMacro(Types[i]) &&
 			*s == *Names[i] && !strcmp(s, Names[i])
 		)
 			return i;
@@ -54,12 +56,14 @@ int findstruct(char *s) {
 	int	i;
 
 	for (i=Locs; i<NSYMBOLS; i++)
-		if (	TSTRUCT == Types[i] &&
+		//if (	TSTRUCT == Types[i] &&
+		if (isStructure(Types[i]) &&
 			*s == *Names[i] && !strcmp(s, Names[i])
 		)
 			return i;
 	for (i=0; i<Globs; i++)
-		if (	TSTRUCT == Types[i] &&
+		//if (	TSTRUCT == Types[i] &&
+		if (isStructure(Types[i]) &&
 			*s == *Names[i] && !strcmp(s, Names[i])
 		)
 			return i;
@@ -142,20 +146,24 @@ static void defglob(char *name, int prim, int type, int size, int val,
 	//grw - removed static param from genbss
 	//int	st;
 
-	if (TCONSTANT == type || TFUNCTION == type) return;
+	//if (TCONSTANT == type || TFUNCTION == type) return;
+	if (isConstant(type) || isFunction(type)) return;
 
 	//grw - removed static param from genbss
 	//st = scls == CSTATIC;
 	if (CPUBLIC == scls) genpublic(name);
 
-	if (init && TARRAY == type)
+	//if (init && TARRAY == type)
+	if (init && isArray(type))
 	  return;
 
-	if (TARRAY != type && !(prim & STCMASK)) genname(name);
+	//if (TARRAY != type && !(prim & STCMASK)) genname(name);
+	if (!isArray(type) && !(prim & STCMASK)) genname(name);
 
 	if (prim & STCMASK) {
 		//grw - removed static param from genbss
-	  if (TARRAY == type) {
+	  //if (TARRAY == type) {
+		if (isArray(type)) {
 		  genbss(gsym(name), objsize(prim, TARRAY, size));
 	  }	else {
 		  genbss(gsym(name), objsize(prim, TVARIABLE, size));
@@ -164,19 +172,22 @@ static void defglob(char *name, int prim, int type, int size, int val,
   } else if (prim == (PCHAR | 0x0010) && init == -1) {
 		gendefpstr(val);
 	}	else if (chartype(prim)) {
-		if (TARRAY == type)
+		//if (TARRAY == type)
+		if (isArray(type))
 			genbss(gsym(name), size);
 		else {
 			  gendefb(val);
 		}
 		//grw - removed static param from genbss
 	}	else if (pinttype(prim)) {
-		if (TARRAY == type)
+		//if (TARRAY == type)
+		if (isArray(type))
 			genbss(gsym(name), size*INTSIZE);
 		else
 			gendefw(val);
 	} else {
-		if (TARRAY == type)
+		//if (TARRAY == type)
+		if (isArray(type))
 			genbss(gsym(name), size*PTRSIZE);
 		else
 			gendefp(val);
@@ -228,14 +239,16 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
 	else if ((y = findglob(name)) != 0) {
 		scls = redeclare(name, Stcls[y], scls);
 		if (CTYPE == scls) return y;
-		if (TFUNCTION == Types[y])
+		//if (TFUNCTION == Types[y])
+		if (isFunction(Types[y]))
 			mtext = Mtext[y];
 	}
 	if (0 == y) {
  		y = newglob();
 		Names[y] = globname(name);
 	}
-	else if (TFUNCTION == Types[y] || TMACRO == Types[y]) {
+	//else if (TFUNCTION == Types[y] || TMACRO == Types[y]) {
+	else if (isFunction(Types[y]) || isMacro(Types[y])) {
 		if (Prims[y] != prim || Types[y] != type)
 			error("redefinition does not match prior type: %s",
 				name);
@@ -272,14 +285,17 @@ void defloc(struct lstat_obj *p) {
 	int n;
 	char *pc;
 	//int prim, int type, int size, int val, int init
-	if (p->type != TARRAY && !(p->prim &STCMASK)) genlab(p->val);
+	//if (p->type != TARRAY && !(p->prim &STCMASK)) genlab(p->val);
+	if (!isArray(p->type) && !(p->prim &STCMASK)) genlab(p->val);
 	if (p->prim & STCMASK) {
 		//grw - removed static param from genbss
-		if (TARRAY == p->type)
+		//if (TARRAY == p->type)
+		if (isArray(p->type))
 			genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
 		else
 			genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
-	} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
+	//} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
+	} else if (p->prim == (PCHAR | 0x0010) && isVariable(p->type)) {
 		if (p->init) {
 			gendefpstr(p->init);
 		} else {
@@ -287,7 +303,8 @@ void defloc(struct lstat_obj *p) {
 		}
   } else if (chartype(p->prim)) {
 	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == p->type) {
+		//if (TARRAY == p->type) {
+		if (isArray(p->type)) {
 			genlab(p->val);
 
 			if (p->isize) {
@@ -310,7 +327,8 @@ void defloc(struct lstat_obj *p) {
 		//grw - update to use pinttype (primitive int type)
 	}	else if (pinttype(p->prim)) {
 	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == p->type) {
+		//if (TARRAY == p->type) {
+		if (isArray(p->type)) {
 			genlab(p->val);
 			if (p->isize) {
 			  genints(p->ilist, p->isize);
@@ -330,7 +348,8 @@ void defloc(struct lstat_obj *p) {
 	}	else {
 		/* arrays of pointers and structures are not initialized */
 		//grw - removed static param from genbss
-		if (TARRAY == p->type)
+		//if (TARRAY == p->type)
+		if (isArray(p->type))
 			genbss(labname(p->val), (p->size)*PTRSIZE);
 		else
 			gendefp(p->init);
@@ -384,16 +403,19 @@ int objsize(int prim, int type, int size) {
 	/* ptrlevel covers function pointer case */
 	else if (ptrlevel(prim) > 0)
 	  k = PTRSIZE;
-	if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
+	//if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
+	if (isFunction(type) || isConstant(type) || isMacro(type))
 		return -1;
-	if (TARRAY == type)
+	/* adujst size for arrays */
+	if (isArray(type))
 		k *= size;
 	return k;
 }
 
 static char *typename(int p) {
 	//grw - added support for multiple pointer indirection
-  static char tname[12];
+  static char tname[14];
+	static char overflow[6];
 	int lvl;
 	int btype;
 
@@ -417,11 +439,12 @@ static char *typename(int p) {
 	else return "n/a";
 
 	if (lvl > 3) {
-		/* indicate higher than triple pointer */
-		strcat(tname, "***+");
+		/* indicate higher than triple pointer by number */
+		sprintf(overflow, " %d*", lvl);
+		strcat(tname, overflow);
 	} else {
 		/* add up to 3 stars */
-  	while (lvl > 1) {
+  	while (lvl >= 1) {
 	  	strcat(tname, "*");
 			lvl--;
 		}
@@ -458,12 +481,20 @@ void dumpsyms(char *title, char *sub, int from, int to) {
 	for (i = from; i < to; i++) {
 		printf("%-6s  %s  %s  %5d  %5d  %s",
 			typename(Prims[i]),
+			/*
 			TVARIABLE == Types[i]? "VAR ":
 				TARRAY == Types[i]? "ARRY":
-				TFUNCTION == Types[i]? "FUN ":
+			  TFUNCTION == Types[i]? "FUN ":
 				TCONSTANT == Types[i]? "CNST":
 				TMACRO == Types[i]? "MAC ":
 				TSTRUCT == Types[i]? "STCT": "n/a",
+				*/
+			isVariable(Types[i])? "VAR ":
+					isArray(Types[i])? "ARRY":
+					isFunction(Types[i])? "FUN ":
+					isConstant(Types[i])? "CNST":
+					isMacro(Types[i])? "MAC ":
+					isStructure(Types[i])? "STCT": "n/a",
 			CPUBLIC == Stcls[i]? "PUBLC":
 				CEXTERN == Stcls[i]? "EXTRN":
 				CSTATIC == Stcls[i]? "STATC":
@@ -471,13 +502,17 @@ void dumpsyms(char *title, char *sub, int from, int to) {
 				CLSTATC == Stcls[i]? "LSTAT":
 				CAUTO   == Stcls[i]? "AUTO ":
 				CMEMBER == Stcls[i]? "MEMBR":
-				CTYPE   == Stcls[i]? "TYPE ": "n/a  ",
+				CTYPE   == Stcls[i]? "TYPE ":
+				//grw - added dimeinsion type
+				CDIM    == Stcls[i]? "DIM  ": "n/a  ",
 			Sizes[i],
 			Vals[i],
 			Names[i]);
-		if (TMACRO == Types[i])
+		//if (TMACRO == Types[i])
+		if (isMacro(Types[i]))
 			printf(" [\"%s\"]", Mtext[i]);
-		if (TFUNCTION == Types[i]) {
+		//if (TFUNCTION == Types[i]) {
+		if (isFunction(Types[i])) {
 			printf(" (");
 			for (p = (int *) Mtext[i]; *p; p++) {
 				printf("%s", typename(*p));
@@ -544,4 +579,17 @@ int findargs(int id) {
  */
 int isglobal(int scls) {
 	return (CPUBLIC == scls || CSTATIC == scls);
+}
+
+
+/*
+ * Test metatype t for a particular value.
+ */
+int isMetaType(int t, int value) {
+	//printf("meta type is %d, value = %d\n", t, value);
+	if (t & TARRMASK) {
+		return value == (t & TARRMASK);
+	} else {
+		return t == value;
+	}
 }
