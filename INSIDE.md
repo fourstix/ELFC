@@ -437,7 +437,7 @@ The ANSI C89/C90 specification defines the following minimum translation limits 
 *Notes:*
 * Up to 15 levels of indirection is supported in a declaration involving pointers, arrays and structure/unions.
 * Pointers to function pointers are not supported., e.g. `int (**f)();` is not supported.
-* Pointers to arrays are supported internally for passing arrays as parameters to functions, but variables cannot be declared as pointers to arrays, e.g. `int (*)a[];` is not supported.
+* Variables cannot be declared as pointers to arrays, e.g. `int (*)a[];` is not supported.
 * Elfc supports structures and unions and pointers to struct/union and pointers to struct/union pointers, eg. `struct stc`, `struct stc *p` and `struct stc **p` are supported.
 * ElfC does not support pointers to pointers to structure or union pointers, e.g. `struct stc ***p;` is not supported.
 * Only the supported parenthesized declaration syntax is `int (*f)()` which declares *f* as a function pointer.
