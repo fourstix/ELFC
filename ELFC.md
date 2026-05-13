@@ -270,10 +270,16 @@ The array `a` may be passed to a function as a parameter by declaring the functi
 3. As a function declared with a pointer to the element base type:
 `int function3(int *p, int rows, int cols)`
 
+Each of these functions would be called with array `a` as a parameter, as follows:
+1. `function1(a, 2);`
+2. `function2(a, 2);`
+2. `function3(a, 2, 3);`
+
 Notes:
 * The array parameters in function1 and function2 are the same, since the array parameter decays into a pointer to an array of three integers in both cases.
 * The first index in the array parameter in function1 is ignored, which is why the rows value must be passed as a separate parameter, even though it was specified.
 * A pointer to the element base type can be used instead, as in function3, but in that case one needs to pass the rows and columns values to do the pointer arithmetic manually.
+
 
 **Implementation Defined Behavior**
 
