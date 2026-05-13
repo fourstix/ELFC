@@ -236,13 +236,13 @@ int a[2][3] = {1,2,3,4,5,6};
 <table>
 <tr><th>Reference</th><th>Type</th><th>Value</th></tr>
 <tr><td>a[0][0]</td><td>int</td><td>1</td></tr>
-<tr><td>&a[0][0]</td><td rowspan="5">int * (pointer decay)</td><td rowspan="5">Address of a[0][0]</td></tr>
+<tr><td>&a[0][0]</td><td rowspan="5">int * (via pointer decay)</td><td rowspan="5">Address of a[0][0]</td></tr>
 <tr><td>a</td></tr>
 <tr><td>&a</td></tr>
 <tr><td>a[0]</td></tr>
 <tr><td>&a[0]</td></tr>
 <tr><td>a[1][0]</td><td>int</td><td>4</td></tr>
-<tr><td>&a[1][0]</td><td rowspan="3">int * (pointer decay)</td><td rowspan="3">Address of a[1][0]</td></tr>
+<tr><td>&a[1][0]</td><td rowspan="3">int * (via pointer decay)</td><td rowspan="3">Address of a[1][0]</td></tr>
 <tr><td>a[1]</td></tr>
 <tr><td>&a[1]</td></tr>
 
@@ -253,6 +253,7 @@ Notes:
 * The array `a` is an array of two arrays of three integer elements, ie array[2] of array[3] of int.
 * The references `a`, `&a`, `a[0]`, `&a[0]`, and `&a[0][0]` all yield the same value, the address of the first element (a[0][0]) of the array.
 * The references `a[1]`, `&a[1]`, and `&a[1][0]` all yield the same value, the address of the first element of the second array of thee elements, ie. the first element of the array `a[1]` is `a[1][0]`.
+* These array references are assignable to the base type `int *` through pointer decay, although some cases will result in a pointer indirection level warning.
 
 **Example 2:**
 
