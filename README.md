@@ -285,7 +285,7 @@ Issues Fixed
 -------------
 
 * ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
-* ElfC allows this assignment in accordance with future versions of the specification, C99 and C11, that clarify that this assignment is allowed.
+* ElfC allows this assignment in accordance with future versions of the specification, C99 and C11, that explicitly state that this assignment should be allowed.
 
 *Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
