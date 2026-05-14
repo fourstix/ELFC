@@ -283,8 +283,8 @@ Notes:
 
 **Implementation Defined Behavior**
 
-* ElfC supports array pointers internally only for passing arrays as function parameters.
-* Array references, outside of function parameters, decay into a pointer to the base type, with the address value of the first element.
+* ElfC only supports array pointers internally and for passing arrays as function parameters.
+* Array references, outside of function parameters, decay into a pointer assignable to a pointer to the base type, with the address value of the first element.
 
 **Differences from ANSI C89/C90**
 
