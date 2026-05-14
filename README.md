@@ -275,7 +275,7 @@ Compiler Option Changes
 Release 3.6
 -----------
 
-Release 3.6 adds support for multi-dimensional arrays to ElfC. Release 3.6 contains a new version of the 32-bit integer math library completely overhauled by Tony Hefner to improve performance, and ElfC now supports initializing arrays of pointers.
+Release 3.6 adds support for multi-dimensional arrays to ElfC and support for initializing arrays of pointers. Release 3.6 contains a new version of the 32-bit integer math library completely overhauled by Tony Hefner to improve performance.
 
 New features
 ------------
@@ -286,10 +286,10 @@ New features
 * ElfC allows references to arrays to be assigned to pointers that match the base type through pointer decay.
 * ElfC now allows any pointers that point to the same base type to be assigned, even if the levels of indirection are different.s
 * ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
-* The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
-* Three new example programs, a calculator, a fractal generator and a 400 digits of pi calculation,  were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, Kudos to Tony for creating these examples.
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
+* The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
+* Three new example programs, a calculator, a fractal generator and a 400 digits of pi calculation,  were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, Kudos to Tony for creating these examples.
 
 Issues Fixed
 -------------
