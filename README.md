@@ -1,9 +1,15 @@
 # ELFC
 A C compiler for a CDP1802 based microcomputer running Elf/OS or Mini/DOS.  ElfC is based on SubC written by Nils M Holms.
 
+Documentation
+---------------
+* ELFC General Information (This Page)
+* [ELFC Detailed Information](ELFC.md)
+* [ELFC Internal Information](INSIDE.md)
+
 Installation
 -------------
-* Unzip the file elfc_r357.zip into the desired directory
+* Unzip the file elfc_r361.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -719,6 +725,9 @@ Repository Contents
   * macros.c -- Demo of various macro mechanisms
   * vargs.c -- Demo of variable argument mechanisms
   * casting.c -- Demo of showing the results of casting various character and integer values.
+  * calc.c -- Demo program of a calculator using the 32-bit integer library.
+  * mandel.c -- Demo program to plot a Mandelbrot set using the 32-bit integer library.
+  * pi.c -- Demo program to compute pi to 400 digits using the 32-bit integer math library.
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/clib/lib**  -- Compiled ElfC C Library files
@@ -740,10 +749,11 @@ Repository Contents
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
+  * arrtest.c -- Functional tests for multi-dimensional arrays
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r357.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r357.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r357.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r361.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r361.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r361.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------

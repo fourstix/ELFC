@@ -1,5 +1,11 @@
 # ElfC Detailed Information
 
+Documentation
+---------------
+* [ELFC General Information](README.md)
+* ELFC Detailed Information (This Page)
+* [ELFC Internal Information](INSIDE.md)
+
 Types Supported
 ---------------
 
@@ -36,7 +42,7 @@ Types Supported
 </table>
 
 *Notes:*
-* *Single dimension arrays of the above types are supported, such as int[] char\*[], etc.*
+* *Arrays of the above types are supported, such as `int[][]`, `char\*[]`, etc.*
 * *Function pointers are limited to one single type, `int(\*)()`, and they have no argument types.*
 * *Structures and unions composed of the above types are supported.*
 * *Pointers to structures and pointers to unions are supported.*
@@ -200,7 +206,7 @@ The `const` keyword is *not* supported for local (auto) arrays, because ElfC doe
 Multi-dimensional Arrays
 -------------------------
 
-Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form.
+Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form. The C Programming Language, 2nd Edition describes arrays in Chapter 5, Pointers and Arrays.
 
 If a multi-dimensional array is an incomplete array, only the first dimension is unspecified, eg. `int a[][3];` declares an incomplete array with two dimensions.
 
@@ -208,7 +214,7 @@ When an array reference is converted to an address reference, the process is cal
 
 When pointer decay is applied, a multi-dimensional array is converted to a pointer to its first element.
 
-When an array is used as the parameter to a function, it is passed by pointer decay.
+When an array is used as the parameter to a function, it is passed by pointer decay as an array pointer.
 
 ElfC supports array pointers internally, so a multi-dimensional array function parameter decays into a pointer to an array of one dimension less, eg. `int a[2][3]` decays into `int (*)a[3]`, a pointer to an array of three elements.
 
@@ -217,6 +223,8 @@ A one dimensional array decays into a pointer to its element type, eg. `int a[4]
 Outside of function parameters, ElfC will decay an array reference into a pointer to the element base type.
 
 The word *decay* indicates that information is lost when the array is converted to a pointer.
+
+**Pointer Decay Rule**
 
 Pointer decay is formerly defined as:
 ```
@@ -253,7 +261,8 @@ Notes:
 * The array `a` is an array of two arrays of three integer elements, ie array[2] of array[3] of int.
 * The references `a`, `&a`, `a[0]`, `&a[0]`, and `&a[0][0]` all yield the same value, the address of the first element (a[0][0]) of the array.
 * The references `a[1]`, `&a[1]`, and `&a[1][0]` all yield the same value, the address of the first element of the second array of thee elements, ie. the first element of the array `a[1]` is `a[1][0]`.
-* These array references are assignable to the base type `int *` through pointer decay, although some cases will result in a pointer indirection level warning.
+* These array references are all assignable to the base type `int *` through pointer decay, although some cases will result in a pointer indirection level warning.
+* ElfC follows the three exceptions noted in the above *Pointer Decay Rule* so that `&`, `sizeof` and a string literal used for array initialization all work as expected.
 
 **Example 2:**
 
