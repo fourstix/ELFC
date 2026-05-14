@@ -102,8 +102,8 @@ static node *primary(int *lv) {
     lbl = strexpr();
     n = mkleaf(OP_LDLAB, lbl);
     //grw - added support for multiple pointer indirection
-    /* lv[LVPRIM] = CHARPTR; */
-    lv[LVPRIM] = (PCHAR | 0x0010);
+    //lv[LVPRIM] = (PCHAR | 0x0010);
+    lv[LVPRIM] = CHARPTR;
     return n;
   case LPAREN:
     Token = scan();

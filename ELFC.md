@@ -206,11 +206,11 @@ The `const` keyword is *not* supported for local (auto) arrays, because ElfC doe
 Multi-dimensional Arrays
 -------------------------
 
-Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form. The C Programming Language, 2nd Edition describes arrays in Chapter 5, Pointers and Arrays.
+Mult-dimensional Arrays in C are arrays where the elements are other arrays.  The array data is stored in Row-Major form. _The C Programming Language, 2nd Edition_ describes arrays in _Chapter 5: Pointers and Arrays_.
 
 If a multi-dimensional array is an incomplete array, only the first dimension is unspecified, eg. `int a[][3];` declares an incomplete array with two dimensions.
 
-When an array reference is converted to an address reference, the process is called *pointer decay*.
+When an array reference is converted to an address reference, the process is called *pointer decay*. The word *decay* indicates that information about the array (the size of one of its dimensions) is lost when the array is converted to a pointer.
 
 When pointer decay is applied, a multi-dimensional array is converted to a pointer to its first element.
 
@@ -220,9 +220,7 @@ ElfC supports array pointers internally, so a multi-dimensional array function p
 
 A one dimensional array decays into a pointer to its element type, eg. `int a[4]` decays into `int *`, a pointer to int.
 
-Outside of function parameters, ElfC will decay an array reference into a pointer to the element base type.
-
-The word *decay* indicates that information is lost when the array is converted to a pointer.
+ElfC will decay an array reference into a non-lvalue pointer that can be assigned to a pointer of the element base type, following the *Pointer Decay Rule* below.
 
 **Pointer Decay Rule**
 

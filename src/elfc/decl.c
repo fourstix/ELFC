@@ -124,9 +124,12 @@ static int initlist(char *name, int prim, int *pinit) {
   }
   lbrace();
   while (Token != RBRACE) {
-    v = constexpr();
+    if (CHARPTR == (prim & ~TQMASK)) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
     //grw - add support for type qualifiers
-    /* if (PCHAR == prim) { */
     /*
      * type qualifiers do not affect type matching
      * so remove any type qualifier bits from primitive type before comparing
@@ -139,12 +142,13 @@ static int initlist(char *name, int prim, int *pinit) {
       gendefb(v);
     } else if (PSCHAR == (prim & ~TQMASK)) {
       //grw - add support for type qualifiers
-    /* } else if (PSCHAR == prim) { */
       if (v < -128 || v > 127) {
         sprintf(buf, "%d", v);
         error("initializer out of range: %s", buf);
       }
       gendefb(v);
+    } else if (CHARPTR == (prim & ~TQMASK)){
+      gendefpstr(v);
     } else {
       gendefw(v);
     }
@@ -155,8 +159,6 @@ static int initlist(char *name, int prim, int *pinit) {
       break;
     if (eofcheck()) return 0;
   }
-  //grw - removed genalign
-  //if (PCHAR == prim) genalign(n);
   Token = scan();
   if (!n) error("too few initializers", NULL);
   return n;
@@ -242,9 +244,12 @@ static int linitlist(int size, int prim, int *pinit) {
   }
   lbrace();
   while (Token != RBRACE) {
-    v = constexpr();
+    if (CHARPTR == (prim & ~TQMASK)) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
     //grw - add support for type qualifiers
-    /* if (PCHAR == prim) { */
     /*
      * type qualifiers do not affect type matching
      * so remove any type qualifier bits from primitive type before comparing
@@ -294,6 +299,8 @@ static int linitlist(int size, int prim, int *pinit) {
   for (i = 0; i < n; i++) {
     if(chartype(prim))
       genbyte(sbuf[n-1-i]);
+    else if (CHARPTR == (prim & ~TQMASK))
+        genldlab(ibuf[n-1-i]);
     else
       genlit(ibuf[n-1-i]);
   }
@@ -332,7 +339,6 @@ static int sinitlist(int size, int prim) {
   if (STRLIT == Token) {
     v = 0;
 
-    // if (PCHAR != prim)
     if (!chartype(prim)) {
       error("initializer type mismatch", NULL);
     }
@@ -380,7 +386,11 @@ static int sinitlist(int size, int prim) {
   }
   lbrace();
   while (Token != RBRACE) {
-    v = constexpr();
+    if (CHARPTR == (prim & ~TQMASK)) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
     //grw - add support for type qualifiers
     /* if (PCHAR == prim) { */
     /*
@@ -723,7 +733,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
     Token = scan();
     /* check for initializing char ptr with string literal address */
-    if (*pprim == (PCHAR | 0x0010) && STRLIT == Token) {
+    if (*pprim == CHARPTR && STRLIT == Token) {
+
       /* generate string and set value to label number */
       *pval = strexpr();
       /* static string initialization has address as value */
@@ -801,12 +812,14 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
     //grw - initialization of global and local arrays
     if (ASSIGN == Token) {
       Token = scan();
+      //grw - allow pointer arrays to be initialized by string or constant
+      /*
       if (!inttype(*pprim))
         error("initialization of"
           " pointer array not"
           " supported",
           NULL);
-
+      */
       if (pmtr)
         error("initialization is not allowed for function paramater %s\n", name);
       //grw - added initialization for local static arrays

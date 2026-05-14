@@ -1,6 +1,6 @@
 /*
- *	NMH's Simple C Compiler, 2011--2016
- *	Code generator (emitter)
+ *  NMH's Simple C Compiler, 2011--2016
+ *  Code generator (emitter)
  */
 
 #include "defs.h"
@@ -9,1145 +9,1071 @@
 #include "cgen.h"
 
 //grw - removed clear logic
-//int	Acc = 0;
+//int  Acc = 0;
 
 //grw - removed clear logic
 //void clear(int q) {
-//	Acc = 0;
-//	if (q) {
-//		Q_type = empty;
-//		Q_cmp = cnone;
-//		Q_bool = bnone;
-//	}
+//  Acc = 0;
+//  if (q) {
+//    Q_type = empty;
+//    Q_cmp = cnone;
+//    Q_bool = bnone;
+//  }
 //}
 
 //grw - removed load
 //void load(void) {
-//	Acc = 1;
+//  Acc = 1;
 //}
 
 int label(void) {
-	static int id = 1;
+  static int id = 1;
 
-	return id++;
+  return id++;
 }
 
 void genraw(char *s) {
-	if (NULL == Outfile) return;
-	fprintf(Outfile, "%s", s);
+  if (NULL == Outfile) return;
+  fprintf(Outfile, "%s", s);
 }
 
 //grw - need ngen function without tab
 void ngenraw(char *s, char *inst, int n) {
-	if (NULL == Outfile) return;
-	fprintf(Outfile, s, inst, n);
+  if (NULL == Outfile) return;
+  fprintf(Outfile, s, inst, n);
 }
 //grw - function to output character
 void cgenraw(char *s, char ch) {
-	if (NULL == Outfile) return;
-	fprintf(Outfile, s, ch);
+  if (NULL == Outfile) return;
+  fprintf(Outfile, s, ch);
 }
 //grw - function to output string
 void sgenraw(char *s, char *inst, char *s2) {
-	if (NULL == Outfile) return;
-	fprintf(Outfile, s, inst, s2);
+  if (NULL == Outfile) return;
+  fprintf(Outfile, s, inst, s2);
 }
 
 
 void gen(char *s) {
-	if (NULL == Outfile) return;
-	fprintf(Outfile, "\t%s\n", s);
+  if (NULL == Outfile) return;
+  fprintf(Outfile, "\t%s\n", s);
 }
 
 void ngen(char *s, char *inst, int n) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, n);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, n);
+  fputc('\n', Outfile);
 }
 
 void ngen2(char *s, char *inst, int n, int a) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, n, a);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, n, a);
+  fputc('\n', Outfile);
 }
 
 void lgen(char *s, char *inst, int n) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, LPREFIX, n);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, LPREFIX, n);
+  fputc('\n', Outfile);
 }
 
 void lgen2(char *s, int v1, int v2) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, v1, LPREFIX, v2);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, v1, LPREFIX, v2);
+  fputc('\n', Outfile);
 }
 
 void sgen(char *s, char *inst, char *s2) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, s2);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, s2);
+  fputc('\n', Outfile);
 }
 
 void sgen2(char *s, char *inst, int v, char *s2) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, v, s2);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, v, s2);
+  fputc('\n', Outfile);
 }
 
 void genlab(int id) {
-	if (NULL == Outfile) return;
-	//grw - refactored Q_type to Q_jmp
-	if (Q_jmp == jump) {
-		if (Q_dest == id) {
-			//grw - print comment instead of jump to next stmt
-			ngen(";---- %s L%d falls through", "lbr", id);
-		} else {
-			//grw - if jump is to another label, output jump
-			cgjump(Q_dest);
-		}
-		Q_jmp = jnone;
-	}
-	commit();
-	//grw - precede label with new line
-	fprintf(Outfile, "\n%c%d:\n", LPREFIX, id);
+  if (NULL == Outfile) return;
+  //grw - refactored Q_type to Q_jmp
+  if (Q_jmp == jump) {
+    if (Q_dest == id) {
+      //grw - print comment instead of jump to next stmt
+      ngen(";---- %s L%d falls through", "lbr", id);
+    } else {
+      //grw - if jump is to another label, output jump
+      cgjump(Q_dest);
+    }
+    Q_jmp = jnone;
+  }
+  commit();
+  //grw - precede label with new line
+  fprintf(Outfile, "\n%c%d:\n", LPREFIX, id);
 }
 
 char *labname(int id) {
-	//grw - why so large? Made size smaller
-	/* static char	name[100]; */
-	static char	name[10];
+  //grw - why so large? Made size smaller
+  /* static char  name[100]; */
+  static char  name[10];
 
 
-	sprintf(name, "%c%d", LPREFIX, id);
-	return name;
+  sprintf(name, "%c%d", LPREFIX, id);
+  return name;
 }
 
 //grw - added support for local labels and goto
 void genllab(int id) {
-	if (NULL == Outfile) return;
-	//grw - output any queued operations
-	commit();
-	//grw - precede label with new line
-	fprintf(Outfile, "\n%c%d:\n", UPREFIX, id);
+  if (NULL == Outfile) return;
+  //grw - output any queued operations
+  commit();
+  //grw - precede label with new line
+  fprintf(Outfile, "\n%c%d:\n", UPREFIX, id);
 }
 
 //grw - added support for local labels and goto
 /*
 char *llabname(int id) {
-	static char	uname[10];
+  static char  uname[10];
 
-	sprintf(uname, "%c%d", UPREFIX, id);
-	return uname;
+  sprintf(uname, "%c%d", UPREFIX, id);
+  return uname;
 }
 */
 //grw - generate an instruction with a local label
 void llgen(char *s, char *inst, int n) {
-	if (NULL == Outfile) return;
-	fputc('\t', Outfile);
-	fprintf(Outfile, s, inst, UPREFIX, n);
-	fputc('\n', Outfile);
+  if (NULL == Outfile) return;
+  fputc('\t', Outfile);
+  fprintf(Outfile, s, inst, UPREFIX, n);
+  fputc('\n', Outfile);
 }
 //grw - added support for local labels and goto
 void gengoto(int dest) {
-	commit();
-	cggoto(dest);
+  commit();
+  cggoto(dest);
 }
 
 
 char *gsym(char *s) {
-	static char	name[NAMELEN+2];
+  static char  name[NAMELEN+2];
 
-	name[0] = PREFIX;
-	copyname(&name[1], s);
-	return name;
+  name[0] = PREFIX;
+  copyname(&name[1], s);
+  return name;
 }
 
 void genprelude(void) {
-	cgprelude();
+  cgprelude();
 }
 
 void genpostlude(void) {
-	cgpostlude();
+  cgpostlude();
 }
 
 void genname(char *name) {
-	char* pname;
-	//grw - process name for library entry point and other lables
-	if (O_library) {
-	  pname = procname(Basefile);
-		//grw - fail if proc name is missing
-		if (pname == NULL)
-		  error("Proc Name is Null.", NULL);
+  char* pname;
+  //grw - process name for library entry point and other lables
+  if (O_library) {
+    pname = procname(Basefile);
+    //grw - fail if proc name is missing
+    if (pname == NULL)
+      error("Proc Name is Null.", NULL);
 
-	  if (!strcmp(gsym(name), pname)) {
-		ngen(";---- library entry point %s", pname, 0);
-		genlab(cgentrypt());
-		return;
-		} else {
-		//grw - commit any queued jump before generating label
-		commit();
-		}
-	}
-	genraw(gsym(name));
-	genraw(":");
-	//grw - setup handler at the beggining of main
-	if(!strcmp(name, "main")){
-		cgsetup();
-	}
+    if (!strcmp(gsym(name), pname)) {
+    ngen(";---- library entry point %s", pname, 0);
+    genlab(cgentrypt());
+    return;
+    } else {
+    //grw - commit any queued jump before generating label
+    commit();
+    }
+  }
+  genraw(gsym(name));
+  genraw(":");
+  //grw - setup handler at the beggining of main
+  if(!strcmp(name, "main")){
+    cgsetup();
+  }
 }
 
 void genpublic(char *name) {
-	char* pname;
-	//grw - don't declare library entry point publics
-	if (O_library) {
-		pname = procname(Basefile);
-		//grw - fail if proc name is missing
-		if (pname == NULL)
-			error("Proc Name is Null.", NULL);
+  char* pname;
+  //grw - don't declare library entry point publics
+  if (O_library) {
+    pname = procname(Basefile);
+    //grw - fail if proc name is missing
+    if (pname == NULL)
+      error("Proc Name is Null.", NULL);
 
-		if (!strcmp(gsym(name), pname)) {
-			//grw - public label supressed
-			return;
-		}
+    if (!strcmp(gsym(name), pname)) {
+      //grw - public label supressed
+      return;
+    }
   }
-	cgpublic(gsym(name));
+  cgpublic(gsym(name));
 }
 
 
 /* loading values */
 void commit(void) {
 
-	if (Q_cmp != cnone) {
-		commit_cmp();
-		return;
-	}
-	if (Q_bool != bnone) {
-		commit_bool();
-		return;
-	}
-	//grw - refactored Q_type to Q_jmp
-	//if (empty == Q_type) return;
+  if (Q_cmp != cnone) {
+    commit_cmp();
+    return;
+  }
+  if (Q_bool != bnone) {
+    commit_bool();
+    return;
+  }
 
-	if (Q_jmp != jnone) {
-		cgjump(Q_dest);
-		Q_jmp = jnone;
-		return;
-	}
+  if (Q_jmp != jnone) {
+    cgjump(Q_dest);
+    Q_jmp = jnone;
+    return;
+  }
 
-	if (Q_push != pnone) {
-		gen(";------ commit push");
-		cgpushd();
-		Q_push = pnone;
-	}
-	// grw - removed logic to queue address modes
-  /*
-  spill();
-	switch (Q_type) {
-	case addr_auto:		cgldla(Q_val); break;
-	case addr_static:	cgldsa(Q_val); break;
-	case addr_globl:	cgldga(gsym(Q_name)); break;
-	case addr_label:	cgldlab(Q_val); break;
-	case literal:		cglit(Q_val); break;
-	case auto_byte:		cgclear(); cgldlb(Q_val); break;
-	case auto_word:		cgldlw(Q_val); break;
-	case static_byte:	cgclear(); cgldsb(Q_val); break;
-	case static_word:	cgldsw(Q_val); break;
-	case globl_byte:	cgclear(); cgldgb(gsym(Q_name)); break;
-	case globl_word:	cgldgw(gsym(Q_name)); break;
-	default:		fatal("internal: unknown Q_type");
-	}
-	*/
-	//grw - remove load
-	//load();
-	//grw - refactored Q_type to Q_jmp
-	//Q_type = empty;
+  if (Q_push != pnone) {
+    gen(";------ commit push");
+    cgpushd();
+    Q_push = pnone;
+  }
+  // grw - removed logic to queue address modes
 }
 
 //grw - remove logic to queue address modes
 //grw - added logic to queue jump to label
-//void queue(int type, int val, char *name) {
-//	commit();
-//	Q_type = type;
-//	Q_val = val;
-//	if (name) copyname(Q_name, name);
-//}
 
 void queue_jmp(int val) {
-	commit();
-	//grw - trace
-	ngen(";---- queue %s L%d", "lbr", val);
-	Q_jmp = jump;
-	Q_dest = val;
+  commit();
+  //grw - trace
+  ngen(";---- queue %s L%d", "lbr", val);
+  Q_jmp = jump;
+  Q_dest = val;
 }
 
 void queue_push() {
-	commit();
-	//grw - trace
-	gen(";---- queue dpush");
-	Q_push = push;
+  commit();
+  //grw - trace
+  gen(";---- queue dpush");
+  Q_push = push;
 }
 
 void genaddr(int y) {
-	//grw - added commit
-	commit();
-	if (CAUTO == Stcls[y])
-		cgldla(Vals[y]);
-		//grw - remove queue
-		//queue(addr_auto, Vals[y], NULL);
-	else if (CLSTATC == Stcls[y])
-		cgldsa(Vals[y]);
-  	//grw - remove queue
-		//queue(addr_static, Vals[y], NULL);
-	else
-		cgldga(gsym(Names[y]));
-	  //grw - remove queue
-		//queue(addr_globl, 0, Names[y]);
+  //grw - added commit
+  commit();
+  if (CAUTO == Stcls[y])
+    cgldla(Vals[y]);
+  else if (CLSTATC == Stcls[y])
+    cgldsa(Vals[y]);
+  else
+    cgldga(gsym(Names[y]));
 }
 
 //grw - add support to pass struct/union by value
 void genvalue(int y) {
-	int size;
-	/* commit() is done in genaddr */
-	gen(";----- pass struct/union argument by value");
-	/* put source address on stack */
-	genaddr(y);
-	size = objsize(Prims[y], Types[y], Sizes[y]);
-	size = ALIGNED(size);
-	cgvalue(size);
+  int size;
+  /* commit() is done in genaddr */
+  gen(";----- pass struct/union argument by value");
+  /* put source address on stack */
+  genaddr(y);
+  size = objsize(Prims[y], Types[y], Sizes[y]);
+  size = ALIGNED(size);
+  cgvalue(size);
 }
 
 //grw - dereference a stuct/union value from a call on the stack
 void genderefc(int y) {
   int yt;
-	int size;
+  int size;
 
-	/* commit any pending operations */
-	commit();
-	gen(";----- struct/union argument returned from function call");
-	/* get the struct/union definition symbol index from function return primitive */
+  /* commit any pending operations */
+  commit();
+  gen(";----- struct/union argument returned from function call");
+  /* get the struct/union definition symbol index from function return primitive */
   yt = Prims[y] & ~STCMASK;
-	size = Sizes[yt];
-	size = ALIGNED(size);
-	cgvalue(size);
+  size = Sizes[yt];
+  size = ALIGNED(size);
+  cgvalue(size);
 }
 
 //grw - dereference a stuct/union pointer on the stack
 void genderefp(int y) {
   int yt;
-	int size;
+  int size;
 
-	/* commit any pending operations */
-	commit();
-	gen(";----- struct/union argument from pointer deref");
-	/* get the struct/union definition symbol index */
+  /* commit any pending operations */
+  commit();
+  gen(";----- struct/union argument from pointer deref");
+  /* get the struct/union definition symbol index */
   yt = y & ~STCMASK;
-	size = Sizes[yt];
-	size = ALIGNED(size);
-	cgvalue(size);
+  size = Sizes[yt];
+  size = ALIGNED(size);
+  cgvalue(size);
 }
 
 //grw - dereference an array pointer on the stack
 void genderefa(void) {
 
-	/* commit any pending operations */
-	commit();
-	gen(";----- deref pointer for array argument");
-	/* get the struct/union definition symbol index */
-	cgindw();
+  /* commit any pending operations */
+  commit();
+  gen(";----- deref pointer for array argument");
+  /* get the struct/union definition symbol index */
+  cgindw();
 }
 
 void genldlab(int id) {
-	//grw - added commit
-	commit();
-	cgldlab(id);
+  //grw - added commit
+  commit();
+  cgldlab(id);
 }
 
 void genlit(int v) {
-	//grw - added commit
-	commit();
-	cglit(v);
+  //grw - added commit
+  commit();
+  cglit(v);
 }
 
 //grw - push byte value onto stack
 void genbyte(int b) {
-	commit();
-	/* make sure int value is in byte range */
-	b &= 0x00FF;
-	cgbyte(b);
+  commit();
+  /* make sure int value is in byte range */
+  b &= 0x00FF;
+  cgbyte(b);
 }
 /* multiple literal values on stack */
 void genlits(int count, int v) {
-	int i;
-	//grw - added commit
-	commit();
-	for(i=0; i < count; i++)
-	  cglit(v);
+  int i;
+  //grw - added commit
+  commit();
+  for(i=0; i < count; i++)
+    cglit(v);
 }
 
 /* binary ops */
 
 void genand(void) {
-	cgand();
+  cgand();
 }
 
 void genior(void) {
-	cgior();
+  cgior();
 }
 
 void genxor(void) {
-	cgxor();
+  cgxor();
 }
 
 void genshl() {
-	//grw - removed cgload2 from logic
-	//if (cgload2() || !swapped) cgswap();
-	//if (!swapped) cgswap();
-	cgshl();
+  cgshl();
 }
 
 void genshr() {
-	//grw - removed cgload2 logic
-	//if (cgload2() || !swapped) cgswap();
-	cgshr();
+  cgshr();
 }
 
-//grw - added support for signd and unsgined
+/* Test if primitive type is a pointer */
 static int ptr(int p) {
-	//grw - added support for multiple pointer indirection
-/*
-	int	sp;
-
-	sp = p & STCMASK;
-	return INTPTR == p || INTPP == p ||
-	  UINTPTR == p || UINTPP == p ||
-		CHARPTR == p || CHARPP == p ||
-		SCHARPTR == p || SCHARPP == p ||
-		VOIDPTR == p || VOIDPP == p ||
-		STCPTR == sp || STCPP == sp ||
-		UNIPTR == sp || UNIPP == sp ||
-		FUNPTR == p;
-*/
+  //grw - added support for multiple pointer indirection
 return (ptrlevel(p) > 0);
 }
+
 //grw - added support for signd and unsgined
 //grw - added support for multiple pointer indirection
 static int needscale(int p) {
-	int	sp;
-	int btype;
-	int lvl;
-	int scale = 0;
+  int  sp;
+  int btype;
+  int lvl;
+  int scale = 0;
 
-	sp = p & STCMASK;
-	btype = basetype(p);
-	lvl   = ptrlevel(p);
+  sp = p & STCMASK;
+  btype = basetype(p);
+  lvl   = ptrlevel(p);
 
-	if (STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp)
-	  /*structure and union pointers need scaling */
-	  scale = 1;
-	else if (lvl > 1) {
-		/* double, and up pointers need scaling */
-		scale = 1;
-	} else if (lvl == 1) {
-		/* integer pointers need scaling */
-		scale = (PINT == btype || PUINT == btype);
-	}
-/*
-	return INTPTR == p || INTPP == p || CHARPP == p || VOIDPP == p ||
-		UINTPTR == p || UINTPP == p || SCHARPP == p ||
-		STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp;
-*/
+  if (STCPTR == sp || STCPP == sp || UNIPTR == sp || UNIPP == sp)
+    /*structure and union pointers need scaling */
+    scale = 1;
+  else if (lvl > 1) {
+    /* double, and up pointers need scaling */
+    scale = 1;
+  } else if (lvl == 1) {
+    /* integer pointers need scaling */
+    scale = (PINT == btype || PUINT == btype);
+  }
 return scale;
 }
 
 int genadd(int p1, int p2, int swapped) {
- 	int	rp = PINT, t;
-	//grw - removed cgload2 logic
-	//if (cgload2() || !swapped) {
-	if (!swapped) {
-		t = p1;
-		p1 = p2;
-		p2 = t;
-	}
-	if (ptr(p1)) {
-		if (needscale(p1)) {
-			if (	(p1 & STCMASK) == STCPTR ||
-				(p1 & STCMASK) == UNIPTR
-			)
-				cgscaleby(objsize(deref(p1), TVARIABLE, 1));
-			else
-				cgscale();
-		}
-		rp = p1;
-	}
-	else if (ptr(p2)) {
-		if (needscale(p2)) {
-			if (	(p2 & STCMASK) == STCPTR ||
-				(p2 & STCMASK) == UNIPTR
-			)
-				cgscale2by(objsize(deref(p2), TVARIABLE, 1));
-			else
-				cgscale2();
-		}
-		rp = p2;
-	}
-	cgadd();
-	return rp;
+   int  rp = PINT, t;
+
+  if (!swapped) {
+    t = p1;
+    p1 = p2;
+    p2 = t;
+  }
+  if (ptr(p1)) {
+    if (needscale(p1)) {
+      if (  (p1 & STCMASK) == STCPTR ||
+        (p1 & STCMASK) == UNIPTR
+      )
+        cgscaleby(objsize(deref(p1), TVARIABLE, 1));
+      else
+        cgscale();
+    }
+    rp = p1;
+  }
+  else if (ptr(p2)) {
+    if (needscale(p2)) {
+      if (  (p2 & STCMASK) == STCPTR ||
+        (p2 & STCMASK) == UNIPTR
+      )
+        cgscale2by(objsize(deref(p2), TVARIABLE, 1));
+      else
+        cgscale2();
+    }
+    rp = p2;
+  }
+  cgadd();
+  return rp;
 }
 
 int gensub(int p1, int p2, int swapped) {
-	int	rp = PINT;
-	//grw - removed cgload2 logic
-	//if (cgload2() || !swapped) cgswap();
-	if (!swapped) cgswap();
-	//grw - changed to use ptr compatibility function
-	/* if (!inttype(p1) && !inttype(p2) && p1 != p2) */
-	if (!compatible(p1,p2))
-		error("incompatible pointer types in binary '-'", NULL);
-	if (ptr(p1) && !ptr(p2)) {
-			if (needscale(p1)) {
-			if (	(p1 & STCMASK) == STCPTR ||
-				(p1 & STCMASK) == UNIPTR
-			)
-				cgscaleby(objsize(deref(p1), TVARIABLE, 1));
-			else
-				cgscale();
-		}
-		rp = p1;
-	}
-	cgsub();
-	if (needscale(p1) && needscale(p2)) {
-		if (	(p1 & STCMASK) == STCPTR ||
-			(p1 & STCMASK) == UNIPTR
-		)
-			cgunscaleby(objsize(deref(p1), TVARIABLE, 1));
-		else
-			cgunscale();
-	}
+  int  rp = PINT;
 
-	return rp;
+  if (!swapped) cgswap();
+  //grw - changed to use ptr compatibility function
+  if (!compatible(p1,p2))
+    error("incompatible pointer types in binary '-'", NULL);
+  if (ptr(p1) && !ptr(p2)) {
+      if (needscale(p1)) {
+      if (  (p1 & STCMASK) == STCPTR ||
+        (p1 & STCMASK) == UNIPTR
+      )
+        cgscaleby(objsize(deref(p1), TVARIABLE, 1));
+      else
+        cgscale();
+    }
+    rp = p1;
+  }
+  cgsub();
+  if (needscale(p1) && needscale(p2)) {
+    if (  (p1 & STCMASK) == STCPTR ||
+      (p1 & STCMASK) == UNIPTR
+    )
+      cgunscaleby(objsize(deref(p1), TVARIABLE, 1));
+    else
+      cgunscale();
+  }
+
+  return rp;
 }
 
 void genmul(int sgn) {
-	//grw - removed cgload2 from logic
-	//cgload2();
-	//if (!swapped) cgswap();
-
   cgmul(sgn);
 }
 
 void gendiv(int sgn) {
-	//grw - removed cgload2 logic
-	//if (cgload2() || !swapped) cgswap();
-	//if (!swapped) cgswap();
-	cgdiv(sgn);
+  cgdiv(sgn);
 }
 
 void genmod(int sgn) {
-	//grw - removed cgload2 logic
-	//if (cgload2() || !swapped) cgswap();
-	//if (!swapped) cgswap();
-	cgmod(sgn);
+  cgmod(sgn);
 }
 
 static void binopchk(int op, int p1, int p2) {
-	if (ASPLUS == op)
-		op = PLUS;
-	else if (ASMINUS == op)
-		op = MINUS;
-	if (inttype(p1) && inttype(p2))
-		return;
-	else if (comptype(p1) || comptype(p2))
-		/* fail */;
-	else if (PVOID == p1 || PVOID == p2)
-		/* fail */;
-	else if (PLUS == op && (inttype(p1) || inttype(p2)))
-		return;
-	else if (MINUS == op && (!inttype(p1) || inttype(p2)))
-		return;
-	else if ((EQUAL == op || NOTEQ == op || LESS == op ||
-		 GREATER == op || LTEQ == op || GTEQ == op)
-		&&
-		(p1 == p2 ||
-		 //grw - added support for multiple pointer indirection
-		 (isvoidptr(p1) && !inttype(p2)) ||
-		 (isvoidptr(p2) && !inttype(p1)))
-		 /*
-		 (VOIDPTR == p1 && !inttype(p2)) ||
-		 (VOIDPTR == p2 && !inttype(p1)))
-     */
-	)
-		return;
-	error("invalid operands to binary operator", NULL);
+  if (ASPLUS == op)
+    op = PLUS;
+  else if (ASMINUS == op)
+    op = MINUS;
+  if (inttype(p1) && inttype(p2))
+    return;
+  else if (comptype(p1) || comptype(p2))
+    /* fail */;
+  else if (PVOID == p1 || PVOID == p2)
+    /* fail */;
+  else if (PLUS == op && (inttype(p1) || inttype(p2)))
+    return;
+  else if (MINUS == op && (!inttype(p1) || inttype(p2)))
+    return;
+  else if ((EQUAL == op || NOTEQ == op || LESS == op ||
+     GREATER == op || LTEQ == op || GTEQ == op)
+    &&
+    (p1 == p2 ||
+     //grw - added support for multiple pointer indirection
+     (isvoidptr(p1) && !inttype(p2)) ||
+     (isvoidptr(p2) && !inttype(p1)))
+  )
+    return;
+  error("invalid operands to binary operator", NULL);
 }
 
 void commit_cmp(void) {
-	//grw - trace
-	gen(";----- commit_cmp");
-	switch (Q_cmp) {
-  	case equal:		cgeq(); break;
-  	case not_equal:		cgne(); break;
-  	case less:		cglt(); break;
-  	case greater:		cggt(); break;
-  	case less_equal:	cgle(); break;
-  	case greater_equal:	cgge(); break;
-  	case below:		cgult(); break;
-  	case above:		cgugt(); break;
-  	case below_equal:	cgule(); break;
-  	case above_equal:	cguge(); break;
-	}
-	Q_cmp = cnone;
+  //grw - trace
+  gen(";----- commit_cmp");
+  switch (Q_cmp) {
+    case equal:    cgeq(); break;
+    case not_equal:    cgne(); break;
+    case less:    cglt(); break;
+    case greater:    cggt(); break;
+    case less_equal:  cgle(); break;
+    case greater_equal:  cgge(); break;
+    case below:    cgult(); break;
+    case above:    cgugt(); break;
+    case below_equal:  cgule(); break;
+    case above_equal:  cguge(); break;
+  }
+  Q_cmp = cnone;
 }
 
 void queue_cmp(int op) {
-  //grw - trace
-	gen(";----- queue_cmp");
-	commit();
-	Q_cmp = op;
+  gen(";----- queue_cmp");
+  commit();
+  Q_cmp = op;
 }
 
 int binoptype(int op, int p1, int p2) {
-	//grw - added support for signed and unsigned
-	int unsgn = unsgnop(p1, p2);
-	binopchk(op, p1, p2);
-	if (PLUS == op) {
-		if (!inttype(p1)) return p1;
-		if (!inttype(p2)) return p2;
-	}
-	else if (MINUS == op) {
-		if (!inttype(p1)) {
-			if (!inttype(p2)) return unsgn ? PUINT : PINT;
-			return p1;
-		}
-	}
-	return unsgn ? PUINT : PINT;
+  //grw - added support for signed and unsigned
+  int unsgn = unsgnop(p1, p2);
+  binopchk(op, p1, p2);
+  if (PLUS == op) {
+    if (!inttype(p1)) return p1;
+    if (!inttype(p2)) return p2;
+  }
+  else if (MINUS == op) {
+    if (!inttype(p1)) {
+      if (!inttype(p2)) return unsgn ? PUINT : PINT;
+      return p1;
+    }
+  }
+  return unsgn ? PUINT : PINT;
 }
 
 /* unary ops */
 void commit_bool(void) {
-	//grw
-	gen(";----- commit_bool");
-	ngen(";----- commit_bool %s = %d", "Q_bool", Q_bool);
-	switch (Q_bool) {
-    case lognot:	cglognot(); break;
-    case normalize:	cgbool(); break;
-	}
-	Q_bool = bnone;
+  //grw
+  gen(";----- commit_bool");
+  ngen(";----- commit_bool %s = %d", "Q_bool", Q_bool);
+  switch (Q_bool) {
+    case lognot:  cglognot(); break;
+    case normalize:  cgbool(); break;
+  }
+  Q_bool = bnone;
 }
 
 void queue_bool(int op) {
   //grw  - trace
-	gen(";----- queue_bool");
-	//ngen(";----- queue_bool %s = %d", "op", op);
-	commit();
-	Q_bool = op;
+  gen(";----- queue_bool");
+  commit();
+  Q_bool = op;
 }
 
 void genbool(void) {
-	queue_bool(normalize);
+  queue_bool(normalize);
 }
 
 void genlognot(void) {
-	queue_bool(lognot);
+  queue_bool(lognot);
 }
 
 void genind(int p) {
-	commit();
-	//grw - added support for signed and unsigned
-	/* Note: pointers to pointers to struct/union do not get de-refed */
-	if (chartype(p))
-		cgindb(signtype(p));
-	else if (!comptype(p)) {
-	  cgindw();
-	}
+  commit();
+  //grw - added support for signed and unsigned
+  /* Note: pointers to pointers to struct/union do not get de-refed */
+  if (chartype(p))
+    cgindb(signtype(p));
+  else if (!comptype(p)) {
+    cgindw();
+  }
 }
 
 void genneg(void) {
-	commit();
-	cgneg();
+  commit();
+  cgneg();
 }
 
 void gennot(void) {
-	commit();
-	cgnot();
+  commit();
+  cgnot();
 }
 
 void genscale(void) {
-	commit();
-	cgscale();
+  commit();
+  cgscale();
 }
 
 void genscale2(void) {
-	commit();
-	cgscale2();
+  commit();
+  cgscale2();
 }
 
 void genscaleby(int v) {
-	commit();
-	cgscaleby(v);
+  commit();
+  cgscaleby(v);
 }
 
 /* jump/call/function ops */
 
 void genjump(int dest) {
-	commit();
-	//grw - added logic to queue jump to label
-	//cgjump(dest);
-	queue_jmp(dest);
+  commit();
+  //grw - added logic to queue jump to label
+  queue_jmp(dest);
 }
 
 void genbranch(int dest, int inv) {
-	gen(";----- genbranch");
-	if (inv) {
-		switch (Q_cmp) {
-		case equal:		cgbrne(dest); break;
-		case not_equal:		cgbreq(dest); break;
-		case less:		cgbrge(dest); break;
-		case greater:		cgbrle(dest); break;
-		case less_equal:	cgbrgt(dest); break;
-		case greater_equal:	cgbrlt(dest); break;
-		case below:		cgbruge(dest); break;
-		case above:		cgbrule(dest); break;
-		case below_equal:	cgbrugt(dest); break;
-		case above_equal:	cgbrult(dest); break;
-		}
-	}
-	else {
-		switch (Q_cmp) {
-		case equal:		cgbreq(dest); break;
-		case not_equal:		cgbrne(dest); break;
-		case less:		cgbrlt(dest); break;
-		case greater:		cgbrgt(dest); break;
-		case less_equal:	cgbrle(dest); break;
-		case greater_equal:	cgbrge(dest); break;
-		case below:		cgbrult(dest); break;
-		case above:		cgbrugt(dest); break;
-		case below_equal:	cgbrule(dest); break;
-		case above_equal:	cgbruge(dest); break;
-		}
-	}
-	Q_cmp = cnone;
+  gen(";----- genbranch");
+  if (inv) {
+    switch (Q_cmp) {
+    case equal:    cgbrne(dest); break;
+    case not_equal:    cgbreq(dest); break;
+    case less:    cgbrge(dest); break;
+    case greater:    cgbrle(dest); break;
+    case less_equal:  cgbrgt(dest); break;
+    case greater_equal:  cgbrlt(dest); break;
+    case below:    cgbruge(dest); break;
+    case above:    cgbrule(dest); break;
+    case below_equal:  cgbrugt(dest); break;
+    case above_equal:  cgbrult(dest); break;
+    }
+  }
+  else {
+    switch (Q_cmp) {
+    case equal:    cgbreq(dest); break;
+    case not_equal:    cgbrne(dest); break;
+    case less:    cgbrlt(dest); break;
+    case greater:    cgbrgt(dest); break;
+    case less_equal:  cgbrle(dest); break;
+    case greater_equal:  cgbrge(dest); break;
+    case below:    cgbrult(dest); break;
+    case above:    cgbrugt(dest); break;
+    case below_equal:  cgbrule(dest); break;
+    case above_equal:  cgbruge(dest); break;
+    }
+  }
+  Q_cmp = cnone;
 }
 
 void genlogbr(int dest, int inv) {
-	//grw - trace
-	gen(";----- genlogbr");
-	//ngen(";----- genlogbr %s = %d", "inv", inv);
-	//ngen(";----- genlogbr %s = %d", "Q_bool", Q_bool);
+  //grw - trace
+  gen(";----- genlogbr");
 
-	if (normalize == Q_bool) {
-		if (inv)
-			cgbrfalse(dest, 0);
-		else
-			cgbrtrue(dest, 0);
-	}
-	else if (lognot == Q_bool) {
-		if (inv)
-			cgbrtrue(dest, 0);
-		else
-			cgbrfalse(dest, 0);
-	}
-	Q_bool = bnone;
+  if (normalize == Q_bool) {
+    if (inv)
+      cgbrfalse(dest, 0);
+    else
+      cgbrtrue(dest, 0);
+  }
+  else if (lognot == Q_bool) {
+    if (inv)
+      cgbrtrue(dest, 0);
+    else
+      cgbrfalse(dest, 0);
+  }
+  Q_bool = bnone;
 }
 
 
 void genbrfalse(int dest) {
-	//grw - trace
-	gen(";----- genbrfalse");
-	if (Q_cmp != cnone) {
-		genbranch(dest, 0);
-		return;
-	}
-	if (Q_bool != bnone) {
-		genlogbr(dest, 1);
-		return;
-	}
-	commit();
-	cgbrfalse(dest, 0);
+  //grw - trace
+  gen(";----- genbrfalse");
+  if (Q_cmp != cnone) {
+    genbranch(dest, 0);
+    return;
+  }
+  if (Q_bool != bnone) {
+    genlogbr(dest, 1);
+    return;
+  }
+  commit();
+  cgbrfalse(dest, 0);
 }
 
 void genbrtrue(int dest) {
-	//grw - trace
-	gen(";----- genbrtrue");
-	//ngen(";----- %s dest = %d", "genbrtrue", dest);
-	if (Q_cmp != cnone) {
-		genbranch(dest, 1);
-		return;
-	}
-	if (Q_bool != bnone) {
-		genlogbr(dest, 0);
-		return;
-	}
-	commit();
-	cgbrtrue(dest, 0);
+  //grw - trace
+  gen(";----- genbrtrue");
+  //ngen(";----- %s dest = %d", "genbrtrue", dest);
+  if (Q_cmp != cnone) {
+    genbranch(dest, 1);
+    return;
+  }
+  if (Q_bool != bnone) {
+    genlogbr(dest, 0);
+    return;
+  }
+  commit();
+  cgbrtrue(dest, 0);
 }
 
 void gensctrue(int dest) {
-	//grw - trace
-	gen(";----- gensctrue");
-	cgbrtrue(dest, 1);
+  //grw - trace
+  gen(";----- gensctrue");
+  cgbrtrue(dest, 1);
 }
 
 void genscfalse(int dest) {
-	//grw - trace
-	gen(";----- gensctrue");
-	cgbrfalse(dest, 1);
+  //grw - trace
+  gen(";----- gensctrue");
+  cgbrfalse(dest, 1);
 }
 
 void gencall(int y) {
-	commit();
-	cgcall(gsym(Names[y]));
-	//grw - remove load
-	//load();
+  commit();
+  cgcall(gsym(Names[y]));
 }
 
 void gencalr(void) {
-	int n = label();
+  int n = label();
 
-	commit();
-	cgcalr(n);
-	//grw - remove laod
-	//load();
+  commit();
+  cgcalr(n);
 }
 
 void genentry(void) {
-	cgentry();
+  cgentry();
 }
 
 void genexit(int scope) {
-	//grw - added support for local labels and goto
+  //grw - added support for local labels and goto
   chklocals(scope);
-	cgexit();
-	/* write out string table after code */
-	genstrtbl();
-	/* write out the local objects */
-	genlocdef();
+  cgexit();
+  /* write out string table after code */
+  genstrtbl();
+  /* write out the local objects */
+  genlocdef();
 }
 
 //grw - add support to pass struct/union by value
 void genpad(int n) {
-	commit();
-	gen(";----- padding the stack for struct/union argument");
-	cglit(n);
+  commit();
+  gen(";----- padding the stack for struct/union argument");
+  cglit(n);
 }
 
 void genpushlit(int n) {
-	commit();
-	cgpushlit(n);
+  commit();
+  cgpushlit(n);
 }
 
 void genstack(int n) {
-	if (n) {
-		cgstack(n);
-	}
+  if (n) {
+    cgstack(n);
+  }
 }
 
 // grw - updated to add support to initialize local char ptr to strings
 void genlocinit(void) {
-	int	i;
-	//int addr;
-	if (Nlsi > 0)
-	  gen(";----- initialize local char pointers with strings");
+  int  i;
+  //int addr;
+  if (Nlsi > 0)
+    gen(";----- initialize local char pointers with strings");
 
-	for (i=0; i<Nlsi; i++) {
-		cginitlpstr(LSval[i], LSaddr[i]);
-	}
-	//grw - removed constant initialization
+  for (i=0; i<Nlsi; i++) {
+    cginitlpstr(LSval[i], LSaddr[i]);
+  }
+  //grw - removed constant initialization
 }
 
-//grw - removed static param from genbss
 /* static and public data definitions */
+//grw - removed static param from genbss
 void genbss(char *name, int len) {
   //grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  if (O_library)
+    commit();
   genraw(name);
- 	genraw(":");
+   genraw(":");
 
-	//grw - created macro for alignment size
+  //grw - created macro for alignment size
   //cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
-	cgdata(ALIGNED(len));
+  cgdata(ALIGNED(len));
 }
 
 /*
  * generate zero-filled static data for partially initialized arrays
  */
 void gendata(int n) {
-	cgdata(n);
+  cgdata(n);
 }
 
 void gendefb(int v) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgdefb(v);
+  cgdefb(v);
 }
 
 void gendefp(int v) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgdefp(v);
+  cgdefp(v);
 }
 //grw - added function to initialize global char ptr with string
 void gendefpstr(int v) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgdefpstr(v);
+  cgdefpstr(v);
+}
+
+/* generate a list of pointers to strings */
+void genpstrs(int *a, int len) {
+  int v, i;
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
+
+  for (i = 0; i < len; i++) {
+    v = a[i];
+    cgdefpstr(v);
+  }
 }
 
 void gendefs(char *s, int len) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgdefs(s, len);
+  cgdefs(s, len);
 }
 
 void genchars(char *s, int len) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgchars(s, len);
+  cgchars(s, len);
 }
 
 void genints(int *a, int len) {
-	int v, i;
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  int v, i;
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	for (i = 0; i < len; i++) {
-		v = a[i];
-		cgdefw(v);
-	}
+  for (i = 0; i < len; i++) {
+    v = a[i];
+    cgdefw(v);
+  }
 }
 
 
 void gendefw(int v) {
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
 
-	cgdefw(v);
+  cgdefw(v);
 }
 
 /* increment ops */
 
 static void genincptr(int *lv, int inc, int pre) {
-	int	y, size;
+  int  y, size;
 
-	size = objsize(deref(lv[LVPRIM]), TVARIABLE, 1);
-	y = lv[LVSYM];
-	commit();
-	if (!y && !pre) cgldinc();
-	if (!pre) {
-		genrval(lv);
-		commit();
-	}
-	if (!y) {
-		if (pre)
-			if (inc)
-				cginc1pi(size);
-			else
-				cgdec1pi(size);
-		else
-			if (inc)
-				cginc2pi(size);
-			else
-				cgdec2pi(size);
-	}
-	else if (CAUTO == Stcls[y]) {
-		if (inc)
-			cgincpl(Vals[y], size);
-		else
-			cgdecpl(Vals[y], size);
-	}
-	else if (CLSTATC == Stcls[y]) {
-		if (inc)
-			cgincps(Vals[y], size);
-		else
-			cgdecps(Vals[y], size);
-	}
-	else {
-		if (inc)
-			cgincpg(gsym(Names[y]), size);
-		else
-			cgdecpg(gsym(Names[y]), size);
-	}
-	if (pre) {
-		genrval(lv);
-		//grw - commit pushd for rvalue
-		commit();
-	}
+  size = objsize(deref(lv[LVPRIM]), TVARIABLE, 1);
+  y = lv[LVSYM];
+  commit();
+  if (!y && !pre) cgldinc();
+  if (!pre) {
+    genrval(lv);
+    commit();
+  }
+  if (!y) {
+    if (pre)
+      if (inc)
+        cginc1pi(size);
+      else
+        cgdec1pi(size);
+    else
+      if (inc)
+        cginc2pi(size);
+      else
+        cgdec2pi(size);
+  }
+  else if (CAUTO == Stcls[y]) {
+    if (inc)
+      cgincpl(Vals[y], size);
+    else
+      cgdecpl(Vals[y], size);
+  }
+  else if (CLSTATC == Stcls[y]) {
+    if (inc)
+      cgincps(Vals[y], size);
+    else
+      cgdecps(Vals[y], size);
+  }
+  else {
+    if (inc)
+      cgincpg(gsym(Names[y]), size);
+    else
+      cgdecpg(gsym(Names[y]), size);
+  }
+  if (pre) {
+    genrval(lv);
+    //grw - commit pushd for rvalue
+    commit();
+  }
 }
 
 void geninc(int *lv, int inc, int pre) {
-	int	y, b;
+  int  y, b;
 
-	y = lv[LVSYM];
-	if (needscale(lv[LVPRIM])) {
-		genincptr(lv, inc, pre);
-		return;
-	}
-	//grw - added support for signed and unsigned
-	//b = PCHAR == lv[LVPRIM];
-	b = chartype(lv[LVPRIM]);
+  y = lv[LVSYM];
+  if (needscale(lv[LVPRIM])) {
+    genincptr(lv, inc, pre);
+    return;
+  }
+  //grw - added support for signed and unsigned
+  //b = PCHAR == lv[LVPRIM];
+  b = chartype(lv[LVPRIM]);
 
-	/* will duplicate move to aux register in (*char)++ */
-	commit();
-	if (!y && !pre) cgldinc();
-	if (!pre) {
-		genrval(lv);
-		//grw - commit pushd for rvalue
-		commit();
-	}
-	if (!y) {
-		if (pre)
-			if (inc)
-				b? cginc1ib(): cginc1iw();
-			else
-				b? cgdec1ib(): cgdec1iw();
-		else
-			if (inc)
-				b? cginc2ib(): cginc2iw();
-			else
-				b? cgdec2ib(): cgdec2iw();
-	}
-	else if (CAUTO == Stcls[y]) {
-		if (inc)
-			b? cginclb(Vals[y]): cginclw(Vals[y]);
-		else
-			b? cgdeclb(Vals[y]): cgdeclw(Vals[y]);
-	}
-	else if (CLSTATC == Stcls[y]) {
-		if (inc)
-			b? cgincsb(Vals[y]): cgincsw(Vals[y]);
-		else
-			b? cgdecsb(Vals[y]): cgdecsw(Vals[y]);
-	}
-	else {
-		if (inc)
-			b? cgincgb(gsym(Names[y])):
-			   cgincgw(gsym(Names[y]));
-		else
-			b? cgdecgb(gsym(Names[y])):
-			   cgdecgw(gsym(Names[y]));
-	}
-	if (pre) {
-		genrval(lv);
-		//grw - commit pushd for rvalue
-		commit();
-	}
+  /* will duplicate move to aux register in (*char)++ */
+  commit();
+  if (!y && !pre) cgldinc();
+  if (!pre) {
+    genrval(lv);
+    //grw - commit pushd for rvalue
+    commit();
+  }
+  if (!y) {
+    if (pre)
+      if (inc)
+        b? cginc1ib(): cginc1iw();
+      else
+        b? cgdec1ib(): cgdec1iw();
+    else
+      if (inc)
+        b? cginc2ib(): cginc2iw();
+      else
+        b? cgdec2ib(): cgdec2iw();
+  }
+  else if (CAUTO == Stcls[y]) {
+    if (inc)
+      b? cginclb(Vals[y]): cginclw(Vals[y]);
+    else
+      b? cgdeclb(Vals[y]): cgdeclw(Vals[y]);
+  }
+  else if (CLSTATC == Stcls[y]) {
+    if (inc)
+      b? cgincsb(Vals[y]): cgincsw(Vals[y]);
+    else
+      b? cgdecsb(Vals[y]): cgdecsw(Vals[y]);
+  }
+  else {
+    if (inc)
+      b? cgincgb(gsym(Names[y])):
+         cgincgw(gsym(Names[y]));
+    else
+      b? cgdecgb(gsym(Names[y])):
+         cgdecgw(gsym(Names[y]));
+  }
+  if (pre) {
+    genrval(lv);
+    //grw - commit pushd for rvalue
+    commit();
+  }
 }
 
 /* switch table generator */
 
 void genswitch(int *vals, int *labs, int nc, int dflt) {
-	int	i, ltbl;
+  int  i, ltbl;
 
-	ltbl = label();
-	cgldswtch(ltbl);
-	cgcalswtch();
-	genlab(ltbl);
-	//grw - don't include count in table
-	//cgdefw(nc);
-	for (i = 0; i < nc; i++)
-		cgcase(vals[i], labs[i]);
-	cgdefl(dflt);
+  ltbl = label();
+  cgldswtch(ltbl);
+  cgcalswtch();
+  genlab(ltbl);
+  //grw - don't include count in table
+  //cgdefw(nc);
+  for (i = 0; i < nc; i++)
+    cgcase(vals[i], labs[i]);
+  cgdefl(dflt);
 }
 
 /* assigments */
 
 void genstore(int *lv) {
-	if (NULL == lv) return;
-	if (!lv[LVSYM]) {
-		cgpopptr();
-		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
-		if (chartype(lv[LVPRIM]))
-			cgstorib();
-		else
-			cgstoriw();
+  if (NULL == lv) return;
+  if (!lv[LVSYM]) {
+    cgpopptr();
+    //grw - added support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      cgstorib();
+    else
+      cgstoriw();
 
-	}
-	else if (CAUTO == Stcls[lv[LVSYM]]) {
-		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
-		if (chartype(lv[LVPRIM]))
-			cgstorlb(Vals[lv[LVSYM]]);
-		else
-			cgstorlw(Vals[lv[LVSYM]]);
-	}
-	else if (CLSTATC == Stcls[lv[LVSYM]]) {
-		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
-		if (chartype(lv[LVPRIM]))
-			cgstorsb(Vals[lv[LVSYM]]);
-		else
-			cgstorsw(Vals[lv[LVSYM]]);
-	}
-	else {
-		//grw - added support for signed and unsigned
-		//if (PCHAR == lv[LVPRIM])
-		if (chartype(lv[LVPRIM]))
-			cgstorgb(gsym(Names[lv[LVSYM]]));
-		else
-			cgstorgw(gsym(Names[lv[LVSYM]]));
-	}
+  }
+  else if (CAUTO == Stcls[lv[LVSYM]]) {
+    //grw - added support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      cgstorlb(Vals[lv[LVSYM]]);
+    else
+      cgstorlw(Vals[lv[LVSYM]]);
+  }
+  else if (CLSTATC == Stcls[lv[LVSYM]]) {
+    //grw - added support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      cgstorsb(Vals[lv[LVSYM]]);
+    else
+      cgstorsw(Vals[lv[LVSYM]]);
+  }
+  else {
+    //grw - added support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      cgstorgb(gsym(Names[lv[LVSYM]]));
+    else
+      cgstorgw(gsym(Names[lv[LVSYM]]));
+  }
 }
 
 //grw - added support to assign struct/union
 void gencopy(int *lv) {
-	int size;
-	if (NULL == lv) return;
+  int size;
+  if (NULL == lv) return;
   size = Sizes[lv[LVPRIM] & ~STCMASK];
   //grw - add cgcopy method to memcopy struct/union
-	cgcopy(size);
+  cgcopy(size);
   return;
 }
 
 /* genrval computation */
 
 void genrval(int *lv) {
-	int y;
+  int y;
 
-	if (NULL == lv) return;
+  if (NULL == lv) return;
 
-	y = lv[LVSYM];
+  y = lv[LVSYM];
 
-	if (!y) {
-		genind(lv[LVPRIM]);
-	}	else if (CAUTO == Stcls[y]) {
-		//grw - add support for signed and unsigned
-		if (chartype(lv[LVPRIM]))
-			//grw - add support for signed and unsigned
-			cgldlb(Vals[y], signtype(lv[LVPRIM]));
-		else
-			cgldlw(Vals[y]);
-	} else if (CLSTATC == Stcls[y]) {
-		if (chartype(lv[LVPRIM]))
-			cgldsb(Vals[y], signtype(lv[LVPRIM]));
-		else
-			cgldsw(Vals[y]);
-	}	else {
-		//grw - added support for signed and unsigned
-		if (chartype(lv[LVPRIM]))
-			cgldgb(gsym(Names[y]), signtype(lv[LVPRIM]));
-		else
-			cgldgw(gsym(Names[y]));
-	}
+  if (!y) {
+    genind(lv[LVPRIM]);
+  }  else if (CAUTO == Stcls[y]) {
+    //grw - add support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      //grw - add support for signed and unsigned
+      cgldlb(Vals[y], signtype(lv[LVPRIM]));
+    else
+      cgldlw(Vals[y]);
+  } else if (CLSTATC == Stcls[y]) {
+    if (chartype(lv[LVPRIM]))
+      cgldsb(Vals[y], signtype(lv[LVPRIM]));
+    else
+      cgldsw(Vals[y]);
+  }  else {
+    //grw - added support for signed and unsigned
+    if (chartype(lv[LVPRIM]))
+      cgldgb(gsym(Names[y]), signtype(lv[LVPRIM]));
+    else
+      cgldgw(gsym(Names[y]));
+  }
 }
 
 //grw - added push data statement
@@ -1156,10 +1082,10 @@ void genrval(int *lv) {
  * to the TOS of the expression stack
  */
 void genpushd() {
-	commit();
-	//grw - added logic to eliminate push followed by immediate pop
-	//cgpushd();
-	queue_push();
+  commit();
+  //grw - added logic to eliminate push followed by immediate pop
+  //cgpushd();
+  queue_push();
 }
 
 //grw - added pop data statement
@@ -1168,14 +1094,14 @@ void genpushd() {
  * into the accumulator register, RA.
  */
 void genpopd() {
-	if (Q_push == push) {
-		gen(";----- push + pop data not required, data remains unchanged in RA");
-	  Q_push = pnone;
-		commit();
-	} else {
-	  commit();
-	  cgpopd();
-	}
+  if (Q_push == push) {
+    gen(";----- push + pop data not required, data remains unchanged in RA");
+    Q_push = pnone;
+    commit();
+  } else {
+    commit();
+    cgpopd();
+  }
 }
 
 //grw - added gen asm code statement
@@ -1184,30 +1110,30 @@ void genpopd() {
  * as a line of assembly language text
  */
 void genasm(char * strlit) {
-	char  asmText[TEXTLEN-2];
-	char* p;
-	commit();
-	/* find double quote at beginning of string literal */
-	p = strchr(strlit, '"');
-	/* if found, skip over, else set ptr to beginning of string literal */
-	if (p)
-	  p++;
-	else
-	  p = strlit;
+  char  asmText[TEXTLEN-2];
+  char* p;
+  commit();
+  /* find double quote at beginning of string literal */
+  p = strchr(strlit, '"');
+  /* if found, skip over, else set ptr to beginning of string literal */
+  if (p)
+    p++;
+  else
+    p = strlit;
 
-	/* copy text into assembly buffer */
-	strcpy(asmText, p);
+  /* copy text into assembly buffer */
+  strcpy(asmText, p);
 
-	/* find the double quote at end of string literal */
-	p = strrchr(asmText, '"');
+  /* find the double quote at end of string literal */
+  p = strrchr(asmText, '"');
 
-	/* replace double quote at end with null */
-	if (p)
-		*p = '\0';
+  /* replace double quote at end with null */
+  if (p)
+    *p = '\0';
 
-	/* print the asm buffer text directly to file as a line */
-	if (NULL == Outfile) return;
-	fprintf(Outfile, "%s", asmText);
+  /* print the asm buffer text directly to file as a line */
+  if (NULL == Outfile) return;
+  fprintf(Outfile, "%s", asmText);
 }
 
 //grw - added string table
@@ -1216,25 +1142,25 @@ void genasm(char * strlit) {
  * Add a string to the string table
  */
 void addstr(int label, char *text, int len) {
-	char *ptext;
+  char *ptext;
 
-	//grw - create duplicate to text string from parser
-	//grw - don't use strdup since C string literals may have embedded nulls
+  //grw - create duplicate to text string from parser
+  //grw - don't use strdup since C string literals may have embedded nulls
 
-	if (len > 0) {
-	  ptext = malloc(len);
-		if (ptext)
-		  memcpy(ptext, text, len);
-		else 		//grw - if we ran out of memory, exit immediately
-		  fatal("Unable to add string to table.");
-	} else
-	  ptext = NULL;
+  if (len > 0) {
+    ptext = malloc(len);
+    if (ptext)
+      memcpy(ptext, text, len);
+    else     //grw - if we ran out of memory, exit immediately
+      fatal("Unable to add string to table.");
+  } else
+    ptext = NULL;
 
-		//grw - convert string table to array of structures
-		str_tbl[str_idx].label = label;
-		str_tbl[str_idx].text = ptext;
-		str_tbl[str_idx].len  = len;
-		str_idx++;
+    //grw - convert string table to array of structures
+    str_tbl[str_idx].label = label;
+    str_tbl[str_idx].text = ptext;
+    str_tbl[str_idx].len  = len;
+    str_idx++;
 }
 
 
@@ -1242,93 +1168,93 @@ void addstr(int label, char *text, int len) {
  * concatenate a string to the previous string in the string table
  */
  void concatstr(char *text, int len) {
-	 int  prev_idx;
-	 char *prev_txt, *new_txt;
-	 int  prev_len, new_len;
+   int  prev_idx;
+   char *prev_txt, *new_txt;
+   int  prev_len, new_len;
 
-	 //grw - no need to concat empty string (Len includes quotes)
-	 if (len > 2) {
-	   prev_idx = str_idx - 1;
-		 //grw - convert string table to array of structures
-		 prev_txt = str_tbl[prev_idx].text;
-	   prev_len = str_tbl[prev_idx].len;
+   //grw - no need to concat empty string (Len includes quotes)
+   if (len > 2) {
+     prev_idx = str_idx - 1;
+     //grw - convert string table to array of structures
+     prev_txt = str_tbl[prev_idx].text;
+     prev_len = str_tbl[prev_idx].len;
 
-	   new_len  = prev_len + len - 2;
-		 //grw - expand storage to hold new text
-		 new_txt  = realloc(prev_txt, new_len);
-		 if (new_txt) {
-		   //grw - copy new text after end of old text, skipping quotes in middle
-		   memcpy(new_txt+prev_len-1, text+1, len-1);
-		   //grw - set previous string to concatenated text string
-			 //grw - convert string table to array of structures
-			 str_tbl[prev_idx].text = new_txt;
-			 str_tbl[prev_idx].len  = new_len;
-		 } else {
-			 /* if we ran out of memory, exit with error */
-			 fatal("Unable to concatenate literal strings");
-		 }
-	 }
+     new_len  = prev_len + len - 2;
+     //grw - expand storage to hold new text
+     new_txt  = realloc(prev_txt, new_len);
+     if (new_txt) {
+       //grw - copy new text after end of old text, skipping quotes in middle
+       memcpy(new_txt+prev_len-1, text+1, len-1);
+       //grw - set previous string to concatenated text string
+       //grw - convert string table to array of structures
+       str_tbl[prev_idx].text = new_txt;
+       str_tbl[prev_idx].len  = new_len;
+     } else {
+       /* if we ran out of memory, exit with error */
+       fatal("Unable to concatenate literal strings");
+     }
+   }
  }
 
  /*
   * Write out strings from the string table
   */
  void genstrtbl(void) {
-	 int i;
-	 int lab;
-	 char *txt;
-	 int len;
+   int i;
+   int lab;
+   char *txt;
+   int len;
 
-	 genraw("\n;----- string table\n");
-	 for (i = 0; i < str_idx; i++) {
-		 //grw - convert string table to array of structures
-		 lab = str_tbl[i].label;
-		 txt = str_tbl[i].text;
-		 len = str_tbl[i].len;
+   genraw("\n;----- string table\n");
+   for (i = 0; i < str_idx; i++) {
+     //grw - convert string table to array of structures
+     lab = str_tbl[i].label;
+     txt = str_tbl[i].text;
+     len = str_tbl[i].len;
 
-		 /* write out each string in string table */
-		 genlab(lab);
-		 gendefs(txt, len);
-		 gendefb(0);
+     /* write out each string in string table */
+     genlab(lab);
+     gendefs(txt, len);
+     gendefb(0);
 
-		 /* free the memory for the string */
-		 free(txt);
-	 }
-	 genraw("\n;----- end string table\n");
-	 /* reset the string table */
-	 str_idx = 0;
+     /* free the memory for the string */
+     free(txt);
+   }
+   genraw("\n;----- end string table\n");
+   /* reset the string table */
+   str_idx = 0;
  }
  /*
   * Validate local labels used in goto statements in a function
   */
 void chklocals(int scope) {
-	int idx;
+  int idx;
 
-	if (llbl_idx > 0)
-	  genraw("\n;----- checking local labels\n");
+  if (llbl_idx > 0)
+    genraw("\n;----- checking local labels\n");
 
-	/* check to see if any labels used by goto were never defined */
+  /* check to see if any labels used by goto were never defined */
   for (idx = 0; idx < llbl_idx; idx++) {
-		if (lcl_lbls[idx].scope == scope && lcl_lbls[idx].defined == 0)
-			error("goto target label %s is undefined", lcl_lbls[idx].text);
-	}
+    if (lcl_lbls[idx].scope == scope && lcl_lbls[idx].defined == 0)
+      error("goto target label %s is undefined", lcl_lbls[idx].text);
+  }
 }
 
 /*
  * Push a string onto the expression Stack
  */
 void genstr(char *s, int len) {
-	int i;
-	//grw - commit jump to entry point in library object
-	if (O_library)
-		commit();
-	genbyte(0);
-	if (len < 1)
-	  return;
+  int i;
+  //grw - commit jump to entry point in library object
+  if (O_library)
+    commit();
+  genbyte(0);
+  if (len < 1)
+    return;
 
-	for (i=0; i<len; i++) {
-		genbyte(s[len-1-i]);
-	}
+  for (i=0; i<len; i++) {
+    genbyte(s[len-1-i]);
+  }
 }
 
 
@@ -1336,19 +1262,19 @@ void genstr(char *s, int len) {
  * Write out definitions for local static objects
  */
 void genlocdef(void) {
-	int i;
+  int i;
   struct lstat_obj *p;
 
-	genraw("\n;----- local static objects\n");
-	for (i = 0; i < lso_idx; i++) {
-		//grw - convert string table to array of structures
-		p = &ls_objs[i];
-		defloc(p);
+  genraw("\n;----- local static objects\n");
+  for (i = 0; i < lso_idx; i++) {
+    //grw - convert string table to array of structures
+    p = &ls_objs[i];
+    defloc(p);
 
-		/* free the memory for the string */
-		//free(txt);
-	}
-	genraw("\n;----- end local static objects\n");
-	/* reset the string table */
-	lso_idx = 0;
+    /* free the memory for the string */
+    //free(txt);
+  }
+  genraw("\n;----- end local static objects\n");
+  /* reset the string table */
+  lso_idx = 0;
 }

@@ -258,9 +258,9 @@ void genlits(int count, int v);
 void genbyte(int b);
 //grw - generate local static object definitions
 void genlocdef(void);
-//grw - generate an arraoy of characters
+//grw - generate an array of characters
 void	genchars(char *s, int len);
-//grw - generate an arraoy of integer valeus
+//grw - generate an array of integer valeus
 void	genints(int *a, int len);
 //grw - add support to pass struct/union by value
 void genvalue(int y);
@@ -298,3 +298,5 @@ int decaymatch(int *lv, int prim2);
 void genderefa(void);
 /* check to see if pointers differ only in level */
 int ptrwarning(int p1, int p2);
+//grw - generate an array of string references
+void	genpstrs(int *a, int len);

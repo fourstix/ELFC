@@ -116,6 +116,10 @@ enum {
 
   //grw - bits 0-3 are for the primitive types
   TYPEMASK = 0x000F,
+
+  //grw - Pointer to character (PCHAR | 0x0010)
+  CHARPTR  = 0x0011,
+
   //grw - bits 4-7 are for the pointer level for primitive types
   PTRMASK  = 0x00F0,
 
@@ -139,7 +143,6 @@ enum {
   //grw - mask to determine if a type is struct/union
   STCMASK  = 0xE000
 };
-
 
 /* storage classes */
 enum {
