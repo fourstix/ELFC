@@ -1690,7 +1690,6 @@ static int array_elements(int dimensions[], int order, int param,  char *aname, 
   char *dname;
   int size = 1;
   int prim = aprim;
-  int lvl = ptrlevel(aprim);
   static int fcnt = 0;
 
   /* if this is a function paramter need to make cdim arguments unique */

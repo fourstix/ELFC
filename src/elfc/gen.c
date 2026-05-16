@@ -1153,14 +1153,15 @@ void addstr(int label, char *text, int len) {
       memcpy(ptext, text, len);
     else     //grw - if we ran out of memory, exit immediately
       fatal("Unable to add string to table.");
-  } else
+  } else {
     ptext = NULL;
+  }
 
-    //grw - convert string table to array of structures
-    str_tbl[str_idx].label = label;
-    str_tbl[str_idx].text = ptext;
-    str_tbl[str_idx].len  = len;
-    str_idx++;
+  //grw - convert string table to array of structures
+  str_tbl[str_idx].label = label;
+  str_tbl[str_idx].text = ptext;
+  str_tbl[str_idx].len  = len;
+  str_idx++;
 }
 
 
