@@ -1,6 +1,6 @@
 /*
- *	NMH's Simple C Compiler, 2011--2021
- *	Symbol table management
+ *  NMH's Simple C Compiler, 2011--2021
+ *  Symbol table management
  */
 
 #include "defs.h"
@@ -9,246 +9,253 @@
 #include "cgen.h"
 
 int findglob(char *s) {
-	int	i;
+  int  i;
 
-	for (i=0; i<Globs; i++) {
-		if (	Types[i] != TMACRO && Stcls[i] != CMEMBER &&
-			*s == *Names[i] && !strcmp(s, Names[i])
-		)
-			return i;
-	}
-	return 0;
+  for (i=0; i<Globs; i++) {
+    //if (Types[i] != TMACRO && Stcls[i] != CMEMBER &&
+    if (!isMacro(Types[i]) && Stcls[i] != CMEMBER &&
+      *s == *Names[i] && !strcmp(s, Names[i])
+    )
+      return i;
+  }
+  return 0;
 }
 
 int findloc(char *s) {
-	int	i;
+  int  i;
 
-	for (i=Locs; i<NSYMBOLS; i++) {
-		if (	Stcls[i] != CMEMBER &&
-			*s == *Names[i] && !strcmp(s, Names[i])
-		)
-			return i;
-	}
-	return 0;
+  for (i=Locs; i<NSYMBOLS; i++) {
+    if (  Stcls[i] != CMEMBER &&
+      *s == *Names[i] && !strcmp(s, Names[i])
+    )
+      return i;
+  }
+  return 0;
 }
 
 int findsym(char *s) {
-	int	y;
+  int  y;
 
-	if ((y = findloc(s)) != 0) return y;
-	return findglob(s);
+  if ((y = findloc(s)) != 0) return y;
+  return findglob(s);
 }
 
 int findmac(char *s) {
-	int	i;
+  int  i;
 
-	for (i=0; i<Globs; i++)
-		if (	TMACRO == Types[i] &&
-			*s == *Names[i] && !strcmp(s, Names[i])
-		)
-			return i;
-	return 0;
+  for (i=0; i<Globs; i++)
+    //if (  TMACRO == Types[i] &&
+    if (isMacro(Types[i]) &&
+      *s == *Names[i] && !strcmp(s, Names[i])
+    )
+      return i;
+  return 0;
 }
 
 int findstruct(char *s) {
-	int	i;
+  int  i;
 
-	for (i=Locs; i<NSYMBOLS; i++)
-		if (	TSTRUCT == Types[i] &&
-			*s == *Names[i] && !strcmp(s, Names[i])
-		)
-			return i;
-	for (i=0; i<Globs; i++)
-		if (	TSTRUCT == Types[i] &&
-			*s == *Names[i] && !strcmp(s, Names[i])
-		)
-			return i;
-	return 0;
+  for (i=Locs; i<NSYMBOLS; i++)
+    //if (  TSTRUCT == Types[i] &&
+    if (isStructure(Types[i]) &&
+      *s == *Names[i] && !strcmp(s, Names[i])
+    )
+      return i;
+  for (i=0; i<Globs; i++)
+    //if (  TSTRUCT == Types[i] &&
+    if (isStructure(Types[i]) &&
+      *s == *Names[i] && !strcmp(s, Names[i])
+    )
+      return i;
+  return 0;
 }
 
 int findmem(int y, char *s) {
-	y++;
-	while (	(y < Globs ||
-		 (y >= Locs && y < NSYMBOLS)) &&
-		CMEMBER ==  Stcls[y]
-	) {
-		if (*s == *Names[y] && !strcmp(s, Names[y]))
-			return y;
-		y++;
-	}
-	return 0;
+  y++;
+  while (  (y < Globs ||
+     (y >= Locs && y < NSYMBOLS)) &&
+    CMEMBER ==  Stcls[y]
+  ) {
+    if (*s == *Names[y] && !strcmp(s, Names[y]))
+      return y;
+    y++;
+  }
+  return 0;
 }
 
 int newglob(void) {
-	int	p;
+  int  p;
 
-	if ((p = Globs++) >= Locs)
-		fatal("too many global symbols");
-	return p;
+  if ((p = Globs++) >= Locs)
+    fatal("too many global symbols");
+  return p;
 }
 
 int newloc(void) {
-	int	p;
+  int  p;
 
-	if ((p = --Locs) <= Globs)
-		fatal("too many local symbols");
-	return p;
+  if ((p = --Locs) <= Globs)
+    fatal("too many local symbols");
+  return p;
 }
 
 #ifdef __ELFC__
- #define PTR_INT_CAST	(int)
+ #define PTR_INT_CAST  (int)
 #else
- #define PTR_INT_CAST	(int) (long long)
+ #define PTR_INT_CAST  (int) (long long)
 #endif
 
 char *galloc(int k, int align) {
-	int	p, mask;
+  int  p, mask;
 
-	k += align * sizeof(int);
-	if (Nbot + k >= Ntop)
-		fatal("out of space for symbol names");
-	p = Nbot;
-	Nbot += k;
-	mask = sizeof(int)-1;
-	if (align)
-		while (PTR_INT_CAST &Nlist[p] & mask)
-			p++;
-	return &Nlist[p];
+  k += align * sizeof(int);
+  if (Nbot + k >= Ntop)
+    fatal("out of space for symbol names");
+  p = Nbot;
+  Nbot += k;
+  mask = sizeof(int)-1;
+  if (align)
+    while (PTR_INT_CAST &Nlist[p] & mask)
+      p++;
+  return &Nlist[p];
 }
 
 char *globname(char *s) {
-	char	*p;
+  char  *p;
 
-	p = galloc((int)strlen(s)+1, 0);
-	strcpy(p, s);
-	return p;
+  p = galloc((int)strlen(s)+1, 0);
+  strcpy(p, s);
+  return p;
 }
 
 char *locname(char *s) {
-	int	p, k;
+  int  p, k;
 
-	k = (int)(strlen(s) + 1);
-	if (Nbot + k >= Ntop)
-		fatal("out of space for symbol names");
-	Ntop -= k;
-	p = Ntop;
-	strcpy(&Nlist[p], s);
-	return &Nlist[p];
+  k = (int)(strlen(s) + 1);
+  if (Nbot + k >= Ntop)
+    fatal("out of space for symbol names");
+  Ntop -= k;
+  p = Ntop;
+  strcpy(&Nlist[p], s);
+  return &Nlist[p];
 }
 
 static void defglob(char *name, int prim, int type, int size, int val,
-			int scls, int init)
+      int scls, int init)
 {
-	//grw - removed static param from genbss
-	//int	st;
+  //grw - removed static param from genbss
+  //int  st;
 
-	if (TCONSTANT == type || TFUNCTION == type) return;
+  //if (TCONSTANT == type || TFUNCTION == type) return;
+  if (isConstant(type) || isFunction(type)) return;
 
-	//grw - removed static param from genbss
-	//st = scls == CSTATIC;
-	if (CPUBLIC == scls) genpublic(name);
+  //grw - removed static param from genbss
+  if (CPUBLIC == scls) genpublic(name);
 
-	if (init && TARRAY == type)
-	  return;
+  if (init && isArray(type))
+    return;
 
-	if (TARRAY != type && !(prim & STCMASK)) genname(name);
+  if (!isArray(type) && !(prim & STCMASK)) genname(name);
 
-	if (prim & STCMASK) {
-		//grw - removed static param from genbss
-	  if (TARRAY == type) {
-		  genbss(gsym(name), objsize(prim, TARRAY, size));
-	  }	else {
-		  genbss(gsym(name), objsize(prim, TVARIABLE, size));
-	  }
-	/* check to see if char ptr initialized with string */
-  } else if (prim == (PCHAR | 0x0010) && init == -1) {
-		gendefpstr(val);
-	}	else if (chartype(prim)) {
-		if (TARRAY == type)
-			genbss(gsym(name), size);
-		else {
-			  gendefb(val);
-		}
-		//grw - removed static param from genbss
-	}	else if (pinttype(prim)) {
-		if (TARRAY == type)
-			genbss(gsym(name), size*INTSIZE);
-		else
-			gendefw(val);
-	} else {
-		if (TARRAY == type)
-			genbss(gsym(name), size*PTRSIZE);
-		else
-			gendefp(val);
-	}
+  if (prim & STCMASK) {
+    //grw - removed static param from genbss
+    if (isArray(type)) {
+      genbss(gsym(name), objsize(prim, TARRAY, size));
+    }  else {
+      genbss(gsym(name), objsize(prim, TVARIABLE, size));
+    }
+  /* check to see if char ptr initialized with string */
+  //} else if (prim == (PCHAR | 0x0010) && init == -1) {
+  } else if (prim == CHARPTR && init == -1) {
+    gendefpstr(val);
+  }  else if (chartype(prim)) {
+    if (isArray(type))
+      genbss(gsym(name), size);
+    else {
+        gendefb(val);
+    }
+    //grw - removed static param from genbss
+  }  else if (pinttype(prim)) {
+    if (isArray(type))
+      genbss(gsym(name), size*INTSIZE);
+    else
+      gendefw(val);
+  } else {
+    if (isArray(type))
+      genbss(gsym(name), size*PTRSIZE);
+    else
+      gendefp(val);
+  }
 }
 
 int redeclare(char *name, int oldcls, int newcls) {
-	switch (oldcls) {
-	case CEXTERN:
-		if (newcls != CPUBLIC && newcls != CEXTERN)
-			error("extern symbol redeclared static: %s", name);
-		return newcls;
-	case CPUBLIC:
-		if (CEXTERN == newcls)
-			return CPUBLIC;
-		if (newcls != CPUBLIC) {
-			error("extern symbol redeclared static: %s", name);
-			return CPUBLIC;
-		}
-		break;
-	case CSPROTO:
-		if (newcls != CSTATIC && newcls != CSPROTO)
-			error("static symbol redeclared extern: %s", name);
-		return newcls;
-	case CSTATIC:
-		if (CSPROTO == newcls)
-			return CSTATIC;
-		if (newcls != CSTATIC) {
-			error("static symbol redeclared extern: %s", name);
-			return CSTATIC;
-		}
-		break;
-	case CTYPE:
-		error("redefinition of typedef name", Text);
-		return CTYPE;
-		break;
-	}
-	error("redefined symbol: %s", name);
-	return newcls;
+  switch (oldcls) {
+  case CEXTERN:
+    if (newcls != CPUBLIC && newcls != CEXTERN)
+      error("extern symbol redeclared static: %s", name);
+    return newcls;
+  case CPUBLIC:
+    if (CEXTERN == newcls)
+      return CPUBLIC;
+    if (newcls != CPUBLIC) {
+      error("extern symbol redeclared static: %s", name);
+      return CPUBLIC;
+    }
+    break;
+  case CSPROTO:
+    if (newcls != CSTATIC && newcls != CSPROTO)
+      error("static symbol redeclared extern: %s", name);
+    return newcls;
+  case CSTATIC:
+    if (CSPROTO == newcls)
+      return CSTATIC;
+    if (newcls != CSTATIC) {
+      error("static symbol redeclared extern: %s", name);
+      return CSTATIC;
+    }
+    break;
+  case CTYPE:
+    error("redefinition of typedef name", Text);
+    return CTYPE;
+    break;
+  }
+  error("redefined symbol: %s", name);
+  return newcls;
 }
 
 int addglob(char *name, int prim, int type, int scls, int size, int val,
-		char *mtext, int init)
+    char *mtext, int init)
 {
-	int	y;
+  int  y;
 
-	if (0 == *name)
-		y = 0;
-	else if ((y = findglob(name)) != 0) {
-		scls = redeclare(name, Stcls[y], scls);
-		if (CTYPE == scls) return y;
-		if (TFUNCTION == Types[y])
-			mtext = Mtext[y];
-	}
-	if (0 == y) {
- 		y = newglob();
-		Names[y] = globname(name);
-	}
-	else if (TFUNCTION == Types[y] || TMACRO == Types[y]) {
-		if (Prims[y] != prim || Types[y] != type)
-			error("redefinition does not match prior type: %s",
-				name);
-	}
-	if (CPUBLIC == scls || CSTATIC == scls)
-		defglob(name, prim, type, size, val, scls, init);
-	Prims[y] = prim;
-	Types[y] = type;
-	Stcls[y] = scls;
-	Sizes[y] = size;
-	Vals[y] = val;
-	Mtext[y] = mtext;
-	return y;
+  if (0 == *name)
+    y = 0;
+  else if ((y = findglob(name)) != 0) {
+    scls = redeclare(name, Stcls[y], scls);
+    if (CTYPE == scls) return y;
+    //if (TFUNCTION == Types[y])
+    if (isFunction(Types[y]))
+      mtext = Mtext[y];
+  }
+  if (0 == y) {
+     y = newglob();
+    Names[y] = globname(name);
+  }
+  //else if (TFUNCTION == Types[y] || TMACRO == Types[y]) {
+  else if (isFunction(Types[y]) || isMacro(Types[y])) {
+    if (Prims[y] != prim || Types[y] != type)
+      error("redefinition does not match prior type: %s",
+        name);
+  }
+  if (CPUBLIC == scls || CSTATIC == scls)
+    defglob(name, prim, type, size, val, scls, init);
+  Prims[y] = prim;
+  Types[y] = type;
+  Stcls[y] = scls;
+  Sizes[y] = size;
+  Vals[y] = val;
+  Mtext[y] = mtext;
+  return y;
 }
 
 /*
@@ -257,269 +264,273 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
  * function's static object space.
  */
 static void addlso(int prim, int type, int size, int val, int init) {
-	if (lso_idx >= MAXLOCINIT)
-	  error("Local Static Object space is full", NULL);
+  if (lso_idx >= MAXLOCINIT)
+    error("Local Static Object space is full", NULL);
 
-	ls_objs[lso_idx].prim = prim;
-	ls_objs[lso_idx].type = type;
-	ls_objs[lso_idx].size = size;
-	ls_objs[lso_idx].val = val;
-	ls_objs[lso_idx].init = init;
-	lso_idx++;
+  ls_objs[lso_idx].prim = prim;
+  ls_objs[lso_idx].type = type;
+  ls_objs[lso_idx].size = size;
+  ls_objs[lso_idx].val = val;
+  ls_objs[lso_idx].init = init;
+  lso_idx++;
 }
 
 void defloc(struct lstat_obj *p) {
-	int n;
-	char *pc;
-	//int prim, int type, int size, int val, int init
-	if (p->type != TARRAY && !(p->prim &STCMASK)) genlab(p->val);
-	if (p->prim & STCMASK) {
-		//grw - removed static param from genbss
-		if (TARRAY == p->type)
-			genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
-		else
-			genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
-	} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
-		if (p->init) {
-			gendefpstr(p->init);
-		} else {
-			gendefw(p->init);
-		}
+  int n;
+  char *pc;
+
+  if (!isArray(p->type) && !(p->prim &STCMASK)) genlab(p->val);
+  if (p->prim & STCMASK) {
+    //grw - removed static param from genbss
+    if (isArray(p->type))
+      genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
+    else
+      genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
+  //} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
+  } else if (p->prim == CHARPTR && isVariable(p->type)) {
+    if (p->init) {
+      gendefpstr(p->init);
+    } else {
+      gendefw(p->init);
+    }
+  } else if (p->prim == CHARPTR && isArray(p->type)) {
+    genlab(p->val);
+    if (p->isize) {
+      /* generate references to strings */
+      genpstrs(p->ilist, p->isize);
+
+      n = p->size - p->isize;
+      free(p->ilist);
+      p->ilist = NULL;
+    } else {
+      n = p->size;
+    }
+    /* pad the non-initialized space */
+    if (n) {
+      gendata(n);
+    }
   } else if (chartype(p->prim)) {
-	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == p->type) {
-			genlab(p->val);
+  //grw - added support to iniitialze global and static arrays
+    if (isArray(p->type)) {
+      genlab(p->val);
 
-			if (p->isize) {
-				pc = (char *) p->ilist;
-				genchars(pc, p->isize);
+      if (p->isize) {
+        pc = (char *) p->ilist;
+        genchars(pc, p->isize);
 
-				n = p->size - p->isize;
-				free(p->ilist);
-				p->ilist = NULL;
-			} else {
-				n = p->size;
-			}
-			/* pad the non-initialized space */
-			if (n) {
-				gendata(n);
-			}
-		} else {
-			gendefb(p->init);
-		}
-		//grw - update to use pinttype (primitive int type)
-	}	else if (pinttype(p->prim)) {
-	//grw - added support to iniitialze global and static arrays
-		if (TARRAY == p->type) {
-			genlab(p->val);
-			if (p->isize) {
-			  genints(p->ilist, p->isize);
-   			n = p->size - p->isize;
-	  		free(p->ilist);
-		  	p->ilist = NULL;
-		  } else {
-			  n = p->size;
-		  }
-		  /* pad the non-initialized space */
-		  if (n) {
-			  gendata(n*INTSIZE);
-		  }
-		} else {
-			gendefw(p->init);
-		}
-	}	else {
-		/* arrays of pointers and structures are not initialized */
-		//grw - removed static param from genbss
-		if (TARRAY == p->type)
-			genbss(labname(p->val), (p->size)*PTRSIZE);
-		else
-			gendefp(p->init);
-	}
+        n = p->size - p->isize;
+        free(p->ilist);
+        p->ilist = NULL;
+      } else {
+        n = p->size;
+      }
+      /* pad the non-initialized space */
+      if (n) {
+        gendata(n);
+      }
+    } else {
+      gendefb(p->init);
+    }
+    //grw - update to use pinttype (primitive int type)
+  }  else if (pinttype(p->prim)) {
+  //grw - added support to iniitialze global and static arrays
+    if (isArray(p->type)) {
+      genlab(p->val);
+      if (p->isize) {
+        genints(p->ilist, p->isize);
+         n = p->size - p->isize;
+        free(p->ilist);
+        p->ilist = NULL;
+      } else {
+        n = p->size;
+      }
+      /* pad the non-initialized space */
+      if (n) {
+        gendata(n*INTSIZE);
+      }
+    } else {
+      gendefw(p->init);
+    }
+  }  else {
+    /* arrays of structures are not initialized */
+    if (isArray(p->type))
+      genbss(labname(p->val), (p->size)*PTRSIZE);
+    else
+      gendefp(p->init);
+  }
 }
 
 int addloc(char *name, int prim, int type, int scls, int size, int val,
-		int init)
+    int init)
 {
-	int	y;
+  int  y;
 
-	if (findloc(name))
-		error("redefinition of: %s", name);
- 	y = newloc();
-	if (CLSTATC == scls) {
-		//grw - add local static object to list
-		//defloc(prim, type, size, val, init);
-		addlso(prim, type, size, val, init);
-		lgen(";----- Local static object %s defined as %c%d", name, val);
-	}
-	Names[y] = locname(name);
-	Prims[y] = prim;
-	Types[y] = type;
-	Stcls[y] = scls;
-	Sizes[y] = size;
-	Vals[y] = val;
-	return y;
+  if (findloc(name))
+    error("redefinition of: %s", name);
+   y = newloc();
+  if (CLSTATC == scls) {
+    //grw - add local static object to list
+    addlso(prim, type, size, val, init);
+    lgen(";----- Local static object %s defined as %c%d", name, val);
+  }
+  Names[y] = locname(name);
+  Prims[y] = prim;
+  Types[y] = type;
+  Stcls[y] = scls;
+  Sizes[y] = size;
+  Vals[y] = val;
+  return y;
 }
 
 void clrlocs(void) {
-	Ntop = POOLSIZE;
-	Locs = NSYMBOLS;
+  Ntop = POOLSIZE;
+  Locs = NSYMBOLS;
 }
 
 int objsize(int prim, int type, int size) {
-	int	k = 0, sp;
+  int  k = 0, sp;
 
-	sp = prim & STCMASK;
+  sp = prim & STCMASK;
 
-	//grw - converted to use chartype and pinttype
-	if (chartype(prim))
-		k = CHARSIZE;
+  //grw - converted to use chartype and pinttype
+  if (chartype(prim))
+    k = CHARSIZE;
   else if (pinttype(prim))
-  	k = INTSIZE;
-	else if (STCPTR == sp || STCPP == sp)
-		k = PTRSIZE;
-	else if (UNIPTR == sp || UNIPP == sp)
-		k = PTRSIZE;
-	else if (PSTRUCT == sp || PUNION == sp)
-		k = Sizes[prim & ~STCMASK];
-	/* ptrlevel covers function pointer case */
-	else if (ptrlevel(prim) > 0)
-	  k = PTRSIZE;
-	if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
-		return -1;
-	if (TARRAY == type)
-		k *= size;
-	return k;
+    k = INTSIZE;
+  else if (STCPTR == sp || STCPP == sp)
+    k = PTRSIZE;
+  else if (UNIPTR == sp || UNIPP == sp)
+    k = PTRSIZE;
+  else if (PSTRUCT == sp || PUNION == sp)
+    k = Sizes[prim & ~STCMASK];
+  /* ptrlevel covers function pointer case */
+  else if (ptrlevel(prim) > 0)
+    k = PTRSIZE;
+  //if (TFUNCTION == type || TCONSTANT == type || TMACRO == type)
+  if (isFunction(type) || isConstant(type) || isMacro(type))
+    return -1;
+  /* adujst size for arrays */
+  if (isArray(type))
+    k *= size;
+  return k;
 }
 
 static char *typename(int p) {
-	//grw - added support for multiple pointer indirection
-  static char tname[12];
-	int lvl;
-	int btype;
+  //grw - added support for multiple pointer indirection
+  static char tname[14];
+  static char overflow[6];
+  int lvl;
+  int btype;
 
-	switch (p & STCMASK) {
-	case PSTRUCT:	return "STRUCT";
-	case STCPTR:	return "STCT*";
-	case STCPP:	return "STCT**";
-	case PUNION:	return "UNION";
-	case UNIPTR:	return "UNIO*";
-	case UNIPP:	return "UNIO**";
-	}
-	lvl = ptrlevel(p);
-	btype = basetype(p);
+  switch (p & STCMASK) {
+  case PSTRUCT:  return "STRUCT";
+  case STCPTR:  return "STCT*";
+  case STCPP:  return "STCT**";
+  case PUNION:  return "UNION";
+  case UNIPTR:  return "UNIO*";
+  case UNIPP:  return "UNIO**";
+  }
+  lvl = ptrlevel(p);
+  btype = basetype(p);
 
-	if (btype == PINT) strcpy(tname, "INT");
-	else if (btype == PUINT) strcpy(tname, "UINT");
-	else if (btype == PCHAR) strcpy(tname, "CHAR");
-	else if (btype == PSCHAR) strcpy(tname, "SCHAR");
-	else if (btype == PVOID) strcpy(tname, "VOID");
-	else if (btype == FUNPTR) return "FUN*";
-	else return "n/a";
+  if (btype == PINT) strcpy(tname, "INT");
+  else if (btype == PUINT) strcpy(tname, "UINT");
+  else if (btype == PCHAR) strcpy(tname, "CHAR");
+  else if (btype == PSCHAR) strcpy(tname, "SCHAR");
+  else if (btype == PVOID) strcpy(tname, "VOID");
+  else if (btype == FUNPTR) return "FUN*";
+  else return "n/a";
 
-	if (lvl > 3) {
-		/* indicate higher than triple pointer */
-		strcat(tname, "***+");
-	} else {
-		/* add up to 3 stars */
-  	while (lvl > 1) {
-	  	strcat(tname, "*");
-			lvl--;
-		}
-	}
+  if (lvl > 3) {
+    /* indicate higher than triple pointer by number */
+    sprintf(overflow, " %d*", lvl);
+    strcat(tname, overflow);
+  } else {
+    /* add up to 3 stars */
+    while (lvl >= 1) {
+      strcat(tname, "*");
+      lvl--;
+    }
+  }
   return tname;
-	//grw - added support for signed and unsigned
-  /*
-	return	PINT    == p? "INT":
-		PCHAR   == p? "CHAR":
-		PSCHAR   == p? "SCHAR":
- 	  PUINT    == p? "UINT":
-		INTPTR  == p? "INT*":
-		CHARPTR == p? "CHAR*":
-		UINTPTR  == p? "UINT*":
-		SCHARPTR == p? "SCHAR*":
-		VOIDPTR == p? "VOID*":
-		FUNPTR  == p? "FUN*":
-		INTPP   == p? "INT**":
-		CHARPP  == p? "CHAR**":
-		UINTPP   == p? "UINT**":
-		SCHARPP  == p? "SCHAR**":
-		VOIDPP  == p? "VOID**":
-		PVOID   == p? "VOID": "n/a";
-		*/
 }
 
 void dumpsyms(char *title, char *sub, int from, int to) {
-	int	i;
-	int	*p;
+  int  i;
+  int  *p;
 
-	printf("\n===== %s%s =====\n", title, sub);
-	printf(	"PRIM    TYPE  STCLS   SIZE  VALUE  NAME [MVAL]/(SIG)\n"
-		"------  ----  -----  -----  -----  -----------------\n");
-	for (i = from; i < to; i++) {
-		printf("%-6s  %s  %s  %5d  %5d  %s",
-			typename(Prims[i]),
-			TVARIABLE == Types[i]? "VAR ":
-				TARRAY == Types[i]? "ARRY":
-				TFUNCTION == Types[i]? "FUN ":
-				TCONSTANT == Types[i]? "CNST":
-				TMACRO == Types[i]? "MAC ":
-				TSTRUCT == Types[i]? "STCT": "n/a",
-			CPUBLIC == Stcls[i]? "PUBLC":
-				CEXTERN == Stcls[i]? "EXTRN":
-				CSTATIC == Stcls[i]? "STATC":
-				CSPROTO == Stcls[i]? "STATP":
-				CLSTATC == Stcls[i]? "LSTAT":
-				CAUTO   == Stcls[i]? "AUTO ":
-				CMEMBER == Stcls[i]? "MEMBR":
-				CTYPE   == Stcls[i]? "TYPE ": "n/a  ",
-			Sizes[i],
-			Vals[i],
-			Names[i]);
-		if (TMACRO == Types[i])
-			printf(" [\"%s\"]", Mtext[i]);
-		if (TFUNCTION == Types[i]) {
-			printf(" (");
-			for (p = (int *) Mtext[i]; *p; p++) {
-				printf("%s", typename(*p));
-				if (p[1]) printf(", ");
-			}
-			putchar(')');
-		}
-		putchar('\n');
-	}
+  printf("\n===== %s%s =====\n", title, sub);
+  printf(  "PRIM    TYPE  STCLS   SIZE  VALUE  NAME [MVAL]/(SIG)\n"
+    "------  ----  -----  -----  -----  -----------------\n");
+  for (i = from; i < to; i++) {
+    printf("%-6s  %s  %s  %5d  %5d  %s",
+      typename(Prims[i]),
+      isVariable(Types[i])? "VAR ":
+          isArray(Types[i])? "ARRY":
+          isFunction(Types[i])? "FUN ":
+          isConstant(Types[i])? "CNST":
+          isMacro(Types[i])? "MAC ":
+          isStructure(Types[i])? "STCT": "n/a",
+      CPUBLIC == Stcls[i]? "PUBLC":
+        CEXTERN == Stcls[i]? "EXTRN":
+        CSTATIC == Stcls[i]? "STATC":
+        CSPROTO == Stcls[i]? "STATP":
+        CLSTATC == Stcls[i]? "LSTAT":
+        CAUTO   == Stcls[i]? "AUTO ":
+        CMEMBER == Stcls[i]? "MEMBR":
+        CTYPE   == Stcls[i]? "TYPE ":
+        //grw - added dimeinsion type
+        CDIM    == Stcls[i]? "DIM  ": "n/a  ",
+      Sizes[i],
+      Vals[i],
+      Names[i]);
+    //if (TMACRO == Types[i])
+    if (isMacro(Types[i]))
+      printf(" [\"%s\"]", Mtext[i]);
+    //if (TFUNCTION == Types[i]) {
+    if (isFunction(Types[i])) {
+      printf(" (");
+      for (p = (int *) Mtext[i]; *p; p++) {
+        printf("%s", typename(*p));
+        if (p[1]) printf(", ");
+      }
+      putchar(')');
+    }
+    putchar('\n');
+  }
 }
 
 //grw - added support for local labels and goto
 int findLocalLabel(int scope, char *text) {
-	int idx;
-	int llid = 0;
+  int idx;
+  int llid = 0;
 
-	for (idx = 0; idx < llbl_idx; idx++) {
-		/* find the matching label in the function */
-		if ((lcl_lbls[idx].scope == scope) && !strcmp(lcl_lbls[idx].text, text)) {
-			llid = idx + 1;
-			break;
-		}
-	}
-	return llid;
+  for (idx = 0; idx < llbl_idx; idx++) {
+    /* find the matching label in the function */
+    if ((lcl_lbls[idx].scope == scope) && !strcmp(lcl_lbls[idx].text, text)) {
+      llid = idx + 1;
+      break;
+    }
+  }
+  return llid;
 }
 
 //grw - moved warning suppression to NMake file
 
 //grw - added support for local labels and goto
 int addLocalLabel(int fn, char *text, int defined) {
-	int llid = 0;
+  int llid = 0;
 
-	if (llbl_idx < MAXUSRLBL) {
-		lcl_lbls[llbl_idx].scope = fn;
-		/* need to duplicate strings since text is overwritten */
-		lcl_lbls[llbl_idx].text  = strdup(text);
-		lcl_lbls[llbl_idx].defined = defined;
-		llbl_idx++;
-		llid = llbl_idx;
-	} else {
-		error("Too many local labels.", NULL);
-	}
+  if (llbl_idx < MAXUSRLBL) {
+    lcl_lbls[llbl_idx].scope = fn;
+    /* need to duplicate strings since text is overwritten */
+    lcl_lbls[llbl_idx].text  = strdup(text);
+    lcl_lbls[llbl_idx].defined = defined;
+    llbl_idx++;
+    llid = llbl_idx;
+  } else {
+    error("Too many local labels.", NULL);
+  }
 return llid;
 }
 
@@ -528,20 +539,33 @@ return llid;
  * load arguments into mhide array
  */
 int findargs(int id) {
-	int idx;
-	int count = 0;
-	for(idx = 0; idx < Margp; idx++) {
-		if (Margs[idx].id == id) {
-			Mhide[count] = Margs[idx].text;
-			count++;
-		}
-	}
-	return count;
+  int idx;
+  int count = 0;
+  for(idx = 0; idx < Margp; idx++) {
+    if (Margs[idx].id == id) {
+      Mhide[count] = Margs[idx].text;
+      count++;
+    }
+  }
+  return count;
 }
 
 /*
  * Test for global Types
  */
 int isglobal(int scls) {
-	return (CPUBLIC == scls || CSTATIC == scls);
+  return (CPUBLIC == scls || CSTATIC == scls);
+}
+
+
+/*
+ * Test metatype t for a particular value.
+ */
+int isMetaType(int t, int value) {
+  //printf("meta type is %d, value = %d\n", t, value);
+  if (t & TARRMASK) {
+    return value == (t & TARRMASK);
+  } else {
+    return t == value;
+  }
 }

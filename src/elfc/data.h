@@ -52,7 +52,8 @@ extern_ int	Ndmax;
 /* symbol tabel structure */
 extern_ char	*Names[NSYMBOLS];
 extern_ int	Prims[NSYMBOLS];
-extern_ char	Types[NSYMBOLS];
+//extern_ char	Types[NSYMBOLS];
+extern_ int	Types[NSYMBOLS];
 extern_ char	Stcls[NSYMBOLS];
 extern_ int	Sizes[NSYMBOLS];
 extern_ int	Vals[NSYMBOLS];

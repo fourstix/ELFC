@@ -1,6 +1,6 @@
 /*
- *	NMH's Simple C Compiler, 2011--2021
- *	Definitions
+ *  NMH's Simple C Compiler, 2011--2021
+ *  Definitions
  */
 
 #include <stdlib.h>
@@ -10,69 +10,68 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION		"3.3.6"
+#define VERSION    "3.3.6"
 
 #ifndef SCCDIR
- #define SCCDIR		"."
+ #define SCCDIR    "."
 #endif
 
 #ifndef AOUTNAME
- #define AOUTNAME	"a.out"
+ #define AOUTNAME  "a.out"
 #endif
 
 
-#define SCCLIBC		""
+#define SCCLIBC    ""
 
-#define PREFIX		'C'
-#define LPREFIX		'L'
-#define UPREFIX		'U'
+#define PREFIX    'C'
+#define LPREFIX   'L'
+#define UPREFIX   'U'
 
-
-#define INTSIZE		BPW
-#define PTRSIZE		INTSIZE
-#define CHARSIZE	1
+#define INTSIZE   BPW
+#define PTRSIZE   INTSIZE
+#define CHARSIZE  1
 //grw - created macro for alignment size
 #define ALIGNED(X)    ((X + INTSIZE-1) / INTSIZE * INTSIZE)
 
 //grw - larger command size for linker
-#define CMDLEN    1024
-#define TEXTLEN		512
+#define CMDLEN     1024
+#define TEXTLEN     512
 //grw - increased size to match spec
-//#define NAMELEN		16
-#define NAMELEN		32
+//#define NAMELEN    16
+#define NAMELEN      32
 
-#define MAXFILES	32
+#define MAXFILES     32
 
-#define MAXIFDEF	16
-#define MAXNMAC		32
-#define MAXCASE		256
-#define MAXBREAK	16
-#define MAXLOCINIT	32
+#define MAXIFDEF     16
+#define MAXNMAC      32
+#define MAXCASE     256
+#define MAXBREAK     16
+#define MAXLOCINIT   32
 //grw - number characters in local init string
-#define MAXLOCSTR 64
+#define MAXLOCSTR    64
 
 //grw - decreased number of formal function args
-//#define MAXFNARGS	 16
+//#define MAXFNARGS   16
 //grw - changed back to meet spec
-#define MAXFNARGS	32
+#define MAXFNARGS    32
 
 /* Maximum number of arguments per Macro */
-//#define MAXMARGS	 8
+//#define MAXMARGS   8
 //grw - increased size to match spec
-#define MAXMARGS	 32
+#define MAXMARGS     32
 
 /* Maximum length of macro parameter */
-#define MAXPARAMLEN	 40
+#define MAXPARAMLEN  40
 
 /* Maximum number of strings in string table */
-#define MAXSTRTBL  40
+#define MAXSTRTBL    40
 
 //grw - added support for local labels and goto
 /* Maximum number of user defined local labels */
-#define MAXUSRLBL  20
+#define MAXUSRLBL    20
 
 /* Warning size for local objects */
-#define LGOBJSIZE  20
+#define LGOBJSIZE    20
 
 /* Maximum integer literal */
 #define MAX_INTLIT  65535
@@ -81,18 +80,21 @@
 #define MAX_SIGNED  32768
 
 /* assert(NSYMBOLS < PSTRUCT) */
-#define NSYMBOLS	1024
-#define POOLSIZE	16384
-#define NODEPOOLSZ	4096	/* ints */
+#define NSYMBOLS    1024
+#define POOLSIZE   16384
+#define NODEPOOLSZ  4096  /* ints */
 
 /* types */
 enum {
-	TVARIABLE = 1,
-	TARRAY,
-	TFUNCTION,
-	TCONSTANT,
-	TMACRO,
-	TSTRUCT
+  TVARIABLE = 1,
+  TFUNCTION,
+  TCONSTANT,
+  TMACRO,
+  TSTRUCT,
+  TARRAY     = 0x1000,
+  TARRPTRBIT = 0x2000,
+  TARRAYPTR  = 0x3000,
+  TARRMASK   = 0xF000
 };
 
 //grw - maximum pointer level
@@ -100,11 +102,11 @@ enum {
 
 /* primitive types */
 enum {
-	PCHAR = 1,
+  PCHAR = 1,
   PSCHAR,
-	PINT,
+  PINT,
   PUINT,
-	PVOID,
+  PVOID,
   //grw - type for function pointer
   FUNPTR,
   //grw - added special type for unsigned char cast to unsigned int
@@ -114,6 +116,10 @@ enum {
 
   //grw - bits 0-3 are for the primitive types
   TYPEMASK = 0x000F,
+
+  //grw - Pointer to character (PCHAR | 0x0010)
+  CHARPTR  = 0x0011,
+
   //grw - bits 4-7 are for the pointer level for primitive types
   PTRMASK  = 0x00F0,
 
@@ -128,43 +134,43 @@ enum {
   //grw - mask for type qualifiers
   TQMASK   = 0x0700,
   //grw - special types for structures and unions and their pointer types
-	PSTRUCT  = 0x2000,
-	PUNION   = 0x4000,
-	STCPTR   = 0x6000,
-	STCPP    = 0x8000,
-	UNIPTR   = 0xA000,
-	UNIPP    = 0xC000,
+  PSTRUCT  = 0x2000,
+  PUNION   = 0x4000,
+  STCPTR   = 0x6000,
+  STCPP    = 0x8000,
+  UNIPTR   = 0xA000,
+  UNIPP    = 0xC000,
   //grw - mask to determine if a type is struct/union
-	STCMASK  = 0xE000
+  STCMASK  = 0xE000
 };
-
 
 /* storage classes */
 enum {
-	CPUBLIC = 1,
-	CEXTERN,
-	CSTATIC,
-	CLSTATC,
-	CAUTO,
-	CSPROTO,
-	CMEMBER,
-	CSTCDEF,
-	CTYPE
+  CPUBLIC = 1,
+  CEXTERN,
+  CSTATIC,
+  CLSTATC,
+  CAUTO,
+  CSPROTO,
+  CMEMBER,
+  CSTCDEF,
+  CTYPE,
+  CDIM
 };
 
 /* lvalue structure */
 enum {
-	LVSYM,
-	LVPRIM,
-	LVADDR,
-	LV
+  LVSYM,
+  LVPRIM,
+  LVADDR,
+  LV
 };
 
 /* debug options */
 enum {
-	D_LSYM = 1,
-	D_GSYM = 2,
-	D_STAT = 4,
+  D_LSYM = 1,
+  D_GSYM = 2,
+  D_STAT = 4,
   D_TREE = 8
 };
 
@@ -172,95 +178,97 @@ enum {
 //grw - remove queue logic for address modes
 /*
 enum {
-	empty,
-	addr_auto,
-	addr_static,
-	addr_globl,
-	addr_label,
-	literal,
-	auto_byte,
-	auto_word,
-	static_byte,
-	static_word,
-	globl_byte,
-	globl_word
+  empty,
+  addr_auto,
+  addr_static,
+  addr_globl,
+  addr_label,
+  literal,
+  auto_byte,
+  auto_word,
+  static_byte,
+  static_word,
+  globl_byte,
+  globl_word
 };
 */
 //grw - added logic to eliminate jump to an adjacent label
 /* jump instructions */
 enum {
-	jnone,
-	jump
+  jnone,
+  jump
 };
 
 //grw - added logic to eliminate push followed by immediate pop
 /* push instructions */
 enum {
-	pnone,
-	push
+  pnone,
+  push
 };
 
 /* compare instructions */
 enum {
-	cnone,
-	equal,
-	not_equal,
-	less,
-	greater,
-	less_equal,
-	greater_equal,
-	below,
-	above,
-	below_equal,
-	above_equal
+  cnone,
+  equal,
+  not_equal,
+  less,
+  greater,
+  less_equal,
+  greater_equal,
+  below,
+  above,
+  below_equal,
+  above_equal
 };
 
 /* boolean instructions */
 enum {
-	bnone,
-	lognot,
-	normalize
+  bnone,
+  lognot,
+  normalize
 };
 
 /* AST node */
 struct node_stc {
-	int		op;
-	struct node_stc	*left, *right;
-	int		args[1];
+  int    op;
+  struct node_stc  *left, *right;
+  int    args[1];
 };
 
-#define node	struct node_stc
+#define node  struct node_stc
 
 /* tokens */
 enum {
-	SLASH, STAR, MOD, PLUS, MINUS, LSHIFT, RSHIFT,
-	GREATER, GTEQ, LESS, LTEQ, EQUAL, NOTEQ, AMPER,
-	CARET, PIPE, LOGAND, LOGOR,
+  SLASH, STAR, MOD, PLUS, MINUS, LSHIFT, RSHIFT,
+  GREATER, GTEQ, LESS, LTEQ, EQUAL, NOTEQ, AMPER,
+  CARET, PIPE, LOGAND, LOGOR,
 
-	ARROW, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR, ASPLUS,
-	ASRSHIFT, ASDIV, ASMUL, ASSIGN, AUTO, BREAK, CASE, CHAR, COLON,
-	COMMA, CONST, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
-	EXTERN, FOR,  GOTO, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
-	LPAREN, NOT, QMARK, RBRACE, RBRACK, REGISTER, RETURN, RPAREN, SCHAR,
-	SEMI, SIGNED, SIZEOF, STATIC, STRLIT, STRUCT, SWITCH, TILDE, TYPEDEF,
-	UINT, ULABEL, UNION, UNSIGNED, VOID, VOLATILE, WHILE, XEOF, XMARK,
+  ARROW, ASAND, ASM, ASXOR, ASLSHIFT, ASMINUS, ASMOD, ASOR, ASPLUS,
+  ASRSHIFT, ASDIV, ASMUL, ASSIGN, AUTO, BREAK, CASE, CHAR, COLON,
+  COMMA, CONST, CONTINUE, DECR, DEFAULT, DO, DOT, ELLIPSIS, ELSE, ENUM,
+  EXTERN, FOR,  GOTO, IDENT, IF, INCR, INT, INTLIT, LBRACE, LBRACK,
+  LPAREN, NOT, QMARK, RBRACE, RBRACK, REGISTER, RETURN, RPAREN, SCHAR,
+  SEMI, SIGNED, SIZEOF, STATIC, STRLIT, STRUCT, SWITCH, TILDE, TYPEDEF,
+  UINT, ULABEL, UNION, UNSIGNED, VOID, VOLATILE, WHILE, XEOF, XMARK,
 
-	P_DEFINE, P_ELSE, P_ELSENOT, P_ENDIF, P_ERROR, P_IFDEF,
-	P_IFNDEF, P_INCLUDE, P_LINE, P_PRAGMA, P_UNDEF
+  P_DEFINE, P_ELSE, P_ELSENOT, P_ENDIF, P_ERROR, P_IFDEF,
+  P_IFNDEF, P_INCLUDE, P_LINE, P_PRAGMA, P_UNDEF
 };
 
 /* AST operators */
 enum {
-	OP_GLUE, OP_ADD, OP_ADDR, OP_ASSIGN, OP_BINAND, OP_BINIOR,
-	OP_BINXOR, OP_BOOL, OP_BRFALSE, OP_BRTRUE, OP_CALL, OP_CALR,
-	OP_COMMA, OP_DEC, OP_DIV, OP_EQUAL, OP_GREATER, OP_GTEQ,
-	OP_IDENT, OP_IFELSE, OP_LAB, OP_LDLAB, OP_LESS, OP_LIT,
-	OP_LOGNOT, OP_LSHIFT, OP_LTEQ, OP_MOD, OP_MUL, OP_NEG,
-	OP_NOT, OP_NOTEQ, OP_PLUS, OP_PREDEC, OP_PREINC, OP_POSTDEC,
-	OP_POSTINC, OP_RSHIFT, OP_RVAL, OP_SCALE, OP_SCALEBY, OP_SUB,
+  OP_GLUE, OP_ADD, OP_ADDR, OP_ASSIGN, OP_BINAND, OP_BINIOR,
+  OP_BINXOR, OP_BOOL, OP_BRFALSE, OP_BRTRUE, OP_CALL, OP_CALR,
+  OP_COMMA, OP_DEC, OP_DIV, OP_EQUAL, OP_GREATER, OP_GTEQ,
+  OP_IDENT, OP_IFELSE, OP_LAB, OP_LDLAB, OP_LESS, OP_LIT,
+  OP_LOGNOT, OP_LSHIFT, OP_LTEQ, OP_MOD, OP_MUL, OP_NEG,
+  OP_NOT, OP_NOTEQ, OP_PLUS, OP_PREDEC, OP_PREINC, OP_POSTDEC,
+  OP_POSTINC, OP_RSHIFT, OP_RVAL, OP_SCALE, OP_SCALEBY, OP_SUB,
   //grw - added support for signed and unsigned
   OP_UMUL, OP_UDIV, OP_UMOD, OP_ABV, OP_ABVEQ, OP_BLW, OP_BLWEQ,
   //grw - added support for assigning struct/union types
   //grw - add support to pass struct/union by value
-  OP_COPY, OP_VALUE, OP_PAD, OP_CALLV, OP_PTRV
+  OP_COPY, OP_VALUE, OP_PAD, OP_CALLV, OP_PTRV,
+  //grw - add support for array pointers as function parameter
+  OP_ARRPTR
 };

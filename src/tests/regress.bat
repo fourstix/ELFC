@@ -49,3 +49,6 @@ elfc stctest.c
 
 call clean math32test
 elfc math32test.c
+
+call clean arrtest
+elfc arrtest.c

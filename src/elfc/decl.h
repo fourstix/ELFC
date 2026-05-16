@@ -246,7 +246,7 @@ int blank(char *p);
 int	strexpr(void);
 //grw - initialize local declarations
 void initexpr(void);
-//grw - global types are CSTATIC and CPUBLIC
+//grw - global storage classes are CSTATIC and CPUBLIC
 int isglobal(int scls);
 //grw - added function to pad partially initialized arrays
 void genzpad(int n);
@@ -258,9 +258,9 @@ void genlits(int count, int v);
 void genbyte(int b);
 //grw - generate local static object definitions
 void genlocdef(void);
-//grw - generate an arraoy of characters
+//grw - generate an array of characters
 void	genchars(char *s, int len);
-//grw - generate an arraoy of integer valeus
+//grw - generate an array of integer valeus
 void	genints(int *a, int len);
 //grw - add support to pass struct/union by value
 void genvalue(int y);
@@ -270,3 +270,33 @@ void genderefc(int y);
 int isnull(int p1, node *n);
 //grw - add support to deref struct/union ptr as argument
 void genderefp(int y);
+//grw - add test functions for meta types
+int isMetaType(int t, int value);
+
+//grw - add macros for metatypes
+#define isVariable(T)  isMetaType((T), TVARIABLE)
+#define isArray(T)  (isMetaType((T), TARRAY) || isMetaType((T), TARRAYPTR))
+#define isArrayPtr(T)  isMetaType((T), TARRAYPTR)
+#define isMacro(T)  isMetaType((T), TMACRO)
+#define isConstant(T)  isMetaType((T), TCONSTANT)
+#define isStructure(T)  isMetaType((T), TSTRUCT)
+#define isFunction(T)  isMetaType((T), TFUNCTION)
+
+//grw - get current dimension scaling factor
+int dimscale(int atype);
+//grw - decay array into pointers
+int arrayptr(int prim, int atype, char *name);
+//grw - get number of dimensions for an array
+int arrayorder(int prim);
+//grw - upgrade array size for user defined types
+int upgrade_array(int utype, int type, int *size);
+//grw - get the type with next dimension
+int nextdim(int atype);
+//grw - decay an array paramter and test for a match
+int decaymatch(int *lv, int prim2);
+//grw - deref an array pointer on the stack
+void genderefa(void);
+/* check to see if pointers differ only in level */
+int ptrwarning(int p1, int p2);
+//grw - generate an array of string references
+void	genpstrs(int *a, int len);

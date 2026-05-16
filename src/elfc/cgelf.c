@@ -565,7 +565,6 @@ void cgcalr(int n)	{gen(";----- cgcalr");
  	gen("          rtn    			 	     ; return to caller"); }
 
 //grw - removed cgalign
-//void cgalign(void)	{ /* unused */ }
 
 void cgdefb(int v)	{
 	ngen("%s\t$%02x    ;----- cgdefb", "db", v); }
@@ -588,13 +587,6 @@ void cgdefpstr(int v)	{
 		ngen2("%s\tL%d.0, L%d.1    ;----- cgdefpstr LSB first, MSB second", "db", v, v); }
 
 //grw - removed cggbss and cglbss
-/*
-void cggbss(char *s, int z)	{
-	ngenraw("%s:    ds %d    ;----- cggbss\n", s, z); }
-
-void cglbss(char *s, int z)	{
-	ngenraw("%s:    ds %d    ;----- cglbss\n", s, z); }
-*/
 
 //grw - added cgpushd and cgpopd statements
 void cgpushd() {gen(";----- cgpushd");
