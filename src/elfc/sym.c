@@ -418,7 +418,7 @@ int objsize(int prim, int type, int size) {
 static char *typename(int p) {
   //grw - added support for multiple pointer indirection
   static char tname[14];
-  static char overflow[6];
+  static char overflow[15];
   int lvl;
   int btype;
 
