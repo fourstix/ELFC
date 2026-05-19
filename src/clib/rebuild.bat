@@ -22,6 +22,9 @@ call build
 cd ..\mathi32
 call clean
 call build
+cd ..\mathu32
+call clean
+call build
 cd ..\elfstd
 call clean
 call build
