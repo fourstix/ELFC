@@ -48,6 +48,12 @@ int main(int argc, char *argv[])
     else if (strcmp(operation, "%") == 0) {
         divi32(op1, op2, &result);
     }
+    else if (strcmp(operation, ">>") == 0) {
+        result = shri32(op1, op2.low);
+    }
+    else if (strcmp(operation, "<<") == 0) {
+        result = shli32(op1, op2.low);
+    }
     else if (strcmp(operation, "?") == 0) {
         comp = cmpi32(op1, op2);
         if (comp == 0) {
