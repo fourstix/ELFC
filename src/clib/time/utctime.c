@@ -14,23 +14,23 @@
 static int _nmday[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 /*
- Calculate the Universal Co-ordinated Time 
+ Calculate the Universal Co-ordinated Time
  */
 int utctime(struct tm *tp) {
   int leap;     /* leap year flag */
   int nmdays;   /* number of days in current month */
   int rtc;      /* flag to indicate RTC used */
-  
+
   /* get the system time */
   rtc = systime(tp);
 
-  /* set leap year flag */  
+  /* set leap year flag */
   leap = (tp->tm_year % 4 == 0 && (tp->tm_year % 100 != 0 || tp->tm_year % 400 == 0));
 
-  
+
   /* adjust minutes for time zone offset */
   tp->tm_min -= _tz_min;
-  
+
   if (tp->tm_min < 0) {
     tp->tm_min += 60;
     tp->tm_hour--;
@@ -39,16 +39,16 @@ int utctime(struct tm *tp) {
     tp->tm_hour++;
   }
 
-  
+
   /* adjust hours for time zone offset */
   tp->tm_hour -= _tz_hr;
-  
+
   /* if dst in effect, remove hour */
   if (tp->tm_isdst == 1) {
       tp->tm_hour--;
   }
-  
-  
+
+
   if (tp->tm_hour < 0) {
     tp->tm_hour += 24;
     tp->tm_mday++;
@@ -56,7 +56,7 @@ int utctime(struct tm *tp) {
     tp->tm_hour -= 24;
     tp->tm_mday--;
   }
-  
+
   /* mday is from 1 to 31, 30, 29 or 28 */
   if (tp->tm_mday < 0) {
     tp->tm_mon--;
@@ -81,7 +81,7 @@ int utctime(struct tm *tp) {
       tp->tm_mday = 1;
     }
   }
- 
+
  /* now adjust months, if it's New Year's Eve */
  if (tp->tm_mon < 0) {
    /* December of last year */
@@ -98,7 +98,7 @@ _dow(tp);
 _doy(tp);
 
 /* Daylight Savings Time is never in effect for UTC */
-tp->tm_isdst = 0; 
+tp->tm_isdst = 0;
 
 return rtc;
 }

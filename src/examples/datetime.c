@@ -23,15 +23,18 @@ int main() {
 
   /* Get the system time */
   retval = systime(tp);
+  printf("systime returned %d\n", retval);
 
 #ifndef __ELFIO__
   printf("%02d:%02d:%02d %02d/%02d/%04d\n",
     tp->tm_hour, tp->tm_min, tp->tm_sec,
     tp->tm_mon+1, tp->tm_mday, tp->tm_year+1900);
 #else
-printf("%d:%d:%d %d/%d/%d\n",
-  tp->tm_hour, tp->tm_min, tp->tm_sec,
-  tp->tm_mon+1, tp->tm_mday, tp->tm_year+1900);
+printf("%s%d:%s%d:%s%d %s%d/%s%d/%d\n",
+  (tp->tm_hour < 10) ? "0" : "", tp->tm_hour, (tp->tm_min < 10) ? "0" : "",
+  tp->tm_min,  (tp->tm_sec < 10) ? "0" : "", tp->tm_sec,
+  (tp->tm_mon+1 < 10) ? "0" : "", tp->tm_mon+1, (tp->tm_mday < 10) ? "0" : "",
+   tp->tm_mday, tp->tm_year+1900);
 #endif
 
   printf("Day of week: %d  Day of Year: %d\n", tp->tm_wday, tp->tm_yday+1);
@@ -58,9 +61,11 @@ printf("%d:%d:%d %d/%d/%d\n",
     tp->tm_hour, tp->tm_min, tp->tm_sec,
     tp->tm_mon+1, tp->tm_mday, tp->tm_year+1900);
 #else
-printf("GMT: %d:%d:%d %d/%d/%d\n",
-  tp->tm_hour, tp->tm_min, tp->tm_sec,
-  tp->tm_mon+1, tp->tm_mday, tp->tm_year+1900);
+printf("GMT: %s%d:%s%d:%s%d %s%d/%s%d/%d\n",
+  (tp->tm_hour < 10) ? "0" : "", tp->tm_hour, (tp->tm_min < 10) ? "0" : "",
+  tp->tm_min, (tp->tm_sec < 10) ? "0" : "", tp->tm_sec,
+  (tp->tm_mon+1 < 10) ? "0" : "", tp->tm_mon+1, (tp->tm_mday < 10) ? "0" : "",
+  tp->tm_mday, tp->tm_year+1900);
 #endif
 
   printf("GMT Day of week: %d  GMT Day of Year: %d DST: %d\n", tp->tm_wday, tp->tm_yday+1, tp->tm_isdst);
