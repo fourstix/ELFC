@@ -23,36 +23,14 @@ static char *_conv(int n, char *format, char *pt, char *ptlim) {
   return _add(buf, pt, ptlim);
 }
 
-/*
- * fill an array with month names
- */
-void _fillmonths(char* m[]) {
-  m[0]  = "January";
-  m[1]  = "February";
-  m[2]  = "March";
-  m[3]  = "April";
-  m[4]  = "May";
-  m[5]  = "June";
-  m[6]  = "July";
-  m[7]  = "August";
-  m[8]  = "September";
-  m[9]  = "October";
-  m[10] = "November";
-  m[11] = "December";
-}
-
 static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
-  char *_days;
-  static char *_months[12];
-  char *_days_ab;
-  char *_months_ab;
-
-  /* Use compact strings to save space */
-  _days_ab = "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat";
-  _months_ab = "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec";
-  _days = "Sunday\0\0\0\0Monday\0\0\0\0Tuesday\0\0\0Wednesday\0Thursday\0\0Friday\0\0\0\0Saturday";
-
-  _fillmonths(_months);
+  static char *_days[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+      "Friday", "Saturday" };
+  static char *_months[12] = { "January", "February", "March", "April", "May", "June",
+     "August", "September", "October", "November", "December"};
+  static char *_days_ab[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+  static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
+     "Sep", "Oct", "Nov", "Dec"};
 
   for ( ; *format; ++format) {
     if (*format == '%') {
@@ -63,11 +41,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           break;
 
         case 'A':
-          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days+(t->tm_wday)*10, pt, ptlim);
+          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days[t->tm_wday], pt, ptlim);
           continue;
 
         case 'a':
-          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days_ab+(t->tm_wday)*4, pt, ptlim);
+          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days_ab[t->tm_wday], pt, ptlim);
           continue;
 
         case 'B':
@@ -76,7 +54,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
 
         case 'b':
         /* case 'h': */
-          pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab+(t->tm_mon)*4, pt, ptlim);
+          pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab[t->tm_mon], pt, ptlim);
           continue;
 /*
         case 'C':
