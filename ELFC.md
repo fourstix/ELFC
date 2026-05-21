@@ -424,11 +424,13 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The math32 library provides equivalent functions as the long utility functions.*
-* *The _atoi32_ function in math32 library provides equivalent function as _atol_.*
-* *The _strtoi32_ function in math32 library provides equivalent function as _strtol_.*
-* *The _div32_ function in math32 library provides equivalent function as _ldiv_.*
-* *The _abs32_ function in math32 library provides equivalent function as _labs_.*
+* *The mathi32 library provides equivalent functions as the long utility functions.*
+* *The _atoi32_ function in mathi32 library provides equivalent function as _atol_.*
+* *The _strtoi32_ function in mathi32 library provides equivalent function as _strtol_.*
+* *The _divi32_ function in mathi32 library provides equivalent function as _ldiv_.*
+* *The _absi32_ function in mathi32 library provides equivalent function as _labs_.*
+* *The mathu32 library provides equivalent function as the unsigned long _strtoul_ function.*
+* *The _strtou32_ function in mathu32 library provides equivalent function as _strtoul_.*
 * *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS.*
 
 
@@ -627,9 +629,9 @@ Strftime Conversions
 </table>
 
 
-Math32 Library
+mathi32 Library
 --------------
-**The math2 library functions use the following structure and type.**
+**The mathi32 library functions use the following structure and type.**
 
 ```c
 struct int32 {
@@ -642,7 +644,7 @@ typedef struct int32 int32_t;
 ```
 *Note: `off_t` in `<stdlib.h>` and `pos_t` in `<stdio.h>` are also defined by struct int32 typedefs.*
 
-**The following functions are supported in the ElfC math32 library.**
+**The following functions are supported in the ElfC mathi32 library.**
 
 * _absi32(a)_ - 32-bit absolute value of a
 * _addi32(a, b)_ - 32-bit addition: returns a + b
@@ -661,6 +663,37 @@ typedef struct int32 int32_t;
 * _strtoi32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit integer
 
 *Note: all variables and return values are type `int32_t`, unless typed differently*
+
+mathu32 Library
+--------------
+**The mathu32 library functions use the following structure and type.**
+
+```c
+struct uint32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit number represented as two 16-bit values */
+typedef struct uint32 uint32_t;
+```
+
+**The following functions are supported in the ElfC mathi32 library.**
+
+* _addu32(a, b)_ - 32-bit unsigned addition: returns a + b
+* _subu32(a, b)_ - 32-bit unsigned subtraction: returns a - b
+* _mulu32(a, b)_ - 32-bit unsigned multiplication: returns a *
+* _mulu32x16(a, int b)_ - 32 x 16-bit unsigned multiplication: returns a * b
+* _cmpi32(a, b)_ - Compare two 32-bit unsigned numbers, returns -1 if a < b, 0 if a == b or 1 if a > b
+* _shlu32(a, int n)_ - Shift 32-bit unsigned number left by n bits
+* _shru32(a, int n)_ - Shift 32-bit unsigned number right by n bits
+* _divu32(a, b, *rem)_ - 32-bit unsigned division: returns quotient, remainder in *rem
+* _tou32(int n)_ - Convert 16-bit number to unsigned 32-bit number
+* _atou32(char *str)_ - Convert a string into unsigned 32-bit integer
+* _char *u32toa(a, char *str)_ - Convert 32-bit unsigned integer to string, returns pointer to beginning of string
+* _strtou32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit unsigned integer
+
+*Note: all variables and return values are type `uint32_t`, unless typed differently*
 
 Pre-Defined Macros
 -------------------

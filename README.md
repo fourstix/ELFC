@@ -211,9 +211,9 @@ Release 3.4 adds support for initializations and 32-bit integer math, as well as
 * Character pointers may be initialized by a string.
 * Initializations for an array may define fewer elements than the array.
 * Static initializations are now padded with zeros.
-* The Math32 library, contributed by Tony Hefner, adds support for 32-bit integer arithmetic.
-* The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Math32 library. (Thanks to Tony Hefner)
-* The fsetpos and fgetpos functions now use the Math32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
+* The Mathi32 and Mathu32 libraries, contributed by Tony Hefner, adds support for signed and unsigned 32-bit integer arithmetic.
+* The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Mathi32 library. (Thanks to Tony Hefner)
+* The fsetpos and fgetpos functions now use the Mathi32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
 * The scanner no longer accepts integer literals that are greater than the largest possible 16-bit integer value of 65535.
 * ElfC supports the suffixes 'u' or 'U' to indicate an integer literal is an unsigned value.
 * The scanner will issue a warning if an integer literal is larger than the maximum signed value, unless the integer literal has the unsigned suffix.
@@ -238,7 +238,7 @@ New Features
 * An additional debug option `-d tree` was added to the compiler to support debugging AST trees and optimizations.
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
-* The functions in the Math32 library were converted to pass 32-bit numbers by value.
+* The functions in the Mathi32 library were converted to pass 32-bit numbers by value.
 * Smaller memory versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-M` compiler option.
 * The elfstd library provides the same functions as stdlib, but uses the Elf BIOS, when possible, rather than C library code.
 * The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
@@ -356,7 +356,7 @@ Stdlib Library
 
 *Notes:*
 * The header file <unistd.h> is empty except for `#include <stdlib.h>` *
-* The type `off_t` is an int32 structure used by the Math32 library *
+* The type `off_t` is an int32 structure used by the Mathi32 library *
 
 Stdio Library
 -------------
@@ -435,7 +435,7 @@ Stdio Library
 * int fseek32(FILE* f, off_t *offset, int whence);
 * int ftell(FILE \*f);
 
-*Note: The type `pos_t` is an int32 structure used by the Math32 library*
+*Note: The type `pos_t` is an int32 structure used by the Mathi32 library*
 
 **File Error Functions**
 
@@ -583,9 +583,9 @@ struct tm {
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 
-Math32 Library
+Mathi32 Library
 --------------
-**The math2 library functions use the following structure and type.**
+**The mathi32 library functions use the following structure and type.**
 
 ```c
 struct int32 {
@@ -615,7 +615,39 @@ typedef struct int32 int32_t;
 * char \*i32toa(int32_t n, char \*str);
 * int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
 
-More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+More information about these library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
+
+
+Mathu32 Library
+--------------
+**The mathu32 library functions use the following structure and type.**
+
+```c
+struct uint32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit number represented as two 16-bit values */
+typedef struct uint32 uint32_t;
+```
+
+**The following functions are supported in the ElfC mathu32 library.**
+
+* int32_t addu32(uint32_t a, uint32_t b);
+* int32_t subu32(uint32_t a, uint32_t b);
+* int32_t mulu32(uint32_t a, uint32_t b);
+* int32_t mulu32x16(uint32_t a, usigned int b);
+* int cmpu32(uint32_t a, uint32_t b);
+* int32_t shli32(uint32_t a, int n);
+* int32_t shru32(uint32_t a, int n);
+* int32_t divu32(uint32_t a, uint32_t b, uint32_t \*rem);
+* int32_t tou32(int n);
+* int32_t atou32(const char \*str);
+* int32_t strtou32(const char \*nptr, char \*\*endptr, int base);
+* char \*u32toa(uint32_t n, char \*str);
+
+More information about these library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 Next Release
 -------------
