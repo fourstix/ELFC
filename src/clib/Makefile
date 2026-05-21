@@ -1,4 +1,4 @@
-SUBDIRS := crt0 ctype elfc elfio elfstd mathi32 stdio stdlib string time
+SUBDIRS := crt0 ctype elfc elfio elfstd mathi32 mathu32 stdio stdlib string time
 
 .PHONY: all clean $(SUBDIRS)
 

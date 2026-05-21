@@ -1,11 +1,11 @@
 #define _ELFCLIB_
-#include <mathi32.h>
+#include <mathu32.h>
 
-int cmpi32(int32_t a, int32_t b)
+int cmpu32(uint32_t a, uint32_t b)
 {
     int r;
 
-    asm("; CDP1802 Assembly: compare two 32-bit signed numbers, compiler runtime");
+    asm("; CDP1802 Assembly: compare two 32-bit unsigned numbers, compiler runtime");
     asm(";");
     asm("; Memory layout at rb+1:");
     asm(";   rb+1 .. rb+4  a (4 bytes, LSB first)");
@@ -23,57 +23,16 @@ int cmpi32(int32_t a, int32_t b)
     asm(";");
     asm("; Registers: r8, ra, rc, rd, rf");
     asm(";   ra      result accumulator (0, then inc=+1 or dec=-1)");
-    asm(";   r8.lo   saved MSB of a");
-    asm(";   rc.lo   saved MSB of b / equality OR accumulator");
-    asm(";   rd      walks through a / b during subtraction");
+    asm(";   rc.lo   equality OR accumulator");
+    asm(";   rd      walks through a during subtraction");
     asm(";   rf      walks through b during subtraction");
     asm("");
-    asm("cmp32:");
+    asm("ucmp32:");
     asm("        ; Initialize result accumulator ra = 0");
     asm("        ldi     0");
     asm("        plo     ra");
     asm("        phi     ra");
     asm("");
-    asm("        ; Load MSB of a from rb+4");
-    asm("        glo     rb");
-    asm("        adi     4");
-    asm("        plo     r8");
-    asm("        ghi     rb");
-    asm("        adci    0");
-    asm("        phi     r8");
-    asm("        ldn     r8");
-    asm("        plo     r8              ; r8.lo = a MSB");
-    asm("");
-    asm("        ; Load MSB of b from rb+8");
-    asm("        glo     rb");
-    asm("        adi     8");
-    asm("        plo     rd");
-    asm("        ghi     rb");
-    asm("        adci    0");
-    asm("        phi     rd");
-    asm("        ldn     rd");
-    asm("        plo     rc              ; rc.lo = b MSB");
-    asm("");
-    asm("        ; Check sign of a");
-    asm("        glo     r8");
-    asm("        shl                     ; a sign bit → DF");
-    asm("        lbnf    a_pos");
-    asm("");
-    asm("a_neg:");
-    asm("        ; a negative: check sign of b");
-    asm("        glo     rc");
-    asm("        shl                     ; b sign bit → DF");
-    asm("        lbnf    ret_neg         ; b positive: a < b");
-    asm("        lbr     same_sign       ; both negative");
-    asm("");
-    asm("a_pos:");
-    asm("        ; a positive: check sign of b");
-    asm("        glo     rc");
-    asm("        shl                     ; b sign bit → DF");
-    asm("        lbdf    ret_pos         ; b negative: a > b");
-    asm("                                ; both positive: fall through");
-    asm("");
-    asm("same_sign:");
     asm("        ; rd = rb+1 → a LSB");
     asm("        copy    rb, rd");
     asm("        inc     rd");
@@ -124,19 +83,14 @@ int cmpi32(int32_t a, int32_t b)
     asm("        or                      ; final equality OR");
     asm("        sex     r2");
     asm("");
-    asm("        lbz     ret_equal       ; all differences zero: a == b");
+    asm("        lbz     store           ; all differences zero: a == b, ra stays 0");
     asm("        lbnf    ret_neg         ; borrow: a < b");
     asm("");
-    asm("ret_pos:");
-    asm("        inc     ra              ; ra = 0x0001");
+    asm("        inc     ra              ; no borrow, nonzero: a > b → ra = 0x0001");
     asm("        lbr     store");
     asm("");
     asm("ret_neg:");
     asm("        dec     ra              ; ra = 0xFFFF");
-    asm("        lbr     store");
-    asm("");
-    asm("ret_equal:");
-    asm("                                ; ra already 0x0000");
     asm("");
     asm("store:");
     asm("        ; Write ra as 16-bit little-endian to r7+1..r7+2");
@@ -145,7 +99,7 @@ int cmpi32(int32_t a, int32_t b)
     asm("        plo     rd");
     asm("        ghi     r7");
     asm("        adci    0");
-    asm("        phi     rd              ; rd = r7+1");
+    asm("        phi     rd");
     asm("");
     asm("        glo     ra");
     asm("        str     rd");

@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <mathi32.h>
+#include <mathu32.h>
 
 int main(int argc, char *argv[])
 {
-    int32_t op1;
-    int32_t op2;
+    uint32_t op1;
+    uint32_t op2;
     char *operation;
-    int32_t result;
+    uint32_t result;
     char op1_buf[12];
     char op2_buf[12];
     char result_buf[12];
@@ -19,43 +19,43 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    op1 = strtoi32(argv[1], &end, 0);
+    op1 = strtou32(argv[1], &end, 0);
     if (*end != '\0') {
-        printf("'%s' is not a number\n", argv[1]);
+        printf("'%s' is not an unsigned number\n", argv[1]);
         return -1;
     }
 
     operation = argv[2];
 
-    op2 = strtoi32(argv[3], &end, 0);
+    op2 = strtou32(argv[3], &end, 0);
     if (*end != '\0') {
-        printf("'%s' is not a number\n", argv[3]);
+        printf("'%s' is not an unsigned number\n", argv[3]);
         return -1;
     }
 
     if (strcmp(operation, "+") == 0) {
-        result = addi32(op1, op2);
+        result = addu32(op1, op2);
     }
     else if (strcmp(operation, "-") == 0) {
-        result = subi32(op1, op2);
+        result = subu32(op1, op2);
     }
     else if (strcmp(operation, "*") == 0) {
-        result = muli32(op1, op2);
+        result = mulu32(op1, op2);
     }
     else if (strcmp(operation, "/") == 0) {
-        result = divi32(op1, op2, NULL);
+        result = divu32(op1, op2, NULL);
     }
     else if (strcmp(operation, "%") == 0) {
-        divi32(op1, op2, &result);
+        divu32(op1, op2, &result);
     }
     else if (strcmp(operation, ">>") == 0) {
-        result = shri32(op1, op2.low);
+        result = shru32(op1, op2.low);
     }
     else if (strcmp(operation, "<<") == 0) {
-        result = shli32(op1, op2.low);
+        result = shlu32(op1, op2.low);
     }
     else if (strcmp(operation, "?") == 0) {
-        comp = cmpi32(op1, op2);
+        comp = cmpu32(op1, op2);
         if (comp == 0) {
             result_buf[0] = '=';
         }
@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
             result_buf[0] = '<';
         }
 
-        printf("%s %c %s\n", i32toa(op1, op1_buf), result_buf[0],
-            i32toa(op2, op2_buf));
+        printf("%s %c %s\n", u32toa(op1, op1_buf), result_buf[0],
+            u32toa(op2, op2_buf));
 
         return 0;
     }
@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    printf("%s %s %s = %s\n", i32toa(op1, op1_buf), operation,
-        i32toa(op2, op2_buf), i32toa(result, result_buf));
+    printf("%s %s %s = %s\n", u32toa(op1, op1_buf), operation,
+        u32toa(op2, op2_buf), u32toa(result, result_buf));
 
     return 0;
 }
