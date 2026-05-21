@@ -1104,7 +1104,6 @@ static int localdecls(void) {
     //grw - created macro for alignment size
     rsize = ALIGNED(rsize);
 
-
     //grw - and pass new label, value to addloc for uninitialized array
     if (stat) {
       /* generate label for static declaration */
