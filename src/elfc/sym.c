@@ -303,7 +303,8 @@ void defloc(struct lstat_obj *p) {
       free(p->ilist);
       p->ilist = NULL;
     } else {
-      n = p->size;
+      /* set size for n pointers */
+      n = p->size * PTRSIZE;
     }
     /* pad the non-initialized space */
     if (n) {
