@@ -98,6 +98,28 @@ v00e0
 +00fa
 }
 .big
+{Cu32toa
+:0000 e2 9b 73 8b 73 87 ab 97 bb 8b fc 05 a8 9b 7c 00
+:0010 b8 08 af 18 08 bf 8b aa 9b ba 1a f8 00 bd f8 00
+:0020 bc f8 20 ac 8a a8 9a b8 f8 00 f6 08 7e 58 18 08
+:0030 7e 58 18 08 7e 58 18 08 7e 58 9c 7e bc ff 0a cb
+:0040 00 47 bc 0a f9 01 5a 2c 8c ca 00 24 9c e7 73 e2
+:0050 9d fc 01 bd 8a a8 9a b8 08 ca 00 1e 18 08 ca 00
+:0060 1e 18 08 ca 00 1e 18 08 ca 00 1e e7 60 9d ff 01
+:0070 bd c2 00 7c 72 fc 30 5f 1f c0 00 6d f0 fc 30 5f
+?stk_err 008f
+:0080 1f e2 f8 00 5f d9 42 00 04 d9 09 e2 d9 06 c3 00
+:0090 00 60 72 ab f0 bb d5
++0040
++004a
++005a
++005f
++0064
++0069
++0072
++007a
+}
+.big
 {Cmulu32
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
@@ -244,26 +266,4 @@ v00e0
 ?stk_err 003b
 :0030 d9 03 00 06 c3 00 00 e2 d9 06 c3 00 00 60 72 ab
 :0040 f0 bb d5
-}
-.big
-{Cu32toa
-:0000 e2 9b 73 8b 73 87 ab 97 bb 8b fc 05 a8 9b 7c 00
-:0010 b8 08 af 18 08 bf 8b aa 9b ba 1a f8 00 bd f8 00
-:0020 bc f8 20 ac 8a a8 9a b8 f8 00 f6 08 7e 58 18 08
-:0030 7e 58 18 08 7e 58 18 08 7e 58 9c 7e bc ff 0a cb
-:0040 00 47 bc 0a f9 01 5a 2c 8c ca 00 24 9c e7 73 e2
-:0050 9d fc 01 bd 8a a8 9a b8 08 ca 00 1e 18 08 ca 00
-:0060 1e 18 08 ca 00 1e 18 08 ca 00 1e e7 60 9d ff 01
-:0070 bd c2 00 7c 72 fc 30 5f 1f c0 00 6d f0 fc 30 5f
-?stk_err 008f
-:0080 1f e2 f8 00 5f d9 42 00 04 d9 09 e2 d9 06 c3 00
-:0090 00 60 72 ab f0 bb d5
-+0040
-+004a
-+005a
-+005f
-+0064
-+0069
-+0072
-+007a
 }

@@ -32,6 +32,9 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
      "Sep", "Oct", "Nov", "Dec"};
 
+  /* temporary time value */
+  int t_tmp;
+
 
   for ( ; *format; ++format) {
     if (*format == '%') {
@@ -71,10 +74,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 */
         case 'd':
-          if (t->tm_mday < 10)
-            pt = _conv(t->tm_mday, "0%d", pt, ptlim);
+          t_tmp = t->tm_mday;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-            pt = _conv(t->tm_mday, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 /*
         case 'e':
@@ -87,27 +91,30 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 
         case 'H':
-          if (t->tm_hour < 10)
-            pt = _conv(t->tm_hour, "0%d", pt, ptlim);
+          t_tmp = t->tm_hour;
+          if (t_tmp < 10)
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           else
-          pt = _conv(t->tm_hour, "%d", pt, ptlim);
+          pt = _conv(t_tmp, "%d", pt, ptlim);
 
           continue;
 
         case 'I':
-          if ((t->tm_hour % 12) < 10 && (t->tm_hour % 12) != 0)
-            pt = _conv((t->tm_hour % 12), "0%d", pt, ptlim);
+          t_tmp = t->tm_hour % 12;
+          if (t_tmp < 10 && t_tmp != 0)
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           else
-            pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12, "%d", pt, ptlim);
+            pt = _conv(t_tmp ? t_tmp : 12, "%d", pt, ptlim);
           continue;
 
         case 'j':
-          if (t->tm_yday + 1 < 10)
-            pt = _conv(t->tm_yday + 1, "00%d", pt, ptlim);
-          else if (t->tm_yday + 1 < 10)
-            pt = _conv(t->tm_yday + 1, "0%d", pt, ptlim);
+          t_tmp = t->tm_yday + 1;
+          if (t_tmp > 99)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
+          else if (t_tmp > 9)
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           else
-            pt = _conv(t->tm_yday + 1, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "00%d", pt, ptlim);
           continue;
 /*
         case 'k':
@@ -119,17 +126,19 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 */
         case 'M':
-          if (t->tm_min < 10)
-            pt = _conv(t->tm_min, "0%d", pt, ptlim);
+          t_tmp = t->tm_min;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-            pt = _conv(t->tm_min, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 
         case 'm':
-          if (t->tm_mon+1 < 10)
-            pt = _conv(t->tm_mon + 1, "0%d", pt, ptlim);
+          t_tmp = t->tm_mon + 1;
+          if (t_tmp < 10)
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           else
-            pt = _conv(t->tm_mon + 1, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           continue;
 /*
         case 'n':
@@ -154,10 +163,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 */
         case 'S':
-          if (t->tm_sec < 10)
-            pt = _conv(t->tm_sec, "0%d", pt, ptlim);
+          t_tmp = t->tm_sec;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-          pt = _conv(t->tm_sec, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 /*
         case 'T':
@@ -169,10 +179,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 */
         case 'U':
-          if (((t->tm_yday + 7 - t->tm_wday) / 7) < 10)
-            pt = _conv((t->tm_yday + 7 - t->tm_wday) / 7, "0%d", pt, ptlim);
+          t_tmp = (t->tm_yday + 7 - t->tm_wday) / 7;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-            pt = _conv((t->tm_yday + 7 - t->tm_wday) / 7, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 /*
         case 'u':
@@ -184,10 +195,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 */
         case 'W':
-          if ((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7 < 10)
-            pt = _conv((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7, "0%d", pt, ptlim);
+          t_tmp = (t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-            pt = _conv((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 
         case 'w':
@@ -203,10 +215,11 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 
         case 'y':
-          if ((t->tm_year + 1900) % 100 < 10)
-            pt = _conv((t->tm_year + 1900) % 100, "0%d", pt, ptlim);
+          t_tmp = (t->tm_year + 1900) % 100;
+          if (t_tmp > 9)
+            pt = _conv(t_tmp, "%d", pt, ptlim);
           else
-            pt = _conv((t->tm_year + 1900) % 100, "%d", pt, ptlim);
+            pt = _conv(t_tmp, "0%d", pt, ptlim);
           continue;
 
         case 'Y':
