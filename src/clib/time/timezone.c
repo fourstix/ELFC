@@ -17,10 +17,10 @@ int _tz_dst    = -1;     /* DST is unknown until set */
 
 void timezone(char *tzname, int tzoff_min, int tzdst) {
   int tz_hr, tz_min;
-  
+
   tz_hr  = tzoff_min / 60;
   tz_min = tzoff_min % 60;
-  
+
   _tzname = tzname;
   _tz_hr  = tz_hr;
   _tz_min = tz_min;
