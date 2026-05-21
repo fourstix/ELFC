@@ -2,30 +2,42 @@
 #include <mathi32.h>
 #include <time.h>
 
-typedef int int16_t;
-
-#define DIGITS 400
-#define LEN ((10 * DIGITS) / 3)
-
-static int16_t a[LEN + 1];
-
-int main() {
-    int16_t i, j, k;
-    int16_t q, d;
-    int16_t nines = 0;
-    int16_t predigit = 0;
+int main(int argc, char *argv[]) {
+    int i, j, k;
+    int q, d;
+    int nines = 0;
+    int predigit = 0;
     int32_t x, y, r;
+    int *a;
+    int len, digits;
 
+    if (argc != 2)
+    {
+        printf("usage: pi <num_digits>\n");
+        return 1;
+    }
+    
+    digits = atoi(argv[1]) + 1;
+    len = ((10 * digits) / 3);
+    
+    a = (int *)malloc((len + 1) * sizeof(int));
+
+    if (a == NULL)
+    {
+        printf("Not enough memory for %d digits.", digits);
+        return 1;
+    }
+    
     printf("start: %s", cstime());
 
-    for (j = 1; j <= LEN; j++)
+    for (j = 1; j <= len; j++)
         a[j] = 2;
 
-    for (j = 1; j <= DIGITS; j++)
+    for (j = 1; j <= digits; j++)
     {
         q = 0;
 
-        for (i = LEN; i >= 1; i--)
+        for (i = len; i >= 1; i--)
         {
             x = addi32(toi32(10 * a[i]), toi32(q * i));            
             d = 2 * i - 1;
