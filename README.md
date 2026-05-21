@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r361.zip into the desired directory
+* Unzip the file elfc_r362.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -275,7 +275,7 @@ Compiler Option Changes
 Release 3.6
 -----------
 
-Release 3.6 adds support for multi-dimensional arrays to ElfC and support for initializing arrays of pointers. Release 3.6 contains a new version of the 32-bit integer math library completely overhauled by Tony Hefner to improve performance.
+Release 3.6 adds support for multi-dimensional arrays to ElfC and support for initializing arrays of pointers. Release 3.6 contains a new version of the 32-bit integer math library completely overhauled by Tony Hefner to improve performance, and a new 32-bit unsigned integer math library contributed by Tony Hefner.
 
 New features
 ------------
@@ -289,13 +289,14 @@ New features
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
 * The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
+* A 32-bit unsigned integer math library was contributed by Tony Hefner.  A big thank you to Tony for this contribution.
 * Three new example programs, a calculator, a fractal generator and a 400 digits of pi calculation,  were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, Kudos to Tony for creating these examples.
 
 Issues Fixed
 -------------
 
 * ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
-* ElfC allows this assignment in accordance with future versions of the specification, C99 and C11, that explicitly state that this assignment should be allowed.
+* ElfC allows this assignment in accordance with future versions of the specification, such as C99 and C11, that explicitly state that this assignment should be allowed.
 
 *Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
@@ -597,7 +598,7 @@ struct int32 {
 typedef struct int32 int32_t;
 ```
 
-**The following functions are supported in the ElfC math32 library.**
+**The following functions are supported in the ElfC mathi32 library.**
 
 * int32_t absi32(int32_t n);
 * int32_t addi32(int32_t a, int32_t b);
@@ -776,18 +777,19 @@ Repository Contents
 * **/src/clib/ctype**  -- Source files for ElfC ctype C library
 * **/src/clib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/clib/assert**  -- Source files for ElfC assert C library
-* **/src/clib/math32**  -- Source files for ElfC Math32 library contributed by Tony Hefner
+* **/src/clib/mathi32**  -- Source files for ElfC 32-bit integer Math library contributed by Tony Hefner
+* **/src/clib/mathu32**  -- Source files for ElfC 32-bit unsigned integer Math library contributed by Tony Hefner
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest5.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
-  * math32test.c -- Functional tests for the math32 library functions
+  * math32test.c -- Functional tests for the mathi32 and mathu32 library functions
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r361.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r361.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r361.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r362.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r362.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r362.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
@@ -798,7 +800,7 @@ A big thank-you to David Madole for his suggestions to improve code performance,
 
 Many thanks to Mike Riley for making his library code available and his patience in answering my questions.
 
-Another big shout out to thank Tony Hefner for developing and contributing the Math32 library and for adding support to stdio and stdlib libraries to support file sizes greater than 32K, up to 2GB.
+Another big shout out to thank Tony Hefner for developing and contributing the Mathi32 and Mathu32 libraries and for adding support to stdio and stdlib libraries to support file sizes greater than 32K, up to 2GB.
 
 A debt of gratitude to Nils Holms for his excellent book, Practical Compiler Construction and for creating SubC, which provides the basis for ElfC.
 
