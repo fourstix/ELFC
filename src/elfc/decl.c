@@ -853,12 +853,16 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
       if (autosize) {
         //grw - size for multidimensional array must be even multiple specified elements
         if (*psize > 1 && ptrptr > 1) {
-          isize %= *psize;
-          if (isize == 0) {
-            isize = *psize;
+          //grw - fix logic to not wipe ot isize
+          //isize %= *psize;
+          if ((isize % *psize) == 0) {
+            *psize = isize;
           } else {
             error("initialization list size must be multiple of the specified dimensions of array %s", name);
           }
+        } else {
+          //grw - set the size value
+          *psize = isize;
         }
       } else if (isize < *psize) {
         /* pad the rest of array elements with zero's */
