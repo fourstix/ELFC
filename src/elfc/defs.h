@@ -64,7 +64,7 @@
 #define MAXPARAMLEN  40
 
 /* Maximum number of strings in string table */
-#define MAXSTRTBL    40
+#define MAXSTRTBL    1024
 
 //grw - added support for local labels and goto
 /* Maximum number of user defined local labels */
