@@ -1052,6 +1052,8 @@ void genrval(int *lv) {
   if (NULL == lv) return;
 
   y = lv[LVSYM];
+  //grw - added a commit to fix issue with array pointer returned from function
+  commit();
 
   if (!y) {
     genind(lv[LVPRIM]);
