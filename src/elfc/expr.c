@@ -692,6 +692,8 @@ static node *prefix(int *lv) {
 
 static node *cast(int *lv) {
   int  t;
+  //grw - add support for casting to a typedef
+  int  utype;
   node  *n;
 
   if (LPAREN == Token) {
@@ -703,8 +705,11 @@ static node *cast(int *lv) {
       STRUCT == Token || UNION == Token ) {
       t = primtype(Token, NULL);
       Token = scan();
-    }
-    else {
+    //grw - add support for casting to a typedef
+    } else if (IDENT == Token && (utype = usertype(Text)) != 0) {
+      t = Prims[utype];
+      Token = scan();
+    } else {
       reject();
       Token = LPAREN;
       strcpy(Text, "(");
