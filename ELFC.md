@@ -629,9 +629,9 @@ Strftime Conversions
 </table>
 
 
-mathi32 Library
+math32 Library
 --------------
-**The mathi32 library functions use the following structure and type.**
+**The math32 library functions use the following structure and type.**
 
 ```c
 struct int32 {
@@ -639,12 +639,20 @@ struct int32 {
     unsigned int high;  /* Upper 16 bits */
 };
 
-/* 32-bit number represented as two 16-bit values */
+/* 32-bit signed number represented as two 16-bit values */
 typedef struct int32 int32_t;
+
+struct uint32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit unsigned number represented as two 16-bit values */
+typedef struct uint32 uint32_t;
 ```
 *Note: `off_t` in `<stdlib.h>` and `pos_t` in `<stdio.h>` are also defined by struct int32 typedefs.*
 
-**The following functions are supported in the ElfC mathi32 library.**
+**The following signed 32-bit functions are supported in the ElfC math32 library.**
 
 * _absi32(a)_ - 32-bit absolute value of a
 * _addi32(a, b)_ - 32-bit addition: returns a + b
@@ -656,7 +664,8 @@ typedef struct int32 int32_t;
 * _shri32(a, int n)_ - Shift 32-bit number right by n bits
 * _asri32(a, int n)_ - Arithmetic shift right by n bits
 * _divi32(a, b, *rem)_ - 32-bit division: returns quotient, remainder in *rem
-* _toi32(int n)_ - Convert 16-bit number to 32-bit number with sign extension
+* _i32_from_int(int n)_ - Convert 16-bit number to 32-bit number with sign extension
+* _int_from_i32(n)_ - Truncate 32-bit number to 16-bit integer
 * _negi32(a)_ - Negate a 32-bit number
 * _atoi32(char *str)_ - Convert a string into 32-bit integer
 * _char *i32toa(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
@@ -664,21 +673,7 @@ typedef struct int32 int32_t;
 
 *Note: all variables and return values are type `int32_t`, unless typed differently*
 
-mathu32 Library
---------------
-**The mathu32 library functions use the following structure and type.**
-
-```c
-struct uint32 {
-    unsigned int low;   /* Lower 16 bits */
-    unsigned int high;  /* Upper 16 bits */
-};
-
-/* 32-bit number represented as two 16-bit values */
-typedef struct uint32 uint32_t;
-```
-
-**The following functions are supported in the ElfC mathi32 library.**
+**The following unsigned 32-bit functions are supported in the ElfC math32 library.**
 
 * _addu32(a, b)_ - 32-bit unsigned addition: returns a + b
 * _subu32(a, b)_ - 32-bit unsigned subtraction: returns a - b
@@ -688,15 +683,22 @@ typedef struct uint32 uint32_t;
 * _shlu32(a, int n)_ - Shift 32-bit unsigned number left by n bits
 * _shru32(a, int n)_ - Shift 32-bit unsigned number right by n bits
 * _divu32(a, b, *rem)_ - 32-bit unsigned division: returns quotient, remainder in *rem
-* _tou32(int n)_ - Convert 16-bit number to unsigned 32-bit number
+* _u32_from_int(int n)_ - Convert 16-bit number to unsigned 32-bit number
+* _uint_from_u32(n)_ - Truncate unsigned 32-bit number to unsigned 16-bit integer
 * _atou32(char *str)_ - Convert a string into unsigned 32-bit integer
 * _char *u32toa(a, char *str)_ - Convert 32-bit unsigned integer to string, returns pointer to beginning of string
 * _strtou32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit unsigned integer
 
 *Note: all variables and return values are type `uint32_t`, unless typed differently*
 
+**The following functions for converting between signed and unsgned are supported in the ElfC math32 library.**
+
+* _u32_from_i32(v)_ - Convert signed 32-bit to unsigned 32-bit
+* _i32_from_u32(v)_ - Convert unsigned 32-bit to signed 32-bit
+
 Pre-Defined Macros
 -------------------
+* The `__ELFC__` macro is defined to identify the compiler for conditional compilation.
 * If `_ELFCLIB_` is defined, C code is compiled for an Elf/OS library procedure.
 * If `_STGROM_`  is defined, assembly code to support STG ROM breakpoints is created.
 * If `_MAXMON_` is defined, assembly code to support MAXMON ROM breakpoints is created.
