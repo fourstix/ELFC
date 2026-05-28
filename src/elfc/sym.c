@@ -141,15 +141,11 @@ char *locname(char *s) {
 }
 
 static void defglob(char *name, int prim, int type, int size, int val,
-      int scls, int init)
-{
-  //grw - removed static param from genbss
-  //int  st;
+      int scls, int init) {
 
   //if (TCONSTANT == type || TFUNCTION == type) return;
   if (isConstant(type) || isFunction(type)) return;
 
-  //grw - removed static param from genbss
   if (CPUBLIC == scls) genpublic(name);
 
   if (init && isArray(type))
@@ -158,33 +154,35 @@ static void defglob(char *name, int prim, int type, int size, int val,
   if (!isArray(type) && !(prim & STCMASK)) genname(name);
 
   if (prim & STCMASK) {
-    //grw - removed static param from genbss
+    //grw - struct/union data objects are aligned
     if (isArray(type)) {
       genbss(gsym(name), objsize(prim, TARRAY, size));
     }  else {
-      genbss(gsym(name), objsize(prim, TVARIABLE, size));
+      if (!init)
+        genbss(gsym(name), objsize(prim, TVARIABLE, size));
     }
   /* check to see if char ptr initialized with string */
-  //} else if (prim == (PCHAR | 0x0010) && init == -1) {
   } else if (prim == CHARPTR && init == -1) {
     gendefpstr(val);
-  }  else if (chartype(prim)) {
-    if (isArray(type))
+  } else if (chartype(prim)) {
+    if (isArray(type)) {
       genbss(gsym(name), size);
-    else {
+    } else {
         gendefb(val);
     }
     //grw - removed static param from genbss
   }  else if (pinttype(prim)) {
-    if (isArray(type))
+    if (isArray(type)) {
       genbss(gsym(name), size*INTSIZE);
-    else
+    } else {
       gendefw(val);
+    }
   } else {
-    if (isArray(type))
+    if (isArray(type)) {
       genbss(gsym(name), size*PTRSIZE);
-    else
+    } else {
       gendefp(val);
+    }
   }
 }
 
@@ -263,7 +261,7 @@ int addglob(char *name, int prim, int type, int scls, int size, int val,
  * into an array to be written out in the
  * function's static object space.
  */
-static void addlso(int prim, int type, int size, int val, int init) {
+void addlso(int prim, int type, int size, int val, int init) {
   if (lso_idx >= MAXLOCINIT)
     error("Local Static Object space is full", NULL);
 
@@ -275,18 +273,19 @@ static void addlso(int prim, int type, int size, int val, int init) {
   lso_idx++;
 }
 
+/*
+ * Declarations for local static data objects
+ */
 void defloc(struct lstat_obj *p) {
   int n;
   char *pc;
 
-  if (!isArray(p->type) && !(p->prim &STCMASK)) genlab(p->val);
+  if (!isArray(p->type) && !(p->prim & STCMASK)) genlab(p->val);
   if (p->prim & STCMASK) {
-    //grw - removed static param from genbss
     if (isArray(p->type))
       genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
     else
       genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
-  //} else if (p->prim == (PCHAR | 0x0010) && TVARIABLE == p->type) {
   } else if (p->prim == CHARPTR && isVariable(p->type)) {
     if (p->init) {
       gendefpstr(p->init);
@@ -370,9 +369,19 @@ int addloc(char *name, int prim, int type, int scls, int size, int val,
     error("redefinition of: %s", name);
    y = newloc();
   if (CLSTATC == scls) {
-    //grw - add local static object to list
-    addlso(prim, type, size, val, init);
-    lgen(";----- Local static object %s defined as %c%d", name, val);
+    //grw - add local static object to list unless initialized structure
+    //grw - TODO: fix logic
+    /* debugging */
+    printf("addloc static: name = %s, prim = %d, size = %d, val = %d, init = %d\n",
+      name, prim, size, val, init);
+    if (!(prim & STCMASK) || !init) {
+      addlso(prim, type, size, val, init);
+      lgen(";----- Local static object %s defined as %c%d", name, val);
+    } else {
+      /* debugging */
+      printf("addloc: skipping prim = %d (prim & ~STCMASK = %d), init = %d, val = %d\n",
+       prim, (prim & STCMASK), init, val);
+    }
   }
   Names[y] = locname(name);
   Prims[y] = prim;
@@ -411,8 +420,9 @@ int objsize(int prim, int type, int size) {
   if (isFunction(type) || isConstant(type) || isMacro(type))
     return -1;
   /* adujst size for arrays */
-  if (isArray(type))
+  if (isArray(type)) {
     k *= size;
+  }
   return k;
 }
 
@@ -569,4 +579,18 @@ int isMetaType(int t, int value) {
   } else {
     return t == value;
   }
+}
+
+
+ /*
+ * Get index for next member for structure
+ * Return 0, if no more members
+ */
+int nextmember(int y) {
+  y++;
+  if (CMEMBER ==  Stcls[y] &&
+      (y < Globs || (y >= Locs && y < NSYMBOLS))) {
+    return y;
+  }
+  return 0;
 }

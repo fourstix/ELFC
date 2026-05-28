@@ -196,7 +196,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvLMNSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvLMNPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {

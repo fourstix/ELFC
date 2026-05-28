@@ -12,6 +12,12 @@ static int declarator(int arg, int scls, char *name, int *pprim, int *psize,
 
 static int array_elements(int dimensions[], int order, int global,  char *aname, int aprim, int *asize);
 
+static int initstruct(char *name, int prim, int *pinit);
+static int linitstruct(int prim, int *pinit, int nstart, int outer);
+static int sinitstruct(int prim, int *pval, int *pinit);
+static int linitlist(int size, int mprim, int *pinit, int nstart, int outer);
+static void writeldata(int n);
+
 /* define static type qualifier messages used in warnings and errors */
 static char invalid[] = "type qualifier \'%s\' not valid";
 static char ignored[] = "type qualifier \'%s\' ignored";
@@ -20,6 +26,10 @@ static char max_lvl[] = "too many levels of indirection in %s";
 
 /* stack move for local variables */
 static int mstack = 0;
+
+/* initialization values for local structures */
+int  vbuf[MAXLOCINIT];
+int  pbuf[MAXLOCINIT];
 
 /*
  * Commit the stack moves for previous local variables
@@ -99,6 +109,7 @@ static int initlist(char *name, int prim, int *pinit) {
   int  n = 0;
   int v = 0;
   char  buf[30];
+  int nest = 0;
 
   if (NULL != name) {
     genname(name);
@@ -106,7 +117,8 @@ static int initlist(char *name, int prim, int *pinit) {
     *pinit = label();
     genlab(*pinit);
   }
-
+  /* debugging */
+  //printf("initlist prim = %d Token = %d (STRLIT = %d)\n", prim, Token, STRLIT);
   if (STRLIT == Token) {
     // if (PCHAR != prim)
     if (!chartype(prim))
@@ -123,8 +135,15 @@ static int initlist(char *name, int prim, int *pinit) {
     return v-1;
   }
   lbrace();
-  while (Token != RBRACE) {
-    if (CHARPTR == (prim & ~TQMASK)) {
+  while (Token != RBRACE || nest) {
+    /* debugging */
+//    if (LBRACE == Token) {
+//      nest++;
+//      Token = scan();
+//    }
+    if (prim & STCMASK) {
+      initstruct(NULL, prim, &v);
+    } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
       v = constexpr();
@@ -134,7 +153,11 @@ static int initlist(char *name, int prim, int *pinit) {
      * type qualifiers do not affect type matching
      * so remove any type qualifier bits from primitive type before comparing
      */
-    if (PCHAR == (prim & ~TQMASK)) {
+    if (prim & STCMASK) {
+      /* debugging */
+      printf("initlist (complex) v = %d\n", v);
+      /* don't do anything for structures */
+    } else if (PCHAR == (prim & ~TQMASK)) {
       if (v < 0 || v > 255) {
         sprintf(buf, "%d", v);
         error("initializer out of range: %s", buf);
@@ -153,6 +176,12 @@ static int initlist(char *name, int prim, int *pinit) {
       gendefw(v);
     }
     n++;
+    /* debugging */
+    //grw - todo add nesting and test
+    //if (nest && RBRACE == Token) {
+    //  nest--;
+    //  Token = scan();
+    //}
     if (COMMA == Token)
       Token = scan();
     else
@@ -161,149 +190,6 @@ static int initlist(char *name, int prim, int *pinit) {
   }
   Token = scan();
   if (!n) error("too few initializers", NULL);
-  return n;
-}
-
-/*
- * Initialization for local (auto) arrays
- *
- * Local init list
- * linitlist :=
- *    { const_list }
- *  | STRLIT
- *
- * const_list :=
- *    constexpr
- *  | constexpr , const_list
- */
-
-static int linitlist(int size, int prim, int *pinit) {
-  int   n = 0;
-  int  v = 0;
-  int  len = 0;
-  int  i = 0;
-  char buf[30];
-  int  ibuf[MAXLOCINIT];
-  char sbuf[MAXLOCSTR];
-  int  rsize;
-
-  //grw - need to stack align character arrays
-  if(chartype(prim)) {
-    //grw - created macro for alignment size
-    //rsize = (size + INTSIZE-1) / INTSIZE * INTSIZE;
-    rsize = ALIGNED(size);
-  } else {
-    rsize = size;
-  }
-
-  if (STRLIT == Token) {
-    // if (PCHAR != prim)
-    if (!chartype(prim))
-      error("initializer type mismatch", NULL);
-    //grw - update to allow concatenation of string literals
-    v = 0;
-    /* concatenate string literals */
-    while (STRLIT == Token) {
-      len = strlen(Text);
-      /* don't process empty strings */
-      if (len > 2) {
-      /* copy characters in string, skipping quote marks at end */
-      for(i = 1; i < len-1; i++){
-        sbuf[v+i-1] = Text[i];
-      }
-      v += (Value-2);
-     }
-      Token = scan();
-    }
-    if (v >= MAXLOCSTR) {
-      v = MAXLOCSTR - 1;
-      error("Local string initializer is too long", NULL);
-    }
-    /* set null at end of concatenated string */
-    sbuf[v] = '\0';
-
-    /* if dynamically sized, calculate stack size for string + 1 for null */
-    if (0 == rsize) {
-        //grw - created macro for alignment size
-        //rsize = ((v+1) + INTSIZE-1) / INTSIZE * INTSIZE;
-        rsize = ALIGNED(v+1);
-    }
-    if (v < rsize) {
-      /* subtract one for null written with string */
-      n = rsize - v - 1;
-      /* pad unitialized elements with zeros */
-      for(i=0; i < n; i++)
-        genbyte(0);
-    }
-    /* write string characters backwards on the stack */
-    genstr(sbuf, v);
-    /* mark init to not move stack */
-    *pinit = 2;
-    /* return size of string + 1 for null */
-    return v+1;
-  }
-  lbrace();
-  while (Token != RBRACE) {
-    if (CHARPTR == (prim & ~TQMASK)) {
-      v = strexpr();
-    } else {
-      v = constexpr();
-    }
-    //grw - add support for type qualifiers
-    /*
-     * type qualifiers do not affect type matching
-     * so remove any type qualifier bits from primitive type before comparing
-     */
-    if (PCHAR == (prim & ~TQMASK)) {
-      if (v < 0 || v > 255) {
-        sprintf(buf, "%d", v);
-        error("initializer out of range: %s", buf);
-    }
-      /* add to the array buffer */
-      sbuf[n] = v;
-    } else if (PSCHAR == (prim & ~TQMASK)) {
-      //grw - add support for type qualifiers
-    /* } else if (PSCHAR == prim) { */
-      if (v < -128 || v > 127) {
-        sprintf(buf, "%d", v);
-        error("initializer out of range: %s", buf);
-      }
-      /* add to the array buffer */
-      sbuf[n] = v;
-    } else {
-      /* add to the array buffer */
-      ibuf[n] = v;
-    }
-    n++;
-    if (COMMA == Token)
-      Token = scan();
-    else
-      break;
-    if (eofcheck()) return 0;
-  }
-  /* mark init to not move stack */
-  *pinit = 2;
-  Token = scan();
-  if (!n) error("no initializers", NULL);
-  if (n < rsize) {
-    v = rsize - n;
-    for (i = 0;  i < v; i++) {
-      //grw - pad with bytes for char arrays
-      if (chartype(prim))
-        genbyte(0);
-      else
-        genlit(0);
-    }
-  }
-  /* push array backwards onto stack */
-  for (i = 0; i < n; i++) {
-    if(chartype(prim))
-      genbyte(sbuf[n-1-i]);
-    else if (CHARPTR == (prim & ~TQMASK))
-        genldlab(ibuf[n-1-i]);
-    else
-      genlit(ibuf[n-1-i]);
-  }
   return n;
 }
 
@@ -319,7 +205,7 @@ static int linitlist(int size, int prim, int *pinit) {
  *  | constexpr , const_list
  */
 
-static int sinitlist(int size, int prim) {
+static int sinitlist(int size, int prim, int *pinit) {
   int   n = 0;
   int  v = 0;
   int  len = 0;
@@ -379,14 +265,20 @@ static int sinitlist(int size, int prim) {
       ls_objs[lso_idx].isize = v;
       ls_objs[lso_idx].ilist = buf;
     }
-    /* mark init done */
-    //*pinit = 1;
+    /* mark init for label to be assigned */
+    *pinit = 0;
     /* return size of string + 1 for null */
     return v;
   }
   lbrace();
   while (Token != RBRACE) {
-    if (CHARPTR == (prim & ~TQMASK)) {
+
+    if (prim & STCMASK) {
+      /* debugging */
+      printf("sinitlist 1 before call to sinitstruct\n");
+      sinitstruct(prim, &v, &i);
+      printf("sinitlist 1 after call to sinitstruct\n");
+    } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
       v = constexpr();
@@ -397,7 +289,11 @@ static int sinitlist(int size, int prim) {
      * type qualifiers do not affect type matching
      * so remove any type qualifier bits from primitive type before comparing
      */
-    if (PCHAR == (prim & ~TQMASK)) {
+
+     if (prim & STCMASK) {
+       /* debugging */
+       printf("sinitlist (complex) v = %d\n", v);
+     } else if (PCHAR == (prim & ~TQMASK)) {
       if (v < 0 || v > 255) {
         sprintf(errbuf, "%d", v);
         error("initializer out of range: %s", errbuf);
@@ -440,6 +336,9 @@ static int sinitlist(int size, int prim) {
     ls_objs[lso_idx].isize = n;
     ls_objs[lso_idx].ilist = buf;
   }
+  /* mark init to be assigned */
+  *pinit = 0;
+
   return n;
 }
 
@@ -728,7 +627,51 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
     /* need to emit error for struct/union */
     if (comptype(*pprim)) {
-      error("Initialization of struct/union %s is not supported", name);
+      /* debugging */
+      Token = scan();
+
+      if (PSTRUCT == stc) {
+        if (CAUTO == scls) {
+          //grw - commit stack moves for previous local variables
+          commitmoves();
+          sgen(";---- initialize local %s %s", "structure", name);
+          linitstruct(*pprim, pinit, 0, 1);
+          gen(";---- initialized structure on stack");
+        } else if (CLSTATC == scls) {
+          sgen(";---- initialize local static %s %s", "struct", name);
+          /* debugging */
+          printf("declarator before sinitstruct val = %d, init = %d\n", *pval, *pinit);
+          sinitstruct(*pprim, pval, pinit);
+          /* debugging */
+          printf("declarator after sinitstruct val = %d, init = %d\n", *pval, *pinit);
+        } else {
+          sgen(";---- initialize global %s %s", "structure", name);
+          isize = initstruct(name, *pprim, pinit);
+          rsize = objsize(*pprim, TSTRUCT, 1);
+          if (isize < rsize) {
+            gendata(rsize - isize);
+          } else if (isize > rsize) {
+            error("Initialization list is larger than structure.", NULL);
+          }
+        }
+
+        if (isglobal(scls)) {
+          /* debugging */
+          printf("declarator 1: setting *pinit = 1 for global\n");
+          *pinit = 1;
+        }
+      } else if (PUNION == stc) {
+        /* Unions are initialized by the first type */
+        *pval = constexpr();
+        if (isglobal(scls)) {
+          /* debugging */
+          printf("declarator 2: setting *pinit = 1 for global\n");
+          *pinit = 1;
+        }
+      } else {
+        error("Initialization of %s is not supported", name);
+      }
+      return TSTRUCT;
     }
 
     Token = scan();
@@ -758,7 +701,10 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
     //grw - allow non-zero pointer initialization
      /*  if (*pval && !inttype(*pprim))
       error("non-zero pointer initialization", NULL);  */
-    if (*pinit == 0) {
+    //grw - do not change pinit for static variables
+    if (*pinit == 0 && CLSTATC != scls) {
+      /* debugging */
+      printf("declarator 3: setting *pinit = 1\n");
       *pinit = 1;
     }
 
@@ -828,11 +774,18 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
         //grw - commit stack moves for previous local variables
         commitmoves();
         sgen(";---- initialize local %s %s", "array", name);
-        isize = linitlist(autosize ? 0 : *psize, *pprim, pinit);
+        //isize = linitlist(autosize ? 0 : *psize, *pprim, pinit);
+        isize = linitlist(autosize ? 0 : *psize, *pprim, pinit, 0, 1);
         gen(";---- initialized array on stack");
       } else if (CLSTATC == scls) {
         sgen(";---- initialize local static %s %s", "array", name);
-        isize = sinitlist(autosize ? 0 : *psize, *pprim);
+        /* debugging */
+        printf("declarator before sinitlist *pval = %d, *pinit = %d\n", *pval, *pinit);
+        isize = sinitlist(autosize ? 0 : *psize, *pprim, pinit);
+        /* debugging */
+        printf("declarator after sinitlist *psize = %d, *pval = %d, init = %d\n",
+        *psize, *pval, *pinit);
+
       } else {
         sgen(";---- initialize global %s %s", "array", name);
         isize = initlist(name, *pprim, pinit);
@@ -840,6 +793,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
       //grw - set ini to 1 for initialized global static and public arrays
       if (isglobal(scls)) {
+        /* debugging */
+        printf("declarator 1: setting *pinit = 1 for global\n");
         *pinit = 1;
       }
       //grw - set value to 1 for initialized array
@@ -1100,28 +1055,50 @@ static int localdecls(void) {
       ls_objs[lso_idx].ilist = NULL;
 
       type = declarator(0, CLSTATC, name, &prim, &size,  &val, &ini);
-    } else {
-      type = declarator(0, CAUTO, name, &prim, &size,  &val, &ini);
-    }
-    type = upgrade_array(utype, type, &size);
-    rsize = objsize(prim, type, size);
-    //grw - created macro for alignment size
-    rsize = ALIGNED(rsize);
+      /* debugging */
+      printf("after declarator 1: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
 
-    //grw - and pass new label, value to addloc for uninitialized array
-    if (stat) {
-      /* generate label for static declaration */
-      addloc(name, prim, type, CLSTATC, size,  label(), val);
-      //grw - moved static definitions to local static object space
-    }  else if (extn) {
-      addloc(name, prim, type, CEXTERN, size,  0, val);
-    }  else {
+    } else {
       /* need to pad struct/union at top of list in case its returned */
       if (!addr && (prim & STCMASK)) {
         addloc("_pad", PINT, TVARIABLE, CAUTO, 2, 0, 0);
         addr -= BPW;
         genstack(addr);
       }
+      type = declarator(0, CAUTO, name, &prim, &size,  &val, &ini);
+      /* debugging */
+      printf("after declarator 2: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
+
+    }
+    type = upgrade_array(utype, type, &size);
+    rsize = objsize(prim, type, size);
+    //grw - created macro for alignment size
+    rsize = ALIGNED(rsize);
+    /* debugging */
+    printf("prim = %d, size = %d, rsize = %d, ini = %d, stat = %d\n",
+    prim, size, rsize, ini, stat);
+
+    //grw - and pass new label, value to addloc for uninitialized array
+    if (stat) {
+      /* generate label for static declaration */
+      /* debugging */
+      printf("before addloc ini = %d, val = %d\n", ini, val);
+      if (!ini)
+        ini = label();
+      addloc(name, prim, type, CLSTATC, size,  ini, val);
+      //grw - moved static definitions to local static object space
+    }  else if (extn) {
+      addloc(name, prim, type, CEXTERN, size,  0, val);
+    }  else {
+      //grw - moved to before auto declarator
+      /* need to pad struct/union at top of list in case its returned */
+      //if (!addr && (prim & STCMASK)) {
+      //  addloc("_pad", PINT, TVARIABLE, CAUTO, 2, 0, 0);
+      //  addr -= BPW;
+      //  genstack(addr);
+      //}
+      /* debugging */
+      //printf("prim = %d, size = %d, rsize = %d, ini = %d\n", prim, size, rsize, ini);
 
       addr -= rsize;
       addloc(name, prim, type, CAUTO, size, addr, 0);
@@ -1714,4 +1691,633 @@ static int array_elements(int dimensions[], int order, int param,  char *aname, 
   /* set new values for array */
   *asize = size;
   return tdim;
+}
+
+
+/*
+ * Initialization for global (public and static) structures
+ *
+ * initstruct :=
+ *    { struct_list }
+ *
+ * struct_list :=
+ *   constexpr | STRLIT
+ *   constexpr | STRLIT , struct_list
+ */
+
+static int initstruct(char *name, int prim, int *pinit) {
+  int y = 0;
+  int v = 0;
+  int nsize = 0;
+  int mtype = 0;
+  int mprim = 0;
+  int msize = 0;
+  char buf[30];
+  int isize = 0;
+  int rsize = 0;
+
+  y = prim & ~STCMASK;
+
+  if (!y) {
+    error("Structure %s not found", name);
+    return 0;
+  }
+
+  if (NULL != name) {
+    genname(name);
+  } else {
+    *pinit = label();
+    genlab(*pinit);
+  }
+
+  lbrace();
+
+  while (Token != RBRACE) {
+    y = nextmember(y);
+    if (!y) {
+      error("Initialization list too long", NULL);
+      break;
+    }
+    mtype = Types[y];
+    mprim = Prims[y];
+    msize = Sizes[y];
+
+    /* debugging */
+    //printf("initstruct 1 mprim = %d, mtype = %d, msize = %d\n", mprim, mtype, msize);
+
+    //if ((mprim & STCMASK) || isArray(mtype)) {
+    //  error("Complex structure initializations are not supported.", NULL);
+    //  break;
+    //}
+    /*
+     * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+     */
+    mprim &= ~TQMASK;
+    /* debugging */
+    //printf("initstruct 2 mprim = %d, mtype = %d, msize = %d\n", mprim, mtype, msize);
+
+    if (mprim & STCMASK) {
+      /* debugging */
+      //printf("initstruct 3 before call to initstruct\n");
+      initstruct(NULL, mprim, &v);
+      //printf("initstruct 4 after call to initstruct\n");
+      //printf("LBRACE = %d RBRACE =%d COMMA = %d\n", LBRACE, RBRACE, COMMA);
+      //printf("initstruct 4a Token = %d\n", Token);
+    } else if (isArray(mtype)) {
+      /* debugging */
+      //printf("initstruct 5 before call to initlist mprim = %d\n", mprim);
+      isize = initlist(NULL, mprim, &v);
+      //printf("initstruct 6 after call to initlist\n");
+
+      rsize = objsize(mprim, mtype, msize);
+      rsize = ALIGNED(rsize);
+      if (rsize > isize) {
+        rsize -= isize;
+        gendata(rsize);
+      }
+    } else if (CHARPTR == mprim) {
+    //if (CHARPTR == mprim) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
+    //grw - add support for type qualifiers
+    if (isArray(mtype) || mprim & STCMASK) {
+      /* debugging */
+      //printf("after complex init v = %d\n", v);
+    } else if (PCHAR == mprim) {
+    //if (PCHAR == mprim) {
+      if (v < 0 || v > 255) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+    }
+      gendefw(v);
+    } else if (PSCHAR == mprim) {
+      //grw - add support for type qualifiers
+      if (v < -128 || v > 127) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+      }
+      gendefw(v);
+    } else if (CHARPTR == mprim) {
+      gendefpstr(v);
+    } else {
+      gendefw(v);
+    }
+    msize = objsize(mprim, mtype, msize);
+    msize = ALIGNED(msize);
+    nsize += msize;
+    if (COMMA == Token)
+      Token = scan();
+    else
+      break;
+    if (eofcheck()) return 0;
+  }
+  /* debugging */
+  //printf("LBRACE = %d RBRACE =%d COMMA = %d\n", LBRACE, RBRACE, COMMA);
+  //printf("initstruct 7 Token = %d\n", Token);
+  Token = scan();
+  /* debugging */
+  //printf("initstruct 8 Token = %d\n", Token);
+
+  //if (!n) error("too few initializers", NULL);
+  return nsize;
+}
+
+/*
+ * Initialization for local (auto) arrays
+ *
+ * Local init list
+ * linitlist :=
+ *    { const_list }
+ *  | STRLIT
+ *
+ * const_list :=
+ *    constexpr
+ *  | constexpr , const_list
+ */
+
+static int linitstruct(int prim, int *pinit, int nstart, int outer) {
+  int  n = nstart;
+  int  v = 0;
+  int  y = 0;
+  int  i = 0;
+  char buf[30];
+  // grw - moved to globals for recurssion */
+  //int  vbuf[MAXLOCINIT];
+  //int  pbuf[MAXLOCINIT];
+  int  rsize;
+  int mtype = 0;
+  int mprim = 0;
+  int msize = 0;
+  int nsize = 0;
+  int bprim;
+
+
+  /* debugging */
+  //printf("linitstruct 1 n = %d, outer = %d\n", n, outer);
+
+  y = prim & ~STCMASK;
+
+  rsize = objsize(prim, TSTRUCT, 1);
+
+  lbrace();
+
+  while (Token != RBRACE) {
+    y = nextmember(y);
+    if (!y) {
+      error("Initialization list too long", NULL);
+      break;
+    }
+    mtype = Types[y];
+    mprim = Prims[y];
+    msize = Sizes[y];
+
+    //if ((mprim & STCMASK) || isArray(mtype)) {
+    //  error("Complex structure initializations are not supported.", NULL);
+    //  break;
+    //}
+    /*
+     * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+     */
+    bprim = mprim & ~TQMASK;
+    /* debugging */
+    //printf("linitstruct 2 mprim = %d, mtype = %d, msize = %d\n", mprim, mtype, msize);
+
+    if (mprim & STCMASK) {
+      /* debugging */
+      //printf("linitstruct 3 before call to linitstruct n =%d\n", n);
+      n = linitstruct(mprim, &v, n, 0);
+      //printf("linitstruct 4 after call to linitstruct n = %d\n", n);
+    } else if (isArray(mtype)) {
+      /* debugging */
+      //error("Complex structure with array initializations are not supported.", NULL);
+      //printf("initstruct 5 before call to linitlist mprim = %d, n = %d\n", mprim, n);
+      n = linitlist(msize, mprim, &v, n, 0);
+      //printf("initstruct 6 after call to linitlist n = %d\n", n);
+    } else if (CHARPTR == bprim) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
+
+     //grw - add support for type qualifiers
+    if (isArray(mtype) || mprim & STCMASK) {
+       /* debugging */
+       //printf("linitstruct 5 (skip complex init) v = %d\n", v);
+    } else if (PCHAR == bprim) {
+       /* debugging */
+       //printf("linitstruct 6 (char) n = %d, v = %d\n", n, v);
+
+      if (v < 0 || v > 255) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+    }
+      /* add to the member buffer */
+      vbuf[n] = v;
+      pbuf[n++] = mprim;
+    } else if (PSCHAR == bprim) {
+      /* debugging */
+      //printf("linitstruct 6 (signed char)  n = %d, v = %d\n",n, v);
+
+      if (v < -128 || v > 127) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+      }
+      /* add to the member buffer */
+      vbuf[n] = v;
+      pbuf[n++] = mprim;
+    } else {
+      /* add to the member buffer */
+      /* debugging */
+      //printf("linitstruct 7 (default)  n = %d, prim = %d, v = %d\n", mprim, n, v);
+      vbuf[n] = v;
+      pbuf[n++] = mprim;
+    }
+    //n++;
+    msize = objsize(mprim, mtype, msize);
+    msize = ALIGNED(msize);
+    nsize += msize;
+
+    if (COMMA == Token)
+      Token = scan();
+    else
+      break;
+    if (eofcheck()) return 0;
+  }
+  /* mark init to not move stack */
+  *pinit = 2;
+
+  Token = scan();
+  /* debugging */
+  //printf("nsize = %d, rsize = %d\n", nsize, rsize);
+
+  if (nsize < rsize) {
+    v = ALIGNED(rsize - nsize)/2;
+
+
+    for (i = 0;  i < v; i++) {
+      //grw - pad with zero int for uninitialized member fields
+      /* debugging */
+      printf("padding (v) = %d\n", v);
+      vbuf[n] = 0;
+      pbuf[n++] = PINT;
+    }
+  } else if (nsize > rsize) {
+    error("Initialization list is too large.", NULL);
+  }
+
+  /* push structure data backwards onto stack */
+  if (outer) {
+    writeldata(n);
+  }
+  return n;
+}
+
+/*
+ * Add an local static object entry for a static structure
+ */
+static void addmemberlso(int y, int i, int value, int init) {
+int mtype = Types[y];
+int mprim = Prims[y];
+int msize = Sizes[y];
+
+msize = objsize(mprim, mtype, msize);
+msize = ALIGNED(msize);
+
+/* debugging */
+printf("adding lso i = %d, y = %d, mprim = %d, mtype = %d, msize = %d, val = %d, init = %d\n",
+  i, y, mprim, mtype, msize, value, init);
+
+ls_objs[lso_idx].isize = 0;
+ls_objs[lso_idx].ilist = NULL;
+//grw - only print label on first member field of structure
+//grw - char pointer is reversed from other types
+if (mprim == CHARPTR)
+  addlso(mprim, mtype, msize, i ? 0 : value, init);
+else
+  addlso(mprim, mtype, msize, i ? 0 : init, value);
+}
+/*
+ * Initialization for static local structures
+ *
+ *  :=
+ *    { const_list }
+ *
+ *
+ * const_list :=
+ *    constexpr | STRLIT
+ *  | constexpr | STRLIT, const_list
+ */
+
+static int sinitstruct(int prim, int *pval, int *pinit) {
+  int  n = 0;
+  int  v = 0;
+  int  i = 0;
+  char errbuf[30];
+  int  y = 0;
+  int  rsize;
+  int mtype = 0;
+  int mprim = 0;
+  int msize = 0;
+  int nsize = 0;
+
+  /* debugging */
+  printf("sinitstruct prim = %d pval =%d, pinit = %d\n", prim, *pval, *pinit);
+
+  y = prim & ~STCMASK;
+
+  rsize = objsize(prim, TSTRUCT, 1);
+  *pinit = label();
+  lbrace();
+  while (Token != RBRACE) {
+    y = nextmember(y);
+    if (!y) {
+      error("Initialization list too long", NULL);
+      break;
+    }
+    mtype = Types[y];
+    mprim = Prims[y];
+    msize = Sizes[y];
+
+    /*
+     * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+     */
+    mprim &= ~TQMASK;
+
+    if (mprim & STCMASK) {
+      /* debugging */
+      printf("sinitstruct 1 before call to sinitstruct\n");
+      //grw - call sinstruct with dummy values
+      sinitstruct(mprim, &v, &i);
+      printf("sinitstruct 2 after call to sinitstruct v = %d, i = %d\n", v, i);
+    } else if (isArray(mtype)) {
+      /* debugging */
+      printf("sinitstruct 3 before call to sinitlist i = %d\n", i);
+      if (chartype(mprim))
+        msize = ALIGNED(msize);
+      sinitlist(msize, mprim, &i);
+      /* debugging */
+      printf("sinitstruct 4 after call to sinitlist i = %d\n", i);
+      //grw - label string inside structure
+      i = label();
+      addlso(mprim, mtype, msize, i, 0);
+
+    } else if (CHARPTR == mprim) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
+
+    /*
+     * type qualifiers do not affect type matching
+     * so remove any type qualifier bits from primitive type before comparing
+     */
+    if ((mprim & STCMASK) || isArray(mtype)) {
+      /* debugging */
+      printf("sinitstruct complex type *pinit = %d, v = %d, i = %d\n", *pinit, v, i);
+      //grw - set values to skip complex member
+      //ibuf[n] = 0;
+      //ybuf[n] = 0;
+    } else if (PCHAR == mprim) {
+      if (v < 0 || v > 255) {
+        sprintf(errbuf, "%d", v);
+        error("initializer out of range: %s", errbuf);
+      }
+      /* add to the character array buffer */
+      addmemberlso(y, n, *pinit, v);
+      //ibuf[n] = v;
+      //ybuf[n] = y;
+    } else if (PSCHAR == mprim) {
+      //grw - add support for type qualifiers
+      if (v < -128 || v > 127) {
+        sprintf(errbuf, "%d", v);
+        error("initializer out of range: %s", errbuf);
+      }
+      /* add to the character array buffer */
+      addmemberlso(y, n, *pinit, v);
+      //ibuf[n] = v;
+      //ybuf[n] = y;
+    } else if (CHARPTR == mprim) {
+      /* character pointer label is in init */
+      addmemberlso(y, n, *pinit, v);
+    } else {
+      /* add to the integer array buffer */
+      addmemberlso(y, n, *pinit, v);
+    }
+    n++;
+    msize = objsize(mprim, mtype, msize);
+    msize = ALIGNED(msize);
+    nsize += msize;
+    if (COMMA == Token)
+      Token = scan();
+    else
+      break;
+    if (eofcheck()) return 0;
+  }
+  Token = scan();
+
+  /* debugging */
+  printf("sinitstruct: nsize = %d, rsize = %d\n", nsize, rsize);
+  if (nsize < rsize) {
+    v = rsize - nsize;
+    /* debugging */
+    printf("sinitstruct: padding v = %d\n", v);
+    addlso(PCHAR, TARRAY, v, 0, 0);
+  } else if (nsize > rsize) {
+    error("Initialization list is too large.", NULL);
+  }
+  *pval = 1;
+  /* debugging */
+  printf("sinitstruct: returning *pinit = %d, *pval = %d, n = %d\n", *pinit, *pval, n);
+  return n;
+}
+
+/*
+ * Initialization for arrays in local (auto) structures
+ *
+ * Local init list
+ * linitlist :=
+ *    { const_list }
+ *  | STRLIT
+ *
+ * const_list :=
+ *    constexpr
+ *  | constexpr , const_list
+ */
+
+static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
+  int  n = nstart;
+  int  v = 0;
+  int  len = 0;
+  int  i = 0;
+  char buf[30];
+//  int  ibuf[MAXLOCINIT];
+  char sbuf[MAXLOCSTR];
+  int  rsize;
+  int  k = 0;
+  int  bprim;
+
+  //grw - need to stack align character arrays
+  if(chartype(mprim)) {
+    rsize = ALIGNED(size);
+  } else {
+    rsize = size;
+  }
+
+  if (STRLIT == Token) {
+    // if (PCHAR != prim)
+    if (!chartype(mprim))
+      error("initializer type mismatch", NULL);
+    //grw - update to allow concatenation of string literals
+    v = 0;
+    /* concatenate string literals */
+    while (STRLIT == Token) {
+      len = strlen(Text);
+      /* don't process empty strings */
+      if (len > 2) {
+      /* copy characters in string, skipping quote marks at end */
+      for(i = 1; i < len-1; i++) {
+        /* debugging */
+        //printf("Adding sbuf[%d] = '%c'\n", (v+i-1), Text[i]);
+        sbuf[v+i-1] = Text[i];
+      }
+      v += (Value-2);
+      }
+      Token = scan();
+    }
+    if (v >= MAXLOCSTR) {
+      v = MAXLOCSTR - 1;
+      error("Local string initializer is too long", NULL);
+    }
+    /* set null at end of concatenated string */
+    sbuf[v] = '\0';
+
+    /* if dynamically sized, calculate stack size for string + 1 for null */
+    if (0 == rsize) {
+        //grw - created macro for alignment size
+        rsize = ALIGNED(v+1);
+    }
+    if (v < rsize) {
+      /* subtract one for null written with string */
+      k = rsize - v - 1;
+      /* debugging */
+      //printf("k  = %d, rsize = %d, v = %d\n", k, rsize, v);
+      /* pad unitialized elements with nulls */
+      for(i=0; i < k; i++) {
+        sbuf[v+i+1] = '\0';
+      }
+    }
+    //grw - push characters onto buffer
+    for (i = 0; i < rsize; i++) {
+        pbuf[n] = mprim;
+        vbuf[n++] = sbuf[i];
+    }
+
+    /* mark init to not move stack */
+    *pinit = 2;
+
+    //grw - write values to stack
+    if (outer) {
+      writeldata(n);
+    }
+
+    /* return elements added to pbuf */
+    return n;
+  }
+  /*
+   * type qualifiers do not affect type matching
+   * so remove any type qualifier bits from primitive type before comparing
+   */
+  bprim = mprim & ~TQMASK;
+  lbrace();
+  //grw - use k as counter
+  k = 0;
+  while (Token != RBRACE) {
+    if (mprim & STCMASK) {
+      /* debugging */
+      //printf("linitlist 1 before call to linitstruct n =%d\n", n);
+      n = linitstruct(mprim, &v, n, 0);
+      //printf("linitlist 2 after call to linitstruct n = %d\n", n);
+    } else if (CHARPTR == bprim) {
+      v = strexpr();
+    } else {
+      v = constexpr();
+    }
+    //grw - add support for type qualifiers
+    if (mprim & STCMASK) {
+      /* debugging */
+      //printf("linitlist complex type v = %d\n", v);
+    } else if (PCHAR == bprim) {
+      if (v < 0 || v > 255) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+    }
+      /* add to the array buffer */
+      pbuf[n] = mprim;
+      vbuf[n++] = v;
+    } else if (PSCHAR == bprim) {
+      //grw - add support for type qualifiers
+      if (v < -128 || v > 127) {
+        sprintf(buf, "%d", v);
+        error("initializer out of range: %s", buf);
+      }
+      /* add to the char buffer */
+      pbuf[n] = mprim;
+      vbuf[n++] = v;
+    } else {
+      /* add to the array buffer */
+      pbuf[n] = mprim;
+      vbuf[n++] = v;
+    }
+    k++;
+    if (COMMA == Token)
+      Token = scan();
+    else
+      break;
+    if (eofcheck()) return 0;
+  }
+  /* mark init to not move stack */
+  *pinit = 2;
+  Token = scan();
+  if (k < rsize) {
+    v = rsize - k;
+    for (i = 0;  i < v; i++) {
+      //grw - pad with bytes for char arrays
+      if (chartype(mprim)){
+        pbuf[n] = mprim;
+        vbuf[n++] = '\0';
+      } else {
+        pbuf[n] = mprim;
+        vbuf[n++] = 0;
+      }
+    }
+  }
+  /* if outer loop, push data onto stack */
+  if (outer) {
+    writeldata(n);
+  }
+  /*
+   * If this is the outer loop, return number of elements,
+   * for inner loop, return next index for data values
+   */
+  return outer ? k : n;
+}
+
+/*
+ *  Write out the local (auto) data to the stack
+ */
+static void writeldata(int n) {
+  int i;
+  for (i = 0; i < n; i++) {
+    if (CHARPTR == pbuf[n-1-i])
+      genldlab(vbuf[n-1-i]);
+    else if (chartype(pbuf[n-1-i]))
+      genbyte(vbuf[n-1-i]);
+    else
+      genlit(vbuf[n-1-i]);
+  }
 }

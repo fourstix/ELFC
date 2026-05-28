@@ -46,7 +46,7 @@
 #define MAXNMAC      32
 #define MAXCASE     256
 #define MAXBREAK     16
-#define MAXLOCINIT   32
+#define MAXLOCINIT   64
 //grw - number characters in local init string
 #define MAXLOCSTR    64
 

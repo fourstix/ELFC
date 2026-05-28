@@ -115,6 +115,9 @@ void genlab(int id) {
     Q_jmp = jnone;
   }
   commit();
+  //grw - zero is used to skip labels
+  if (!id)
+    return;
   //grw - precede label with new line
   fprintf(Outfile, "\n%c%d:\n", LPREFIX, id);
 }
@@ -779,16 +782,14 @@ void genlocinit(void) {
 }
 
 /* static and public data definitions */
-//grw - removed static param from genbss
 void genbss(char *name, int len) {
   //grw - commit jump to entry point in library object
   if (O_library)
     commit();
   genraw(name);
-   genraw(":");
+  genraw(":");
 
   //grw - created macro for alignment size
-  //cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
   cgdata(ALIGNED(len));
 }
 

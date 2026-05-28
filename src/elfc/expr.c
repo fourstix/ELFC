@@ -1144,6 +1144,7 @@ int strexpr(void) {
    int  lab, lab2, k;
 
   lab = label();
+
   if (str_idx < MAXSTRTBL) {
     /* set k to true for first string literal */
     k = 1;
@@ -1173,6 +1174,7 @@ int strexpr(void) {
     }
     gendefb(0);
     genlab(lab2);
+    error("the string table is full", NULL);
   }
   return lab;
 }
