@@ -273,9 +273,9 @@ static int sinitlist(int size, int prim, int *pinit) {
 
     if (prim & STCMASK) {
       /* debugging */
-      printf("sinitlist 1 before call to sinitstruct\n");
+      //printf("sinitlist 1 before call to sinitstruct\n");
       sinitstruct(prim, &v, &i);
-      printf("sinitlist 1 after call to sinitstruct\n");
+      //printf("sinitlist 1 after call to sinitstruct\n");
     } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
@@ -624,7 +624,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
     /* need to emit error for struct/union */
     if (comptype(*pprim)) {
-      /* debugging */
       Token = scan();
 
       if (PSTRUCT == stc) {
@@ -637,10 +636,10 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
         } else if (CLSTATC == scls) {
           sgen(";---- initialize local static %s %s", "struct", name);
           /* debugging */
-          printf("declarator before sinitstruct val = %d, init = %d\n", *pval, *pinit);
+          //printf("declarator before sinitstruct val = %d, init = %d\n", *pval, *pinit);
           sinitstruct(*pprim, pval, pinit);
           /* debugging */
-          printf("declarator after sinitstruct val = %d, init = %d\n", *pval, *pinit);
+          //printf("declarator after sinitstruct val = %d, init = %d\n", *pval, *pinit);
         } else {
           sgen(";---- initialize global %s %s", "structure", name);
           isize = initstruct(name, *pprim, pinit);
@@ -771,11 +770,11 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
       } else if (CLSTATC == scls) {
         sgen(";---- initialize local static %s %s", "array", name);
         /* debugging */
-        printf("declarator before sinitlist *pval = %d, *pinit = %d\n", *pval, *pinit);
+        //printf("declarator before sinitlist *pval = %d, *pinit = %d\n", *pval, *pinit);
         isize = sinitlist(autosize ? 0 : *psize, *pprim, pinit);
         /* debugging */
-        printf("declarator after sinitlist *psize = %d, *pval = %d, init = %d\n",
-        *psize, *pval, *pinit);
+        //printf("declarator after sinitlist *psize = %d, *pval = %d, init = %d\n",
+        //*psize, *pval, *pinit);
 
       } else {
         sgen(";---- initialize global %s %s", "array", name);
@@ -1045,7 +1044,7 @@ static int localdecls(void) {
 
       type = declarator(0, CLSTATC, name, &prim, &size,  &val, &ini);
       /* debugging */
-      printf("after declarator 1: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
+      //printf("after declarator 1: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
 
     } else {
       /* need to pad struct/union at top of list in case its returned */
@@ -1056,7 +1055,7 @@ static int localdecls(void) {
       }
       type = declarator(0, CAUTO, name, &prim, &size,  &val, &ini);
       /* debugging */
-      printf("after declarator 2: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
+      //printf("after declarator 2: prim = %d, size = %d, val = %d, ini = %d\n", prim, size, val, ini);
 
     }
     type = upgrade_array(utype, type, &size);
@@ -1064,14 +1063,12 @@ static int localdecls(void) {
     //grw - created macro for alignment size
     rsize = ALIGNED(rsize);
     /* debugging */
-    printf("prim = %d, size = %d, rsize = %d, ini = %d, stat = %d\n",
-    prim, size, rsize, ini, stat);
+    //printf("prim = %d, size = %d, rsize = %d, ini = %d, stat = %d\n",
+    //prim, size, rsize, ini, stat);
 
     //grw - and pass new label, value to addloc for uninitialized array
     if (stat) {
       /* generate label for static declaration */
-      /* debugging */
-      printf("before addloc ini = %d, val = %d\n", ini, val);
       if (!ini)
         ini = label();
       addloc(name, prim, type, CLSTATC, size,  ini, val);
@@ -1734,10 +1731,6 @@ static int initstruct(char *name, int prim, int *pinit) {
     /* debugging */
     //printf("initstruct 1 mprim = %d, mtype = %d, msize = %d\n", mprim, mtype, msize);
 
-    //if ((mprim & STCMASK) || isArray(mtype)) {
-    //  error("Complex structure initializations are not supported.", NULL);
-    //  break;
-    //}
     /*
      * type qualifiers do not affect type matching
      * so remove any type qualifier bits from primitive type before comparing
