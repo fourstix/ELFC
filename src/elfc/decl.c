@@ -154,8 +154,6 @@ static int initlist(char *name, int prim, int *pinit) {
      * so remove any type qualifier bits from primitive type before comparing
      */
     if (prim & STCMASK) {
-      /* debugging */
-      printf("initlist (complex) v = %d\n", v);
       /* don't do anything for structures */
     } else if (PCHAR == (prim & ~TQMASK)) {
       if (v < 0 || v > 255) {
@@ -291,8 +289,7 @@ static int sinitlist(int size, int prim, int *pinit) {
      */
 
      if (prim & STCMASK) {
-       /* debugging */
-       printf("sinitlist (complex) v = %d\n", v);
+       /* don't do anything for structures */
      } else if (PCHAR == (prim & ~TQMASK)) {
       if (v < 0 || v > 255) {
         sprintf(errbuf, "%d", v);
@@ -656,16 +653,12 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
         }
 
         if (isglobal(scls)) {
-          /* debugging */
-          printf("declarator 1: setting *pinit = 1 for global\n");
           *pinit = 1;
         }
       } else if (PUNION == stc) {
         /* Unions are initialized by the first type */
         *pval = constexpr();
         if (isglobal(scls)) {
-          /* debugging */
-          printf("declarator 2: setting *pinit = 1 for global\n");
           *pinit = 1;
         }
       } else {
@@ -703,8 +696,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
       error("non-zero pointer initialization", NULL);  */
     //grw - do not change pinit for static variables
     if (*pinit == 0 && CLSTATC != scls) {
-      /* debugging */
-      printf("declarator 3: setting *pinit = 1\n");
       *pinit = 1;
     }
 
@@ -793,8 +784,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
 
       //grw - set ini to 1 for initialized global static and public arrays
       if (isglobal(scls)) {
-        /* debugging */
-        printf("declarator 1: setting *pinit = 1 for global\n");
         *pinit = 1;
       }
       //grw - set value to 1 for initialized array
@@ -2062,8 +2051,8 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
       sinitlist(msize, mprim, &i);
       /* debugging */
       printf("sinitstruct 4 after call to sinitlist i = %d\n", i);
-      //grw - label string inside structure
-      i = label();
+      //grw - label string inside structure, first label is *pinit
+      i = n ? label() : *pinit;
       addlso(mprim, mtype, msize, i, 0);
 
     } else if (CHARPTR == mprim) {
@@ -2078,10 +2067,7 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
      */
     if ((mprim & STCMASK) || isArray(mtype)) {
       /* debugging */
-      printf("sinitstruct complex type *pinit = %d, v = %d, i = %d\n", *pinit, v, i);
-      //grw - set values to skip complex member
-      //ibuf[n] = 0;
-      //ybuf[n] = 0;
+      //printf("sinitstruct complex type *pinit = %d, v = %d, i = %d\n", *pinit, v, i);
     } else if (PCHAR == mprim) {
       if (v < 0 || v > 255) {
         sprintf(errbuf, "%d", v);
@@ -2089,8 +2075,6 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
       }
       /* add to the character array buffer */
       addmemberlso(y, n, *pinit, v);
-      //ibuf[n] = v;
-      //ybuf[n] = y;
     } else if (PSCHAR == mprim) {
       //grw - add support for type qualifiers
       if (v < -128 || v > 127) {
@@ -2099,8 +2083,6 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
       }
       /* add to the character array buffer */
       addmemberlso(y, n, *pinit, v);
-      //ibuf[n] = v;
-      //ybuf[n] = y;
     } else if (CHARPTR == mprim) {
       /* character pointer label is in init */
       addmemberlso(y, n, *pinit, v);
