@@ -1,10 +1,7 @@
 #ifndef _MATH32_H_
 #define _MATH32_H_
 
-/* include stdlib if not included already */
-#ifndef _STDLIB_
-#include <stdlib.h>
-#endif
+#include <stdint.h>
 
 #ifndef _ELFCLIB_
 #pragma .link .library math32.lib
@@ -31,8 +28,12 @@ int32_t i32_from_int(int v);
 uint32_t u32_from_uint(unsigned int v);
 
 /* Cast 32-bit number to int */
-#define int_from_i32(v)      ((int)(v).low)
-#define uint_from_u32(v)     ((unsigned int)(v).low)
+int int_from_i32(int32_t v);
+unsigned int uint_from_u32(uint32_t v);
+
+/* Concatenate two 16-bit unsigned numbers to 32-bit */
+int32_t make_i32(uint16_t high, uint16_t low);
+uint32_t make_u32(uint16_t high, uint16_t low);
 
 /* Cast between signed and unsigned */
 int32_t i32_from_u32(uint32_t v);
