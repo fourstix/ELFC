@@ -352,7 +352,7 @@
 /Cstrlen 0061 00
 \Cstrlen 0062
 ?auto_err 0068
-:0060 d4 00 00 d9 03 00 02 c3 00 00 d9 42 ff fe d9 0c
+:0060 d4 00 00 d9 03 00 02 c3 00 00 d9 0c d9 42 ff fe
 :0070 d9 84 d9 3c ff fc d9 09 d9 42 ff fc d9 12 00 01
 :0080 d9 42 ff fe d9 84 d9 c9 d9 09 9a 52 8a f1 ca 00
 :0090 94 c0 00 cc c0 00 a4 d9 42 ff fc d9 54 ff fc d9
@@ -401,14 +401,14 @@
 \Cstrlen 0039
 ?auto_err 003f
 :0030 c0 00 4e d9 42 00 02 d4 00 00 d9 03 00 02 c3 00
-:0040 00 d9 42 ff fe d9 0c d9 84 d9 09 c0 00 7a d9 42
+:0040 00 d9 0c d9 42 ff fe d9 84 d9 09 c0 00 7a d9 42
 :0050 00 04 d9 42 ff fe d9 87 d9 42 00 02 d9 42 ff fe
 /Cstrlcpy 0067 00
 \Cstrlcpy 0068
 ?auto_err 006e
 :0060 d9 42 00 00 d9 84 d4 00 00 d9 03 00 06 c3 00 00
 ?auto_err 007f
-:0070 d9 42 ff fe d9 0c d9 84 d9 09 d9 03 00 02 c3 00
+:0070 d9 0c d9 42 ff fe d9 84 d9 09 d9 03 00 02 c3 00
 ?stk_err 0085
 :0080 00 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
 +002e
@@ -753,8 +753,8 @@
 /Cstrcspn 0035 00
 \Cstrcspn 0036
 ?auto_err 003c
-:0030 d9 42 ff fe d4 00 00 d9 03 00 04 c3 00 00 d9 42
-:0040 ff fe d9 0c d9 84 d9 3c ff fc d9 09 d9 42 ff fc
+:0030 d9 42 ff fe d4 00 00 d9 03 00 04 c3 00 00 d9 0c
+:0040 d9 42 ff fe d9 84 d9 3c ff fc d9 09 d9 42 ff fc
 :0050 d9 7b 00 d9 09 9a 52 8a f1 c2 00 73 d9 42 ff fc
 :0060 d9 4e ff fc d9 12 00 00 d9 81 d9 09 d9 60 d9 09
 :0070 c0 00 7d d9 12 00 00 d9 3c ff fc d9 09 d9 42 00

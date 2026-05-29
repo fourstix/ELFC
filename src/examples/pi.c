@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <mathi32.h>
+#include <math32.h>
 #include <time.h>
 
 int main(int argc, char *argv[]) {
@@ -39,9 +39,9 @@ int main(int argc, char *argv[]) {
 
         for (i = len; i >= 1; i--)
         {
-            x = addi32(toi32(10 * a[i]), toi32(q * i));            
+            x = addi32(i32_from_int(10 * a[i]), i32_from_int(q * i));            
             d = 2 * i - 1;
-            y = divi32(x, toi32(d), &r);
+            y = divi32(x, i32_from_int(d), &r);
             a[i] = r.low;
             q = y.low;
         }

@@ -19,10 +19,7 @@ call build
 cd ..\time
 call clean
 call build
-cd ..\mathi32
-call clean
-call build
-cd ..\mathu32
+cd ..\math32
 call clean
 call build
 cd ..\elfstd

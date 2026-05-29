@@ -1,20 +1,20 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <errno.h>
-#include <mathi32.h>
+#include <math32.h>
 
 #pragma             extrn Cerrno
 #pragma             extrn C_fildes
-#pragma             extrn Ctoi32
+#pragma             extrn Ci32_from_int
 #pragma             extrn Ccmpi32
-#pragma .link .library mathi32.lib
+#pragma .link .library math32.lib
 
 off_t lseek32(int fd, off_t offset, int how) {
   int fildes;
   off_t result;
   off_t eof;
 
-  eof = toi32(EOF);
+  eof = i32_from_int(EOF);
 
   /* get system file descriptor */
   fildes = _fildes(fd);

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <mathi32.h>
+#include <math32.h>
 
 int	Errors = 0;
 int result = EXIT_SUCCESS;
@@ -62,21 +62,21 @@ int main() {
   if (n.high != 0x0002 || n.low != 0xbf23) fail("subi32-2");
 
   pr("toi32");
-  x = toi32(5);
+  x = i32_from_int(5);
   if (x.low != 0x0005 || x.high != 0) fail("toi32-1");
 
-  x = toi32(-5);
+  x = i32_from_int(-5);
   if (x.low != 0xfffb || x.high != 0xffff) fail("toi32-2");
 
   pr("muli32");
-  x = toi32(5);
+  x = i32_from_int(5);
   n = muli32(a, x);
   if (n.high != 0x0004 || n.low != 0x93e5) fail("muli32-1");
 
   n = muli32(b, x);
   if (n.high != 0xfffb || n.low != 0x6c1b) fail("muli32-2");
 
-  x = toi32(-5);
+  x = i32_from_int(-5);
   n = muli32(b, x);
   if (n.high != 0x0004 || n.low != 0x93e5) fail("muli32-3");
 
@@ -84,25 +84,18 @@ int main() {
   if (n.high != 0xfffb || n.low != 0x6c1b) fail("muli32-4");
 
   pr("negi32");
-  //x = negi32(a);
-  //printf("x.high = %04X, x.low = %04X\n", x.high, x.low);
+  x = negi32(a);
   if (cmpi32(negi32(a), b)) fail("negi32-1");
-  //if (cmpi32(x, b)) fail("negi32-1");
 
-  //x = negi32(b);
-  //printf("x.high = %04X, x.low = %04X\n", x.high, x.low);
+  x = negi32(b);
   if (cmpi32(a, negi32(b))) fail("negi32-2");
-  //if (cmpi32(a, x)) fail("negi32-2");
-
 
   x = negi32(n);
-  //printf("x.high = %04X, x.low = %04X\n", x.high, x.low);
-  if (cmpi32(a, negi32(b))) fail("negi32-2");
-  if (x.high != 0x0004 || x.low != 0x93e5) fail("negi32-3");
+  if (cmpi32(a, negi32(b))) fail("negi32-3");
+  if (x.high != 0x0004 || x.low != 0x93e5) fail("negi32-4");
 
   n = negi32(x);
-  //printf("n.high = %04X, n.low = %04X\n", n.high, n.low);
-  if (n.high != 0xfffb || n.low != 0x6c1b) fail("negi32-4");
+  if (n.high != 0xfffb || n.low != 0x6c1b) fail("negi32-5");
 
 
   pr("absi32");
@@ -115,9 +108,6 @@ int main() {
 	b = atoi32("10000");
 	n = divi32(a,b, &x);
 
-	//printf("a = %04X:%04X / b %04X:%04X\n", a.high, a.low, b.high, b.low);
-	//printf("quot = %04X:%04X, rem = %04X:%04X\n", n.high, n.low, x.high, x.low);
-
 	if (n.high != 0 || n.low != 0x0200) fail("divi32-1");
 	if (x.high != 0 || x.low != 0x0003) fail("divi32-2");
 
@@ -126,9 +116,6 @@ int main() {
 	b = atoi32("10000");
 	n = divi32(a,b, &x);
 
-	//printf("a = %04X:%04X / b %04X:%04X\n", a.high, a.low, b.high, b.low);
-	//printf("quot = %04X:%04X, rem = %04X:%04X\n", n.high, n.low, x.high, x.low);
-
 	if (n.high != 0xffff || n.low != 0xfe00) fail("divi32-3");
 	if (x.high != 0xffff || x.low != 0xfffd) fail("divi32-4");
 
@@ -136,9 +123,6 @@ int main() {
 	a = atoi32("-5120003");
 	b = atoi32("-10000");
 	n = divi32(a,b, &x);
-
-	//printf("a = %04X:%04X / b %04X:%04X\n", a.high, a.low, b.high, b.low);
-	//printf("quot = %04X:%04X, rem = %04X:%04X\n", n.high, n.low, x.high, x.low);
 
 	if (n.high != 0 || n.low != 0x0200) fail("divi32-5");
 	if (x.high != 0xffff || x.low != 0xfffd) fail("divi32-6");
@@ -151,30 +135,26 @@ int main() {
 
 	pr("strtoi32");
 	n = strtoi32("-5120003junk", &endp, 10);
-	if (n.high != 0xffb1 || n.low != 0xdffd) fail("strtoi32-3");
+	if (n.high != 0xffb1 || n.low != 0xdffd) fail("strtoi32-1");
 	if (!endp) fail("strtoi32-2");
 	if (strcmp(endp, "junk")) fail("strtoi32-3");
-	//printf("n = %04X:%04X  endp = %s\n", n.high, n.low, endp);
 
 	n = strtoi32("030d416F", &endp, 16);
 	if (n.high != 0x030d || n.low != 0x416f) fail("strtoi32-4");
 	if (!endp) fail("strtoi32-5");
 	if (strlen(endp)) fail("strtoi32-6");
-	//printf("n = %04X:%04X  endp = %s\n", n.high, n.low, endp);
 
 	pr("shli32");
 	a.high = 0x5555;
   a.low  = 0xaaaa;
 	n = shli32(a, 1);
 	if (n.high != 0xaaab || n.low != 0x5554) fail("shli32-1");
-  //printf("n = %04X:%04X\n", n.high, n.low, endp);
 
 	pr("shri32");
 	a.high = 0xaaaa;
 	a.low  = 0x5555;
 	n = shri32(a, 1);
 	if (n.high != 0x5555 || n.low != 0x2AAA) fail("shri32-1");
-	//printf("n = %04X:%04X\n", n.high, n.low, endp);
 
   if (!Errors)
     printf("All tests passed.\n");
