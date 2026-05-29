@@ -670,7 +670,8 @@ typedef struct uint32 uint32_t;
 * _atoi32(char *str)_ - Convert a string into 32-bit integer
 * _char *i32toa(a, char *str)_ - Convert 32-bit integer to string, returns pointer to beginning of string
 * _strtoi32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit integer
-
+* _int_from_i32(n)_ - Cast 32-bit to 16-bit signed integer
+* _make_i32(unsigned int high, unsigned int low)_ Create 32-bit integer from high and low words
 *Note: all variables and return values are type `int32_t`, unless typed differently*
 
 **The following unsigned 32-bit functions are supported in the ElfC math32 library.**
@@ -688,6 +689,8 @@ typedef struct uint32 uint32_t;
 * _atou32(char *str)_ - Convert a string into unsigned 32-bit integer
 * _char *u32toa(a, char *str)_ - Convert 32-bit unsigned integer to string, returns pointer to beginning of string
 * _strtou32(const char *nptr, char **endptr, int base)_ - Convert string to 32-bit unsigned integer
+* _uint_from_u32(n)_ - Cast 32-bit to 16-bit unsigned integer
+* _make_u32(unsigned int high, unsigned int low)_ Create 32-bit unsigned integer from high and low words
 
 *Note: all variables and return values are type `uint32_t`, unless typed differently*
 
