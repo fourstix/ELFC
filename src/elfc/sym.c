@@ -371,16 +371,9 @@ int addloc(char *name, int prim, int type, int scls, int size, int val,
    y = newloc();
   if (CLSTATC == scls) {
     //grw - add local static object to list unless initialized structure
-    /* debugging */
-    //printf("addloc static: name = %s, prim = %d, size = %d, val = %d, init = %d\n",
-    //  name, prim, size, val, init);
     if (!(prim & STCMASK) || !init) {
       addlso(prim, type, size, val, init);
       lgen(";----- Local static object %s defined as %c%d", name, val);
-    } else {
-      /* debugging */
-      //printf("addloc: skipping prim = %d (prim & ~STCMASK = %d), init = %d, val = %d\n",
-      // prim, (prim & STCMASK), init, val);
     }
   }
   Names[y] = locname(name);
