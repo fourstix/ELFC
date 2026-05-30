@@ -823,8 +823,11 @@ void gendefpstr(int v) {
   //grw - commit jump to entry point in library object
   if (O_library)
     commit();
-
-  cgdefpstr(v);
+  /* print a poitner as label bytes, or zero for NULL */
+  if (v)
+    cgdefpstr(v);
+  else
+    cgdefp(v);
 }
 
 /* generate a list of pointers to strings */
@@ -836,7 +839,11 @@ void genpstrs(int *a, int len) {
 
   for (i = 0; i < len; i++) {
     v = a[i];
-    cgdefpstr(v);
+    /* print a string label as data bytes, or zero bytes for NULL */
+    if (v)
+      cgdefpstr(v);
+    else
+      cgdefp(v);
   }
 }
 

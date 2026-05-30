@@ -1,6 +1,11 @@
 #ifndef _MATH32_H_
 #define _MATH32_H_
 
+/* include stdlib if not included already */
+#ifndef _STDLIB_
+#include <stdlib.h>
+#endif
+
 #include <stdint.h>
 
 #ifndef _ELFCLIB_

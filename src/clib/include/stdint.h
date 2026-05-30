@@ -1,6 +1,11 @@
 #ifndef STDINT_H_
 #define STDINT_H_
 
+/* include stdlib if not included already */
+#ifndef _STDLIB_
+#include <stdlib.h>
+#endif
+
 /* 7.18.1.1 Exact-width integer types */
 typedef char int8_t;
 typedef unsigned char uint8_t;
