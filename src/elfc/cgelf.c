@@ -567,7 +567,7 @@ void cgcalr(int n)	{gen(";----- cgcalr");
 //grw - removed cgalign
 
 void cgdefb(int v)	{
-	ngen("%s\t$%02x    ;----- cgdefb", "db", v); }
+	ngen("%s\t$%02x    ;----- cgdefb", "db", v&0x00FF); }
 
 void cgdefw(int v)	{
 	ngen2("%s\t$%02x, $%02x  ;----- cgdefw LSB first, MSB second", "db",	v&0x00FF, (v&0xFF00)>>8); }

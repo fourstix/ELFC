@@ -115,6 +115,9 @@ void genlab(int id) {
     Q_jmp = jnone;
   }
   commit();
+  //grw - zero is used to skip labels
+  if (!id)
+    return;
   //grw - precede label with new line
   fprintf(Outfile, "\n%c%d:\n", LPREFIX, id);
 }
@@ -779,17 +782,18 @@ void genlocinit(void) {
 }
 
 /* static and public data definitions */
-//grw - removed static param from genbss
-void genbss(char *name, int len) {
+void genbss(char *name, int len, int align) {
   //grw - commit jump to entry point in library object
   if (O_library)
     commit();
   genraw(name);
-   genraw(":");
+  genraw(":");
 
   //grw - created macro for alignment size
-  //cgdata((len + INTSIZE-1) / INTSIZE * INTSIZE);
-  cgdata(ALIGNED(len));
+  if (align)
+    cgdata(ALIGNED(len));
+  else
+    cgdata(len);
 }
 
 /*
@@ -819,8 +823,11 @@ void gendefpstr(int v) {
   //grw - commit jump to entry point in library object
   if (O_library)
     commit();
-
-  cgdefpstr(v);
+  /* print a poitner as label bytes, or zero for NULL */
+  if (v)
+    cgdefpstr(v);
+  else
+    cgdefp(v);
 }
 
 /* generate a list of pointers to strings */
@@ -832,7 +839,11 @@ void genpstrs(int *a, int len) {
 
   for (i = 0; i < len; i++) {
     v = a[i];
-    cgdefpstr(v);
+    /* print a string label as data bytes, or zero bytes for NULL */
+    if (v)
+      cgdefpstr(v);
+    else
+      cgdefp(v);
   }
 }
 

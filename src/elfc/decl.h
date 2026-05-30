@@ -10,6 +10,8 @@ int	addloc(char *name, int prim, int type, int scls, int size, int val,
 		int init);
 //grw - made defloc public
 void defloc(struct lstat_obj *p);
+//grw - made addlso public
+void addlso(int prim, int type, int size, int val, int init);
 
 int	binoptype(int op, int p1, int p2);
 int	chrpos(char *s, int c);
@@ -55,8 +57,7 @@ void	genbrtrue(int dest);
 //grw - added short-circuit code generators
 void	genscfalse(int dest);
 void	gensctrue(int dest);
-//grw - removed static param from genbss
-void	genbss(char *name, int len);
+void	genbss(char *name, int len, int align);
 void	gencall(int y);
 void	gencalr(void);
 void	gencmp(char *inst);
@@ -248,6 +249,8 @@ int	strexpr(void);
 void initexpr(void);
 //grw - global storage classes are CSTATIC and CPUBLIC
 int isglobal(int scls);
+//grw - storage classes CSTATIC, CLSTAT and CPUBLIC are static
+int isstatic(int scls);
 //grw - added function to pad partially initialized arrays
 void genzpad(int n);
 //grw - added function to push string onto stack for local intializations
@@ -300,3 +303,5 @@ void genderefa(void);
 int ptrwarning(int p1, int p2);
 //grw - generate an array of string references
 void	genpstrs(int *a, int len);
+//grw - get next member of structure
+int nextmember(int y);
