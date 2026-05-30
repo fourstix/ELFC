@@ -57,7 +57,7 @@ void	genbrtrue(int dest);
 //grw - added short-circuit code generators
 void	genscfalse(int dest);
 void	gensctrue(int dest);
-void	genbss(char *name, int len);
+void	genbss(char *name, int len, int align);
 void	gencall(int y);
 void	gencalr(void);
 void	gencmp(char *inst);
@@ -249,6 +249,8 @@ int	strexpr(void);
 void initexpr(void);
 //grw - global storage classes are CSTATIC and CPUBLIC
 int isglobal(int scls);
+//grw - storage classes CSTATIC, CLSTAT and CPUBLIC are static
+int isstatic(int scls);
 //grw - added function to pad partially initialized arrays
 void genzpad(int n);
 //grw - added function to push string onto stack for local intializations

@@ -204,7 +204,7 @@ static int initlist(char *name, int prim, int *pinit) {
  */
 
 static int sinitlist(int size, int prim, int *pinit) {
-  int   n = 0;
+  int  n = 0;
   int  v = 0;
   int  len = 0;
   int  i = 0;
@@ -269,18 +269,27 @@ static int sinitlist(int size, int prim, int *pinit) {
     return v;
   }
   lbrace();
+  /* mark init to be assigned */
+  *pinit = 0;
   while (Token != RBRACE) {
-
     if (prim & STCMASK) {
-      /* debugging */
-      //printf("sinitlist 1 before call to sinitstruct\n");
       sinitstruct(prim, &v, &i);
-      //printf("sinitlist 1 after call to sinitstruct\n");
+      /* count structures since loop count is number of braces */
+      len++;
+      /* debugging */
+      //printf("sinitlist 1 after call to sinitstruct: len = %d, i = %d, v = %d\n", len, i, v);
+      /* set init if first element is a structure structure label */
+      if (1 == len) {
+        *pinit = i;
+        /* debugging */
+        //printf("sinitlist 2 setting label to %d\n", *pinit);
+      }
     } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
       v = constexpr();
     }
+
     //grw - add support for type qualifiers
     /* if (PCHAR == prim) { */
     /*
@@ -295,7 +304,6 @@ static int sinitlist(int size, int prim, int *pinit) {
         sprintf(errbuf, "%d", v);
         error("initializer out of range: %s", errbuf);
     }
-      /* add to the character array buffer */
       sbuf[n] = v;
     } else if (PSCHAR == (prim & ~TQMASK)) {
       //grw - add support for type qualifiers
@@ -319,7 +327,21 @@ static int sinitlist(int size, int prim, int *pinit) {
   }
   Token = scan();
   /* check for no initializers or too many initializers */
-  if (!n || (size && n > size)) {
+  if (prim & STCMASK) {
+    /* debugging */
+    //printf("sinitlist n = %d, len = %d, size = %d\n", n, len, size);
+    if (size && len > size) {
+      error(str_err, NULL);
+    } else if (len < size) {
+      i = size - len;
+      v = objsize(prim, TARRAY, i);
+      /* debugging */
+      //printf("padding local static array with %d bytes for %d structures\n", v, i);
+      addlso(PCHAR, TARRAY, v, 0, 0);
+    }
+    /* set n to element count */
+    n = size;
+  } else if (!n || (size && n > size)) {
     /* show corrrect error message */
     if (!n) {
       error("no initializers", NULL);
@@ -330,11 +352,18 @@ static int sinitlist(int size, int prim, int *pinit) {
     ls_objs[lso_idx].ilist = NULL;
     free(buf);
   } else {
+    /* pad with additional 0 values */
+    while (n < size) {
+      if (chartype(prim)) {
+        sbuf[n] = 0;
+      } else {
+        ibuf[n] = 0;
+      }
+      n++;
+    }
     ls_objs[lso_idx].isize = n;
     ls_objs[lso_idx].ilist = buf;
   }
-  /* mark init to be assigned */
-  *pinit = 0;
 
   return n;
 }
@@ -1743,6 +1772,7 @@ static int initstruct(char *name, int prim, int *pinit) {
       /* debugging */
       //printf("initstruct 3 before call to initstruct\n");
       initstruct(NULL, mprim, &v);
+      /* debugging */
       //printf("initstruct 4 after call to initstruct\n");
       //printf("LBRACE = %d RBRACE =%d COMMA = %d\n", LBRACE, RBRACE, COMMA);
       //printf("initstruct 4a Token = %d\n", Token);
@@ -1750,6 +1780,7 @@ static int initstruct(char *name, int prim, int *pinit) {
       /* debugging */
       //printf("initstruct 5 before call to initlist mprim = %d\n", mprim);
       isize = initlist(NULL, mprim, &v);
+      /* debugging */
       //printf("initstruct 6 after call to initlist\n");
 
       rsize = objsize(mprim, mtype, msize);
@@ -1943,7 +1974,7 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
     for (i = 0;  i < v; i++) {
       //grw - pad with zero int for uninitialized member fields
       /* debugging */
-      printf("padding (v) = %d\n", v);
+      //printf("padding (v) = %d\n", v);
       vbuf[n] = 0;
       pbuf[n++] = PINT;
     }
@@ -1970,8 +2001,8 @@ msize = objsize(mprim, mtype, msize);
 msize = ALIGNED(msize);
 
 /* debugging */
-printf("adding lso i = %d, y = %d, mprim = %d, mtype = %d, msize = %d, val = %d, init = %d\n",
-  i, y, mprim, mtype, msize, value, init);
+//printf("adding lso i = %d, y = %d, mprim = %d, mtype = %d, msize = %d, val = %d, init = %d\n",
+//  i, y, mprim, mtype, msize, value, init);
 
 ls_objs[lso_idx].isize = 0;
 ls_objs[lso_idx].ilist = NULL;
@@ -2007,7 +2038,7 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
   int nsize = 0;
 
   /* debugging */
-  printf("sinitstruct prim = %d pval =%d, pinit = %d\n", prim, *pval, *pinit);
+  //printf("sinitstruct prim = %d pval =%d, pinit = %d\n", prim, *pval, *pinit);
 
   y = prim & ~STCMASK;
 
@@ -2032,18 +2063,21 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
 
     if (mprim & STCMASK) {
       /* debugging */
-      printf("sinitstruct 1 before call to sinitstruct\n");
+      //printf("sinitstruct 1 before call to sinitstruct n = %d, *pinit = %d\n", n, *pinit);
       //grw - call sinstruct with dummy values
       sinitstruct(mprim, &v, &i);
-      printf("sinitstruct 2 after call to sinitstruct v = %d, i = %d\n", v, i);
+      /* set pinit to label from first structure */
+      if (0 == n) *pinit = i;
+      /* debugging */
+      //printf("sinitstruct 2 after call to sinitstruct n = %d, v = %d, i = %d *pinit = %d\n", n, v, i, *pinit);
     } else if (isArray(mtype)) {
       /* debugging */
-      printf("sinitstruct 3 before call to sinitlist i = %d\n", i);
+      //printf("sinitstruct 3 before call to sinitlist i = %d\n", i);
       if (chartype(mprim))
         msize = ALIGNED(msize);
       sinitlist(msize, mprim, &i);
       /* debugging */
-      printf("sinitstruct 4 after call to sinitlist i = %d\n", i);
+      //printf("sinitstruct 4 after call to sinitlist i = %d\n", i);
       //grw - label string inside structure, first label is *pinit
       i = n ? label() : *pinit;
       addlso(mprim, mtype, msize, i, 0);
@@ -2096,18 +2130,18 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
   Token = scan();
 
   /* debugging */
-  printf("sinitstruct: nsize = %d, rsize = %d\n", nsize, rsize);
+  //printf("sinitstruct: nsize = %d, rsize = %d\n", nsize, rsize);
   if (nsize < rsize) {
     v = rsize - nsize;
     /* debugging */
-    printf("sinitstruct: padding v = %d\n", v);
+    //printf("sinitstruct: padding v = %d\n", v);
     addlso(PCHAR, TARRAY, v, 0, 0);
   } else if (nsize > rsize) {
     error("Initialization list is too large.", NULL);
   }
   *pval = 1;
   /* debugging */
-  printf("sinitstruct: returning *pinit = %d, *pval = %d, n = %d\n", *pinit, *pval, n);
+  //printf("sinitstruct: returning *pinit = %d, *pval = %d, n = %d\n", *pinit, *pval, n);
   return n;
 }
 

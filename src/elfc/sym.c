@@ -142,8 +142,8 @@ char *locname(char *s) {
 
 static void defglob(char *name, int prim, int type, int size, int val,
       int scls, int init) {
+  int aligned = !isstatic(scls);
 
-  //if (TCONSTANT == type || TFUNCTION == type) return;
   if (isConstant(type) || isFunction(type)) return;
 
   if (CPUBLIC == scls) genpublic(name);
@@ -154,32 +154,32 @@ static void defglob(char *name, int prim, int type, int size, int val,
   if (!isArray(type) && !(prim & STCMASK)) genname(name);
 
   if (prim & STCMASK) {
-    //grw - struct/union data objects are aligned
+    //grw - struct/union data objects are always aligned
     if (isArray(type)) {
-      genbss(gsym(name), objsize(prim, TARRAY, size));
+      genbss(gsym(name), objsize(prim, TARRAY, size), 1);
     }  else {
       if (!init)
-        genbss(gsym(name), objsize(prim, TVARIABLE, size));
+        genbss(gsym(name), objsize(prim, TVARIABLE, size), 1);
     }
   /* check to see if char ptr initialized with string */
   } else if (prim == CHARPTR && init == -1) {
     gendefpstr(val);
   } else if (chartype(prim)) {
     if (isArray(type)) {
-      genbss(gsym(name), size);
+      genbss(gsym(name), size, aligned);
     } else {
         gendefb(val);
     }
     //grw - removed static param from genbss
   }  else if (pinttype(prim)) {
     if (isArray(type)) {
-      genbss(gsym(name), size*INTSIZE);
+      genbss(gsym(name), size*INTSIZE, aligned);
     } else {
       gendefw(val);
     }
   } else {
     if (isArray(type)) {
-      genbss(gsym(name), size*PTRSIZE);
+      genbss(gsym(name), size*PTRSIZE, aligned);
     } else {
       gendefp(val);
     }
@@ -281,11 +281,12 @@ void defloc(struct lstat_obj *p) {
   char *pc;
 
   if (!isArray(p->type) && !(p->prim & STCMASK)) genlab(p->val);
+  /* structure members are always aligned */
   if (p->prim & STCMASK) {
     if (isArray(p->type))
-      genbss(labname(p->val), objsize(p->prim, TARRAY, p->size));
+      genbss(labname(p->val), objsize(p->prim, TARRAY, p->size), 1);
     else
-      genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size));
+      genbss(labname(p->val), objsize(p->prim, TVARIABLE, p->size), 1);
   } else if (p->prim == CHARPTR && isVariable(p->type)) {
     if (p->init) {
       gendefpstr(p->init);
@@ -352,9 +353,9 @@ void defloc(struct lstat_obj *p) {
       gendefw(p->init);
     }
   }  else {
-    /* arrays of structures are not initialized */
+    /* arrays of pointers are aligned */
     if (isArray(p->type))
-      genbss(labname(p->val), (p->size)*PTRSIZE);
+      genbss(labname(p->val), (p->size)*PTRSIZE, 1);
     else
       gendefp(p->init);
   }
@@ -370,17 +371,16 @@ int addloc(char *name, int prim, int type, int scls, int size, int val,
    y = newloc();
   if (CLSTATC == scls) {
     //grw - add local static object to list unless initialized structure
-    //grw - TODO: fix logic
     /* debugging */
-    printf("addloc static: name = %s, prim = %d, size = %d, val = %d, init = %d\n",
-      name, prim, size, val, init);
+    //printf("addloc static: name = %s, prim = %d, size = %d, val = %d, init = %d\n",
+    //  name, prim, size, val, init);
     if (!(prim & STCMASK) || !init) {
       addlso(prim, type, size, val, init);
       lgen(";----- Local static object %s defined as %c%d", name, val);
     } else {
       /* debugging */
-      printf("addloc: skipping prim = %d (prim & ~STCMASK = %d), init = %d, val = %d\n",
-       prim, (prim & STCMASK), init, val);
+      //printf("addloc: skipping prim = %d (prim & ~STCMASK = %d), init = %d, val = %d\n",
+      // prim, (prim & STCMASK), init, val);
     }
   }
   Names[y] = locname(name);
@@ -568,6 +568,13 @@ int isglobal(int scls) {
   return (CPUBLIC == scls || CSTATIC == scls);
 }
 
+
+/*
+ * Test for static types (Public, Static and Local Static)
+ */
+int isstatic(int scls) {
+  return (CPUBLIC == scls || CSTATIC == scls || CLSTATC == scls);
+}
 
 /*
  * Test metatype t for a particular value.

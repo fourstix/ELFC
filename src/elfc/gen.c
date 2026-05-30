@@ -782,7 +782,7 @@ void genlocinit(void) {
 }
 
 /* static and public data definitions */
-void genbss(char *name, int len) {
+void genbss(char *name, int len, int align) {
   //grw - commit jump to entry point in library object
   if (O_library)
     commit();
@@ -790,7 +790,10 @@ void genbss(char *name, int len) {
   genraw(":");
 
   //grw - created macro for alignment size
-  cgdata(ALIGNED(len));
+  if (align)
+    cgdata(ALIGNED(len));
+  else
+    cgdata(len);
 }
 
 /*
