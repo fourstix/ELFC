@@ -27,7 +27,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   static char *_days[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
       "Friday", "Saturday" };
   static char *_months[12] = { "January", "February", "March", "April", "May", "June",
-     "August", "September", "October", "November", "December"};
+     "July", "August", "September", "October", "November", "December"};
   static char *_days_ab[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
   static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
      "Sep", "Oct", "Nov", "Dec"};
