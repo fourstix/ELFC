@@ -313,6 +313,7 @@ char vowels[5] = {'a','e','i','o','u'};
 int values[] = {10, 20, 30};
 ```
 *Note:*
+* Unititialized values at the end of the list are set to 0.
 * ElfC does not pad the inner dimensions of multi-dimensional arrays, so the first example is initialized as `{1,2,3,4,0,0}` and *not* `{1,2,0,3,4,0}`
 
 **An array of characters may be initializd by a string**
