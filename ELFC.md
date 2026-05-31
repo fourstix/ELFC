@@ -298,6 +298,53 @@ Notes:
 * Declaring a variable as a pointer to an array type is not supported., e.g. `int (*)a[];` is not supported.
 * An array type may be declared in a `typedef` or in a variable declaration, but not both.
 
+Initialization
+---------------
+
+* ElfC supports initialization of arrays and structures.
+* Nested initializations are supported for structures containing arrays and other structures, and for arrays of structures.
+* Uninitialzed values are set to zero.
+* ElfC currently does not support additional nested braces in an initialization, unless it defines a member structure or array.
+
+**Arrays may be initializd by lists of values**
+```c
+int numbers[2][3] = {1,2,3,4,5,6};
+char vowels[4] = {'a','e','i','o','u'};
+int decades[] = {10, 20, 30};
+```
+**An array of characters may be initializd by a string**
+```c
+char word[5] = "first";
+char greeting[] = "hello";
+```
+*Note: ElfC will not silently remove the NULL at the end of an initialization string, when the string is one character too long for an array.*
+
+
+**An array of character pointers may be initializd by a list of strings**
+```c
+char words[3] = {"first", "second", "third"};
+```
+
+**A structure may be initialized by a list of member values, including arrays and other structures, enclosed in braces**
+
+```c
+struct point {
+  int x;
+  int y;
+  char *name;
+};
+
+struct line {
+  struct point p1;
+  struct point p2;
+  char code[3];
+};
+
+struct point p1 = {1, 1, "one"};
+struct point points[] = {{2, 20, "two"},  {30, 3, "three"}};
+struct line line1 = {{5, 6, "a"},  {11, 12, "b"}, {'a','b'}}
+```
+
 Local Labels and `goto`
 -----------------------
 

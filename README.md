@@ -288,15 +288,21 @@ New features
 * ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
+* Structures can be initialized and arrays of structures can be initialized.
 * The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
-* A 32-bit unsigned integer math library was contributed by Tony Hefner.  A big thank you to Tony for this contribution.
-* Three new example programs, a calculator, a fractal generator and a 400 digits of pi calculation,  were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, Kudos to Tony for creating these examples.
+* 32-bit unsigned integer math functions were added to the Math32 library by Tony Hefner.  A big thank you to Tony for this contribution.
+* New example programs, a calculator, a fractal generator and a digits of pi calculator and a banner program named figlet were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, many thanks to Tony for creating these examples.
 
 Issues Fixed
 -------------
 
 * ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
-* ElfC allows this assignment in accordance with future versions of the specification, such as C99 and C11, that explicitly state that this assignment should be allowed.
+* ElfC allows this assignment in accordance with future versions of the specification, such as C99 and C11, that explicitly state that this assignment should be allowed. (Which is a long-winded way of saying ElfC handles pointer assignments they way one would expect.)
+* ElfC improperly sized an automatically sized array of characters.
+* Updated ElfC logic to properly handle a cast to a typedef type.
+* Fixed an issue where ElfC did not properly de-reference an array pointer returned by a function.
+* ElfC no longer (unnecessarily) aligns static character data.
+* Increased string table size to 1024 and removed logic to inline strings.
 
 *Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
