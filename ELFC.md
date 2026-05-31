@@ -308,21 +308,27 @@ Initialization
 
 **Arrays may be initializd by lists of values**
 ```c
-int numbers[2][3] = {1,2,3,4,5,6};
-char vowels[4] = {'a','e','i','o','u'};
-int decades[] = {10, 20, 30};
+int a[2][3] = {1,2,3,4};
+char vowels[5] = {'a','e','i','o','u'};
+int values[] = {10, 20, 30};
 ```
+*Note:*
+* ElfC does not pad the inner dimensions of multi-dimensional arrays, so the first example is initialized as `{1,2,3,4,0,0}` and *not* `{1,2,0,3,4,0}`
+
 **An array of characters may be initializd by a string**
 ```c
-char word[5] = "first";
+char word[6] = "first";
 char greeting[] = "hello";
 ```
-*Note: ElfC will not silently remove the NULL at the end of an initialization string, when the string is one character too long for an array.*
+*Notes:*
+* ElfC will not silently remove the NULL at the end of an initialization string, when the string is one character too long for an array.
+* The size of the array must include the null at end of string.
 
 
 **An array of character pointers may be initializd by a list of strings**
 ```c
-char words[3] = {"first", "second", "third"};
+char *prizes[3] = {"first", "second", "third"};
+char *birds[] = {"crow", "hawk", "owl", "robin"};
 ```
 
 **A structure may be initialized by a list of member values, including arrays and other structures, enclosed in braces**
