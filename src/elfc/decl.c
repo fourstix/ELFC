@@ -29,7 +29,7 @@ static int mstack = 0;
 
 /* initialization values for local structures */
 int  vbuf[MAXLOCINIT];
-int  pbuf[MAXLOCINIT];
+int  mbuf[MAXLOCINIT];
 
 /*
  * Commit the stack moves for previous local variables
@@ -1825,7 +1825,7 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
     }
       /* add to the member buffer */
       vbuf[n] = v;
-      pbuf[n++] = mprim;
+      mbuf[n++] = mprim;
     } else if (PSCHAR == bprim) {
       if (v < -128 || v > 127) {
         sprintf(buf, "%d", v);
@@ -1833,11 +1833,11 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
       }
       /* add to the member buffer */
       vbuf[n] = v;
-      pbuf[n++] = mprim;
+      mbuf[n++] = mprim;
     } else {
       /* add to the member buffer */
       vbuf[n] = v;
-      pbuf[n++] = mprim;
+      mbuf[n++] = mprim;
     }
     msize = objsize(mprim, mtype, msize);
     msize = ALIGNED(msize);
@@ -1860,7 +1860,7 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
     for (i = 0;  i < v; i++) {
       //grw - pad with zero int for uninitialized member fields
       vbuf[n] = 0;
-      pbuf[n++] = PINT;
+      mbuf[n++] = PINT;
     }
   } else if (nsize > rsize) {
     error("Initialization list is too large.", NULL);
@@ -2079,7 +2079,7 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
     }
     //grw - push characters onto buffer
     for (i = 0; i < rsize; i++) {
-        pbuf[n] = mprim;
+        mbuf[n] = mprim;
         vbuf[n++] = sbuf[i];
     }
 
@@ -2091,7 +2091,7 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
       writeldata(n);
     }
 
-    /* return elements added to pbuf */
+    /* return elements added to member buffer */
     return n;
   }
   /*
@@ -2118,7 +2118,7 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
         error("initializer out of range: %s", buf);
     }
       /* add to the array buffer */
-      pbuf[n] = mprim;
+      mbuf[n] = mprim;
       vbuf[n++] = v;
     } else if (PSCHAR == bprim) {
       //grw - add support for type qualifiers
@@ -2127,11 +2127,11 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
         error("initializer out of range: %s", buf);
       }
       /* add to the char buffer */
-      pbuf[n] = mprim;
+      mbuf[n] = mprim;
       vbuf[n++] = v;
     } else {
       /* add to the array buffer */
-      pbuf[n] = mprim;
+      mbuf[n] = mprim;
       vbuf[n++] = v;
     }
     k++;
@@ -2149,10 +2149,10 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
     for (i = 0;  i < v; i++) {
       //grw - pad with bytes for char arrays
       if (chartype(mprim)){
-        pbuf[n] = mprim;
+        mbuf[n] = mprim;
         vbuf[n++] = '\0';
       } else {
-        pbuf[n] = mprim;
+        mbuf[n] = mprim;
         vbuf[n++] = 0;
       }
     }
@@ -2174,9 +2174,9 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
 static void writeldata(int n) {
   int i;
   for (i = 0; i < n; i++) {
-    if (CHARPTR == pbuf[n-1-i])
+    if (CHARPTR == mbuf[n-1-i])
       genldlab(vbuf[n-1-i]);
-    else if (chartype(pbuf[n-1-i]))
+    else if (chartype(mbuf[n-1-i]))
       genbyte(vbuf[n-1-i]);
     else
       genlit(vbuf[n-1-i]);
