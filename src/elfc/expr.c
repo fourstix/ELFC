@@ -491,9 +491,18 @@ static node *postfix(int *lv) {
       break;
     case DOT:
       Token = scan();
-      if (comptype(lv[LVPRIM]))
+      if (comptype(lv[LVPRIM])) {
+        //grw - is this a function returning a structure or union
+        if (lv[LVSYM] && isFunction(Types[lv[LVSYM]])) {
+          //grw - convert return value into a pointer and evaluate
+          lv[LVPRIM] = pointerto(lv[LVPRIM], Names[lv[LVSYM]]);
+          n = rvalue(n, lv);
+          n = stc_access(n, lv, 1);
+          lv[LVSYM] = 0;
+          break;
+        }
         n = stc_access(n, lv, 0);
-      else
+      } else
         error("struct/union expected before '.'",
           NULL);
       break;

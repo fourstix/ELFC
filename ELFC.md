@@ -1,4 +1,4 @@
-# ElfC Detailed Information
+math32# ElfC Detailed Information
 
 Documentation
 ---------------
@@ -298,6 +298,60 @@ Notes:
 * Declaring a variable as a pointer to an array type is not supported., e.g. `int (*)a[];` is not supported.
 * An array type may be declared in a `typedef` or in a variable declaration, but not both.
 
+Initialization
+---------------
+
+* ElfC supports initialization of arrays and structures.
+* Nested initializations are supported for structures containing arrays and other structures, and for arrays of structures.
+* Uninitialzed values are set to zero.
+* ElfC currently does not support additional nested braces in an initialization, unless it defines a member structure or array.
+
+**Arrays may be initializd by lists of values**
+```c
+int a[2][3] = {1,2,3,4};
+char vowels[5] = {'a','e','i','o','u'};
+int values[] = {10, 20, 30};
+```
+*Note:*
+* Unititialized values at the end of the list are set to 0.
+* ElfC does not pad the inner dimensions of multi-dimensional arrays, so the first example is initialized as `{1,2,3,4,0,0}` and *not* `{1,2,0,3,4,0}`
+
+**An array of characters may be initializd by a string**
+```c
+char word[6] = "first";
+char greeting[] = "hello";
+```
+*Notes:*
+* ElfC will not silently remove the NULL at the end of an initialization string, when the string is one character too long for an array.
+* The size of the array must include the null at end of string.
+
+
+**An array of character pointers may be initializd by a list of strings**
+```c
+char *prizes[3] = {"first", "second", "third"};
+char *birds[] = {"crow", "hawk", "owl", "robin"};
+```
+
+**A structure may be initialized by a list of member values, including arrays and other structures, enclosed in braces**
+
+```c
+struct point {
+  int x;
+  int y;
+  char *name;
+};
+
+struct line {
+  struct point p1;
+  struct point p2;
+  char code[3];
+};
+
+struct point p1 = {1, 1, "one"};
+struct point points[] = {{2, 20, "two"},  {30, 3, "three"}};
+struct line line1 = {{5, 6, "a"},  {11, 12, "b"}, {'a','b'}}
+```
+
 Local Labels and `goto`
 -----------------------
 
@@ -424,11 +478,11 @@ The following functions were omitted from the ElfC stdlib C library.
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
-* *The mathi32 library provides equivalent functions as the long utility functions.*
-* *The _atoi32_ function in mathi32 library provides equivalent function as _atol_.*
-* *The _strtoi32_ function in mathi32 library provides equivalent function as _strtol_.*
-* *The _divi32_ function in mathi32 library provides equivalent function as _ldiv_.*
-* *The _absi32_ function in mathi32 library provides equivalent function as _labs_.*
+* *The math32 library provides equivalent functions as the long utility functions.*
+* *The _atoi32_ function in math32 library provides equivalent function as _atol_.*
+* *The _strtoi32_ function in math32 library provides equivalent function as _strtol_.*
+* *The _divi32_ function in math32 library provides equivalent function as _ldiv_.*
+* *The _absi32_ function in math32 library provides equivalent function as _labs_.*
 * *The mathu32 library provides equivalent function as the unsigned long _strtoul_ function.*
 * *The _strtou32_ function in mathu32 library provides equivalent function as _strtoul_.*
 * *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS.*

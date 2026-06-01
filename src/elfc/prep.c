@@ -33,6 +33,32 @@ int getln(char *buf, int max) {
 	return k;
 }
 
+void checkmacro(char *s, char *name) {
+	int unmatch = 0;
+	int comment = 0;
+
+	if (!s) return;
+	while(*s) {
+		if ('/' == *s) {
+			if ('/' == *(s+1) || '*' == *(s+1))
+				comment = 1;
+		} else if ('\\' == *s) {
+			if ('*' == *(s+1))
+				comment = 1;
+		} else if ('(' == *s) {
+			unmatch++;
+		} else if (')' == *s) {
+			--unmatch;
+		}
+		s++;
+	}
+	if (comment)
+		warn("macro %s appears to contain a comment", name);
+	if (unmatch)
+	  warn("macro %s appears to contain unbalanced parentheses", name);
+	return;
+}
+
 static void defmac(void) {
 	char	name[NAMELEN+1];
 	char	*p;
@@ -91,6 +117,8 @@ static void defmac(void) {
 	/* skip over whitespace before macro text */
 	for (p = mbuf; isspace(*p); p++)
 		;
+	/* warn for common errors */
+	checkmacro(p, name);
 	if ((y = findmac(name)) != 0) {
 		//grw - added check for maxro params
 		if (strcmp(Mtext[y], mbuf) || Sizes[y] != margc)

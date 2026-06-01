@@ -10,7 +10,7 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION    "3.3.6"
+#define VERSION    "3.6.3"
 
 #ifndef SCCDIR
  #define SCCDIR    "."

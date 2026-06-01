@@ -211,9 +211,9 @@ Release 3.4 adds support for initializations and 32-bit integer math, as well as
 * Character pointers may be initialized by a string.
 * Initializations for an array may define fewer elements than the array.
 * Static initializations are now padded with zeros.
-* The Mathi32 and Mathu32 libraries, contributed by Tony Hefner, adds support for signed and unsigned 32-bit integer arithmetic.
-* The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Mathi32 library. (Thanks to Tony Hefner)
-* The fsetpos and fgetpos functions now use the Mathi32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
+* The Math32 library, contributed by Tony Hefner, adds support for signed and unsigned 32-bit integer arithmetic.
+* The lseek32 and fseek32 functions provide support for file sizes up to 2GB, by using the Math32 library. (Thanks to Tony Hefner)
+* The fsetpos and fgetpos functions now use the Math32 library to support file sizes up to 2GB. (Thanks to Tony Hefner)
 * The scanner no longer accepts integer literals that are greater than the largest possible 16-bit integer value of 65535.
 * ElfC supports the suffixes 'u' or 'U' to indicate an integer literal is an unsigned value.
 * The scanner will issue a warning if an integer literal is larger than the maximum signed value, unless the integer literal has the unsigned suffix.
@@ -238,7 +238,7 @@ New Features
 * An additional debug option `-d tree` was added to the compiler to support debugging AST trees and optimizations.
 * A walkthrough of ElfC compilation process and its output files is documented on the [ELFC Internal Information](INSIDE.md) page.
 * Details about the ElfC stack frame layout was documented with examples on the [ELFC Internal Information](INSIDE.md) page.
-* The functions in the Mathi32 library were converted to pass 32-bit numbers by value.
+* The functions in the Math32 library were converted to pass 32-bit numbers by value.
 * Smaller memory versions of stdlib and stdio libraries, named elflib and elfio, are available through the `-M` compiler option.
 * The elfstd library provides the same functions as stdlib, but uses the Elf BIOS, when possible, rather than C library code.
 * The elfio libraries provides fewer print formatting and scanning options, but are otherwise compatible with stdio and stdlib. (See the [ELFC Detailed Information](ELFC.md) page for details.)
@@ -288,17 +288,31 @@ New features
 * ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
+* Structures can be initialized and arrays of structures can be initialized.
+* A new compiler option `-I` will cause ElfC to not issue warnings.
 * The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
-* A 32-bit unsigned integer math library was contributed by Tony Hefner.  A big thank you to Tony for this contribution.
-* Three new example programs, a calculator, a fractal generator and a 400 digits of pi calculation,  were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, Kudos to Tony for creating these examples.
+* 32-bit unsigned integer math functions were added to the Math32 library by Tony Hefner.  A big thank you to Tony for this contribution.
+* New example programs, a calculator, a fractal generator and a digits of pi calculator and a banner program named figlet were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, many thanks to Tony for creating these examples.
 
 Issues Fixed
 -------------
 
 * ElfC interprets Section 6.3.16.1 of the ANSI C89/C90 specification to allow the pointers to be assignable when they both point to the same basic type, even if they have different levels of indirection.  (Section 6.3.16.1 is considered ambiguous on this point by some.)
-* ElfC allows this assignment in accordance with future versions of the specification, such as C99 and C11, that explicitly state that this assignment should be allowed.
+* ElfC allows this assignment in accordance with future versions of the specification, such as C99 and C11, that explicitly state that this assignment should be allowed. (Which is a long-winded way of saying ElfC handles pointer assignments they way one would expect.)
+* ElfC improperly sized an automatically sized array of characters.
+* Updated ElfC logic to properly handle a cast to a typedef type.
+* Fixed an issue where ElfC did not properly de-reference an array pointer returned by a function.
+* ElfC no longer (unnecessarily) aligns static character data.
+* Increased string table size to 1024 and removed logic to inline strings.
+* Fixed an error in the time library strftime function _months array.
+* Fixed an issue with accessing a member of a static structure returned by a function.
+* Added warning message for comments or unbalanced parentheses in macro text.
 
-*Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
+Compiler Option Changes
+-----------------------
+* The `-I` option will cause ElfC to ignore conditions that generate a warning.
+
+*Note: Information about initializations, multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 Stdlib Library
 --------------
@@ -357,7 +371,7 @@ Stdlib Library
 
 *Notes:*
 * The header file <unistd.h> is empty except for `#include <stdlib.h>` *
-* The type `off_t` is an int32 structure used by the Mathi32 library *
+* The type `off_t` is an int32 structure used by the Math32 library *
 
 Stdio Library
 -------------
@@ -436,7 +450,7 @@ Stdio Library
 * int fseek32(FILE* f, off_t *offset, int whence);
 * int ftell(FILE \*f);
 
-*Note: The type `pos_t` is an int32 structure used by the Mathi32 library*
+*Note: The type `pos_t` is an int32 structure used by the Math32 library*
 
 **File Error Functions**
 
@@ -584,9 +598,9 @@ struct tm {
 More information about unsupported library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
 
-Mathi32 Library
+Math32 Library
 --------------
-**The mathi32 library functions use the following structure and type.**
+**The math32 library functions use the following structures and types.**
 
 ```c
 struct int32 {
@@ -594,11 +608,19 @@ struct int32 {
     unsigned int high;  /* Upper 16 bits */
 };
 
-/* 32-bit number represented as two 16-bit values */
+/* 32-bit signed number represented as two 16-bit values */
 typedef struct int32 int32_t;
+
+struct uint32 {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+
+/* 32-bit unsigned number represented as two 16-bit values */
+typedef struct uint32 uint32_t;
 ```
 
-**The following functions are supported in the ElfC mathi32 library.**
+**The following signed 32-bit integer functions are supported in the ElfC Math32 library.**
 
 * int32_t absi32(int32_t n);
 * int32_t addi32(int32_t a, int32_t b);
@@ -616,24 +638,7 @@ typedef struct int32 int32_t;
 * char \*i32toa(int32_t n, char \*str);
 * int32_t strtoi32(const char \*nptr, char \*\*endptr, int base);
 
-More information about these library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
-
-
-Mathu32 Library
---------------
-**The mathu32 library functions use the following structure and type.**
-
-```c
-struct uint32 {
-    unsigned int low;   /* Lower 16 bits */
-    unsigned int high;  /* Upper 16 bits */
-};
-
-/* 32-bit number represented as two 16-bit values */
-typedef struct uint32 uint32_t;
-```
-
-**The following functions are supported in the ElfC mathu32 library.**
+**The following unsigned 32-bit integer functions are supported in the ElfC math32 library.**
 
 * int32_t addu32(uint32_t a, uint32_t b);
 * int32_t subu32(uint32_t a, uint32_t b);
@@ -763,6 +768,7 @@ Repository Contents
   * calc.c -- Demo program of a calculator using the 32-bit integer library.
   * mandel.c -- Demo program to plot a Mandelbrot set using the 32-bit integer library.
   * pi.c -- Demo program to compute pi to 400 digits using the 32-bit integer math library.
+  * figlet.c -- Demo program to print a text string as a banner.
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/clib/lib**  -- Compiled ElfC C Library files
@@ -777,13 +783,12 @@ Repository Contents
 * **/src/clib/ctype**  -- Source files for ElfC ctype C library
 * **/src/clib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/clib/assert**  -- Source files for ElfC assert C library
-* **/src/clib/mathi32**  -- Source files for ElfC 32-bit integer Math library contributed by Tony Hefner
-* **/src/clib/mathu32**  -- Source files for ElfC 32-bit unsigned integer Math library contributed by Tony Hefner
+* **/src/clib/math32**  -- Source files for ElfC 32-bit signed and unsigned integer Math library contributed by Tony Hefner
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest5.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
-  * math32test.c -- Functional tests for the mathi32 and mathu32 library functions
+  * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
 * **/bin**  -- Binary files for ElfC
@@ -800,7 +805,7 @@ A big thank-you to David Madole for his suggestions to improve code performance,
 
 Many thanks to Mike Riley for making his library code available and his patience in answering my questions.
 
-Another big shout out to thank Tony Hefner for developing and contributing the Mathi32 and Mathu32 libraries and for adding support to stdio and stdlib libraries to support file sizes greater than 32K, up to 2GB.
+Another big shout out to thank Tony Hefner for developing and contributing the Math32 and Mathu32 libraries and for adding support to stdio and stdlib libraries to support file sizes greater than 32K, up to 2GB.
 
 A debt of gratitude to Nils Holms for his excellent book, Practical Compiler Construction and for creating SubC, which provides the basis for ElfC.
 

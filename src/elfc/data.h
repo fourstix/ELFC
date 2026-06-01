@@ -110,6 +110,8 @@ extern_ int	O_debug;
 extern_ int	O_library;
 //grw - added play macro action
 extern_ int	O_playmac;
+//grw - added option to ignore warnings
+extern_ int	O_ignore;
 
 
 //grw - create string table
