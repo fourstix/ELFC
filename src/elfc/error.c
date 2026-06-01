@@ -50,7 +50,11 @@ int synch(int syn) {
 }
 
 void warn(char *s, char *a) {
+	if (O_ignore)
+	  return;
+
 	fprintf(stderr, "warning: %s: %d: ", File, Line);
 	fprintf(stderr, s, a);
 	fprintf(stderr, "\n");
+	return;
 }

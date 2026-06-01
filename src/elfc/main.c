@@ -196,7 +196,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvLMNPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvILMNPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -209,7 +209,9 @@ static void longusage(void) {
   printf(
     "-t       test only, generate no code\n"
 		"-v       verbose output\n"
-		"-D m=v   define macro M with optional value V\n");
+		"-D m=v   define macro M with optional value V\n"
+    //grw - added option to ignore warnings
+    "-I       ignore warnings\n");
   printf(
   	"-L       compile and assemble a library object file\n"
     //grw - added smaller elf libraries
@@ -283,7 +285,8 @@ int main(int argc, char *argv[]) {
   O_library = 0;
   //grw - added play macro option
   O_playmac = 0;
-
+  //grw - added option to ignore warnings
+  O_ignore = 0;
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -321,10 +324,14 @@ int main(int argc, char *argv[]) {
 				if (def) cmderror("too many -D's", NULL);
 				def = nextarg(argc, argv, &i, &j);
 				break;
+      //grw - added option to ignore warnings
+      case 'I':
+        O_ignore = 1;
+        break;
       case 'L':
 				O_library = 1;
 				break;
-        //grw - added smaller memory library option
+      //grw - added smaller memory library option
       case 'M':
 				O_clibs = 0;
         O_elflibs = 1;

@@ -289,6 +289,7 @@ New features
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
 * Structures can be initialized and arrays of structures can be initialized.
+* A new compiler option `-I` will cause ElfC to not issue warnings.
 * The 32-bit integer math library was re-written by Tony Hefner to improve performance. Many thanks to Tony for this contribution.
 * 32-bit unsigned integer math functions were added to the Math32 library by Tony Hefner.  A big thank you to Tony for this contribution.
 * New example programs, a calculator, a fractal generator and a digits of pi calculator and a banner program named figlet were added by Tony Hefner to demonstrate the use of the 32-bit integer math library.  Again, many thanks to Tony for creating these examples.
@@ -303,8 +304,15 @@ Issues Fixed
 * Fixed an issue where ElfC did not properly de-reference an array pointer returned by a function.
 * ElfC no longer (unnecessarily) aligns static character data.
 * Increased string table size to 1024 and removed logic to inline strings.
+* Fixed an error in the time library strftime function _months array.
+* Fixed an issue with accessing a member of a static structure returned by a function.
+* Added warning message for comments or unbalanced parentheses in macro text.
 
-*Note: Information about multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
+Compiler Option Changes
+-----------------------
+* The `-I` option will cause ElfC to ignore conditions that generate a warning.
+
+*Note: Information about initializations, multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 Stdlib Library
 --------------
