@@ -630,7 +630,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
     if (CTYPE == scls)
       error(unsupp, NULL);
 
-    /* need to emit error for struct/union */
     if (comptype(*pprim)) {
       Token = scan();
 
@@ -1057,8 +1056,8 @@ static int localdecls(void) {
 
     //grw - and pass new label, value to addloc for uninitialized array
     if (stat) {
-      /* generate label for static declaration */
-      if (!ini)
+      /* generate label for uninitialized static declaration or string */
+      if (0 == ini || -1 == ini)
         ini = label();
       addloc(name, prim, type, CLSTATC, size,  ini, val);
       //grw - moved static definitions to local static object space
@@ -1877,21 +1876,22 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
  * Add an local static object entry for a static structure
  */
 static void addmemberlso(int y, int i, int value, int init) {
-int mtype = Types[y];
-int mprim = Prims[y];
-int msize = Sizes[y];
+  int mtype = Types[y];
+  int mprim = Prims[y];
+  int msize = Sizes[y];
 
-msize = objsize(mprim, mtype, msize);
-msize = ALIGNED(msize);
+  msize = objsize(mprim, mtype, msize);
+  msize = ALIGNED(msize);
 
-ls_objs[lso_idx].isize = 0;
-ls_objs[lso_idx].ilist = NULL;
-//grw - only print label on first member field of structure
-//grw - char pointer init and value are reversed from other types
-if (mprim == CHARPTR)
-  addlso(mprim, mtype, msize, i ? 0 : value, init);
-else
-  addlso(mprim, mtype, msize, i ? 0 : init, value);
+  ls_objs[lso_idx].isize = 0;
+  ls_objs[lso_idx].ilist = NULL;
+  //grw - only print label on first member field of structure
+  //grw - char pointer init and value are reversed from other types
+  if (mprim != CHARPTR) {
+    addlso(mprim, mtype, msize, i ? 0 : value, init);
+  } else {
+    addlso(mprim, mtype, msize, i ? 0 : init, value);
+  }
 }
 /*
  * Initialization for static local structures
@@ -1921,6 +1921,7 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
 
   rsize = objsize(prim, TSTRUCT, 1);
   *pinit = label();
+
   lbrace();
   while (Token != RBRACE) {
     y = nextmember(y);
@@ -1962,6 +1963,7 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
      * so remove any type qualifier bits from primitive type before comparing
      */
     if ((mprim & STCMASK) || isArray(mtype)) {
+      /* do nothing for structures or arrays */
     } else if (PCHAR == mprim) {
       if (v < 0 || v > 255) {
         sprintf(errbuf, "%d", v);
@@ -1981,7 +1983,7 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
       /* character pointer label is in init */
       addmemberlso(y, n, *pinit, v);
     } else {
-      /* add to the integer array buffer */
+      /* add to the local static object buffer */
       addmemberlso(y, n, *pinit, v);
     }
     n++;
