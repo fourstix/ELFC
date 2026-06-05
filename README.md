@@ -709,10 +709,6 @@ Differences Between ElfC and Full C89
    to structures and unions, i.e. only pointers to a struct/union and pointers
    to pointers to a struct/union are supported.
 
-*  Initialization of a struct/union is not supported.
-
-*  Initialization lists do not support mixed types and cannot be nested.
-
 *  Character arrays must be large enough to accept the entire initialization string plus
    its terminating NULL. ElfC will not silently remove the NULL at the end of an
    initialization string, when the string is one character too long for an array.
