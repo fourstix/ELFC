@@ -22,7 +22,7 @@
 
 time_t time(time_t *tp)
 {
-    struct tm tm_buf;
+    static struct tm tm_buf;
     time_t result;
 
     systime(&tm_buf);
