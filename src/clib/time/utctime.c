@@ -27,7 +27,6 @@ int utctime(struct tm *tp) {
   /* set leap year flag */
   leap = (tp->tm_year % 4 == 0 && (tp->tm_year % 100 != 0 || tp->tm_year % 400 == 0));
 
-
   /* adjust minutes for time zone offset */
   tp->tm_min -= _tz_min;
 
@@ -38,7 +37,6 @@ int utctime(struct tm *tp) {
     tp->tm_min -= 60;
     tp->tm_hour++;
   }
-
 
   /* adjust hours for time zone offset */
   tp->tm_hour -= _tz_hr;
@@ -82,23 +80,23 @@ int utctime(struct tm *tp) {
     }
   }
 
- /* now adjust months, if it's New Year's Eve */
- if (tp->tm_mon < 0) {
-   /* December of last year */
-   tp->tm_mon = 11;
-   tp->tm_year--;
- } else if (tp->tm_mon > 11) {
-   /* January of next year */
-   tp->tm_mon = 0;
-   tp->tm_year++;
- }
+  /* now adjust months, if it's New Year's Eve */
+  if (tp->tm_mon < 0) {
+    /* December of last year */
+    tp->tm_mon = 11;
+    tp->tm_year--;
+  } else if (tp->tm_mon > 11) {
+    /* January of next year */
+    tp->tm_mon = 0;
+    tp->tm_year++;
+  }
 
-/* Now set the related fields for day of week and day of year */
-_dow(tp);
-_doy(tp);
+  /* Now set the related fields for day of week and day of year */
+  _dow(tp);
+  _doy(tp);
 
-/* Daylight Savings Time is never in effect for UTC */
-tp->tm_isdst = 0;
+  /* Daylight Savings Time is never in effect for UTC */
+  tp->tm_isdst = 0;
 
-return rtc;
+  return rtc;
 }
