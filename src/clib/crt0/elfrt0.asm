@@ -281,11 +281,11 @@ s_fp1arg:   lbr fp1arg
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP
 ;------------------------ C Program Stack ---------------------------
-cstk:   ds 127
+cstk:   ds 63
 cstack: db 0          	; progam stack
 ;----------------------- Expression Stack ---------------------------
 estk:   ds 32           ; minimum stack for arithmetic operations
-es_min: ds 223          ; auto variables and arithmetic operations
+es_min: ds 95           ; auto variables and arithmetic operations
 estack: db 0            ; Top of expression stack
 ;----------------------- Arguments for Main ---------------------------
 m_argc:   db   0        ; arguement count

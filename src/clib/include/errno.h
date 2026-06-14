@@ -17,6 +17,7 @@ extern int errno;
 #define EINVAL  22
 #define ENFILE  23
 #define EMFILE  24
+#define EDOM    33
 #define ERANGE  34
 
 #endif

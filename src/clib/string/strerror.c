@@ -12,6 +12,7 @@ char *strerror(int err) {
 	case EINVAL:	return "invalid argument";
 	case ENFILE:	return "too many open files";
 	case EMFILE:	return "out of file handles";
+	case EDOM:    return "argument out of domain";
   case ERANGE:  return "result out of range";
 	default:	    return "unknown error";
 	}

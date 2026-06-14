@@ -81,6 +81,9 @@ s_unscl2n:  equ  (SUBTBL + $DB)
 s_mcopy:    equ  (SUBTBL + $DE)
 s_epush8:   equ  (SUBTBL + $E1)
 s_derefm:   equ  (SUBTBL + $E4)
+s_fp2args:  equ  (SUBTBL + $E7)
+s_dpop32:   equ  (SUBTBL + $EA)
+s_fp1arg:   equ  (SUBTBL + $ED)
 
 ;----------------------------------
 ; ElfC crt0 - error vectors
