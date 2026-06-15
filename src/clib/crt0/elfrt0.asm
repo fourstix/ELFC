@@ -146,19 +146,18 @@ Elfexit:  load   rf, ostack   ; get original SP
           rtn                 ; return to Elf/OS
 
 ;----- error handling for when expression stack exhausted
-auto_err: call O_INMSG        ; print error msg
-            db 'Out of Stack Space for Auto Variables',10,13,0
-          load   ra, -1       ; set error value for return
+auto_err: load   rf, auto_msg
+          CALL   O_MSG        ; print error msg
+err_exit: load   ra, -1       ; set error value for return
           stc                 ; set DF for error return
           lbr Elfexit         ; exit to Elf/OS
 
 ;----- error handling for when expression stack exhausted
-stk_err:  call O_INMSG        ; print error msg
-            db 'Stack Creep Error',10,13,0
-          load   ra, -1       ; set error value for return
-          stc                 ; set DF for error return
-          lbr Elfexit         ; exit to Elf/OS
+stk_err:  load   rf, stk_msg
+          call O_MSG          ; print error msg
+          lbr    err_exit     ; exit to Elf/OS
 
+;----- load C arguments from Elf/OS command string
 argvload: load  rd, m_argc    ; load argc pointer
           load  rf, m_argv    ; load argv pointer
           load  rc, $00       ; set counter
@@ -167,20 +166,26 @@ sk_sp:    lda   r8            ; get byte from cmd string
           lbz   argvdone      ; end of arg string
           smi   ' '           ; check for space
           lbz   sk_sp         ; skip over leading spaces
+          smi   2             ; check if previous arg was quote
+          lbz   q_delim       ; process quoted argument
 
           dec   r8            ; move back to first char in argument
-          glo  r8             ; put argument address in arg slot
+          ldi   ' '           ; set delimiter to space
+          str   r2            ; put delimiter into M(X)
+
+a_addr:   glo   r8            ; put argument address in arg slot
           str   rf            ; C variables are stored LSB first, then MSB
           inc   rf
           ghi   r8            ; C variables are LSB first, then MSB
           str   rf
           inc   rf
           inc   rc            ; increment arg counter
-sk_ns:    lda   r8            ; skip over non-spaces
+sk_del:   lda   r8            ; skip over non-spaces
           lbz   argvdone      ; if we hit zero, we're done
-          smi   ' '
-          lbnz  sk_ns
-          dec   r8            ; back up to first space
+          sm                  ; subtract delimiter from value
+          lbnz  sk_del
+
+          dec   r8            ; back up to delimiter
           ldi   0
           str   r8            ; put zero after arg
           inc   r8            ; move back to next char
@@ -191,6 +196,10 @@ sk_ns:    lda   r8            ; skip over non-spaces
 argvdone: glo   rc            ; get argument count
           str   rd            ; save arg count in variable
           rtn
+
+q_delim:  ldi   '"'           ; set delimiter to double quote
+          str   r2            ; put delimiter into M(X)
+          lbr   a_addr        ; set the address for argument
 
           org (($-1)|255)+1   ; align subroutine table to page boundary
 
@@ -282,15 +291,18 @@ s_fp1arg:   lbr fp1arg
 ostack: dw 0          	; original SP
 ;------------------------ C Program Stack ---------------------------
 cstk:   ds 63
-cstack: db 0          	; progam stack
+cstack: db 0          	; program stack
 ;----------------------- Expression Stack ---------------------------
 estk:   ds 32           ; minimum stack for arithmetic operations
 es_min: ds 95           ; auto variables and arithmetic operations
 estack: db 0            ; Top of expression stack
 ;----------------------- Arguments for Main ---------------------------
-m_argc:   db   0        ; arguement count
+m_argc:   db   0        ; argument count
           ;----- argv[] room for pointers up to 8 arguments
 m_argv:   db   0, 0, 0, 0, 0, 0, 0, 0
           db   0, 0, 0, 0, 0, 0, 0, 0
+; ------------------------- Error Messages --------------------------
+stk_msg:  db 'Stack Creep Error',10,13,0
+auto_msg: db 'Out of Stack Space for Auto Variables',10,13,0
 ; --------------------- End Variables and Stack ---------------------
              end  ElfCpgm
