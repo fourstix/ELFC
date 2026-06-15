@@ -149,7 +149,6 @@ err_exit: load   ra, -1       ; set error value for return
           stc                 ; set DF for error return
           lbr Elfexit         ; exit to Elf/OS
 
-
 ;----- error handling for when expression stack exhausted
 stk_err:  load   rf, stk_msg
           call O_MSG          ; print error msg
@@ -285,11 +284,11 @@ s_derefm:   lbr derefm
 ; --------------------- Variables and Stack--------------------------
 ostack: dw 0          	; original SP
 ;------------------------ C Program Stack ---------------------------
-cstk:   ds 127
+cstk:   ds 63
 cstack: db 0          	; program stack
 ;----------------------- Expression Stack ---------------------------
 estk:   ds 32           ; minimum stack for arithmetic operations
-es_min: ds 223          ; auto variables and arithmetic operations
+es_min: ds 95           ; auto variables and arithmetic operations
 estack: db 0            ; Top of expression stack
 ;----------------------- Arguments for Main ---------------------------
 m_argc:   db   0        ; argument count
