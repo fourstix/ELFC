@@ -91,6 +91,9 @@
           extrn   lset16
           extrn   mcopy
           extrn   derefm
+          extrn   fp2args
+          extrn   dpop32
+          extrn   fp1arg
 
           ;----- C routines
           extrn  Cmain
@@ -349,6 +352,9 @@ s_unscl2n:  lbr unscl2n
 s_mcopy:    lbr mcopy
 s_epush8:   lbr epush8
 s_derefm:   lbr derefm
+s_fp2args:  lbr fp2args
+s_dpop32:   lbr dpop32
+s_fp1arg:   lbr fp1arg
 
 ; --------------------- Variables and Stack--------------------------
 ostack:   dw     0            ; original SP

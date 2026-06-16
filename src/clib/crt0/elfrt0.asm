@@ -91,6 +91,9 @@
           extrn   lset16
           extrn   mcopy
           extrn   derefm
+          extrn   fp2args
+          extrn   dpop32
+          extrn   fp1arg
 
           ;----- C routines
           extrn  Cmain
