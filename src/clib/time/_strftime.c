@@ -39,7 +39,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim)
   static char *_days_ab[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
   static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-  int32_t tz_hr;
+  int tz_hr;
   int32_t tz_sec;
 
   for (; *format; ++format) {
@@ -199,9 +199,16 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim)
           continue;
 
         case 'z': {
-          tz_hr = divi32(_tz_offset, i32_from_int(SECS_PER_HOUR), &tz_sec);
+          tz_hr = int_from_i32(
+            divi32(_tz_offset, i32_from_int(SECS_PER_HOUR), &tz_sec));
 
-          pt = _conv(int_from_i32(tz_hr), "%02d", pt, ptlim);
+          if (tz_hr < 0) {
+            pt = _add("-", pt, ptlim);
+          } else {
+            pt = _add("+", pt, ptlim);
+          }
+
+          pt = _conv(abs(tz_hr), "%02d", pt, ptlim);
           pt = _conv(int_from_i32(tz_sec) / SECS_PER_MIN, "%02d", pt, ptlim);
 
           continue;
