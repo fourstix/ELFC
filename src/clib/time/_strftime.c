@@ -1,60 +1,77 @@
 #define _ELFCLIB_
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 /* define only extern procedures required */
-#pragma           extrn Csprintf
-#pragma           extrn C_tzname
-#pragma           extrn C_tz_min
-#pragma           extrn C_tz_hr
+#pragma extrn Csprintf
+#pragma extrn C_tzname
+#pragma extrn C_tz_offset
+#pragma extrn Cdivi32
+#pragma extrn Ci32_from_int
+#pragma extrn Cint_from_i32
 
+#define SECS_PER_MIN 60
+#define SECS_PER_HOUR 3600
 
-static char *_add(char *str, char *pt, char *ptlim) {
+static char *_add(char *str, char *pt, char *ptlim)
+{
   while (pt < ptlim && (*pt = *str++) != '\0') ++pt;
   return pt;
 }
 
-static char *_conv(int n, char *format, char *pt, char *ptlim) {
-  static char  buf[32];
+static char *_conv(int n, char *format, char *pt, char *ptlim)
+{
+  static char buf[32];
 
   sprintf(buf, format, n);
   return _add(buf, pt, ptlim);
 }
 
-static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
-  static char *_days[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-      "Friday", "Saturday" };
-  static char *_months[12] = { "January", "February", "March", "April", "May", "June",
-     "July", "August", "September", "October", "November", "December"};
+static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim)
+{
+  static char *_days[7] = {"Sunday",   "Monday", "Tuesday", "Wednesday",
+                           "Thursday", "Friday", "Saturday"};
+  static char *_months[12] = {"January",   "February", "March",    "April",
+                              "May",       "June",     "July",     "August",
+                              "September", "October",  "November", "December"};
   static char *_days_ab[7] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-  static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-     "Sep", "Oct", "Nov", "Dec"};
+  static char *_months_ab[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  int32_t tz_hr;
+  int32_t tz_sec;
 
-  for ( ; *format; ++format) {
+  for (; *format; ++format) {
     if (*format == '%') {
-
       switch (*++format) {
         case '\0':
           --format;
           break;
 
         case 'A':
-          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days[t->tm_wday], pt, ptlim);
+          pt =
+              _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days[t->tm_wday],
+                   pt, ptlim);
           continue;
 
         case 'a':
-          pt = _add((t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days_ab[t->tm_wday], pt, ptlim);
+          pt = _add(
+              (t->tm_wday < 0 || t->tm_wday > 6) ? "?" : _days_ab[t->tm_wday],
+              pt, ptlim);
           continue;
 
         case 'B':
-          pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months[t->tm_mon], pt, ptlim);
+          pt =
+              _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months[t->tm_mon],
+                   pt, ptlim);
           continue;
 
         case 'b':
-        /* case 'h': */
-          pt = _add((t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab[t->tm_mon], pt, ptlim);
+     /* case 'h': */
+          pt = _add(
+              (t->tm_mon < 0 || t->tm_mon > 11) ? "?" : _months_ab[t->tm_mon],
+              pt, ptlim);
           continue;
 /*
         case 'C':
@@ -87,7 +104,8 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 
         case 'I':
-          pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12, "%02d", pt, ptlim);
+          pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12, "%02d", pt,
+                     ptlim);
           continue;
 
         case 'j':
@@ -99,8 +117,8 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 
         case 'l':
-          pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12, "%2d", pt, ptlim);
-          continue;
+          pt = _conv((t->tm_hour % 12) ? (t->tm_hour % 12) : 12,
+              "%2d", pt, ptlim); continue;
 */
         case 'M':
           pt = _conv(t->tm_min, "%02d", pt, ptlim);
@@ -148,15 +166,16 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
           continue;
 /*
         case 'u':
-          pt = _conv((t->tm_wday == 0) ? 7 : t->tm_wday, "%d", pt, ptlim);
-          continue;
+          pt = _conv((t->tm_wday == 0) ? 7 : t->tm_wday, "%d", pt,
+              ptlim); continue;
 
         case 'v':
           pt = _fmt("%e-%b-%Y", t, pt, ptlim);
           continue;
 */
         case 'W':
-          pt = _conv((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7, "%02d", pt, ptlim);
+          pt = _conv((t->tm_yday + 7 - (t->tm_wday ? (t->tm_wday - 1) : 6)) / 7,
+                     "%02d", pt, ptlim);
           continue;
 
         case 'w':
@@ -178,19 +197,16 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
         case 'Y':
           pt = _conv(t->tm_year + 1900, "%04d", pt, ptlim);
           continue;
-/*
-        case 'z': {
-          if (_tz_hr < 0)
-            pt = _add("-", pt, ptlim);
-          else
-            pt = _add("+", pt, ptlim);
 
-          pt = _conv(abs(_tz_hr), "%02d:", pt, ptlim);
-          pt = _conv(abs(_tz_min), "%02d", pt, ptlim);
+        case 'z': {
+          tz_hr = divi32(_tz_offset, i32_from_int(SECS_PER_HOUR), &tz_sec);
+
+          pt = _conv(int_from_i32(tz_hr), "%02d", pt, ptlim);
+          pt = _conv(int_from_i32(tz_sec) / SECS_PER_MIN, "%02d", pt, ptlim);
 
           continue;
         }
-*/
+
         case 'Z':
           pt = _add(_tzname ? _tzname : "?", pt, ptlim);
           continue;
@@ -208,7 +224,8 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim) {
   return pt;
 }
 
-int  _strftime(char *s, int maxsize, const char *format, struct tm *tp) {
+int _strftime(char *s, int maxsize, const char *format, struct tm *tp)
+{
   char *p;
 
   p = _fmt(((format == NULL) ? "%c" : format), tp, s, s + maxsize);

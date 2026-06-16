@@ -29,8 +29,7 @@ typedef int32_t time_t;
 #endif
 
 extern char *_tzname;  /* Time Zone Name */
-extern int _tz_min;    /* minutes difference from GMT (West negative, East positive) */
-extern int _tz_hr;     /* hours difference from GMT (West negative, East positive) */
+extern int32_t _tz_offset; /* seconds difference from GMT (West negative, East positive) */
 extern int _tz_dst;    /* 1 if DST in effect, 0 if not and -1 if unknwon */
 
 
@@ -59,7 +58,6 @@ void timezone(char *tzname, int tzoff_min, int tzdst);
 int  utctime(struct tm *tp);
 time_t _tm_to_time_t(struct tm *t, int32_t utc_offset_secs);
 void _time_t_to_tm(time_t ts, int32_t utc_offset_secs, struct tm *out);
-int32_t _tz_offset(void);
 char *_ctime(time_t *timer);
 char *_ctime2(time_t *timer);
 time_t time(time_t *second);

@@ -3,7 +3,7 @@
 =auto_err 2369
 =stk_err 239f
 =Elfexit 2054
-:2000 30 0d 86 0f 07 ea 00 06
+:2000 30 0d 86 0f 07 ea 00 01
 .ever               ; tell linker to update header
 :2008 45 6c 66 43 00 96 73 86 73 d4 20 66 f8 e7 af f8
 :2018 21 bf 92 5f 1f 82 5f f8 68 a2 f8 22 b2 f8 68 a7

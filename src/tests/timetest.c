@@ -26,6 +26,9 @@ static int32_t I32_5097600 = { 0xC880, 0x004D };
 /* -86400 */
 static int32_t I32_NEG_86400 = { 0xAE80, 0xFFFE };
 
+static int32_t I32_NEG1 = { 0xFFFF, 0xFFFF };
+static int32_t I32_ZERO = { 0, 0 };
+
 /* ── systime stub ───────────────────────────────────────────────────────── */
 
 int systime(struct tm *tp)
@@ -58,6 +61,16 @@ static void check(const char *name, int pass)
     }
 }
 
+static int32_t get_offset(int tz_hr, int tz_min)
+{
+    int32_t tz_offset;
+    
+    tz_offset = addi32(muli32x16(i32_from_int(tz_hr), 3600),
+                  muli32x16(i32_from_int(tz_min), 60));
+                  
+    return tz_offset;
+}
+
 /* ── tests ──────────────────────────────────────────────────────────────── */
 
 static void test_timegm(void)
@@ -68,7 +81,7 @@ static void test_timegm(void)
     t.tm_year=100; t.tm_mon=0; t.tm_mday=1;
     t.tm_hour=0;   t.tm_min=0; t.tm_sec=0;
     result = timegm(&t);
-    check("timegm: epoch = 0", cmpi32(result, i32_from_int(0)) == 0);
+    check("timegm: epoch = 0", cmpi32(result, I32_ZERO) == 0);
 
     t.tm_year=100; t.tm_mon=0; t.tm_mday=2;
     t.tm_hour=0;   t.tm_min=0; t.tm_sec=0;
@@ -83,7 +96,7 @@ static void test_timegm(void)
     t.tm_year=99; t.tm_mon=11; t.tm_mday=31;
     t.tm_hour=23; t.tm_min=59; t.tm_sec=59;
     result = timegm(&t);
-    check("timegm: 1999-12-31 23:59:59 = -1", cmpi32(result, i32_from_int(-1)) == 0);
+    check("timegm: 1999-12-31 23:59:59 = -1", cmpi32(result, I32_NEG1) == 0);
 
     t.tm_year=100; t.tm_mon=1; t.tm_mday=29;
     t.tm_hour=0;   t.tm_min=0; t.tm_sec=0;
@@ -144,12 +157,12 @@ static void test_mktime_localtime(void)
     time_t ts;
 
     /* UTC+5:30 */
-    _tz_hr=5; _tz_min=30; _tz_dst=0;
+    _tz_offset = get_offset(5, 30); _tz_dst=0;
 
     t.tm_year=100; t.tm_mon=0; t.tm_mday=1;
     t.tm_hour=5;   t.tm_min=30; t.tm_sec=0;
     ts = mktime(&t);
-    check("mktime: UTC+5:30 epoch", cmpi32(ts, i32_from_int(0)) == 0);
+    check("mktime: UTC+5:30 epoch", cmpi32(ts, I32_ZERO) == 0);
 
     ts.low=0; ts.high=0;
     out = localtime(&ts);
@@ -158,12 +171,12 @@ static void test_mktime_localtime(void)
     check("localtime: UTC+5:30 mday=1",  out->tm_mday == 1);
 
     /* UTC-8 */
-    _tz_hr=-8; _tz_min=0; _tz_dst=0;
+    _tz_offset = get_offset(-8, 0); _tz_dst=0;
 
     t.tm_year=99;  t.tm_mon=11; t.tm_mday=31;
     t.tm_hour=16;  t.tm_min=0;  t.tm_sec=0;
     ts = mktime(&t);
-    check("mktime: UTC-8 epoch", cmpi32(ts, i32_from_int(0)) == 0);
+    check("mktime: UTC-8 epoch", cmpi32(ts, I32_ZERO) == 0);
 
     ts.low=0; ts.high=0;
     out = localtime(&ts);
@@ -172,7 +185,7 @@ static void test_mktime_localtime(void)
     check("localtime: UTC-8 mday=31",  out->tm_mday == 31);
     check("localtime: UTC-8 hour=16",  out->tm_hour == 16);
 
-    _tz_hr=0; _tz_min=0;
+    _tz_offset = I32_ZERO;
 }
 
 static void test_ctime(void)
@@ -181,7 +194,7 @@ static void test_ctime(void)
     time_t ts;
     char *s;
 
-    _tz_hr=0; _tz_min=0; _tz_dst=0;
+    _tz_offset = I32_ZERO;
 
     t.tm_year=100; t.tm_mon=0; t.tm_mday=1;
     t.tm_hour=0;   t.tm_min=0; t.tm_sec=0;
@@ -210,7 +223,7 @@ static void test_time(void)
     struct tm *out;
 
     /* systime returns 2024-03-15 14:30:00 local, UTC+5:30 */
-    _tz_hr=5; _tz_min=30; _tz_dst=0;
+    _tz_offset = get_offset(5, 30); _tz_dst=0;
 
     ts = time(NULL);
     ts2.low=0; ts2.high=0;
@@ -224,7 +237,7 @@ static void test_time(void)
     check("time: UTC mon=2",    out->tm_mon  == 2);
     check("time: UTC year=124", out->tm_year == 124);
 
-    _tz_hr=0; _tz_min=0;
+    _tz_offset = I32_ZERO;
 }
 
 /* ── main ───────────────────────────────────────────────────────────────── */

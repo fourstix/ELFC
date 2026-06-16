@@ -17,13 +17,12 @@
 ..\elfc -L _time_t_to_tm.c
 ..\elfc -L timezone.c
 ..\elfc -L _tm_to_time_t.c
-..\elfc -L _tz_offset.c
 ..\elfc -L utctime.c
 
 type _asctime2.prg _asctime.prg _cstime2.prg _cstime.prg > time.lib
 type _ctime2.prg _ctime.prg _dow.prg _doy.prg gmtime.prg >> time.lib
 type localtime.prg mktime.prg _strftime2.prg _strftime.prg >> time.lib
 type systime.prg time.prg timegm.prg _time_t_to_tm.prg timezone.prg >> time.lib
-type _tm_to_time_t.prg _tz_offset.prg utctime.prg >> time.lib
+type _tm_to_time_t.prg utctime.prg >> time.lib
 
 copy time.lib ..\lib\time.lib
