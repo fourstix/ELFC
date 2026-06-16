@@ -90,9 +90,10 @@ static void render(char *text) {
     char *p;
     for (row = 0; row < FONT_HEIGHT; row++) {
         for (p = text; *p; p++) {
-            printf("%s ", get_char(*p)[row]);
+            putstr(get_char(*p)[row]);
+            putstr(" ");
         }
-        printf("\n");
+        putstr("\n");
     }
 }
 
@@ -105,23 +106,29 @@ static void get_input(char *buf, int size) {
     }
 }
 
-int main(void) {
-    printf("FIGLET - ASCII ART TEXT\n");
-    printf("=======================\n\n");
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        putstr("\n");
+        render(argv[1]);
+        return 0;
+    }
+        
+    putstr("FIGLET - ASCII ART TEXT\n");
+    putstr("=======================\n\n");
 
     while (1) {
-        printf("ENTER TEXT (OR Q TO QUIT): ");
+        putstr("ENTER TEXT (OR Q TO QUIT): ");
         get_input(text, sizeof(text));
 
         if ((text[0] == 'Q' || text[0] == 'q') && text[1] == '\0') {
-            printf("\nGOODBYE!\n");
+            putstr("\nGOODBYE!\n");
             break;
         }
 
         if (text[0]) {
-            printf("\n\n");
+            putstr("\n\n");
             render(text);
-            printf("\n");
+            putstr("\n");
         }
     }
 
