@@ -1,10 +1,13 @@
 ;---------------------------------------------------------
-;	NMH's Simple C Compiler, 2012--2014
-;	C runtime module for Elf/OS
+;    NMH's Simple C Compiler, 2012--2014
+;    C runtime module for Elf/OS
 ;---------------------------------------------------------
 
 #include ../include/ops_c.inc
 #include ../include/os_api.inc
+
+#define CMD_BUF     $80
+#define MAX_ARGS    8
 
           public es_min
           public auto_err
@@ -100,6 +103,8 @@ ElfCpgm:  br     Elfstart
 .link     .ever               ; tell linker to update header
           db 'ElfC',0
 Elfstart: push   r6           ; save original return address on stack
+;------ load arguments for main function onto ES ---------
+          call   argvload     ; initialize arg pointer array *argv[]
           load   rf, ostack   ; save original SP
           ghi    r2
           str    rf
@@ -113,8 +118,6 @@ Elfstart: push   r6           ; save original return address on stack
 
 ;------ Need to call the _init function in stdlib ---------
           call   C_init
-;------ load arguments for main function onto ES ---------
-          call   argvload     ; initialize arg pointer array *argv[]
 ;-----  before calling main, push argc and **argv onto stack
           load   rd, m_argc
           load   rf, m_argv
@@ -127,8 +130,8 @@ Elfstart: push   r6           ; save original return address on stack
           stxd                ; push MSB or int argc
           ldn    rd           ; push arg count as LSB of first argument
           stxd
-          sex   r2            ; set X = SP for call to main
-          call  Cmain				  ; call the main procedure
+          sex    r2           ; set X = SP for call to main
+          call   Cmain        ; call the main procedure
           clc                 ; clear DF for return to Elf/OS
 
 ;----- set up registers for return to Elf/OS
@@ -142,68 +145,134 @@ Elfexit:  load   rf, ostack   ; get original SP
           glo    ra           ; get byte value for return
           rtn                 ; return to Elf/OS
 
-;----- error handling for when expression stack exhausted
-auto_err: load   rf, auto_msg
-          CALL   O_MSG        ; print error msg
-err_exit: load   ra, -1       ; set error value for return
-          stc                 ; set DF for error return
-          lbr Elfexit         ; exit to Elf/OS
+argvload:
+          load   r8, CMD_BUF  ; read pointer
+          copy   r8, r9       ; write pointer
+          load   ra, m_argv   ; argv table pointer
+          ldi    0
+          plo    rc           ; in-arg flag = 0
+          plo    rd           ; escape flag = 0
+          plo    re           ; argc = 0
+          plo    rf           ; quote flag = 0
 
-;----- error handling for when expression stack exhausted
-stk_err:  load   rf, stk_msg
-          call O_MSG          ; print error msg
-          lbr    err_exit     ; exit to Elf/OS
+loop:
+          lda    r8           ; D = M(r8), r8++
+          phi    rc           ; rc.hi = current char
+          lbz    end_of_input
+          ; ── escape flag? ────────────────────────────────
+          glo    rd
+          lbz    not_escaped
 
-;----- load C arguments from Elf/OS command string
-argvload: load  rd, m_argc    ; load argc pointer
-          load  rf, m_argv    ; load argv pointer
-          load  rc, $00       ; set counter
-          load  r8, K_KEYBUF  ; set pointer to key buffer
-sk_sp:    lda   r8            ; get byte from cmd string
-          lbz   argvdone      ; end of arg string
-          smi   ' '           ; check for space
-          lbz   sk_sp         ; skip over leading spaces
-          smi   2             ; check if previous arg was quote
-          lbz   q_delim       ; process quoted argument
+          ; start new arg if not already in one
+          glo    rc           ; in-arg flag
+          lbnz   esc_copy
 
-          dec   r8            ; move back to first char in argument
-          ldi   ' '           ; set delimiter to space
-          str   r2            ; put delimiter into M(X)
+          glo    re           ; argc
+          xri    MAX_ARGS
+          lbz    end_of_input
 
-a_addr:   glo   r8            ; put argument address in arg slot
-          str   rf            ; C variables are stored LSB first, then MSB
-          inc   rf
-          ghi   r8            ; C variables are LSB first, then MSB
-          str   rf
-          inc   rf
-          inc   rc            ; increment arg counter
-sk_del:   lda   r8            ; skip over non-spaces
-          lbz   argvdone      ; if we hit zero, we're done
-          sm                  ; subtract delimiter from value
-          lbnz  sk_del
+          glo    r9
+          str    ra
+          inc    ra
+          ghi    r9
+          str    ra
+          inc    ra
+          inc    re           ; argc++
+          inc    rc           ; in-arg flag = 1
 
-          dec   r8            ; back up to delimiter
-          ldi   0
-          str   r8            ; put zero after arg
-          inc   r8            ; move back to next char
-          glo   rc
-          smi   8             ; up to 8 args
-          lbnz  sk_sp         ; if not at max, keep going
+esc_copy:
+          ghi    rc
+          str    r9
+          inc    r9
+          dec    rd           ; escape flag = 0
+          lbr    loop
 
-argvdone: glo   rc            ; get argument count
-          str   rd            ; save arg count in variable
-          rtn
+not_escaped:
+          ; ── backslash? ──────────────────────────────────
+          ghi    rc
+          xri    05ch
+          lbnz   not_backslash
+          inc    rd           ; escape flag = 1
+          lbr    loop
 
-q_delim:  ldi   '"'           ; set delimiter to double quote
-          str   r2            ; put delimiter into M(X)
-          lbr   a_addr        ; set the address for argument
+not_backslash:
+          ; ── in quotes? ──────────────────────────────────
+          glo    rf           ; quote flag
+          lbz    not_in_quotes
 
-          org (($-1)|255)+1   ; align subroutine table to page boundary
+          ; check for closing quote: current char == opening quote char?
+          ghi    rc           ; current char
+          str    r2           ; M(r2) = current char
+          ghi    rd           ; opening quote char
+          sm                  ; D = current - opening_quote
+          lbnz   not_closing_quote
 
-s_return:   sep r3            ; return from subroutine
-dispatch:   lda r3            ; jump in page to inline byte address
-            plo r9
-            ;----- subroutine vectors
+          dec    rf           ; quote flag = 0
+          lbr    loop
+
+not_closing_quote:
+          ghi    rc
+          str    r9
+          inc    r9
+          lbr    loop
+
+not_in_quotes:
+          ; ── opening quote? ──────────────────────────────
+          ghi    rc
+          xri    027h         ; single quote?
+          lbz    open_quote
+          ghi    rc
+          xri    022h         ; double quote?
+          lbnz   not_quote
+
+open_quote:
+          glo    rc           ; in-arg flag
+          lbnz   already_in_arg
+
+          glo    re           ; argc
+          xri    MAX_ARGS
+          lbz    end_of_input
+
+          glo    r9
+          str    ra
+          inc    ra
+          ghi    r9
+          str    ra
+          inc    ra
+          inc    re           ; argc++
+          inc    rc           ; in-arg flag = 1
+
+already_in_arg:
+          ghi    rc           ; opening quote char
+          phi    rd           ; rd.hi = opening quote char
+          inc    rf           ; quote flag = 1
+          lbr    loop
+
+not_quote:
+          ; ── whitespace? ─────────────────────────────────
+          ghi    rc
+          xri    020h         ; space?
+          lbz    whitespace
+          ghi    rc
+          xri    009h         ; tab?
+          lbnz   regular_char
+
+whitespace:
+          glo    rc           ; in-arg flag
+          lbz    loop
+
+          ldi    0
+          str    r9
+          inc    r9
+          plo    rc           ; in-arg flag = 0
+          lbr    loop
+
+          org 2100h           ; align subroutine table to page boundary
+
+s_return: sep    r3           ; return from subroutine
+dispatch: lda    r3           ; jump in page to inline byte address
+          plo    r9
+          ;----- subroutine vectors
 s_esmove:   lbr esmove
 s_stkchk:   lbr stkchk
 s_dpop16:   lbr dpop16
@@ -282,21 +351,68 @@ s_epush8:   lbr epush8
 s_derefm:   lbr derefm
 
 ; --------------------- Variables and Stack--------------------------
-ostack: dw 0          	; original SP
+ostack:   dw     0            ; original SP
 ;------------------------ C Program Stack ---------------------------
-cstk:   ds 63
-cstack: db 0          	; program stack
+cstk:     ds     63
+cstack:   db     0            ; progam stack
 ;----------------------- Expression Stack ---------------------------
-estk:   ds 32           ; minimum stack for arithmetic operations
-es_min: ds 95           ; auto variables and arithmetic operations
-estack: db 0            ; Top of expression stack
+estk:     ds     32           ; minimum stack for arithmetic operations
+es_min:   ds     95           ; auto variables and arithmetic operations
+estack:   db     0            ; Top of expression stack
+;----- error handling for when expression stack exhausted
+auto_err: call O_INMSG        ; print error msg
+            db 'Out of Stack Space for Auto Variables',10,13,0
+          load   ra, -1       ; set error value for return
+          stc                 ; set DF for error return
+          lbr    Elfexit      ; exit to Elf/OS
+
+;----- error handling for when expression stack exhausted
+stk_err:  call O_INMSG        ; print error msg
+            db 'Stack Creep Error',10,13,0
+          load   ra, -1       ; set error value for return
+          stc                 ; set DF for error return
+          lbr    Elfexit      ; exit to Elf/OS
 ;----------------------- Arguments for Main ---------------------------
-m_argc:   db   0        ; argument count
+regular_char:
+          glo    rc           ; in-arg flag
+          lbnz   copy_char
+
+          glo    re           ; argc
+          xri    MAX_ARGS
+          lbz    end_of_input
+
+          glo    r9
+          str    ra
+          inc    ra
+          ghi    r9
+          str    ra
+          inc    ra
+          inc    re           ; argc++
+          inc    rc           ; in-arg flag = 1
+
+copy_char:
+          ghi    rc
+          str    r9
+          inc    r9
+          lbr    loop
+
+end_of_input:
+          glo    rc           ; in-arg flag
+          lbz    store_argc
+          ldi    0
+          str    r9
+
+store_argc:
+          load   r9, m_argc
+          glo    re
+          str    r9
+
+          rtn
+
+m_argc:   db   0              ; argument count
           ;----- argv[] room for pointers up to 8 arguments
 m_argv:   db   0, 0, 0, 0, 0, 0, 0, 0
           db   0, 0, 0, 0, 0, 0, 0, 0
-; ------------------------- Error Messages --------------------------
-stk_msg:  db 'Stack Creep Error',10,13,0
-auto_msg: db 'Out of Stack Space for Auto Variables',10,13,0
-; --------------------- End Variables and Stack ---------------------
-             end  ElfCpgm
+;--------------------- End Variables and Stack ---------------------
+
+          end  ElfCpgm
