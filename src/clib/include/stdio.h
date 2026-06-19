@@ -151,6 +151,7 @@ int sscanf(char *src, const char *fmt, ...);
 
 /* file functions */
 int remove(const char *path);
+int _rename(const char *old, const char *new);
 int rename(const char *old, const char *new);
 int fileno(FILE *f);
 char* tmpnam(char *buf);
