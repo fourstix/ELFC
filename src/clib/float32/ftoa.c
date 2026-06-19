@@ -1,21 +1,22 @@
 #define _ELFCLIB_
 #include <float32.h>
-#include <string.h>
-
 
 #pragma             extrn _ftoa
-#pragma             extrn Cstrcpy
 
-#pragma .link .library string.lib
-
-
+/*
+ * Convert a floating point number into an ASCII string
+ */
 void ftoa(float32_t fp1, char *s) {
   if (NULL == s)
     return;
 
   /* Process NaN */
   if (isNaN(fp1)) {
-    strcpy(s, "NaN");
+    /* write "NaN" to buffer */
+    s[0] = 'N';
+    s[1] = 'a';
+    s[2] = 'N';
+    s[3] = '\0';
     return;
   }
 
