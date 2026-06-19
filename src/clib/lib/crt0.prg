@@ -1,29 +1,29 @@
 .big
-=es_min 2289
-=auto_err 2369
-=stk_err 239f
+=es_min 2292
+=auto_err 2372
+=stk_err 23a8
 =Elfexit 2054
-:2000 30 0d 86 10 07 ea 00 04
+:2000 30 0d 86 13 07 ea 00 01
 .ever               ; tell linker to update header
-:2008 45 6c 66 43 00 96 73 86 73 d4 20 66 f8 e7 af f8
-:2018 21 bf 92 5f 1f 82 5f f8 68 a2 f8 22 b2 f8 68 a7
+:2008 45 6c 66 43 00 96 73 86 73 d4 20 66 f8 f0 af f8
+:2018 21 bf 92 5f 1f 82 5f f8 71 a2 f8 22 b2 f8 71 a7
 /C_init 2036 00
 \C_init 2037
 :2028 f8 23 b7 87 ab 97 bb f8 01 a9 f8 21 b9 d4 00 00
-:2038 f8 e9 ad f8 23 bd f8 ea af f8 23 bf e7 9f 73 8f
+:2038 f8 f2 ad f8 23 bd f8 f3 af f8 23 bf e7 9f 73 8f
 /Cmain 2050 00
 \Cmain 2051
-:2048 73 f8 00 73 0d 73 e2 d4 00 00 fc 00 f8 e7 af f8
+:2048 73 f8 00 73 0d 73 e2 d4 00 00 fc 00 f8 f0 af f8
 :2058 21 bf 4f b2 0f a2 e2 60 72 a6 f0 b6 8a d5 f8 80
-:2068 a8 f8 00 b8 88 a9 98 b9 f8 ea aa f8 23 ba f8 00
-:2078 ac ad ae af 48 bc c2 23 d9 8d c2 20 9e 8c ca 20
-:2088 97 8e fb 08 c2 23 d9 89 5a 1a 99 5a 1a 1e 1c 9c
+:2068 a8 f8 00 b8 88 a9 98 b9 f8 f3 aa f8 23 ba f8 00
+:2078 ac ad ae af 48 bc c2 23 e2 8d c2 20 9e 8c ca 20
+:2088 97 8e fb 08 c2 23 e2 89 5a 1a 99 5a 1a 1e 1c 9c
 :2098 59 19 2d c0 20 7c 9c fb 5c ca 20 a8 1d c0 20 7c
 :20a8 8f c2 20 bd 9c 52 9d f7 ca 20 b7 2f c0 20 7c 9c
 :20b8 59 19 c0 20 7c 9c fb 27 c2 20 c9 9c fb 22 ca 20
-:20c8 e1 8c ca 20 db 8e fb 08 c2 23 d9 89 5a 1a 99 5a
+:20c8 e1 8c ca 20 db 8e fb 08 c2 23 e2 89 5a 1a 99 5a
 :20d8 1a 1e 1c 9c bd 1f c0 20 7c 9c fb 20 c2 20 ed 9c
-:20e8 fb 09 ca 23 c1 8c c2 20 7c f8 00 59 19 ac c0 20
+:20e8 fb 09 ca 23 ca 8c c2 20 7c f8 00 59 19 ac c0 20
 :20f8 7c
 ?esmove 2104
 ?stkchk 2107
@@ -124,14 +124,14 @@
 :2271 00
 >0020
 >00df
-:2368 00 d4 03 4b 4f 75 74 20 6f 66 20 53 74 61 63 6b
-:2378 20 53 70 61 63 65 20 66 6f 72 20 41 75 74 6f 20
-:2388 56 61 72 69 61 62 6c 65 73 0a 0d 00 f8 ff aa f8
-:2398 ff ba ff 00 c0 20 54 d4 03 4b 53 74 61 63 6b 20
-:23a8 43 72 65 65 70 20 45 72 72 6f 72 0a 0d 00 f8 ff
-:23b8 aa f8 ff ba ff 00 c0 20 54 8c ca 23 d3 8e fb 08
-:23c8 c2 23 d9 89 5a 1a 99 5a 1a 1e 1c 9c 59 19 c0 20
-:23d8 7c 8c c2 23 e0 f8 00 59 f8 e9 a9 f8 23 b9 8e 59
-:23e8 d5 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-:23f8 00 00
+:2371 00 d4 03 4b 4f 75 74 20 6f 66 20 53 74 61 63 6b
+:2381 20 53 70 61 63 65 20 66 6f 72 20 41 75 74 6f 20
+:2391 56 61 72 69 61 62 6c 65 73 0a 0d 00 f8 ff aa f8
+:23a1 ff ba ff 00 c0 20 54 d4 03 4b 53 74 61 63 6b 20
+:23b1 43 72 65 65 70 20 45 72 72 6f 72 0a 0d 00 f8 ff
+:23c1 aa f8 ff ba ff 00 c0 20 54 8c ca 23 dc 8e fb 08
+:23d1 c2 23 e2 89 5a 1a 99 5a 1a 1e 1c 9c 59 19 c0 20
+:23e1 7c 8c c2 23 e9 f8 00 59 f8 f2 a9 f8 23 b9 8e 59
+:23f1 d5 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+:2401 00 00
 @2000
