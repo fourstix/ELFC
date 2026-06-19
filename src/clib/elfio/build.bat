@@ -30,6 +30,7 @@
 ..\elfc -L sscanf.c
 ..\elfc -L fflush.c
 ..\elfc -L remove.c
+..\elfc -L _rename.c
 ..\elfc -L rename.c
 ..\elfc -L fgetpos.c
 ..\elfc -L fsetpos.c
@@ -42,8 +43,8 @@
 ..\elfc -L tmpfile.c
 ..\elfc -L fileno.c
 
-type _vformat.prg _vscan.prg clearerr.prg fclose.prg fdopen.prg feof.prg > elfio.lib
-type ferror.prg fflush.prg fgetc.prg fgetpos.prg fgets.prg fileno.prg >> elfio.lib
+type _rename.prg _vformat.prg _vscan.prg clearerr.prg fclose.prg fdopen.prg > elfio.lib
+type feof.prg ferror.prg fflush.prg fgetc.prg fgetpos.prg fgets.prg fileno.prg >> elfio.lib
 type fopen.prg fprintf.prg fputc.prg fputs.prg fread.prg fscanf.prg >> elfio.lib
 type fseek.prg fseek32.prg fsetpos.prg ftell.prg fwrite.prg getch.prg >> elfio.lib
 type gets.prg kprintf.prg perror.prg printf.prg putch.prg puts.prg putstr.prg >> elfio.lib
