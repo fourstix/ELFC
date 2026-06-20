@@ -24,11 +24,16 @@
 ..\elfc -L lseek32.c
 ..\elfc -L unlink.c
 ..\elfc -L realloc.c
+..\elfc -L _env_read_line.c
+..\elfc -L _env_split_line.c
+..\elfc -L getenv.c
+..\elfc -L setenv.c
 
-type _fdinit.prg _fildes.prg _init.prg abort.prg atexit.prg > stdlib.lib
-type atoi.prg bsearch.prg calloc.prg close.prg creat.prg >> stdlib.lib
-type div.prg exit.prg free.prg itoa.prg itou.prg >> stdlib.lib
-type itox.prg lseek.prg lseek32.prg malloc.prg open.prg qsort.prg >> stdlib.lib
-type rand.prg read.prg realloc.prg unlink.prg write.prg >> stdlib.lib
+type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > stdlib.lib
+type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> stdlib.lib
+type exit.prg _fdinit.prg _fildes.prg free.prg getenv.prg _init.prg >> stdlib.lib
+type itoa.prg itou.prg itox.prg lseek32.prg lseek.prg malloc.prg >> stdlib.lib
+type open.prg qsort.prg rand.prg read.prg realloc.prg setenv.prg >> stdlib.lib
+type unlink.prg write.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib
