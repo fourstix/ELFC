@@ -25,6 +25,21 @@ struct int32 {
 };
 #endif
 
+/* Support functions for setenv and putenv */
+
+#define ENV_FILE_PATH   "/cfg/env.dat"
+#define ENV_TMP_PATH    "/cfg/env.tmp"
+
+/*
+ * Bounds NAME=VALUE\0. Kept small and fixed regardless of file size.
+ * Adjust to suit available RAM; 64 bytes covers most practical
+ * environment variable names/values on a constrained system.
+ */
+#define ENV_LINE_MAX    64
+
+int _env_read_line(int fd, char *buf, int maxlen);
+char *_env_split_line(char *line);
+
 /* file descriptor constants */
 
 /* Max number of 8 = 3 pre-defined + 5 system files */
@@ -161,6 +176,9 @@ void *bsearch(void *key, void *array, size_t count, size_t size, int (*cmp)());
 void qsort(void *list, size_t count, size_t size, int (*cmp)());
 int rand(void);
 void srand(int n);
+int setenv(const char *name, const char *value, int overwrite);
+char *getenv(const char *name);
+int unsetenv(const char *name);
 
 typedef struct int32 off_t;
 

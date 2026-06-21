@@ -33,11 +33,12 @@
 ..\elfc -L strim.c
 ..\elfc -L strnstr.c
 
-type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg strcasecmp.prg> string.lib
-type strcasestr.prg strcat.prg strchr.prg strcmp.prg strcpy.prg strcspn.prg >> string.lib
-type strdup.prg strerror.prg strim.prg strlcat.prg strlcpy.prg strlen.prg strlwr.prg >> string.lib
-type strncasecmp.prg strncat.prg strncmp.prg strncpy.prg strndup.prg strnlen.prg >> string.lib
-type strnstr.prg strpbrk.prg strrchr.prg strrev.prg strsep.prg strspn.prg strstr.prg >> string.lib
-type strtok.prg strupr.prg >> string.lib
+type memchr.prg memcmp.prg memcpy.prg memmove.prg memset.prg strcasecmp.prg > string.lib
+type strcasestr.prg strcat.prg strchr.prg strcmp.prg strcpy.prg >> string.lib
+type strcspn.prg strdup.prg strerror.prg strim.prg strlcat.prg >> string.lib
+type strlcpy.prg strlen.prg strlwr.prg strncasecmp.prg strncat.prg >> string.lib
+type strncmp.prg strncpy.prg strndup.prg strnlen.prg strnstr.prg >> string.lib
+type strpbrk.prg strrchr.prg strrev.prg strsep.prg strspn.prg >> string.lib
+type strstr.prg strtok.prg strupr.prg >> string.lib
 
 copy string.lib ..\lib\string.lib

@@ -43,12 +43,13 @@
 ..\elfc -L tmpfile.c
 ..\elfc -L fileno.c
 
-type _rename.prg _vformat.prg _vscan.prg clearerr.prg fclose.prg fdopen.prg > stdio.lib
-type feof.prg ferror.prg fflush.prg fgetc.prg fgetpos.prg fgets.prg fileno.prg >> stdio.lib
-type fopen.prg fprintf.prg fputc.prg fputs.prg fread.prg fscanf.prg >> stdio.lib
-type fseek.prg fseek32.prg fsetpos.prg ftell.prg fwrite.prg getch.prg >> stdio.lib
-type gets.prg kprintf.prg perror.prg printf.prg putch.prg puts.prg putstr.prg >> stdio.lib
-type remove.prg rename.prg rewind.prg scanf.prg sprintf.prg sscanf.prg >> stdio.lib
-type tmpfile.prg tmpnam.prg ungetc.prg vfprintf.prg vprintf.prg vsprintf.prg >> stdio.lib
+type clearerr.prg fclose.prg fdopen.prg feof.prg ferror.prg fflush.prg > stdio.lib
+type fgetc.prg fgetpos.prg fgets.prg fileno.prg fopen.prg fprintf.prg >> stdio.lib
+type fputc.prg fputs.prg fread.prg fscanf.prg fseek32.prg fseek.prg >> stdio.lib
+type fsetpos.prg ftell.prg fwrite.prg getch.prg gets.prg kprintf.prg >> stdio.lib
+type perror.prg printf.prg putch.prg puts.prg putstr.prg remove.prg >> stdio.lib
+type _rename.prg rename.prg rewind.prg scanf.prg sprintf.prg sscanf.prg >> stdio.lib
+type tmpfile.prg tmpnam.prg ungetc.prg _vformat.prg vfprintf.prg >> stdio.lib
+type vprintf.prg _vscan.prg vsprintf.prg >> stdio.lib
 
 copy stdio.lib ..\lib\stdio.lib
