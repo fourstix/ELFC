@@ -32,12 +32,12 @@
 ..\elfc -L u32toa.c
 ..\elfc -L uint_from_u32.c
 
-type absi32.prg addi32.prg addu32.prg asri32.prg atoi32.prg  > math32.lib
-type atou32.prg cmpi32.prg cmpu32.prg divi32.prg divu32.prg >> math32.lib
-type i32_from_int.prg i32_from_u32.prg i32toa.prg int_from_i32.prg >> math32.lib
-type make_i32.prg make_u32.prg muli32.prg muli32x16.prg >> math32.lib
-type mulu32.prg mulu32x16.prg negi32.prg shli32.prg shlu32.prg >> math32.lib
-type shri32.prg shru32.prg strtoi32.prg strtou32.prg subi32.prg >> math32.lib
-type subu32.prg u32_from_i32.prg u32_from_uint.prg u32toa.prg uint_from_u32.prg >> math32.lib
+type absi32.prg addi32.prg addu32.prg asri32.prg atoi32.prg atou32.prg > math32.lib
+type cmpi32.prg cmpu32.prg divi32.prg divu32.prg i32_from_int.prg >> math32.lib
+type i32_from_u32.prg i32toa.prg int_from_i32.prg make_i32.prg >> math32.lib
+type make_u32.prg muli32.prg muli32x16.prg mulu32.prg mulu32x16.prg >> math32.lib
+type negi32.prg shli32.prg shlu32.prg shri32.prg shru32.prg >> math32.lib
+type strtoi32.prg strtou32.prg subi32.prg subu32.prg u32_from_i32.prg >> math32.lib
+type u32_from_uint.prg u32toa.prg uint_from_u32.prg >> math32.lib
 
 copy math32.lib ..\lib\math32.lib

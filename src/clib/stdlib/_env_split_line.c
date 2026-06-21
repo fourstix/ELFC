@@ -1,5 +1,5 @@
 /*
- * _split_line: given a "NAME=VALUE" line, locate the '=' separator.
+ * _env_split_line: given a "NAME=VALUE" line, locate the '=' separator.
  * Returns a pointer to the VALUE portion (after '='), or NULL if
  * no '=' is present. Replaces '=' with '\0' in place, so the NAME
  * portion becomes a separate null-terminated string at the start

@@ -8,9 +8,13 @@
  *                           variable that is not set prints nothing
  *                           for that argument, matching GNU printenv)
  *
- * Streams the store file directly to stdout using the same
+ * Streams the store file directly to the console using the same
  * small fixed-size line buffer as getenv/setenv; no dynamic
  * allocation and no requirement to hold the whole file in memory.
+ *
+ * Uses the platform's puts() (writes a string followed by a newline)
+ * rather than a raw write() to file descriptor 1, since the target
+ * console is not addressed that way.
  */
 
 #include <stdio.h>
@@ -44,9 +48,8 @@ static void print_one(const char *name)
     char *value;
 
     value = getenv(name);
-    if (value != NULL) {
+    if (value != NULL)
         puts(value);
-    }
 }
 
 int main(int argc, char *argv[])

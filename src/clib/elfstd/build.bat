@@ -28,12 +28,13 @@
 ..\elfc -L _env_split_line.c
 ..\elfc -L getenv.c
 ..\elfc -L setenv.c
+..\elfc -L unsetenv.c
 
 type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > elfstd.lib
 type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> elfstd.lib
 type exit.prg _fdinit.prg _fildes.prg free.prg getenv.prg _init.prg >> elfstd.lib
 type itoa.prg itou.prg itox.prg lseek32.prg lseek.prg malloc.prg >> elfstd.lib
 type open.prg qsort.prg rand.prg read.prg realloc.prg setenv.prg >> elfstd.lib
-type unlink.prg write.prg >> elfstd.lib
+type unlink.prg unsetenv.prg write.prg >> elfstd.lib
 
 copy elfstd.lib ..\lib\elfstd.lib
