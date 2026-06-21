@@ -2,14 +2,13 @@
 #include <float32.h>
 #include <errno.h>
 
-#pragma             extrn _addfp
+#pragma             extrn _ftrunc
 #pragma             extrn Cerrno
 
 /*
- * Return: a + b
- *         NaN for (+inf) + (-inf) or (-inf) + (+inf)
+ * Return: a as float integer value
  */
-float32_t addf(float32_t a, float32_t b) {
+float32_t truncf(float32_t a) {
   int r_high = 0;
   int r_low = 0;
   static float32_t result = {0, 0};
@@ -19,42 +18,21 @@ float32_t addf(float32_t a, float32_t b) {
   if (isNaN(a)) {
     errno = EDOM;
     return a;
-  } else if (isNaN(b)) {
-    errno = EDOM;
-    return b;
-    /* check for +/- infinity */
   } else if (isInf(a)) {
-    /* check for 2 inf values that differ only in sign bit */
-    if (FP_SIGN == (a.high ^ b.high)) {
-      /* return NaN */
-      errno = EDOM;
-      result.high = FP_NAN;
-      result.low = FP_NAN;
-      return result;
-    } else {
-      /* otherwise return infinity */
-      errno = ERANGE;
-      return a;
-    }
-  } else if (isInf(b)) {
-    /* a can't be inf here, so return b as infintity */
     errno = ERANGE;
-    return b;
-  } else if (isZero(a)) {
-    return b;
-  } else if (isZero(b)) {
     return a;
   }
 
+  asm("            gosub s_fp1arg       ; push argument onto ES");
 
-  asm("            gosub s_fp2args      ; push arguments onto ES");
   /* Save Registers Used by ElfC */
   asm("            sex     r2           ; make sure x = SP");
   asm("            push    r9           ; save c registers");
   asm("            push    rb           ; save c registers");
 
   /* call function in library */
-  asm("            call    _addfp       ; call floating point library routine");
+  asm("            call    _ftrunc        ; call floating point library routine");
+
   /* restore ElfC registers */
   asm("            pop     rb           ; restore C registers");
   asm("            pop     r9           ; restore C registers");
@@ -72,10 +50,6 @@ float32_t addf(float32_t a, float32_t b) {
   /* assign local variables to static result for return */
   result.high = r_high;
   result.low = r_low;
-
-  /* set error if overflow occurred */
-  if (isInf(result))
-    errno = ERANGE;
 
   return result;
 }

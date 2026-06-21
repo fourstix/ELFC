@@ -76,7 +76,7 @@ ftoa_t:       ldi      0            ; terminate output
               rtn                   ; and return to caller
 ftoa_2:       smi      0ffh         ; check for infinity
               lbnz     ftoa_3       ; jump if not
-              ldi      'i'          ; write inf to output
+              ldi      'I'          ; write inf to output
               str      rd
               inc      rd
               ldi      'n'

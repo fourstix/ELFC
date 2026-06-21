@@ -1,13 +1,19 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 #pragma             extrn Cerrno
+#pragma             extrn Cstrpbrk
+
+#ifndef _ELFCLIB_
+#pragma .link .library string.lib
+#endif
 
 int _rename(const char *old, const char *new) {
 	int result;
-	/* nulls are invalid */
-	if(old == NULL || new == NULL) {
+	/* nulls are invalid, as well as new names with path delimiters or spaces */
+	if(old == NULL || new == NULL || strpbrk(new, "/\\ ")) {
 		errno = EINVAL;
 		return EOF;
 	}
