@@ -38,7 +38,8 @@ float32_t asinf(float32_t a) {
     result.low = FP_HALFPI_LO;
     result.high = FP_HALFPI_HI;
     if (isNeg(a)) {
-      result.high &= FP_SIGN;
+      /* if negative, set sign bit */
+      result.high |= FP_SIGN;
     }
     return result;
   }

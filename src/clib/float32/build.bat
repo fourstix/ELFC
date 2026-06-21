@@ -35,7 +35,7 @@
 ..\asm02 -L _fpasin.asm
 ..\asm02 -L _fpacos.asm
 ..\asm02 -L _fpatan.asm
-
+..\asm02 -L _ftrunc.asm
 
 ..\elfc -L addf.c
 ..\elfc -L divf.c
@@ -60,15 +60,25 @@
 ..\elfc -L atanf.c
 ..\elfc -L sqrtf.c
 ..\elfc -L _reduce.c
+..\elfc -L truncf.c
+..\elfc -L fracf.c
+..\elfc -L modf.c
+..\elfc -L negf.c
+..\elfc -L ceilf.c
+..\elfc -L floorf.c
+..\elfc -L roundf.c
+..\elfc -L frexpf.c
 
 type _addfp.prg _addtows.prg _atof.prg _atoi32.prg _divfp.prg _eqfp.prg > float32.lib
 type _false32.prg _fpacos.prg _fpargs.prg _fpasin.prg _fpatan.prg >> float32.lib
-type _fpcomp2.prg _fpcopy.prg _fpcos.prg _fpdata.prg >> float32.lib
-type _fpnorm.prg _fpret0.prg _fpreta.prg _fpretb.prg _fpretinf.prg _fpsin.prg >> float32.lib
-type _fpsqrt.prg _fptan.prg _ftoa.prg _ftoi32.prg _getargs.prg _gtfp.prg _gtefp.prg >> float32.lib
+type _fpcomp2.prg _fpcopy.prg _fpcos.prg _fpdata.prg _fpnorm.prg >> float32.lib
+type _fpret0.prg _fpreta.prg _fpretb.prg _fpretinf.prg _fpsin.prg _fpsqrt.prg >> float32.lib
+type _fptan.prg _ftoa.prg _ftoi32.prg _ftrunc.prg _getargs.prg _gtfp.prg _gtefp.prg >> float32.lib
 type _ltfp.prg _ltefp.prg _mulfp.prg _nefp.prg _reduce.prg _subfp.prg _tobcd32.prg _itoa32.prg >> float32.lib
 type _trigdata.prg _true32.prg absf.prg acosf.prg addf.prg asinf.prg atanf.prg >> float32.lib
-type atof.prg cosf.prg divf.prg eqf.prg ftoa.prg ftoi32.prg gtf.prg gtef.prg >> float32.lib
-type  ltf.prg ltef.prg mulf.prg nef.prg sgnf.prg sinf.prg sqrtf.prg subf.prg tanf.prg >> float32.lib
+type atof.prg cosf.prg ceilf.prg divf.prg eqf.prg floorf.prg fracf.prg frexpf.prg>> float32.lib
+type ftoa.prg ftoi32.prg gtf.prg gtef.prg ltf.prg ltef.prg modf.prg mulf.prg >> float32.lib
+type nef.prg negf.prg roundf.prg sgnf.prg sinf.prg sqrtf.prg subf.prg >> float32.lib
+type tanf.prg truncf.prg >> float32.lib
 
 copy float32.lib ..\lib\float32.lib

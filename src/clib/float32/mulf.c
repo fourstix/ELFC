@@ -50,7 +50,7 @@ float32_t mulf(float32_t a, float32_t b) {
       return result;
     } else {
       /* multiplying by any negative flips sign of infinity */
-      if (a.high & ~FP_SIGN) {
+      if (isNeg(a)) {
         b.high ^= FP_SIGN;
       }
       errno = ERANGE;
@@ -79,7 +79,6 @@ float32_t mulf(float32_t a, float32_t b) {
 
   /* get result from expression stack */
   asm("            gosub s_dpop32       ; pop result from expression stack");
-  //BRKPT
 
   /* move arguments onto local variables */
   asm("            gosub s_lset16       ; set the high word return value");

@@ -26,6 +26,8 @@
 ; **************************************************
               proc    _subfp
 
+.link .requires _addfp
+
               extrn   _subfpi
 
               glo     r7           ; Setup registers for call

@@ -32,7 +32,7 @@ float32_t atanf(float32_t a) {
     result.high = FP_HALFPI_HI;
     /* if negative set the sign bit */
     if (isNeg(a)) {
-      result.high &= FP_SIGN;
+      result.high |= FP_SIGN;
     }
     return result;
   } else if (isZero(a)) {

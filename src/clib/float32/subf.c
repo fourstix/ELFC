@@ -25,7 +25,7 @@ float32_t subf(float32_t a, float32_t b) {
     /* check for +/- infinity */
   } else if (isInf(a)) {
     /* check for 2 inf values that the same sign */
-    if (a.high = b.high) {
+    if (a.high == b.high) {
       errno = EDOM;
       /* return NaN */
       result.high = FP_NAN;

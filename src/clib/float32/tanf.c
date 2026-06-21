@@ -29,7 +29,7 @@ float32_t tanf(float32_t a) {
   }
 
   /* reduce angle to range of -pi <= a <= pi */
-  a = _reduce(a, 1);
+  a = _reduce(a);
 
   /* Push angle value onto the expression stack */
   asm("            gosub s_fp1arg       ; push argument onto ES");

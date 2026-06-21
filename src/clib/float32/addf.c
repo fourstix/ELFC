@@ -24,7 +24,7 @@ float32_t addf(float32_t a, float32_t b) {
     return b;
     /* check for +/- infinity */
   } else if (isInf(a)) {
-    /* check for 2 inf values that differ in sign bit */
+    /* check for 2 inf values that differ only in sign bit */
     if (FP_SIGN == (a.high ^ b.high)) {
       /* return NaN */
       errno = EDOM;
