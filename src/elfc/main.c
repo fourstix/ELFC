@@ -63,7 +63,7 @@ static int exists(char *file) {
 }
 
 //grw - elimiate __dos conditional code
-static void compile(char *file, char *def) {
+static void compile(char *file, char *def[], int ndef) {
 	char	*ofile;
 	FILE	*in, *out;
 
@@ -90,7 +90,7 @@ static void compile(char *file, char *def) {
 
   //grw - removed old extra verbose messages
 	}
-	program(file, in, out, def);
+	program(file, in, out, def, ndef);
 	if (file) {
 		fclose(in);
 		if (out) fclose(out);
@@ -267,17 +267,18 @@ static char exe_path[MAXPATH];
 
 int main(int argc, char *argv[]) {
 	int	i, j;
-	char	*def;
+  //arh allow multiple command line definitions
+	char	*def[MAX_DEFS];
+  int ndef = 0;
   //grw need to pase first file name to Asm/02 and Link/02
   char  *fname = NULL;
 
-	def = NULL;
 	O_debug = 0;
 	O_verbose = 0;
 	O_componly = 0;
 	O_asmonly = 0;
 	O_testonly = 0;
-    //grw - added no c libs option
+  //grw - added no c libs option
 	O_clibs = 1;
   O_elflibs = 0;
 	O_outfile = "";
@@ -295,7 +296,7 @@ int main(int argc, char *argv[]) {
 	for (i=1; i<argc; i++) {
 		if (*argv[i] != '-') break;
 		if (!strcmp(argv[i], "-")) {
-			compile(NULL, def);
+			compile(NULL, def, ndef);
 			exit(Errors? EXIT_FAILURE: EXIT_SUCCESS);
 		}
 		for (j=1; argv[i][j]; j++) {
@@ -321,8 +322,9 @@ int main(int argc, char *argv[]) {
 				O_verbose++;
 				break;
 			case 'D':
-				if (def) cmderror("too many -D's", NULL);
-				def = nextarg(argc, argv, &i, &j);
+        //arh allow up to MAX_DEFS command line definitions
+        if (ndef == MAX_DEFS) cmderror("too many -D's", NULL);
+				def[ndef++] = nextarg(argc, argv, &i, &j);
 				break;
       //grw - added option to ignore warnings
       case 'I':
@@ -365,7 +367,7 @@ int main(int argc, char *argv[]) {
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
-			compile(argv[i], def);
+			compile(argv[i], def, ndef);
 			//grw - set name for linker
       if (fname == NULL) {
 			  fname = argv[i];
