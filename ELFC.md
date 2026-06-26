@@ -416,7 +416,6 @@ Will produce the file cstime.prg that can be concatenated into an Elf/OS (Mini/D
 type systime.prg asctime.prg cstime.prg > time.lib
 ```
 
-
 Stdio Print Conversions
 -----------------------
 * The flags `-, +, space, 0 and #` are supported.
@@ -469,23 +468,21 @@ The following functions were omitted from the ElfC stdlib C library.
 * double atof(char\* s);
 * long atol(char\* s);
 * double strtod(char\* s, char\*\* endp);
-* long strtol(char\* s, char\*\* endp, int base
+* long strtol(char\* s, char\*\* endp, int base);
 * unsigned long strtoul(char\* s, char\*\* endp, int base);
 * long labs(long n);
 * ldiv_t ldiv(long num, long denom);
 * int system(char *s);
-* char\* getenv(char *name);
 
 *Notes:*
 * *All the long and double utility functions were omitted because these types are not supported in the current version.*
 * *The math32 library provides equivalent functions as the long utility functions.*
-* *The _atoi32_ function in math32 library provides equivalent function as _atol_.*
-* *The _strtoi32_ function in math32 library provides equivalent function as _strtol_.*
-* *The _divi32_ function in math32 library provides equivalent function as _ldiv_.*
-* *The _absi32_ function in math32 library provides equivalent function as _labs_.*
-* *The mathu32 library provides equivalent function as the unsigned long _strtoul_ function.*
-* *The _strtou32_ function in mathu32 library provides equivalent function as _strtoul_.*
-* *The system and genenv() functions have no equivalent functions in Elf/OS or Mini/DOS.*
+* *The _atoi32_ function in math32 library provides equivalent function to _atol_.*
+* *The _strtoi32_ function in math32 library provides equivalent function to _strtol_.*
+* *The _divi32_ function in math32 library provides equivalent function to _ldiv_.*
+* *The _absi32_ function in math32 library provides equivalent function to _labs_.*
+* *The _strtou32_ function in mathu32 library provides equivalent function to _strtoul_.*
+* *The system function has no equivalent in Elf/OS or Mini/DOS.*
 
 
 Unsupported Stdio Functions
@@ -565,6 +562,16 @@ int example(int count, ...) {
   va_end(ap);
 }
 ```
+Environment
+-----------
+
+The setenv(), getenv(), and unsetenv() functions are supported on Elf/OS and Mini/DOS. The src/examples folder includes a set of utilities for managing the environment from the command line.
+
+* **export** This command is used to set a value for an environment variable. The command `export USER="John Q. Public"` sets the USER environment variable as shown. If no value is provided following the '=' sign, then the variable value is set to the empty string.
+
+* **printenv** This command is used to print the current values of environment variables. The command `printenv X Y` would print the values of the X and Y variables on separate lines. If no variable names are specified, all of the environment variables and their values are printed.
+
+* **unset** This command is used to delete environment variables. The command `unset X Y` will delete both the X and Y environment variables.
 
 Assert Macro
 --------------
@@ -595,24 +602,59 @@ struct tm {
 
 Unsupported Time Functions
 ---------------------------
-The following functions were omitted from the ElfC time C library because Elf/OS v5 and Mini/DOS do not provide API for a clock or system time variable.  Equivalent functions that provide the same information through a time structure are provided instead.
+The following functions were omitted from the ElfC time C library:
 
-* clock_t clock(void)
-* time_t void(void)
-* double difftime(time_t time2, time_t time1)
-* time_t mktime(struct tm *tp)
+* clock_t clock(void) - there is no guaranteed time counter
+* double difftime(time_t time2, time_t time1) - double is not supported by ElfC
+
+You can calculate the difference in seconds between two time_t values using the subi32 function from the math32 library.
 
 Local Timezone information
 ---------------------------
-ElfC does not support the _locale.h_ header, so the following function should be used to set time zone information and daylight savings time information before calling other time functions.
+ElfC does not support the _locale.h_ header, so the following function may be used to set time zone information and daylight savings time information before calling other time functions.
 
 * void timezone(char \*tzname, int tzoff_min, int tzdst)
 
 *Notes:*
-* _tzname_ is a string abbreviation for the time zone name, such as "EST" for US Eastern Standard Time.
-* _tzoff_min_ is the offset from Universal Co-ordinated Time in minutes.  Offset values WEST of UTC should be negative, while offsets to the EAST are positive.
-* _tzdst_ indicates if daylight savings time is in effect. It should be 1 if daylight savings time is in effect, and 0 if not.
+* `_tz_name_` is a string abbreviation for the time zone name, such as "EST" for US Eastern Standard Time.
+* `_tz_offset_` is the offset from Universal Co-ordinated Time in seconds.  Offset values WEST of UTC should be negative, while offsets to the EAST are positive.
+* `_tz_dst_` indicates if daylight savings time is in effect. It should be 1 if daylight savings time is in effect, and 0 if not.
 
+The user may set the TZ environment variable to a POSIX-compliant description of the time zone.
+
+### Format Breakdown
+
+The standard format for a POSIX timezone string is:
+
+*stdoffset[dst[offset][,start[/time],end[/time]]]]*
+
+  * **std**: The name of the standard timezone (must be 3 or more alphabetic characters, like EST)
+  * **offset**: The time value you must add to the local time to get UTC. Note: Signs are inverted compared to modern ISO-8601 standards (e.g., New York is UTC-5, so its POSIX offset is 5 or +5)
+  * **dst**: The name of the daylight saving timezone (e.g., EDT). If missing, DST is not observed
+  * **offset** (second occurrence): The DST offset. If missing, it defaults to 1 hour ahead of standard time
+*.,start... ,end...: The specific dates and times when the switch into and out of DST occurs.
+
+Common Examples
+
+#### United States (Eastern Time):
+
+  EST5EDT,M3.2.0,M11.1.0
+  
+  * EST5: Standard time is EST, which is 5 hours behind UTC (UTC = Local + 5)
+  * EDT: Observes Daylight Saving Time (EDT)
+  * M3.2.0: DST starts on the 3rd month (March), 2nd week, 0 day (Sunday)
+  * M11.1.0: DST ends on the 11th month (November), 1st week, 0 day (Sunday)
+
+#### United Kingdom (London):
+
+  GMT0BST,M3.5.0/1,M10.5.0/2
+
+  * GMT0: Standard time is GMT, 0 hours from UTC
+  * BST: Observes British Summer Time
+  * M3.5.0/1: Starts the last Sunday (5 means last week) of March at 1:00 AM
+  * M10.5.0/2: Ends the last Sunday of October at 2:00 AM
+
+There are currently two implementations of the tzset() function, which reads the TZ environment variable and sets the _tz variables for the current time zone. The `tzset_all` function is a full implementation of the POSIX standard and can interpret any time zone worldwide. The `tzset_us` function is much smaller and faster, but only handles US time zones. Additional implementations specific to other geographic locations may be added in the future. Code should call tzset, and a compiler command-line definitionis used to indicate which variant is desired for a program (e.g. elfc -D tzset=tzset_us timetest.c).
 
 Equivalent Time Functions
 --------------------------
@@ -643,8 +685,14 @@ Supported Time Functions
 -------------------------
 The following functions are supported as documented.
 
-* char \*asctime(struct tm *tp)
-* int  strftime(char \*s, int smax, char \*fmt, struct tm \*tp);
+* char *_ctime(time_t *timer);
+* time_t time(time_t *second);
+* time_t timegm(struct tm *t);
+* time_t mktime(struct tm *t);
+* struct tm *gmtime(time_t *timer);
+* struct tm *localtime(time_t *timer);
+* char *asctime(struct tm *tp)
+* int strftime(char *s, int smax, char *fmt, struct tm *tp);
 
 *Notes:*
 
