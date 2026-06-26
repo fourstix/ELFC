@@ -11,7 +11,7 @@
 #define SECS_PER_HOUR 3600
 
 /* Time Zone name */
-char *_tzname = NULL;
+char *_tz_name = NULL;
 
 /* Timezone offsets are not always whole number hours (Newfoundland and India)
  */
@@ -23,7 +23,7 @@ int _tz_dst = -1;            /* DST is unknown until set */
 
 void timezone(char *tzname, int tzoff_min, int tzdst)
 {
-  _tzname = tzname;
+  _tz_name = tzname;
   _tz_offset = muli32x16(i32_from_int(tzoff_min), 60);
   if (tzdst == 1) {
     _tz_offset = addi32(_tz_offset, i32_from_int(SECS_PER_HOUR));

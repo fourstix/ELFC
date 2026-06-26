@@ -28,10 +28,45 @@ typedef int32_t time_t;
 #define ctime    _ctime2
 #endif
 
-extern char *_tzname;  /* Time Zone Name */
+extern char *_tz_name;     /* Time Zone Name */
 extern int32_t _tz_offset; /* seconds difference from GMT (West negative, East positive) */
-extern int _tz_dst;    /* 1 if DST in effect, 0 if not and -1 if unknwon */
+extern int _tz_dst;        /* 1 if DST in effect, 0 if not and -1 if unknwon */
 
+#define TZ_NAME_MAX  8
+
+/*
+ * Parsed representation of a POSIX TZ string:
+ *   std_name  offset  [ dst_name [ dst_offset ] [ , rule ] ]
+ *
+ * has_dst is false if there is no dst_name component at all (e.g.
+ * "UTC0" or "EST5"), meaning the zone never observes DST.
+ *
+ * has_rule is false if a dst_name is present but no ",rule" was
+ * given; POSIX defines a default US rule in that case, but on this
+ * platform we treat it as "DST status unknown" instead of guessing
+ * at a region-specific default.
+ */
+struct tz_parsed {
+    char    std_name[TZ_NAME_MAX];
+    int32_t std_offset;     /* seconds to ADD to local time to get UTC */
+    char    dst_name[TZ_NAME_MAX];
+    int32_t dst_offset;     /* seconds to ADD to local DST time to get UTC */
+    int     has_dst;
+    int     has_rule;
+    int     start_month;    /* 1-12 */
+    int     start_week;     /* 1-5 (5 = last) */
+    int     start_day;      /* 0-6, 0=Sunday */
+    int32_t start_time;     /* seconds after local midnight, default 7200 */
+    int     end_month;
+    int     end_week;
+    int     end_day;
+    int32_t end_time;
+};
+
+int _tz_parse(const char *tz, struct tz_parsed *out);
+int _tz_is_dst_active(struct tz_parsed *tz, time_t now_utc);
+void tzset_us(void);
+void tzset_all(void);
 
 struct tm {
     int tm_sec;       /* seconds after the minute (0 to 60) */

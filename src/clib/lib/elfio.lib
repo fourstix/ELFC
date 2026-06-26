@@ -1096,24 +1096,31 @@ v021a
 ?auto_err 000e
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 03 ff fe c3 00 00
 :0010 d9 12 00 00 d9 42 00 00 d9 b7 d9 0f 9a 52 8a f1
-:0020 ca 00 2f d9 09 d9 12 00 00 d9 42 00 02 d9 b7 d9
-?Cerrno 003e
-:0030 09 9a 52 8a f1 c2 00 4b d9 12 00 16 d9 21 00 00
-:0040 d9 09 d9 12 ff ff d9 09 c0 00 98 d9 45 00 00 8a
-:0050 af 9a bf d9 45 00 02 8a ac 9a bc 9b 73 8b 73 d4
-:0060 03 1b 60 72 ab f0 bb f8 00 c7 f8 ff ba aa d9 48
-:0070 ff fe d9 12 ff ff d9 42 ff fe d9 b7 d9 09 9a 52
-?Cerrno 008e
-:0080 8a f1 ca 00 88 c0 00 92 d9 12 00 05 d9 21 00 00
-?auto_err 009d
-:0090 d9 09 d9 42 ff fe d9 09 d9 03 00 02 c3 00 00 e2
-?stk_err 00a3
-:00a0 d9 06 c3 00 00 60 72 ab f0 bb d5
+:0020 ca 00 4e d9 09 d9 12 00 00 d9 42 00 02 d9 b7 d9
+:0030 0f 9a 52 8a f1 ca 00 4e d9 09 d9 12 00 ca d9 42
+/Cstrpbrk 0043 00
+\Cstrpbrk 0044
+?auto_err 004a
+:0040 00 02 d4 00 00 d9 03 00 04 c3 00 00 d9 0c d9 09
+?Cerrno 005d
+:0050 9a 52 8a f1 c2 00 6a d9 12 00 16 d9 21 00 00 d9
+:0060 09 d9 12 ff ff d9 09 c0 00 b7 d9 45 00 00 8a af
+:0070 9a bf d9 45 00 02 8a ac 9a bc 9b 73 8b 73 d4 03
+:0080 1b 60 72 ab f0 bb f8 00 c7 f8 ff ba aa d9 48 ff
+:0090 fe d9 12 ff ff d9 42 ff fe d9 b7 d9 09 9a 52 8a
+?Cerrno 00ad
+:00a0 f1 ca 00 a7 c0 00 b1 d9 12 00 05 d9 21 00 00 d9
+?auto_err 00bc
+:00b0 09 d9 42 ff fe d9 09 d9 03 00 02 c3 00 00 e2 d9
+?stk_err 00c2
+:00c0 06 c3 00 00 60 72 ab f0 bb d5 2f 5c 20 00
 +0021
 +0036
-+0049
-+0083
-+0086
++003c
++0055
++0068
++00a2
++00a5
 }
 .big
 {Crename

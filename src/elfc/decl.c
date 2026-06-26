@@ -1583,9 +1583,13 @@ void defarg(char *s) {
   if (*p) *--p = '=';
 }
 
-void program(char *name, FILE *in, FILE *out, char *def) {
+void program(char *name, FILE *in, FILE *out, char *def[], int ndef) {
+  int i;
+
   init();
-  defarg(def);
+  for (i = 0; i < ndef; i++) {
+    defarg(def[i]);
+  }
   Infile = in;
   Outfile = out;
   File = Basefile = name;
