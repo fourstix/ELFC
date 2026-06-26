@@ -571,9 +571,9 @@
 ?auto_err 0b5c
 :0b50 d9 42 ff fc d4 00 64 d9 03 00 08 c3 00 00 d9 0c
 :0b60 d9 3c 00 04 d9 09 c0 00 e8 d9 42 00 06 d9 42 00
-?C_tzname 0b73
+?C_tz_name 0b73
 :0b70 04 d9 1b 00 00 d9 09 9a 52 8a f1 c2 0b 85 d9 1b
-?C_tzname 0b80
+?C_tz_name 0b80
 :0b80 00 00 c0 0b 89 d9 12 0e 91 d4 00 03 d9 03 00 06
 ?auto_err 0b91
 :0b90 c3 00 00 d9 0c d9 3c 00 04 d9 09 c0 00 e8 c0 0c
@@ -1177,9 +1177,9 @@ v0f24
 :07e0 00 d9 0c d9 12 00 3c d9 8d d9 93 d4 00 64 d9 03
 ?auto_err 07f3
 :07f0 00 08 c3 00 00 d9 0c d9 3c 00 04 d9 09 c0 00 e8
-?C_tzname 080a
+?C_tz_name 080a
 :0800 d9 42 00 06 d9 42 00 04 d9 1b 00 00 d9 09 9a 52
-?C_tzname 0817
+?C_tz_name 0817
 :0810 8a f1 c2 08 1c d9 1b 00 00 c0 08 20 d9 12 0b 11
 ?auto_err 0828
 :0820 d4 00 03 d9 03 00 06 c3 00 00 d9 0c d9 3c 00 04
@@ -2098,7 +2098,7 @@ v01ac
 }
 .big
 {Ctimezone
-=C_tzname 0003
+=C_tz_name 0003
 =C_tz_offset 0005
 =C_tz_dst 0009
 :0000 c0 00 0b 00 00 00 00 00 00 ff ff e2 9b 73 8b 73
@@ -3760,14 +3760,14 @@ v0ae1
 }
 .big
 {Ctzset_all
-?C_tzname 000e
+?C_tz_name 000e
 :0000 c0 00 9a e2 9b 73 8b 73 87 ab 97 bb d9 1b 00 00
 :0010 d9 12 00 55 d9 81 d9 09 d9 60 d9 09 d9 12 00 01
-?C_tzname 0022
+?C_tz_name 0022
 :0020 d9 1b 00 00 d9 84 d9 12 00 54 d9 81 d9 09 d9 60
-?C_tzname 0038
+?C_tz_name 0038
 :0030 d9 09 d9 12 00 02 d9 1b 00 00 d9 84 d9 12 00 43
-?C_tzname 004e
+?C_tz_name 004e
 :0040 d9 81 d9 09 d9 60 d9 09 d9 12 00 03 d9 1b 00 00
 :0050 d9 84 d9 12 00 00 d9 81 d9 09 d9 60 d9 09 d9 12
 ?C_tz_offset 0060
@@ -3795,7 +3795,7 @@ v0ae1
 :0110 f1 ca 01 9e d9 12 00 00 d9 3c ff fa d9 09 d9 42
 :0120 ff fa d9 12 00 08 d9 c0 d9 09 9a 52 8a f1 ca 01
 :0130 34 c0 01 66 c0 01 44 d9 42 ff fa d9 4e ff fa d9
-?C_tzname 014a
+?C_tz_name 014a
 :0140 09 c0 01 1e d9 42 ff fa d9 1b 00 00 d9 84 d9 12
 :0150 04 51 d9 42 ff fa d9 84 d9 7b 00 d9 81 d9 09 d9
 ?C_tz_offset 0168
@@ -3812,7 +3812,7 @@ v0ae1
 :01b0 ca 02 3d d9 12 00 00 d9 3c ff fa d9 09 d9 42 ff
 :01c0 fa d9 12 00 08 d9 c0 d9 09 9a 52 8a f1 ca 01 d3
 :01d0 c0 02 05 c0 01 e3 d9 42 ff fa d9 4e ff fa d9 09
-?C_tzname 01e9
+?C_tz_name 01e9
 :01e0 c0 01 bd d9 42 ff fa d9 1b 00 00 d9 84 d9 12 04
 :01f0 51 d9 42 ff fa d9 84 d9 7b 00 d9 81 d9 09 d9 60
 ?C_tz_offset 0207
@@ -3839,7 +3839,7 @@ v0ae1
 :0280 84 c0 03 14 d9 12 00 00 d9 3c ff fa d9 09 d9 42
 :0290 ff fa d9 12 00 08 d9 c0 d9 09 9a 52 8a f1 ca 02
 :02a0 a4 c0 02 dc c0 02 b4 d9 42 ff fa d9 4e ff fa d9
-?C_tzname 02ba
+?C_tz_name 02ba
 :02b0 09 c0 02 8e d9 42 ff fa d9 1b 00 00 d9 84 d9 12
 :02c0 04 51 d9 12 00 0c d9 84 d9 42 ff fa d9 84 d9 7b
 ?C_tz_offset 02de
@@ -3857,7 +3857,7 @@ v0ae1
 :0330 ff fa d9 09 d9 42 ff fa d9 12 00 08 d9 c0 d9 09
 :0340 9a 52 8a f1 ca 03 4a c0 03 7c c0 03 5a d9 42 ff
 :0350 fa d9 4e ff fa d9 09 c0 03 34 d9 42 ff fa d9 1b
-?C_tzname 0360
+?C_tz_name 0360
 :0360 00 00 d9 84 d9 12 04 51 d9 42 ff fa d9 84 d9 7b
 ?C_tz_offset 037e
 :0370 00 d9 81 d9 09 d9 60 d9 09 c0 03 4d d9 12 00 00
@@ -3872,7 +3872,7 @@ v0ae1
 :03b0 09 c0 04 3b d9 12 00 00 d9 3c ff fa d9 09 d9 42
 :03c0 ff fa d9 12 00 08 d9 c0 d9 09 9a 52 8a f1 ca 03
 :03d0 d4 c0 04 06 c0 03 e4 d9 42 ff fa d9 4e ff fa d9
-?C_tzname 03ea
+?C_tz_name 03ea
 :03e0 09 c0 03 be d9 42 ff fa d9 1b 00 00 d9 84 d9 12
 :03f0 04 51 d9 42 ff fa d9 84 d9 7b 00 d9 81 d9 09 d9
 ?C_tz_offset 0408
@@ -3955,14 +3955,14 @@ v00fb
 }
 .big
 {Ctzset_us
-?C_tzname 000e
+?C_tz_name 000e
 :0000 c0 02 e5 e2 9b 73 8b 73 87 ab 97 bb d9 1b 00 00
 :0010 d9 12 00 55 d9 81 d9 09 d9 60 d9 09 d9 12 00 01
-?C_tzname 0022
+?C_tz_name 0022
 :0020 d9 1b 00 00 d9 84 d9 12 00 54 d9 81 d9 09 d9 60
-?C_tzname 0038
+?C_tz_name 0038
 :0030 d9 09 d9 12 00 02 d9 1b 00 00 d9 84 d9 12 00 43
-?C_tzname 004e
+?C_tz_name 004e
 :0040 d9 81 d9 09 d9 60 d9 09 d9 12 00 03 d9 1b 00 00
 :0050 d9 84 d9 12 00 00 d9 81 d9 09 d9 60 d9 09 d9 12
 ?C_tz_offset 0060
@@ -4076,7 +4076,7 @@ v00fb
 :0550 d9 60 d9 09 c0 05 02 d9 12 06 7b d9 42 ff fa d9
 :0560 84 d9 12 00 00 d9 81 d9 09 d9 60 d9 09 d9 42 ff
 :0570 f6 d9 09 9a 52 8a f1 ca 05 c2 d9 12 00 08 d9 12
-?C_tzname 0584
+?C_tz_name 0584
 /Cstrncpy 0587 00
 \Cstrncpy 0588
 ?auto_err 058e
@@ -4091,7 +4091,7 @@ v00fb
 ?C_tz_dst 05bb
 :05b0 de 00 04 d9 09 d9 12 00 00 d9 21 00 00 d9 09 c0
 :05c0 06 5d d4 00 9a d9 0c d9 09 9a 52 8a f1 c2 06 18
-?C_tzname 05da
+?C_tz_name 05da
 /Cstrncpy 05dd 00
 \Cstrncpy 05de
 :05d0 d9 12 00 08 d9 12 06 7b d9 1b 00 00 d4 00 00 d9
@@ -4106,7 +4106,7 @@ v00fb
 :0600 c3 00 00 d9 0c d9 de 00 04 d9 09 d9 12 00 01 d9
 ?C_tz_dst 0611
 :0610 21 00 00 d9 09 c0 06 5d d9 12 00 08 d9 12 06 73
-?C_tzname 0622
+?C_tz_name 0622
 /Cstrncpy 0625 00
 \Cstrncpy 0626
 ?auto_err 062c

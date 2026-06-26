@@ -28,9 +28,9 @@ typedef int32_t time_t;
 #define ctime    _ctime2
 #endif
 
-extern char *_tzname;  /* Time Zone Name */
+extern char *_tz_name;     /* Time Zone Name */
 extern int32_t _tz_offset; /* seconds difference from GMT (West negative, East positive) */
-extern int _tz_dst;    /* 1 if DST in effect, 0 if not and -1 if unknwon */
+extern int _tz_dst;        /* 1 if DST in effect, 0 if not and -1 if unknwon */
 
 #define TZ_NAME_MAX  8
 

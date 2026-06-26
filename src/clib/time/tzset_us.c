@@ -22,7 +22,7 @@
  *   EST5EDT  CST6CDT  MST7MDT  PST8PDT  AST4ADT  AKST9AKDT
  *   HST10    MST7   (no-DST zones)
  *
- * Sets _tzname, _tz_offset (int32_t seconds), _tz_dst as described
+ * Sets _tz_name, _tz_offset (int32_t seconds), _tz_dst as described
  * in tzset.h. Defaults to UTC on any parse error.
  *
  * getenv is forward-declared (not via env.h) to avoid the host-side
@@ -40,7 +40,7 @@
 #pragma extrn Cisdigit
 #pragma extrn Cstrncpy
 #pragma extrn Cnegi32
-#pragma extrn C_tzname
+#pragma extrn C_tz_name
 #pragma extrn C_tz_offset
 #pragma extrn C_tz_dst
 #pragma extrn Csystime
@@ -49,10 +49,10 @@
 
 static void set_utc_default(void)
 {
-    _tzname[0] = 'U';
-    _tzname[1] = 'T';
-    _tzname[2] = 'C';
-    _tzname[3] = '\0';
+    _tz_name[0] = 'U';
+    _tz_name[1] = 'T';
+    _tz_name[2] = 'C';
+    _tz_name[3] = '\0';
     _tz_offset.low  = 0;
     _tz_offset.high = 0;
     _tz_dst = 0;
@@ -191,18 +191,18 @@ void tzset_us(void)
     }
 
     if (!has_dst) {
-        strncpy(_tzname, std_name, TZ_NAME_MAX);
+        strncpy(_tz_name, std_name, TZ_NAME_MAX);
         _tz_offset = negi32(std_offset);
         _tz_dst = 0;
         return;
     }
 
     if (dst_active()) {
-        strncpy(_tzname, dst_name, TZ_NAME_MAX);
+        strncpy(_tz_name, dst_name, TZ_NAME_MAX);
         _tz_offset = negi32(dst_offset);
         _tz_dst = 1;
     } else {
-        strncpy(_tzname, std_name, TZ_NAME_MAX);
+        strncpy(_tz_name, std_name, TZ_NAME_MAX);
         _tz_offset = negi32(std_offset);
         _tz_dst = 0;
     }
