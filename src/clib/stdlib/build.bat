@@ -28,7 +28,7 @@
 ..\elfc -L _env_split_line.c
 ..\elfc -L getenv.c
 ..\elfc -L setenv.c
-../elfc -L unsetenv.c
+..\elfc -L unsetenv.c
 
 type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > stdlib.lib
 type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> stdlib.lib
