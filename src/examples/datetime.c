@@ -18,8 +18,8 @@ int main() {
 
   tp = &now;
 
-  /* set local timezone for US Eastern Daylight Time */
-  timezone("EDT", -300, 1);
+  /* set local timezone */
+  tzset_us();
 
   /* Get the system time */
   retval = systime(tp);
