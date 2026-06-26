@@ -20,6 +20,8 @@
  #define AOUTNAME  "a.out"
 #endif
 
+//arh - Allow multiple -D options
+#define MAX_DEFS  8
 
 #define SCCLIBC    ""
 

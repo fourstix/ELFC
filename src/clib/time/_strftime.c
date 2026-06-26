@@ -6,7 +6,7 @@
 
 /* define only extern procedures required */
 #pragma extrn Csprintf
-#pragma extrn C_tzname
+#pragma extrn C_tz_name
 #pragma extrn C_tz_offset
 #pragma extrn Cdivi32
 #pragma extrn Ci32_from_int
@@ -215,7 +215,7 @@ static char *_fmt(char *format, struct tm *t, char *pt, char *ptlim)
         }
 
         case 'Z':
-          pt = _add(_tzname ? _tzname : "?", pt, ptlim);
+          pt = _add(_tz_name ? _tz_name : "?", pt, ptlim);
           continue;
 
         case '%':

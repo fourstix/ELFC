@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #pragma             extrn Cerrno
+#pragma             extrn Cstrpbrk
 
 int _rename(const char *old, const char *new) {
 	int result;
