@@ -825,11 +825,11 @@ The float32 library defines the following special values
 * `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
 
 Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$, $0 \times \pm\infty $ or $\pm\infty \div\pm\infty $
+* The result of $0\div0$, $0\times\pm\infty $ or $\pm\infty \div\pm\infty $
 * The result of $\pm\infty  + \mp\infty $ or $\pm\infty  - \pm\infty $
 * The result of `sqrt(x)` when $x \lt 0$
 * The result of `logf(x)` when $x \lt 0$
-* The result of `powf(b,p)` when $b \lt 0$ or $b \eq 0$ and $p \leq 0$
+* The result of `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
 
 When `NaN` is returned `errno` is set to `EDOM` (domain error).
 
@@ -861,7 +861,7 @@ Underflow occurs when the absolute value of the result is less than the smallest
 Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set to `EDOM`.
 
 **Comparison functions**
-* int _eqf(float32_t a, float32_t b)_ - return true if $a \eq b$
+* int _eqf(float32_t a, float32_t b)_ - return true if $a = b$
 * int _gtf(float32_t a, float32_t b)_ - return true if $a \gt b$
 * int _gtef(float32_t a, float32_t b)_ - return true if $a \geq b$
 * int _ltf(float32_t a, float32_t b)_ - return true if $a \lt b$
@@ -909,13 +909,13 @@ The following table shows the results of comparison functions with special value
 * float32_t _sinf(float32_t a)_ - return the $\sin(a)$ in radians
 * float32_t _cosf(float32_t a)_ - return the $\cos(a)$ in radians
 * float32_t _tanf(float32_t a)_ - return the $\tan(a)$ in radians
-* float32_t _asinf(float32_t a)_ - return the $\arcsin(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$, the domain of a is (-1, 1)
+* float32_t _asinf(float32_t a)_ - return the $\arcsin(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$), the domain of a is (-1, 1)
 * float32_t _acosf(float32_t a)_- return the $\arccos(a)$ in the range of (0, $\pi$), the domain of a is (-1, 1)
 * float32_t _atanf(float32_t a)_- return the $\arctan(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$), the domain of a is (-1, 1)
 * float32_t _atan2f(float32_t y, float32_t x)_ - return the $\arctan(\frac{y}{x})$ in the range of ($-\pi$, $+\pi$).
 
 **Angle conversion functions**
-* float32_t _areducef(float32_t a)_ - reduce an angle to range of ($-\pi$, $\pi) radians
+* float32_t _areducef(float32_t a)_ - reduce an angle to range of ($-\pi$, $\pi$) radians
 * float32_t _rad2degf(float32_t a)_ - convert an angle in radians to degrees
 * float32_t _deg2radf(float32_t a)_ - convert an angle in degrees to radians
 
@@ -931,16 +931,16 @@ The following table shows the results of comparison functions with special value
 * float32_t _zflushf(float32_t a, float32_t eps)_ - If $(a)$ $\leq$ $\epsilon$, return 0, else return a.
 
 **Logarithmic and Power Functins**
-* float32_t _expf(float32_t a)_ - return the exponential function $\exp^a$
+* float32_t _expf(float32_t a)_ - return the exponential function $e^a$
 * float32_t _logf(float32_t a)_ - return the natural logarithm function $\ln(a)$, where $a \gt 0$
 * float32_t _log2f(float32_t a)_- return the base 2 logarithm function $\log_2(a)$, where $a \gt 0$
-* float32_t _log10f(float32_t a)_- return the common logarithm function $\log_10(a)$, where $a \gt 0$
+* float32_t _log10f(float32_t a)_- return the common logarithm function $\log_{10}(a)$, where $a \gt 0$
 * float32_t _sqrtf(float32_t a)_ - return the square root of a, where $a $geq 0$
-* float32_t _powf(float32_t b, float32_t p)_ - return base b to the power p $b^p$, where $b \gt 0$ or $b \eq 0$ and $p \gt 0$.
-* float32_t _hypotf(float32_t a, float32_t b)_ - return the hypotenuse of a and b $\sqrt{a^2 + b^2}$
-* float32_t _sinhf(float32_t a)_ - return the $\hypsine(a)$
-* float32_t _coshf(float32_t a)_ - return the $\hypcosine(a)$
-* float32_t _tanhf(float32_t a)_ - return the $\hyptangent(a)$
+* float32_t _powf(float32_t b, float32_t p)_ - return base b to the power p $b^p$, where $b \gt 0$ or $b = 0$ and $p \gt 0$.
+* float32_t _hypotf(float32_t a, float32_t b)_ - return the hypotenuse of a and b, $\sqrt{a^2 + b^2}$
+* float32_t _sinhf(float32_t a)_ - return the hyperbolic sine(a)
+* float32_t _coshf(float32_t a)_ - return the hyperbolic cosine(a)
+* float32_t _tanhf(float32_t a)_ - return the hyperbolic tangent(a)
 
 Pre-Defined Macros
 -------------------
