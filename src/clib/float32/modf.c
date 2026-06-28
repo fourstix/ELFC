@@ -25,7 +25,8 @@ float32_t modf(float32_t a, float32_t *ip) {
     errno = EDOM;
     /* set whole number to NaN */
     *ip = a;
-    return a;
+    result = a;
+    return result;
   } else if (isInf(a)) {
     errno = ERANGE;
     /* set whole number to infinity */

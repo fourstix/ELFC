@@ -18,10 +18,12 @@ float32_t subf(float32_t a, float32_t b) {
   /* if either arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isNaN(b)) {
     errno = EDOM;
-    return b;
+    result = b;
+    return result;
     /* check for +/- infinity */
   } else if (isInf(a)) {
     /* check for 2 inf values that the same sign */
@@ -34,18 +36,21 @@ float32_t subf(float32_t a, float32_t b) {
     } else {
       errno = ERANGE;
       /* otherwise return infinity */
-      return a;
+      result = a;
+      return result;
     }
     /* check for subtracting +/- infinity from any number */
   } else if (isInf(b)) {
     errno = ERANGE;
+    result = b;
     /* flip sign bit of inf value and return */
-    b.high ^= FP_SIGN;
+    result.high ^= FP_SIGN;
     /* a can't be inf here, so return b as infintity */
-    return b;
+    return result;
   } else if (isZero(b)) {
     /* anything minus zero is itself */
-    return a;
+    result = a;
+    return result;
   }
 
   /* push arguments onto expression stack, swapping order */

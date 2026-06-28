@@ -18,7 +18,8 @@
 
    if (isNaN(a)) {
      errno = EDOM;
-     return a;
+     result = a;
+     return result;
    } else if (isZero(a)) {
      /* zero is negative of itself (ignore -0) */
      result.high = 0;

@@ -2,50 +2,31 @@
 #include <float32.h>
 #include <errno.h>
 
-extern float32_t _fp_epsilon;
-
-#pragma             extrn _fpsin
-#pragma             extrn Careducef
-#pragma             extrn Czflushf
+#pragma             extrn _ftoi32
 #pragma             extrn Cerrno
 
-
-/* constant value used in routine */
-#pragma .link .requires C_fp_const
-#pragma             extrn C_fp_epsilon
 /*
- * Sine of a 32-bit floating point number
- * Return sine of a
- *        NaN if a is NaN or +/-Infiinty
+ * Return: a as a 16-bit integer value
  */
-float32_t sinf(float32_t a) {
+int ftoi(float32_t a) {
   int r_high = 0;
   int r_low = 0;
-  static float32_t result = {0, 0};
 
-  /* Process special values */
-  if (isNaN(a) || isInf(a)) {
+  /* handle cases without calling routines */
+  /* if either arg is Nan, return NaN */
+  if (isNaN(a)) {
     errno = EDOM;
-    result.low = FP_NAN;
-    result.high = FP_NAN;
-    return result;
-  } else if (isZero(a)) {
-    result.low = 0;
-    result.high = 0;
-    return result;
+  } else if (isInf(a)) {
+    errno = ERANGE;
   }
 
-  /* reduce angle to range of -pi <= a <= pi */
-  a = areducef(a);
-
-  /* Push angle value onto the expression stack */
   asm("            gosub s_fp1arg       ; push argument onto ES");
   /* Save Registers Used by ElfC */
   asm("            sex     r2           ; make sure x = SP");
   asm("            push    r9           ; save c registers");
   asm("            push    rb           ; save c registers");
   /* call function in library */
-  asm("            call    _fpsin       ; call floating point library routine");
+  asm("            call    _ftoi32      ; call floating point library routine");
   /* restore ElfC registers */
   asm("            pop     rb           ; restore C registers");
   asm("            pop     r9           ; restore C registers");
@@ -58,16 +39,6 @@ float32_t sinf(float32_t a) {
   asm("            gosub s_lset16       ; set the low word return value");
   asm("              dw -4              ; in the local variable");
 
-  /* clip value of (1+epsilon) to be 1 */
-  if (FP_ONE_HI == (r_high & ~FP_SIGN)) {
-    r_low = 0;
-  }
-  /* assign local variables to static result for return */
-  result.high = r_high;
-  result.low = r_low;
-
-  /* flush very small values (-0.000001 to +0.000001) to zero */
-  result = zflushf(result, _fp_epsilon);
-
-  return result;
+  /* return low word as int value */
+  return r_low;
 }

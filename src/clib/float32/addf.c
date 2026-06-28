@@ -18,10 +18,12 @@ float32_t addf(float32_t a, float32_t b) {
   /* if either arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isNaN(b)) {
     errno = EDOM;
-    return b;
+    result = b;
+    return result;
     /* check for +/- infinity */
   } else if (isInf(a)) {
     /* check for 2 inf values that differ only in sign bit */
@@ -34,16 +36,19 @@ float32_t addf(float32_t a, float32_t b) {
     } else {
       /* otherwise return infinity */
       errno = ERANGE;
-      return a;
+      result = a;
+      return result;
     }
   } else if (isInf(b)) {
     /* a can't be inf here, so return b as infintity */
     errno = ERANGE;
     return b;
   } else if (isZero(a)) {
-    return b;
+    result = b;
+    return result;
   } else if (isZero(b)) {
-    return a;
+    result = a;
+    return result;
   }
 
 

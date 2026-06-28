@@ -17,10 +17,12 @@ float32_t truncf(float32_t a) {
   /* if either arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isInf(a)) {
     errno = ERANGE;
-    return a;
+    result = a;
+    return result;
   }
 
   asm("            gosub s_fp1arg       ; push argument onto ES");

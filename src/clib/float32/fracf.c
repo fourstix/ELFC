@@ -14,14 +14,16 @@ float32_t fracf(float32_t a) {
   static float32_t fint  = {0, 0};
   static float32_t result = {0, 0};
 
-  /* handle cases without calling routines */
-  /* if either arg is Nan, return NaN */
+  /* handle special cases */
+  /* if arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isInf(a)) {
     errno = ERANGE;
-    return a;
+    result = a;
+    return result;
   }
 
   asm("            gosub s_fp1arg       ; push argument onto ES");
