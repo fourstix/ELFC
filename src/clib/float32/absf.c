@@ -18,7 +18,8 @@
 
    if (isNaN(a)) {
      errno = EDOM;
-     return a;
+     result = a;
+     return result;
    }
    /* clear sign bit, if set */
    /* assign local variables to static result for return */

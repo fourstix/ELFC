@@ -23,11 +23,13 @@ float32_t frexpf(float32_t a, int *exp) {
   if (isNaN(a)) {
     errno = EDOM;
     *exp = 255;
-    return a;
+    nfrac = a;
+    return nfrac;
   } else if(isInf(a)) {
     errno = ERANGE;
     *exp  = 255;
-    return a;
+    nfrac = a;
+    return nfrac;
   } else if (isZero(a)) {
     *exp = 0;
     nfrac.high = 0;

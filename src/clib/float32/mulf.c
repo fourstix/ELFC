@@ -18,10 +18,12 @@ float32_t mulf(float32_t a, float32_t b) {
   /* if either arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isNaN(b)) {
     errno = EDOM;
-    return b;
+    result = b;
+    return result;
     /* check for +/- infinity */
   } else if (isInf(a)) {
     /* check for inf * 0 */
@@ -32,13 +34,14 @@ float32_t mulf(float32_t a, float32_t b) {
       result.low = FP_NAN;
       return result;
     } else {
-      /* multiplying by any negative flips sign of infinity */
+      result = a;
+      /* multiplying by any negative value flips sign of infinity */
       if (isNeg(b)) {
-        a.high ^= FP_SIGN;
+        result.high ^= FP_SIGN;
       }
         errno = ERANGE;
       /* return infinity */
-      return a;
+      return result;
     }
   } else if (isInf(b)) {
     /* check for 0 * infinity */
@@ -49,19 +52,22 @@ float32_t mulf(float32_t a, float32_t b) {
       result.low = FP_NAN;
       return result;
     } else {
+      result = b;
       /* multiplying by any negative flips sign of infinity */
       if (isNeg(a)) {
-        b.high ^= FP_SIGN;
+        result.high ^= FP_SIGN;
       }
       errno = ERANGE;
       /* return infinity */
-      return b;
+      return result;
     }
-    /* a and b are not NaN or infinity */
+    /* a and b are not NaN or infinity, so 0 times anything is 0 */
   } else if (isZero(a)) {
-    return a;
+    result = a;
+    return result;
   } else if (isZero(b)) {
-    return b;
+    result = b;
+    return result;
   }
 
   /* push arguments onto expression stack, swapping order */

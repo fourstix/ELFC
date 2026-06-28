@@ -20,10 +20,12 @@ float32_t divf(float32_t a, float32_t b) {
   /* if either arg is Nan, return NaN */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isNaN(b)) {
     errno = EDOM;
-    return b;
+    result = b;
+    return result;
     /* check for zero divided by something */
   } else if (isZero(a)) {
     if (isZero(b)) {
@@ -33,7 +35,8 @@ float32_t divf(float32_t a, float32_t b) {
       result.low  = FP_NAN;
       return result;
     } else {
-      return a;
+      result = a;
+      return result;
     }
   } else if (isInf(a)) {
      if (isInf(b)) {
@@ -43,12 +46,13 @@ float32_t divf(float32_t a, float32_t b) {
        result.low  = FP_NAN;
        return result;
     } else {
+      result = a;
       /* dividing by any negative flips sign of infinity */
       if (isNeg(b)) {
-        a.high ^= FP_SIGN;
+        result.high ^= FP_SIGN;
       }
       errno = ERANGE;
-      return a;
+      return result;
     }
     /* anything divided by inf is zero */
   } else if (isInf(b)) {

@@ -2,9 +2,15 @@
 #include <float32.h>
 #include <errno.h>
 
+extern float32_t _fp_one;
+
 #pragma             extrn Cerrno
 #pragma             extrn Cmodf
 #pragma             extrn Csubf
+
+/* constant values used in routine */
+#pragma .link .requires C_fp_const
+#pragma             extrn C_fp_one
 
 /*
  * Return next integer below a floating point number
@@ -16,15 +22,16 @@ float32_t floorf(float32_t a) {
   float32_t    f_int;
   float32_t    frac;
   static float32_t result = {0, 0};
-  static float32_t fp_one = {FP_ONE_LO, FP_ONE_HI};
 
   /* handle special cases */
   if (isNaN(a)) {
     errno = EDOM;
-    return a;
+    result = a;
+    return result;
   } else if (isInf(a)) {
     errno = ERANGE;
-    return a;
+    result = a;
+    return result;
   } else if (isZero(a)) {
     result.high = 0;
     result.low  = 0;
@@ -37,12 +44,13 @@ float32_t floorf(float32_t a) {
   e -= 127;
   /* if expoinent 23 or higher, a is a whole number */
   if (e > 22) {
-    return a;
+    result = a;
+    return result;
   } else if (e < 0) {
     /* fraction values in range of -1.0 < 0.0 < 1.0 */
     if (isNeg(a)) {
       /* for negative fractions, the floor is -1 */
-      result = fp_one;
+      result = _fp_one;
       result.high |= FP_SIGN;
       return result;
     } else {
@@ -61,7 +69,7 @@ float32_t floorf(float32_t a) {
       result = f_int;
   } else if (isNeg(f_int)) {
     /* negative floor is one below */
-    result = subf(f_int, fp_one);
+    result = subf(f_int, _fp_one);
   } else {
     /* positive floor is truncated value */
     result = f_int;

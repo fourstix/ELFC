@@ -2,10 +2,19 @@
 #include <float32.h>
 #include <errno.h>
 
+extern float32_t _fp_one;
+extern float32_t _fp_negone;
+
 #pragma             extrn _fpacos
 #pragma             extrn Cerrno
 #pragma             extrn Cgtf
 #pragma             extrn Cltf
+
+/* constant values used in routine */
+#pragma .link .requires C_fp_const
+#pragma             extrn C_fp_one
+#pragma             extrn C_fp_negone
+
 /*
  * Inverse cosine function of a 32-bit floating point number
  *   Returns arcccosine of a
@@ -17,11 +26,9 @@ float32_t acosf(float32_t a) {
   int r_high = 0;
   int r_low = 0;
   static float32_t result = {0, 0};
-  static float32_t fp_one    = {FP_ONE_LO, FP_ONE_HI};
-  static float32_t fp_negone = {FP_NEGONE_LO, FP_NEGONE_HI};
 
   /* Process special values */
-  if (isNaN(a) || isInf(a) || gtf(a, fp_one) || ltf(a, fp_negone)) {
+  if (isNaN(a) || isInf(a) || gtf(a, _fp_one) || ltf(a, _fp_negone)) {
     /* out of domain -1 <= a <= 1 */
     errno = EDOM;
     result.low = FP_NAN;

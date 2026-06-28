@@ -2,9 +2,16 @@
 #include <float32.h>
 #include <errno.h>
 
+extern float32_t _fp_epsilon;
+
 #pragma             extrn _fpcos
-#pragma             extrn C_reduce
+#pragma             extrn Careducef
+#pragma             extrn Czflushf
 #pragma             extrn Cerrno
+
+/* constant value used in routine */
+#pragma .link .requires C_fp_const
+#pragma             extrn C_fp_epsilon
 
 /*
  * Cosine of a 32-bit floating point number
@@ -30,7 +37,7 @@ float32_t cosf(float32_t a) {
   }
 
   /* reduce angle to range of -pi < a < pi */
-  a = _reduce(a);
+  a = areducef(a);
 
   /* Push angle value onto the expression stack */
   asm("            gosub s_fp1arg       ; push argument onto ES");
@@ -59,6 +66,9 @@ float32_t cosf(float32_t a) {
   /* assign local variables to static result for return */
   result.high = r_high;
   result.low = r_low;
+
+  /* flush very small values (-0.000001 to +0.000001) to zero */
+  result = zflushf(result, _fp_epsilon);
 
   return result;
 }

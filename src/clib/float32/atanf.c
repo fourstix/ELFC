@@ -2,23 +2,31 @@
 #include <float32.h>
 #include <errno.h>
 
+extern float32_t _fp_atan_dmax;
+extern float32_t _fp_atan_dmin;
+
 #pragma             extrn _fpatan
+#pragma             extrn Cgtef
+#pragma             extrn Cltef
 #pragma             extrn Cerrno
 
+/* constant value used in routine */
+#pragma .link .requires C_fp_const
+#pragma             extrn C_fp_atan_dmax
+#pragma             extrn C_fp_atan_dmin
 /*
  * Inverse tangent function of a 32-bit floating point number
  * Returns arctangent of a
  *         -pi/2 to pi/2, for -Infinity < a < +Infinty
  *         NaN if a is NaN
- *         +pi/2 if a is +Infinity
- *         -pi/2 if a is -Infinity
+ *         +pi/2 if a is +Infinity, or a greater than domain limit (_fp_atan_dmax)
+ *         -pi/2 if a is -Infinity, or a less than domain limit (_fp_atan_dmin)
  */
 float32_t atanf(float32_t a) {
   int r_high = 0;
   int r_low = 0;
   static float32_t result = {0, 0};
-  //static float32_t fp_one    = {FP_ONE_LO, FP_ONE_HI};
-  //static float32_t fp_negone = {FP_NEGONE_LO, FP_NEGONE_HI};
+  /* domain limit for argument */
 
   /* Process special values */
   if (isNaN(a)) {
@@ -26,19 +34,20 @@ float32_t atanf(float32_t a) {
     result.low = FP_NAN;
     result.high = FP_NAN;
     return result;
-  } else if (isInf(a)) {
-    /* +Inf is pi/2, -Inf is -pi/2 */
-    result.low = FP_HALFPI_LO;
-    result.high = FP_HALFPI_HI;
-    /* if negative set the sign bit */
-    if (isNeg(a)) {
-      result.high |= FP_SIGN;
-    }
-    return result;
   } else if (isZero(a)) {
     /* 0 is zero angle */
     result.low = 0;
     result.high = 0;
+    return result;
+  } else if (gtef(a, _fp_atan_dmax)) {
+    /* if +Inf or a > domain Limit, result is +pi/2 */
+    result.low = FP_HALFPI_LO;
+    result.high = FP_HALFPI_HI;
+    return result;
+  } else if (isNeg(a) && ltef(a, _fp_atan_dmin)) {
+    /* if -Inf or a < -domain limit, result is -pi/2 */
+    result.low = FP_HALFPI_LO;
+    result.high = FP_HALFPI_HI | FP_SIGN;
     return result;
   }
 
