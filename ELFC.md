@@ -825,13 +825,26 @@ The float32 library defines the following special values
 * `-Inf` - Negative Infinity $-\Infty$, Overflow in the negative range
 
 Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$, $0 \times \pm\Infty$
+* The result of $0\div0$, $0 \times \pm\Infty$ or $\pm\Infty\div\pm\Infty$
 * The result of $\pm\Infty + \mpInfty$ or $\pm\Infty - \pm\Infty$
 * The result of `sqrt(x)` when $x \lt 0$
 * The result of `logf(x)` when $x \lt 0$
+* The result of `powf(b,p)` when $b \lt 0$ or $b \eq 0$ and $p \leq 0$
 
 When `NaN` is returned `errno` is set to `EDOM` (domain error).
+
+When the result of a function exceeds the floating point range `+Inf` or `-Inf` is returned.
+* `+Inf` is returned when positive overflow occurs in the result, x $\gt$ FLT_MAX
+* `-Inf` is returned when negative overflow occurs in the result, x $\lt$ -FLT_MAX
+
 When '+Inf' or `-Inf` is returned `errno` is set to `ERANGE` (out of range error).
+
+Underflow occurs when the absolute value of the result is less than the smallest absolute floating point value FLT_MIN.
+
+* Zero is returned when underflow occurs.
+* Float32 does not use a negative zero value or sub-normal values.
+* Instead, Zero is always considered unsigned and underflow is not considered an error.
+* This is called _store zero_ or _flush to zero_ method.
 
 **The float32 library provides the following math functions**
 
@@ -864,7 +877,7 @@ Note:
 * `-Inf` is considered equal to `-Inf`
 * `-Inf` is less than any other number.
 
-The following table shows the results of comparison functions with special values.
+The following table shows the results of comparison functions with special values. The value `x` represents any other number.
 
 <table>
 <tr><th>a<th>b<th>eqf</th><th>neqf</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th></tr>
@@ -893,41 +906,41 @@ The following table shows the results of comparison functions with special value
 * float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
 
 **Trig functions**
-* float32_t _sinf(float32_t a)_ - return the sine of a in radians
-* float32_t _cosf(float32_t a)_ - return the cosine of a in radians
-* float32_t _tanf(float32_t a)_ - return the tangent of a in radians
-* float32_t _asinf(float32_t a)_ - return the arcsine of a in the range of ($\neg\frac{+\pi}{2})$, $\frac{-\pi}{2}$
-* float32_t _acosf(float32_t a)_- return the arccosine of a in the range of ($0, $\pi$)
-* float32_t _atanf(float32_t a)_- return the arctangent of a in the range of ($\neg\frac{+\pi}{2}$, $\frac{-\pi}{2}$
-* float32_t _atan2f(float32_t y, float32_t x)_
+* float32_t _sinf(float32_t a)_ - return the $\sin(a)$ in radians
+* float32_t _cosf(float32_t a)_ - return the $\cos(a)$ in radians
+* float32_t _tanf(float32_t a)_ - return the $\tan(a)$ in radians
+* float32_t _asinf(float32_t a)_ - return the $\arcsin(a)$ in the range of ($\frac{-\pi}{2})$, $\frac{+\pi}{2}$, the domain of a is (-1, 1)
+* float32_t _acosf(float32_t a)_- return the $\arccos(a)$ in the range of (0, $\pi$), the domain of a is (-1, 1)
+* float32_t _atanf(float32_t a)_- return the $\arctan(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$, the domain of a is (-1, 1)
+* float32_t _atan2f(float32_t y, float32_t x)_ - return the $\arctan(\frac{y}{x})$ in the range of ($-\pi, +\pi).
 
 **Angle conversion functions**
-* float32_t _areducef(float32_t a)_ - reduce an angle to range of ($\neg\pi$, $\pi$)
+* float32_t _areducef(float32_t a)_ - reduce an angle to range of ($-\pi$, $\pi$)
 * float32_t _rad2degf(float32_t a)_ - convert an angle in radians to degrees
 * float32_t _deg2radf(float32_t a)_ - convert an angle in degrees to radians
 
 **Rounding functions**
-* float32_t _truncf(float32_t a)_
-* float32_t _modf(float32_t a, float32_t \*ip)_
-* float32_t _fracf(float32_t a)_
-* float32_t _ceilf(float32_t a)_
-* float32_t _floorf(float32_t a)_
-* float32_t _roundf(float32_t a)_
-* float32_t _frexpf(float32_t a, int \*exp)_
-* float32_t _ldexpf(float32_t a, int n)_
-* float32_t _zflushf(float32_t a, float32_t eps)_
+* float32_t _truncf(float32_t a)_ - return the whole number part of a, as a floating point number
+* float32_t _modf(float32_t a, float32_t \*ip)_ - split a into an integer and fractional parts, each with the same size as a. Store the integer part in \*ip and return the fractional part.
+* float32_t _fracf(float32_t a)_ - return the fractional part of a, as a floating point number
+* float32_t _ceilf(float32_t a)_ - return the smallest integer not less than a, as a floating point number
+* float32_t _floorf(float32_t a)_ - return the largest integer not greater than a, as a floating point number
+* float32_t _roundf(float32_t a)_ - return a rounded to the nearest integer, as a floating point number
+* float32_t _frexpf(float32_t a, int \*exp)_ - split a into a normalized fraction from (0.5, 1) and a power of two.  Set *exp to the power of 2 and return the normalized fraction.
+* float32_t _ldexpf(float32_t m, int n)_ - return $a\times2^n$
+* float32_t _zflushf(float32_t a, float32_t eps)_ - If $\abs(a)$ $\leq$ $\epsilon$, return 0, else return a.
 
 **Logarithmic and Power Functins**
-* float32_t _expf(float32_t a)_
-* float32_t _logf(float32_t a)_
-* float32_t _log2f(float32_t a)_
-* float32_t _log10f(float32_t a)_
-* float32_t _sqrtf(float32_t a)_
-* float32_t _powf(float32_t b, float32_t p)_
-* float32_t _hypotf(float32_t a, float32_t b)_
-* float32_t _sinhf(float32_t a)_
-* float32_t _coshf(float32_t a)_
-* float32_t _tanhf(float32_t a)_
+* float32_t _expf(float32_t a)_ - return the exponential function $\exp^a$
+* float32_t _logf(float32_t a)_ - return the natural logarithm function $\ln(a)$, where $a \gt 0$
+* float32_t _log2f(float32_t a)_- return the base 2 logarithm function $\log_2(a)$, where $a \gt 0$
+* float32_t _log10f(float32_t a)_- return the common logarithm function $\log_10(a)$, where $a \gt 0$
+* float32_t _sqrtf(float32_t a)_ - return the square root of a, where $a $geq 0$
+* float32_t _powf(float32_t b, float32_t p)_ - return base b to the power p $b^p$, where $b \gt 0$ or $b \eq 0$ and $p \gt 0$.
+* float32_t _hypotf(float32_t a, float32_t b)_ - return the hypotenuse of a and b $\sqrt{a^2 + b^2}$
+* float32_t _sinhf(float32_t a)_ - return the $\hypsine(a)$
+* float32_t _coshf(float32_t a)_ - return the $\hypcosine(a)$
+* float32_t _tanhf(float32_t a)_ - return the $\hyptangent(a)$
 
 Pre-Defined Macros
 -------------------
