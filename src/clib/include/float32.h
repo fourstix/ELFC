@@ -6,6 +6,11 @@
 #include <stdlib.h>
 #endif
 
+/* include math32 for int32_t type */
+#ifndef _MATH32_H_
+#include <math32.h>
+#endif
+
 #ifndef _ELFCLIB_
 #pragma .link .library float32.lib
 #endif
@@ -33,29 +38,55 @@
 #define FP_NEGINF  0xFF80
 /* mask for sign bit */
 #define FP_SIGN    0x8000
+/* mask for exponent bits */
 #define FP_EXP     0x7F80
 
 
 /* Float values used with trig functions */
 #define FP_ONE_HI    0x3F80
 #define FP_ONE_LO    0x0000
-#define FP_NEGONE_HI 0xBF80
-#define FP_NEGONE_LO 0x0000
 #define FP_HALFPI_HI 0x3FC9
-#define FP_HALFPI_LO 0x0FDB
+#define FP_HALFPI_LO 0x0FDA
 #define FP_PI_HI     0x4049
 #define FP_PI_LO     0x0FDB
+#define FP_2PI_HI    0x40C9
+#define FP_2PI_LO    0x0FDB
+#define FP_4THPI_HI  0x3F49
+#define FP_4THPI_LO  0x0FDB
+
+/* Round to zero value (0.000001) for sin and tangent */
+#define FP_RND_0_HI 0x3586
+#define FP_RND_0_L0 0x37BD
 
 
+/* Exponential Limit is ln(FLT_MAX) rounded to 86 */
+#define FP_E_MAX_HI  0x42ac
+#define FP_E_MAX_LO  0x0000
 
+/* ArcTan domain limit is -38.871475 to +38.871475 */
+#define FP_AT_MAX_HI  0x421B
+#define FP_AT_MAX_LO  0x7c64
 
 /* Conversion Factors */
+/* Natural to common (base 10) logarithm */
+#define FP_LN_10_HI   0x4013
+#define FP_LN_10_LO   0x5D8E
+
+/* Natural to base 2 logarithm */
+#define FP_LN_2_HI    0x3F31
+#define FP_LN_2_LO    0x7218
+
+/* Degrees to Radians */
+#define FP_DEG_RAD_HI 0x3C8E
+#define FP_DEG_RAD_LO 0xFA35
+
+/* Radians to Degrees */
+#define FP_RAD_DEG_HI 0x4265
+#define FP_RAD_DEG_LO 0x2EE1
+
+/* Precision Constants */
 #define FP_DOT5_HI   0x3f00
 #define FP_DOT5_LO   0x0000
-
-#define FP_180_HI    0x4334
-#define FP_180_LO    0x0000
-
 
 /* 32-bit signed number represented as two 16-bit values */
 struct float32 {
@@ -65,18 +96,6 @@ struct float32 {
 
 typedef struct float32 float32_t;
 
-/* define types for ftoi32 function */
-#ifndef int32
-struct int32 {
-    unsigned int low;   /* Lower 16 bits */
-    unsigned int high;  /* Upper 16 bits */
-};
-#endif
-
-#ifndef int32_t
-typedef struct int32 int32_t;
-#endif
-
 /* arthimetic functions */
 float32_t absf(float32_t a);
 float32_t addf(float32_t a, float32_t b);
@@ -84,6 +103,8 @@ float32_t divf(float32_t a, float32_t b);
 float32_t mulf(float32_t a, float32_t b);
 float32_t subf(float32_t a, float32_t b);
 float32_t negf(float32_t a);
+float32_t invf(float32_t a);
+float32_t fmodf(float32_t a, float32_t b);
 
 /* comparison functions */
 int eqf(float32_t a, float32_t b);
@@ -96,7 +117,10 @@ int nef(float32_t a, float32_t b);
 /* Conversion functions */
 void ftoa(float32_t fp1, char *s);
 int32_t ftoi32(float32_t a);
+int ftoi(float32_t a);
 float32_t atof(char *s);
+float32_t itof(int i);
+float32_t i32tof(int32_t i);
 
 
 /* Trig functions */
@@ -106,11 +130,16 @@ float32_t tanf(float32_t a);
 float32_t asinf(float32_t a);
 float32_t acosf(float32_t a);
 float32_t atanf(float32_t a);
-/* Reduce angle to range of (-pi, pi) */
-float32_t _reduce(float32_t a);
+float32_t atan2f(float32_t y, float32_t x);
 
-/* Math functions */
-float32_t sqrtf(float32_t a);
+/* Reduce angle to range of (-pi, pi) */
+float32_t areducef(float32_t a);
+
+/* Angle conversion functions */
+float32_t rad2degf(float32_t a);
+float32_t deg2radf(float32_t a);
+
+/* Rounding functions */
 float32_t truncf(float32_t a);
 float32_t modf(float32_t a, float32_t *ip);
 float32_t fracf(float32_t a);
@@ -118,4 +147,18 @@ float32_t ceilf(float32_t a);
 float32_t floorf(float32_t a);
 float32_t roundf(float32_t a);
 float32_t frexpf(float32_t a, int *exp);
+float32_t ldexpf(float32_t a, int n);
+float32_t zflushf(float32_t a, float32_t eps);
+
+/* Logarithmic and Power Functins */
+float32_t expf(float32_t a);
+float32_t logf(float32_t a);
+float32_t log2f(float32_t a);
+float32_t log10f(float32_t a);
+float32_t sqrtf(float32_t a);
+float32_t powf(float32_t b, float32_t p);
+float32_t hypotf(float32_t a, float32_t b);
+float32_t sinhf(float32_t a);
+float32_t coshf(float32_t a);
+float32_t tanhf(float32_t a);
 #endif
