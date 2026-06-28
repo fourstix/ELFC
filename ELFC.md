@@ -821,12 +821,12 @@ typedef struct float32 float32_t;
 **Special Values**
 The float32 library defines the following special values
 * `NaN` - Not a Number, when a value is out of the defined domain
-* `+Inf` - Positive Infinity $+\inf$, Overflow in the positive range
-* `-Inf` - Negative Infinity $-\inf$, Overflow in the negative range
+* `+Inf` - Positive Infinity $+\infty $, Overflow in the positive range
+* `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
 
 Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$, $0 \times \pm\inf$ or $\pm\inf\div\pm\inf$
-* The result of $\pm\inf + \mp\inf$ or $\pm\inf - \pm\inf$
+* The result of $0\div0$, $0 \times \pm\infty $ or $\pm\infty \div\pm\infty $
+* The result of $\pm\infty  + \mp\infty $ or $\pm\infty  - \pm\infty $
 * The result of `sqrt(x)` when $x \lt 0$
 * The result of `logf(x)` when $x \lt 0$
 * The result of `powf(b,p)` when $b \lt 0$ or $b \eq 0$ and $p \leq 0$
@@ -849,7 +849,7 @@ Underflow occurs when the absolute value of the result is less than the smallest
 **The float32 library provides the following math functions**
 
 **Arithmetic functions**
-* float32_t _absf(float32_t a)_ - return the absolute value of a, $\lverta\rvert$
+* float32_t _absf(float32_t a)_ - return the absolute value of a, $\lvert a \rvert$
 * float32_t _addf(float32_t a, float32_t b)_ - return $a + b$
 * float32_t _divf(float32_t a, float32_t b)_- return $a \div b$
 * float32_t _mulf(float32_t a, float32_t b)_ - return $a \times b$
