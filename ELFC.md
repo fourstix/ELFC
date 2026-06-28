@@ -825,8 +825,9 @@ The float32 library defines the following special values
 * `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
 
 Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$, $0\times\pm\infty $ or $\pm\infty \div\pm\infty $
-* The result of $\pm\infty  + \mp\infty $ or $\pm\infty  - \pm\infty $
+* The result of $0\div0$ or $\pm\infty \div\pm\infty $
+* The result of $0 \times \pm\infty $
+* The result of $\pm\infty + \mp\infty $ or $\pm\infty - \pm\infty $
 * The result of `sqrt(x)` when $x \lt 0$
 * The result of `logf(x)` when $x \lt 0$
 * The result of `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
