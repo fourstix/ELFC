@@ -821,13 +821,14 @@ typedef struct float32 float32_t;
 **Special Values**
 The float32 library defines the following special values
 * `NaN` - Not a Number, when a value is out of the defined domain
-* `+Inf` - Positive Infinity $+\Infnty$, Overflow in the positive range
-* `-Inf` - Negative Infinity $-\Infnty$, Overflow in the negative range
+* `+Inf` - Positive Infinity $+\Infty$, Overflow in the positive range
+* `-Inf` - Negative Infinity $-\Infty$, Overflow in the negative range
 
 Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$, $0 \times \pm\Infnty$
-* The result of $\pm\Infnty + \mpInfnty$ or $\pm\Infnty - \pm\Infnty$
-* The result of `sqrt(x)` when $x \lt 0$ or `logf(x)` when $x \lt 0$
+* The result of $0\div0$, $0 \times \pm\Infty$
+* The result of $\pm\Infty + \mpInfty$ or $\pm\Infty - \pm\Infty$
+* The result of `sqrt(x)` when $x \lt 0$
+* The result of `logf(x)` when $x \lt 0$
 
 When `NaN` is returned `errno` is set to `EDOM` (domain error).
 When '+Inf' or `-Inf` is returned `errno` is set to `ERANGE` (out of range error).
@@ -841,7 +842,7 @@ When '+Inf' or `-Inf` is returned `errno` is set to `ERANGE` (out of range error
 * float32_t _mulf(float32_t a, float32_t b)_ - return $a \times b$
 * float32_t _subf(float32_t a, float32_t b)_ - return $a - b$
 * float32_t _negf(float32_t a)_ - return $-a$
-* float32_t _invf(float32_t a)_ - return $\frac(1)(a)$
+* float32_t _invf(float32_t a)_ - return the reciprocal $\frac{1}{a}$
 * float32_t _fmodf(float32_t a, float32_t b)_ - return $a \bmod b$
 
 Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set to `EDOM`.
@@ -849,9 +850,9 @@ Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set 
 **Comparison functions**
 * int _eqf(float32_t a, float32_t b)_ - return true if $a \eq b$
 * int _gtf(float32_t a, float32_t b)_ - return true if $a \gt b$
-* int _gtef(float32_t a, float32_t b)_ - return true if $a \gte b$
+* int _gtef(float32_t a, float32_t b)_ - return true if $a \geq b$
 * int _ltf(float32_t a, float32_t b)_ - return true if $a \lt b$
-* int _ltef(float32_t a, float32_t b)_ - return true if $a \lte b$
+* int _ltef(float32_t a, float32_t b)_ - return true if $a \leq b$
 * int _nef(float32_t a, float32_t b)_ - return true if $a \neq b$
 
 Note:
@@ -866,17 +867,17 @@ Note:
 The following table shows the results of comparison functions with special values.
 
 <table>
-<tr><th>a<th>b<th>eqf</th><th>neqf</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th><\tr>
-<tr><td>NaN<\td><td>NaN<\td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td><\tr>
-<tr><td>NaN<\td><td>x<\td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td><\tr>
-<tr><td>x<\td><td>NaN<\td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td><\tr>
-<tr><td>+Inf<\td><td>+Inf<\td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td><\tr>
-<tr><td>+Inf<\td><td>x<\td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td><\tr>
-<tr><td>x<\td><td>+Inf<\td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td><\tr>
-<tr><td>-Inf<\td><td>-Inf<\td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td><\tr>
-<tr><td>-Inf<\td><td>x<\td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td><\tr>
-<tr><td>x<\td><td>-Inf<\td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td><\tr>
-<\table>
+<tr><th>a<th>b<th>eqf</th><th>neqf</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th></tr>
+<tr><td>NaN</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>NaN</td><td>x</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>x</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>+Inf</td><td>+Inf</td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td></tr>
+<tr><td>+Inf</td><td>x</td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td></tr>
+<tr><td>x</td><td>+Inf</td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td></tr>
+<tr><td>-Inf</td><td>-Inf</td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td></tr>
+<tr><td>-Inf</td><td>x</td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td></tr>
+<tr><td>x</td><td>-Inf</td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td></tr>
+</table>
 
 **Tests for Special values**
 * _isNan(a)_ - return true if a is Not a Number `NaN`, the sign bit is ignored
@@ -895,24 +896,24 @@ The following table shows the results of comparison functions with special value
 * float32_t _sinf(float32_t a)_ - return the sine of a in radians
 * float32_t _cosf(float32_t a)_ - return the cosine of a in radians
 * float32_t _tanf(float32_t a)_ - return the tangent of a in radians
-* float32_t _asinf(float32_t a)_ - return the arcsine of a in the range of ($\neg\frac(+\pi)(2)$, $\frac(-\pi)(2)$
+* float32_t _asinf(float32_t a)_ - return the arcsine of a in the range of ($\neg\frac{+\pi}{2})$, $\frac{-\pi}{2}$
 * float32_t _acosf(float32_t a)_- return the arccosine of a in the range of ($0, $\pi$)
-* float32_t _atanf(float32_t a)_- return the arctangent of a in the range of ($\neg\frac(+\pi)(2)$, $\frac(-\pi)(2)$
-* float32_t atan2f(float32_t y, float32_t x)_
+* float32_t _atanf(float32_t a)_- return the arctangent of a in the range of ($\neg\frac{+\pi}{2}$, $\frac{-\pi}{2}$
+* float32_t _atan2f(float32_t y, float32_t x)_
 
 **Angle conversion functions**
 * float32_t _areducef(float32_t a)_ - reduce an angle to range of ($\neg\pi$, $\pi$)
-* float32_t _rad2degf(float32_t a)_
-* float32_t _deg2radf(float32_t a)_
+* float32_t _rad2degf(float32_t a)_ - convert an angle in radians to degrees
+* float32_t _deg2radf(float32_t a)_ - convert an angle in degrees to radians
 
 **Rounding functions**
 * float32_t _truncf(float32_t a)_
-* float32_t _modf(float32_t a, float32_t *ip)_
+* float32_t _modf(float32_t a, float32_t \*ip)_
 * float32_t _fracf(float32_t a)_
 * float32_t _ceilf(float32_t a)_
 * float32_t _floorf(float32_t a)_
 * float32_t _roundf(float32_t a)_
-* float32_t _frexpf(float32_t a, int *exp)_
+* float32_t _frexpf(float32_t a, int \*exp)_
 * float32_t _ldexpf(float32_t a, int n)_
 * float32_t _zflushf(float32_t a, float32_t eps)_
 
