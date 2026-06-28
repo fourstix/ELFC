@@ -314,6 +314,16 @@ Compiler Option Changes
 
 *Note: Information about initializations, multi-dimensional arrays and pointer decay can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
+Release 3.7
+-----------
+Release 3.7 adds a 32-bit single precision floating point math library.
+
+New features
+------------
+
+Issues Fixed
+------------
+
 Stdlib Library
 --------------
 **The following functions are supported in the ElfC stdlib C library.**
@@ -655,15 +665,94 @@ typedef struct uint32 uint32_t;
 
 More information about these library functions, header files and ElfC internals can be found on the [ELFC Detailed Information](ELFC.md) page.
 
+Float32 Library
+----------------
+**The float32 library functions use the following structures and types.**
+
+```c
+struct float32 {
+    unsigned int low;   /* low word */
+    unsigned int high;  /* high word*/
+};
+
+/* 32-bit single precision floating point numbers */
+typedef struct float32 float32_t;
+```
+
+**The float32 library provides the following math functions**
+
+**Arithmetic functions**
+* float32_t absf(float32_t a)
+* float32_t addf(float32_t a, float32_t b)
+* float32_t divf(float32_t a, float32_t b)
+* float32_t mulf(float32_t a, float32_t b)
+* float32_t subf(float32_t a, float32_t b)
+* float32_t negf(float32_t a)
+* float32_t invf(float32_t a)
+* float32_t fmodf(float32_t a, float32_t b)
+
+**Comparison functions**
+* int eqf(float32_t a, float32_t b)
+* int gtf(float32_t a, float32_t b)
+* int gtef(float32_t a, float32_t b)
+* int ltf(float32_t a, float32_t b)
+* int ltef(float32_t a, float32_t b)
+* int nef(float32_t a, float32_t b)
+
+**Conversion functions**
+* void ftoa(float32_t fp1, char \*s)
+* int32_t ftoi32(float32_t a)
+* int ftoi(float32_t a)
+* float32_t atof(char \*s)
+* float32_t itof(int i)
+* float32_t i32tof(int32_t i)
+
+**Trig functions**
+* float32_t sinf(float32_t a)
+* float32_t cosf(float32_t a)
+* float32_t tanf(float32_t a)
+* float32_t asinf(float32_t a)
+* float32_t acosf(float32_t a)
+* float32_t atanf(float32_t a)
+* float32_t atan2f(float32_t y, float32_t x)
+
+**Angle conversion functions**
+* float32_t areducef(float32_t a)
+* float32_t rad2degf(float32_t a)
+* float32_t deg2radf(float32_t a)
+
+**Rounding functions**
+* float32_t truncf(float32_t a)
+* float32_t modf(float32_t a, float32_t *ip)
+* float32_t fracf(float32_t a)
+* float32_t ceilf(float32_t a)
+* float32_t floorf(float32_t a)
+* float32_t roundf(float32_t a)
+* float32_t frexpf(float32_t a, int *exp)
+* float32_t ldexpf(float32_t a, int n)
+* float32_t zflushf(float32_t a, float32_t eps)
+
+**Logarithmic and Power Functins**
+* float32_t expf(float32_t a)
+* float32_t logf(float32_t a)
+* float32_t log2f(float32_t a)
+* float32_t log10f(float32_t a)
+* float32_t sqrtf(float32_t a)
+* float32_t powf(float32_t b, float32_t p)
+* float32_t hypotf(float32_t a, float32_t b)
+* float32_t sinhf(float32_t a)
+* float32_t coshf(float32_t a)
+* float32_t tanhf(float32_t a)
+
+More information about these library functions, floating point values, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
+
 Next Release
 -------------
 * Initialization for structure objects
-* Implement a 32-bit library with float data types.
 * Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
 -------------
-* Implement a version of the C math library to use the float data types.
 * Create a native OS (Elf/OS or Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
 * Create a native OS (Elf/OS or Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
 
@@ -780,6 +869,7 @@ Repository Contents
 * **/src/clib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/clib/assert**  -- Source files for ElfC assert C library
 * **/src/clib/math32**  -- Source files for ElfC 32-bit signed and unsigned integer Math library contributed by Tony Hefner
+* **/src/clib/float32** -- Sources files for the ELFC 32-bit single precision floating point math libary
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest5.c  -- Functional tests for various library functions
