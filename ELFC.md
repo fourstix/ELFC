@@ -899,6 +899,7 @@ The following table shows the results of comparison functions with special value
 * _isNan(a)_ - return true if a is Not a Number `NaN`, the sign bit is ignored
 * _isInf(a)_ - return true if a is `+Inf` or `-Inf`
 * _isZero(a)_ - return true if a is `0`, the sign bit is ignored
+* _isNeg(a)_ - return true if a is negative.
 
 **Conversion functions**
 * void _ftoa(float32_t fp1, char \*s)_ - convert a floating point number into an ASCII string

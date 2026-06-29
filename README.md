@@ -316,7 +316,7 @@ Compiler Option Changes
 
 Release 3.7
 -----------
-Release 3.7 adds a 32-bit single precision floating point math library Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for `getenv` and `setenv` functions and additonal support in the Time library to support timezones and additional time functions.
+Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.
 
 New features
 ------------

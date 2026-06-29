@@ -442,7 +442,7 @@ Notes:
 
 IEEE 754-1985 specifies that the biased exponent value of `0xFF` indicates `NaN`, `+Inf` or `-Inf`. For `+Inf` and `-Inf` the fractional bits are all zero, and for `NaN` the fractional bits are a non-zero specified by the implementation. Float32 sets all of the fractional bits to `1` for `Nan`.  Since 7 of the fractional bits are available in the high word, Float32 only checks the high word to determine if the number represents a special value, and the bits in the low word are implied to be all 0 or all 1 by the fractional bits in the high word when the high word denotes a special value.
 
-IEEE 754-1985 spcifies the biased exponent value of `0x00` indicates `0`.  The specification allows for signed zero values and sub-normal values which Float32 does not use.  For zero, Float32 sets all the bits in the sign, exponent and fraction parts to `0` and Float32 ignores the sign bit when testing for zero.  This is often referred to as the _store zero_ or _flush to zero_ method.
+IEEE 754-1985 spcifies the biased exponent value of `0x00` indicates `0`.  The specification allows for signed zero values and sub-normal values which Float32 does not use.  For zero, Float32 sets all the bits in the sign, exponent and fraction parts to `0` and Float32 ignores the sign bit when testing for zero.  When underflow occurs the value is set to `0` regardless of the sign bit.  This is often referred to as the _store zero_ or _flush to zero_ method.
 
 <table>
 <tr><th colspan="4">Special Values</th></tr>
@@ -460,7 +460,7 @@ Notes:
 * Float32 sets all bits to `1`for `NaN` and sets all bits to `0` for Zero.
 * Only the high word is checked to test for a special value, and the bits of the low word are considered implied by the fractional bits in the high word.
 * The sign bit is ignored when testing for `0` or `NaN`.
-* Zero is considered as unsigned by Float32. The value `-0` is considered the same as `0` by Float32.
+* Zero is considered as unsigned by Float32. The value `-0` is treated the same as `0` by Float32.
 * The `isNaN`, `isInf`, `isNeg` and `isZero` macros handle special values correctly.
 
 **Floating Point References**
