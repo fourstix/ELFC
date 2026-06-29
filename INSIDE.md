@@ -447,10 +447,10 @@ IEEE 754-1985 spcifies the biased exponent value of `0x00` indicates `0`.  The s
 <table>
 <tr><th colspan="4">Special Values</th></tr>
 <tr><th>Value</th><th>High Word</th><th>Low Word</th><th>Description</th></tr>
-<tr><td>NaN</td><td>0xFFFF</td><td>0XFFFF</td><td>Not a Number</td></tr>
-<tr><td>+Inf</td><td>0x7F80</td><td>0X0000</td><td>Positive Infinity</td></tr>
-<tr><td>+Inf</td><td>0xFF80</td><td>0X0000</td><td>Negative Infinity</td></tr>
-<tr><td>0</td><td>0X0000</td><td>0X0000</td><td>Zero</td></tr>
+<tr><td>NaN</td><td>0xFFFF</td><td>0xFFFF</td><td>Not a Number</td></tr>
+<tr><td>+Inf</td><td>0x7F80</td><td>0x0000</td><td>Positive Infinity</td></tr>
+<tr><td>+Inf</td><td>0xFF80</td><td>0x0000</td><td>Negative Infinity</td></tr>
+<tr><td>0</td><td>0x0000</td><td>0x0000</td><td>Zero</td></tr>
 </table>
 
 Notes:

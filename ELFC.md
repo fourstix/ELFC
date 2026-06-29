@@ -934,7 +934,7 @@ The following table shows the results of comparison functions with special value
 * float32_t _ldexpf(float32_t m, int n)_ - return $a\times2^n$
 * float32_t _zflushf(float32_t a, float32_t eps)_ - If $(a)$ $\leq$ $\epsilon$, return 0, else return a.
 
-**Logarithmic and Power Functins**
+**Logarithmic and Power Functions**
 * float32_t _expf(float32_t a)_ - return the exponential function $e^a$
 * float32_t _logf(float32_t a)_ - return the natural logarithm function $\ln(a)$, where $a \gt 0$
 * float32_t _log2f(float32_t a)_- return the base 2 logarithm function $\log_2(a)$, where $a \gt 0$

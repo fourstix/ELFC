@@ -760,6 +760,12 @@ typedef struct float32 float32_t;
 * float32_t coshf(float32_t a)
 * float32_t tanhf(float32_t a)
 
+**Tests for Special values**
+* int isNan(a)
+* int isInf(a)
+* int isZero(a)
+* int isNeg(a)
+
 More information about these library functions, floating point values, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
 
 Next Release
