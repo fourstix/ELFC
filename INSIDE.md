@@ -313,10 +313,13 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><td>derefm</td><td>Replace a pointer on the expression stack with the struct/union memory block it references</td></tr>
 <tr><td>dget16</td><td>Get a 2-byte value from the expression stack (ESP is unchanged)</td></tr>
 <tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack</td></tr>
+<tr><td>dpop32</td><td>Pop a 4-byte value from the expression stack</td></tr>
 <tr><td>dpush16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>epush16</td><td>Push a 2-byte constant onto expression stack</td></tr>
 <tr><td>epush8</td><td>Push 1-byte char value onto expression stack</td></tr>
 <tr><td>esmove</td><td>Move the expression stack pointer by a signed offset</td></tr>
+<tr><td>fp1arg</td><td>Push a 32-bit argument onto the expression stack</td></tr>
+<tr><td>fp2args</td><td>Push two 32-bit arguments onto the expression stack</td></tr>
 <tr><td>mcopy</td><td>Copy the contents of a structure or union referenced by the pointer at the SOS into the structure or union referenced by the pointer at the TOS</td></tr>
 <tr><td>sclsos2n</td><td>Scale a 16-bit pointer offset at the SOS of the expression stack by a power of 2</td></tr>
 <tr><td>scltos2n</td><td>Scale a 16-bit pointer offset at the TOS of the expression stack by a power of 2</td></tr>
@@ -407,6 +410,24 @@ ElfC File Descriptor
 * *The total Size of ElfC File Descriptor is 534 bytes.*
 * *The DTA begins 22 bytes offset from the start of the FD.*
 * *This FD format is valid for Mini/DOS and Elf/OS v5*
+
+32-bit Floating Point
+----------------------
+
+ElfC implements 32-bit single precision floating point format following the IEEE 745-1985 standard. ElfC uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does ELFC use a signed zero value internally.  Following the IEEE 745-1985 standard, ElfC ignores the sign bit when testing for zero or NaN.  Therefore, signed zero values, if they were to occur, would be treated as zero.
+
+ElfC uses 1 bit for the sign bit, 8 bits for the Exponent bits and 23 bits for the fractional part of the mantissa.  The Exponent is biased by `127` so that values from 1 to 254 are valid for numbers.  The exponent values `255` and `0` are reserved for special values. The value `255` is used for `NaN`, `+Inf` and `-Inf` while `0` is reserved for Zero.
+
+For normal numbers, there is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent} \times 1.{fraction}$
+
+<table>
+<tr><th cspan="32">32-bit floating point format</th></tr>
+<tr><th cspan="16">High Word</th><th cspan="16">Low Word</th></tr>
+<tr><th>Sign</th><th cspan="8>Exponent bits</th><th cspan="23">Fraction bits</th></tr>
+<tr><td>S0</td><td>E7</td><td>E6</td><td>E5</td><td>E4</td><td>E3</td><td>E2</td><td>E1</td><td>E0</td><td>F22</td><td>F21</td><td>F20<\td><td>F19<\td><td>F18<\td><td>F17<\td><td>F16<\td><td>F15<\td><td>F14<\td><td>F13<\td><td>F12<\td><td>F11<\td><td>F10<\td><td>F9<\td><td>F8<\td><td>F7<\td><td>F6<\td><td>F5<\td><td>F4<\td><td>F3<\td><td>F2<\td><td>F1<\td><td>F0<\td></tr>
+</table>
+
+
 
 Translation Limits
 -------------------
