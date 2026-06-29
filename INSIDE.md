@@ -421,10 +421,10 @@ ElfC uses 1 bit for the sign bit, 8 bits for the Exponent bits and 23 bits for t
 For normal numbers, the number is equal to power of two raised to the unbiased exponent times the mantissa and then assigned negative if the sign bit is `1` or positive if the sign bit is `0`. There is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent - 127} \times 1.{fraction}$
 
 <table>
-<tr><th colspan="32">32-bit floating point format</th></tr>
-<tr><th colspan="16">High Word</th><th colspan="16">Low Word</th></tr>
-<tr><th>Sign</th><th colspan="8>Exponent bits</th><th colspan="23">Fraction bits</th></tr>
-<tr><td>S0</td><td>E7</td><td>E6</td><td>E5</td><td>E4</td><td>E3</td><td>E2</td><td>E1</td><td>E0</td><td>F22</td><td>F21</td><td>F20</td><td>F19</td><td>F18</td><td>F17</td><td>F16</td><td>F15</td><td>F14</td><td>F13</td><td>F12</td><td>F11</td><td>F10</td><td>F9</td><td>F8</td><td>F7</td><td>F6</td><td>F5</td><td>F4</td><td>F3</td><td>F2</td><td>F1</td><td>F0</td></tr>
+<tr><th colspan="24">32-bit floating point format</th></tr>
+<tr><th colspan="16">High Word</th><th colspan="8">Low Word</th></tr>
+<tr><th>Sign</th><th colspan="8>Exponent bits</th><th colspan="7">Fraction bits</th><th colspan="8">Fraction bits</th></tr>
+<tr><td>S0</td><td colspan="8">E7 ... E0</td><td colspan="7">F22 ... F16</td><td colspan="8">F15 ... F0</td></tr>
 </table>
 
 
