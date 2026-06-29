@@ -824,13 +824,17 @@ The float32 library defines the following special values
 * `+Inf` - Positive Infinity $+\infty $, Overflow in the positive range
 * `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
 
-Not a number or `NaN` is returned under the following conditions.
-* The result of $0\div0$ or $\pm\infty \div\pm\infty $
-* The result of $0 \times \pm\infty $
-* The result of $\pm\infty + \mp\infty $ or $\pm\infty - \pm\infty $
-* The result of `sqrt(x)` when $x \lt 0$
-* The result of `logf(x)` when $x \lt 0$
-* The result of `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
+Not a number or `NaN` is returned as a result under the following conditions.
+* `divf(0,0)` or `divf($\pm$Inf, $\pm$Inf)`
+* `mulf(0 $\pm$Inf)` or `mulf($\pm$Inf, 0)`
+* `addf(+Inf, -Inf)` or `addf(-Inf, +Inf)`
+* `subf(+Inf, +Inf)` or `subf(-Inf, _INf)`
+* `sinf($\pm$Inf)`, `cosf($\pm$Inf)` or `tanf($\pm$Inf)`
+* `asinf(a)` or `acosf(a)` when $\lvert a \rvert \gt 1$
+* `sqrt(x)` when $x \lt 0$
+* `logf(x)`, `log2f(x)` or `log10f(x)` when $x \lt 0$
+* `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
+* Any function, except the comparison functions `eqf`, `neqf`, `gtf`, `gtef`, `ltf` or `ltef`, when an argument is `NaN`
 
 When `NaN` is returned `errno` is set to `EDOM` (domain error).
 
@@ -838,7 +842,7 @@ When the result of a function exceeds the floating point range `+Inf` or `-Inf` 
 * `+Inf` is returned when positive overflow occurs in the result, x $\gt$ FLT_MAX
 * `-Inf` is returned when negative overflow occurs in the result, x $\lt$ -FLT_MAX
 
-When '+Inf' or `-Inf` is returned `errno` is set to `ERANGE` (out of range error).
+When `+Inf` or `-Inf` is returned `errno` is set to `ERANGE` (out of range error).
 
 Underflow occurs when the absolute value of the result is less than the smallest absolute floating point value FLT_MIN.
 
@@ -971,10 +975,11 @@ Unsupported Libraries
 
 Header files
 ------------
-* The `float.h` header file is not supported.
+* The `float32.h` header file implements the definitions for `float.h`.
+* The `float.h` header file is empty except for an `#include <float32.h>` statement.
 * The `locale.h` header file is not supported.
 * The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
-* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for a single `#include <stdlib.h>` statement.
+* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for an `#include <stdlib.h>` statement.
 
 Compiler Options
 ----------------
