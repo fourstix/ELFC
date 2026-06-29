@@ -444,27 +444,34 @@ IEEE 754-1985 spcifies the biased exponent value of 0x00 indicates `0`.  The spe
 <table>
 <tr><th colspan="4">Special Values</th></tr>
 <tr><th>Value</th><th>High Word</th><th>Low Word (Implied)</th><th>Description</th></tr>
-<tr><td>NaN</td><td>0xFFFF</td><td>0XFFFF</td><td>Not a Number</td>
-<tr><td>+Inf</td><td>0x7F80</td><td>0X0000</td><td>Positive Infinity</td>
-<tr><td>+Inf</td><td>0xFF80</td><td>0X0000</td><td>Negative Infinity</td>
-<tr><td>0</td><td>0X0000</td><td>0X0000</td><td>Zero</td>
+<tr><td>NaN</td><td>0xFFFF</td><td>0XFFFF</td><td>Not a Number</td></tr>
+<tr><td>+Inf</td><td>0x7F80</td><td>0X0000</td><td>Positive Infinity</td></tr>
+<tr><td>+Inf</td><td>0xFF80</td><td>0X0000</td><td>Negative Infinity</td></tr>
+<tr><td>0</td><td>0X0000</td><td>0X0000</td><td>Zero</td></tr>
+</table>
+
+Notes:
+
+* When a special value is returned both the high word and low word values are set.
+* The values for `+Inf` and `-Inf` differ only in their sign bit.
+* ElfC sets all bits to `1`for `NaN` and sets all bits to `0` for Zero.
+* Only the high word is checked to test for a special value.
+* The bits of the low word are considered implied by the fractional bits in the high word, when testing for a special value.
+* The sign bit is ignored when testing for `0` or `NaN`, although `-0` is not used and is considered as `0` by ELfC.
 
 **Floating Point References**
 
 The following references were used to implement the Float32 library.
-* [Wikipedia Article: IEEE 754-1985](https://en.wikipedia.org/wiki/IEEE_754-1985)
 
 * [Wikipedia Article: Single-precision floating-point format](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
 
+* [Wikipedia Article: IEEE 754-1985](https://en.wikipedia.org/wiki/IEEE_754-1985)
 
 * [IEEE 754 Floating Point Converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html)
 
-* [Musl Libc Math Library v1.2.6](https://elixir.bootlin.com/musl/v1.2.6/source/src/math)
-
 * [Sun Microsystems Numerical Computation Guide, Chapter 2. IEEE Arithmetic](https://docs.oracle.com/cd/E19422-01/819-3693/ncg_math.html)
 
-
-
+* [Musl Libc Math Library v1.2.6](https://elixir.bootlin.com/musl/v1.2.6/source/src/math)
 
 Translation Limits
 -------------------
