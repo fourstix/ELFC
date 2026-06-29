@@ -421,12 +421,17 @@ ElfC uses 1 bit for the sign bit, 8 bits for the Exponent bits and 23 bits for t
 For normal numbers, the number is equal to power of two raised to the unbiased exponent times the mantissa and then assigned negative if the sign bit is `1` or positive if the sign bit is `0`. There is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent - 127} \times 1.{fraction}$
 
 <table>
-<tr><th colspan="24">32-bit floating point format</th></tr>
-<tr><th colspan="16">High Word</th><th colspan="8">Low Word</th></tr>
-<tr><th>Sign</th><th colspan="8>Exponent bits</th><th colspan="7">Fraction bits</th><th colspan="8">Fraction bits</th></tr>
-<tr><td>S0</td><td colspan="8">E7 ... E0</td><td colspan="7">F22 ... F16</td><td colspan="8">F15 ... F0</td></tr>
+<tr><th colspan="16">32-bit floating point format</th></tr>
+<tr><th colspan="8">High Word</th><th colspan="8">Low Word</th></tr>
+<tr><th>Sign</th><th colspan="8>8 Exponent bits</th><th colspan="7">23 Fraction bits</th></tr>
+<tr><td>S0</td><td colspan="4">E7 ... E0</td><td colspan="11">F22 ... F16</td><td colspan="8">F15 ... F0</td></tr>
 </table>
 
+Notes:
+* High Word consists of 1 sign bit, 8 exponent bits and 7 fraction bits
+* Low Word consists of the remaining 16 fraction bits
+* The exponent value is biased by `+127` with `0` and `255`used for special values
+* The range for normal exponents is from `-126` to `127` stored as expoenent values `1` to `254`.
 
 
 Translation Limits
