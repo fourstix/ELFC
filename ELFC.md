@@ -823,13 +823,14 @@ The float32 library defines the following special values
 * `NaN` - Not a Number, when a value is out of the defined domain
 * `+Inf` - Positive Infinity $+\infty $, Overflow in the positive range
 * `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
+* `0` - Zero (for underflow)
 
 Not a number or `NaN` is returned as a result under the following conditions.
-* `divf(0,0)` or `divf($\pm$Inf, $\pm$Inf)`
-* `mulf(0 $\pm$Inf)` or `mulf($\pm$Inf, 0)`
+* `divf(0,0)` or `divf(`$\pm$`Inf, `$\pm$`Inf)`
+* `mulf(0 `$\pm$`Inf)` or `mulf(`$\pm$`Inf, 0)`
 * `addf(+Inf, -Inf)` or `addf(-Inf, +Inf)`
-* `subf(+Inf, +Inf)` or `subf(-Inf, _INf)`
-* `sinf($\pm$Inf)`, `cosf($\pm$Inf)` or `tanf($\pm$Inf)`
+* `subf(+Inf, +Inf)` or `subf(-Inf, -INf)`
+* `sinf(x)`, `cosf(x)` or `tanf(x)` when x is `$\pm$`Inf
 * `asinf(a)` or `acosf(a)` when $\lvert a \rvert \gt 1$
 * `sqrt(x)` when $x \lt 0$
 * `logf(x)`, `log2f(x)` or `log10f(x)` when $x \lt 0$
@@ -846,7 +847,7 @@ When `+Inf` or `-Inf` is returned `errno` is set to `ERANGE` (out of range error
 
 Underflow occurs when the absolute value of the result is less than the smallest absolute floating point value FLT_MIN.
 
-* Zero is returned when underflow occurs.
+* Zero `0` is returned when underflow occurs.
 * Float32 does not use a negative zero value or sub-normal values.
 * Instead, Zero is always considered unsigned and underflow is not considered an error.
 * This is called _store zero_ or _flush to zero_ method.
@@ -946,6 +947,8 @@ The following table shows the results of comparison functions with special value
 * float32_t _sinhf(float32_t a)_ - return the hyperbolic sine(a)
 * float32_t _coshf(float32_t a)_ - return the hyperbolic cosine(a)
 * float32_t _tanhf(float32_t a)_ - return the hyperbolic tangent(a)
+
+Details about the ElfC 32-bit floating point implementation can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Pre-Defined Macros
 -------------------
