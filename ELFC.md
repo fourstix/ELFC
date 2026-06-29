@@ -826,11 +826,11 @@ The float32 library defines the following special values
 * `0` - Zero (for underflow)
 
 Not a number or `NaN` is returned as a result under the following conditions.
-* `divf(0,0)` or `divf(`$\pm$`Inf, ` $\pm$ `Inf)`
-* `mulf(0 ` $\pm$ `Inf)` or `mulf(` $\pm$ `Inf, 0)`
+* `divf(0,0)` or `divf(a, b)` where a and b are $\pm$ Inf
+* `mulf(0 x)` or `mulf(x, 0)` where x is $\pm$ Inf
 * `addf(+Inf, -Inf)` or `addf(-Inf, +Inf)`
 * `subf(+Inf, +Inf)` or `subf(-Inf, -INf)`
-* `sinf(x)`, `cosf(x)` or `tanf(x)` when x is $\pm$Inf
+* `sinf(x)`, `cosf(x)` or `tanf(x)` when x is $\pm$ Inf
 * `asinf(a)` or `acosf(a)` when $\lvert a \rvert \gt 1$
 * `sqrt(x)` when $x \lt 0$
 * `logf(x)`, `log2f(x)` or `log10f(x)` when $x \lt 0$
