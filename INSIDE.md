@@ -414,7 +414,9 @@ ElfC File Descriptor
 32-bit Floating Point
 ----------------------
 
-ElfC implements 32-bit single precision floating point format following the IEEE 745-1985 standard. ElfC uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does ELFC use a signed zero value internally.  Following the IEEE 745-1985 standard, ElfC ignores the sign bit when testing for zero or NaN.  Therefore, signed zero values, if they were to occur, would be treated as zero.
+ElfC implements 32-bit single precision floating point format following the IEEE 745-1985 standard. ElfC uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does ELFC use a signed zero value internally.  Following the IEEE 745-1985 standard, ElfC ignores the sign bit when testing for zero or `NaN`.  Therefore, signed zero values, if they occur, are treated as zero.
+
+**Floating Point Format**
 
 ElfC uses 1 bit for the sign bit, 8 bits for the Exponent bits and 23 bits for the fractional part of the mantissa.  The Exponent is biased by `127` so that values from 1 to 254 are valid for numbers.  The exponent values `255` and `0` are reserved for special values. The value `255` is used for `NaN`, `+Inf` and `-Inf` while `0` is reserved for Zero.
 
@@ -432,6 +434,36 @@ Notes:
 * Low Word consists of the remaining 16 fraction bits (F15 to F0)
 * The exponent value is biased by `+127` with `0` and `255`used for special values
 * The range for normal exponents is from `-126` to `127` stored as expoenent values `1` to `254`.
+
+**Floating Point Special Values**
+
+IEEE 754-1985 specifies that the biased exponent value of 0xFF indicates `NaN`, `+Inf` or `-Inf`. For `+Inf` and `-Inf` the fractional bits are zero, and for `NaN` the fractional bits are non-zero. ElfC sets all of the fractional bits to `1` for `Nan`.  Since 7 of the fractional bits are in the high word, ElfC only checks the high word to determine the special value, and the bits in the low word are implied to be all 0 or all 1.
+
+IEEE 754-1985 spcifies the biased exponent value of 0x00 indicates `0`.  The specification allows for signed zero values and sub-normal values which ElfC does not use.  For zero, ElfC sets all the bits in the sign, exponent and fraction parts to `0` and ignores the sign bit when testing for zero.
+
+<table>
+<tr><th colspan="4">Special Values</th></tr>
+<tr><th>Value</th><th>High Word</th><th>Low Word (Implied)</th><th>Description</th></tr>
+<tr><td>NaN</td><td>0xFFFF</td><td>0XFFFF</td><td>Not a Number</td>
+<tr><td>+Inf</td><td>0x7F80</td><td>0X0000</td><td>Positive Infinity</td>
+<tr><td>+Inf</td><td>0xFF80</td><td>0X0000</td><td>Negative Infinity</td>
+<tr><td>0</td><td>0X0000</td><td>0X0000</td><td>Zero</td>
+
+**Floating Point References**
+
+The following references were used to implement the Float32 library.
+* [Wikipedia Article: IEEE 754-1985](https://en.wikipedia.org/wiki/IEEE_754-1985)
+
+* [Wikipedia Article: Single-precision floating-point format](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
+
+
+* [IEEE 754 Floating Point Converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html)
+
+* [Musl Libc Math Library v1.2.6](https://elixir.bootlin.com/musl/v1.2.6/source/src/math)
+
+* [Sun Microsystems Numerical Computation Guide, Chapter 2. IEEE Arithmetic](https://docs.oracle.com/cd/E19422-01/819-3693/ncg_math.html)
+
+
 
 
 Translation Limits
