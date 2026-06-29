@@ -639,7 +639,7 @@ Common Examples
 #### United States (Eastern Time):
 
   EST5EDT,M3.2.0,M11.1.0
-  
+
   * EST5: Standard time is EST, which is 5 hours behind UTC (UTC = Local + 5)
   * EDT: Observes Daylight Saving Time (EDT)
   * M3.2.0: DST starts on the 3rd month (March), 2nd week, 0 day (Sunday)
@@ -796,10 +796,157 @@ typedef struct uint32 uint32_t;
 
 *Note: all variables and return values are type `uint32_t`, unless typed differently*
 
-**The following functions for converting between signed and unsgned are supported in the ElfC math32 library.**
+**The following functions for converting between signed and unsigned are supported in the ElfC math32 library.**
 
 * _u32_from_i32(v)_ - Convert signed 32-bit to unsigned 32-bit
 * _i32_from_u32(v)_ - Convert unsigned 32-bit to signed 32-bit
+
+
+Float32 Library
+----------------
+**The float32 library functions use the following structures and types.**
+
+```c
+struct float32 {
+    unsigned int low;   /* low word */
+    unsigned int high;  /* high word*/
+};
+
+/* 32-bit single precision floating point numbers */
+typedef struct float32 float32_t;
+```
+**Special Values**
+The float32 library defines the following special values
+* `NaN` - Not a Number, when a value is out of the defined domain
+* `+Inf` - Positive Infinity $+\infty $, Overflow in the positive range
+* `-Inf` - Negative Infinity $-\infty $, Overflow in the negative range
+* `0` - Zero (for underflow)
+
+Not a number or `NaN` is returned as a result under the following conditions.
+* `divf(0,0)` or `divf(a, b)` where a and b are $\pm$ Inf
+* `mulf(0 x)` or `mulf(x, 0)` where x is $\pm$ Inf
+* `addf(+Inf, -Inf)` or `addf(-Inf, +Inf)`
+* `subf(+Inf, +Inf)` or `subf(-Inf, -INf)`
+* `sinf(x)`, `cosf(x)` or `tanf(x)` when x is $\pm$ Inf
+* `asinf(a)` or `acosf(a)` when $\lvert a \rvert \gt 1$
+* `sqrt(x)` when $x \lt 0$
+* `logf(x)`, `log2f(x)` or `log10f(x)` when $x \lt 0$
+* `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
+* Any function, except the comparison functions `eqf`, `neqf`, `gtf`, `gtef`, `ltf` or `ltef`, when an argument is `NaN`
+
+When `NaN` is returned `errno` is set to `EDOM` (domain error).
+
+When the result of a function exceeds the floating point range `+Inf` or `-Inf` is returned.
+* `+Inf` is returned when positive overflow occurs in the result, x $\gt$ FLT_MAX
+* `-Inf` is returned when negative overflow occurs in the result, x $\lt$ -FLT_MAX
+
+When `+Inf` or `-Inf` is returned `errno` is set to `ERANGE` (out of range error).
+
+Underflow occurs when the absolute value of the result is less than the smallest absolute floating point value FLT_MIN.
+
+* Zero `0` is returned when underflow occurs.
+* Float32 does not use a negative zero value or sub-normal values.
+* Instead, Zero is always considered unsigned and underflow is not considered an error.
+* This is called _store zero_ or _flush to zero_ method.
+
+**The float32 library provides the following math functions**
+
+**Arithmetic functions**
+* float32_t _absf(float32_t a)_ - return the absolute value of a, $\lvert a \rvert$
+* float32_t _addf(float32_t a, float32_t b)_ - return $a + b$
+* float32_t _divf(float32_t a, float32_t b)_- return $a \div b$
+* float32_t _mulf(float32_t a, float32_t b)_ - return $a \times b$
+* float32_t _subf(float32_t a, float32_t b)_ - return $a - b$
+* float32_t _negf(float32_t a)_ - return $-a$
+* float32_t _invf(float32_t a)_ - return the reciprocal $\frac{1}{a}$
+* float32_t _fmodf(float32_t a, float32_t b)_ - return $a \bmod b$
+
+Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set to `EDOM`.
+
+**Comparison functions**
+* int _eqf(float32_t a, float32_t b)_ - return true if $a = b$
+* int _gtf(float32_t a, float32_t b)_ - return true if $a \gt b$
+* int _gtef(float32_t a, float32_t b)_ - return true if $a \geq b$
+* int _ltf(float32_t a, float32_t b)_ - return true if $a \lt b$
+* int _ltef(float32_t a, float32_t b)_ - return true if $a \leq b$
+* int _nef(float32_t a, float32_t b)_ - return true if $a \neq b$
+
+Note:
+* If either `a` or `b` is 'NaN', then _eqf_, _gtf_, _gte_, _ltf_ and _ltef_ all return `false`.
+* If either `a` or `b` is `NaN` then the _nef_ function returns `true`.
+* In particular, note that _nef(NaN, NaN)_ will return *false*.
+* `+Inf` is considered equal to `+Inf`
+* `+Inf` is greater than any other number.
+* `-Inf` is considered equal to `-Inf`
+* `-Inf` is less than any other number.
+
+The following table shows the results of comparison functions with special values. The value `x` represents any other number.
+
+<table>
+<tr><th>a<th>b<th>eqf</th><th>neqf</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th></tr>
+<tr><td>NaN</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>NaN</td><td>x</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>x</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
+<tr><td>+Inf</td><td>+Inf</td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td></tr>
+<tr><td>+Inf</td><td>x</td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td></tr>
+<tr><td>x</td><td>+Inf</td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td></tr>
+<tr><td>-Inf</td><td>-Inf</td><td>true</td><td>false</td><td>true</td><td>false</td><td>true</td><td>false</td></tr>
+<tr><td>-Inf</td><td>x</td><td>false</td><td>true</td><td>false</td><td>false</td><td>true</td><td>true</td></tr>
+<tr><td>x</td><td>-Inf</td><td>false</td><td>true</td><td>true</td><td>true</td><td>false</td><td>false</td></tr>
+</table>
+
+**Tests for Special values**
+* _isNan(a)_ - return true if a is Not a Number `NaN`, the sign bit is ignored
+* _isInf(a)_ - return true if a is `+Inf` or `-Inf`
+* _isZero(a)_ - return true if a is `0`, the sign bit is ignored
+* _isNeg(a)_ - return true if a is negative.
+
+**Conversion functions**
+* void _ftoa(float32_t fp1, char \*s)_ - convert a floating point number into an ASCII string
+* int32_t _ftoi32(float32_t a)_ - convert a floating point number into a 32-bit integer
+* int _ftoi(float32_t a)_ - convert a floating point number into an integer
+* float32_t _atof(char \*s)_ - convert an ASCII string into floating point number
+* float32_t _itof(int i)_ - convert an int value into floating point number
+* float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
+
+**Trig functions**
+* float32_t _sinf(float32_t a)_ - return the $\sin(a)$ in radians
+* float32_t _cosf(float32_t a)_ - return the $\cos(a)$ in radians
+* float32_t _tanf(float32_t a)_ - return the $\tan(a)$ in radians
+* float32_t _asinf(float32_t a)_ - return the $\arcsin(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$), the domain of a is (-1, 1)
+* float32_t _acosf(float32_t a)_- return the $\arccos(a)$ in the range of (0, $\pi$), the domain of a is (-1, 1)
+* float32_t _atanf(float32_t a)_- return the $\arctan(a)$ in the range of ($\frac{-\pi}{2}$, $\frac{+\pi}{2}$), the domain of a is (-1, 1)
+* float32_t _atan2f(float32_t y, float32_t x)_ - return the $\arctan(\frac{y}{x})$ in the range of ($-\pi$, $+\pi$).
+
+**Angle conversion functions**
+* float32_t _areducef(float32_t a)_ - reduce an angle to range of ($-\pi$, $\pi$) radians
+* float32_t _rad2degf(float32_t a)_ - convert an angle in radians to degrees
+* float32_t _deg2radf(float32_t a)_ - convert an angle in degrees to radians
+
+**Rounding functions**
+* float32_t _truncf(float32_t a)_ - return the whole number part of a, as a floating point number
+* float32_t _modf(float32_t a, float32_t \*ip)_ - split a into an integer and fractional parts, each with the same size as a. Store the integer part in \*ip and return the fractional part.
+* float32_t _fracf(float32_t a)_ - return the fractional part of a, as a floating point number
+* float32_t _ceilf(float32_t a)_ - return the smallest integer not less than a, as a floating point number
+* float32_t _floorf(float32_t a)_ - return the largest integer not greater than a, as a floating point number
+* float32_t _roundf(float32_t a)_ - return a rounded to the nearest integer, as a floating point number
+* float32_t _frexpf(float32_t a, int \*exp)_ - split a into a normalized fraction from (0.5, 1) and a power of two.  Set *exp to the power of 2 and return the normalized fraction.
+* float32_t _ldexpf(float32_t m, int n)_ - return $a\times2^n$
+* float32_t _zflushf(float32_t a, float32_t eps)_ - If $(a)$ $\leq$ $\epsilon$, return 0, else return a.
+
+**Logarithmic and Power Functions**
+* float32_t _expf(float32_t a)_ - return the exponential function $e^a$
+* float32_t _logf(float32_t a)_ - return the natural logarithm function $\ln(a)$, where $a \gt 0$
+* float32_t _log2f(float32_t a)_- return the base 2 logarithm function $\log_2(a)$, where $a \gt 0$
+* float32_t _log10f(float32_t a)_- return the common logarithm function $\log_{10}(a)$, where $a \gt 0$
+* float32_t _sqrtf(float32_t a)_ - return the square root of a, where $a $geq 0$
+* float32_t _powf(float32_t b, float32_t p)_ - return base b to the power p $b^p$, where $b \gt 0$ or $b = 0$ and $p \gt 0$.
+* float32_t _hypotf(float32_t a, float32_t b)_ - return the hypotenuse of a and b, $\sqrt{a^2 + b^2}$
+* float32_t _sinhf(float32_t a)_ - return the hyperbolic sine(a)
+* float32_t _coshf(float32_t a)_ - return the hyperbolic cosine(a)
+* float32_t _tanhf(float32_t a)_ - return the hyperbolic tangent(a)
+
+Details about the ElfC 32-bit floating point implementation can be found on the [ELFC Internal Information](INSIDE.md) page.
 
 Pre-Defined Macros
 -------------------
@@ -829,10 +976,11 @@ Unsupported Libraries
 
 Header files
 ------------
-* The `float.h` header file is not supported.
+* The `float32.h` header file implements the definitions for `float.h`.
+* The `float.h` header file is empty except for an `#include <float32.h>` statement.
 * The `locale.h` header file is not supported.
 * The `stdlib.h` header file implements definitions for `unistd.h`, `stddef.h` and `fcntl.h`.
-* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for a single `#include <stdlib.h>` statement.
+* The `unistd.h`, `stddef.h` and `fcntl.h` header files are empty except for an `#include <stdlib.h>` statement.
 
 Compiler Options
 ----------------

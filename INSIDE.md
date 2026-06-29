@@ -313,10 +313,13 @@ The following subroutines are invoked by the ElfC code generation code in the `c
 <tr><td>derefm</td><td>Replace a pointer on the expression stack with the struct/union memory block it references</td></tr>
 <tr><td>dget16</td><td>Get a 2-byte value from the expression stack (ESP is unchanged)</td></tr>
 <tr><td>dpop16</td><td>Pop a 2-byte value from the expression stack</td></tr>
+<tr><td>dpop32</td><td>Pop a 4-byte value from the expression stack</td></tr>
 <tr><td>dpush16</td><td>Pop a 2-byte value from the expression stack</td></tr>
 <tr><td>epush16</td><td>Push a 2-byte constant onto expression stack</td></tr>
 <tr><td>epush8</td><td>Push 1-byte char value onto expression stack</td></tr>
 <tr><td>esmove</td><td>Move the expression stack pointer by a signed offset</td></tr>
+<tr><td>fp1arg</td><td>Push a 32-bit argument onto the expression stack</td></tr>
+<tr><td>fp2args</td><td>Push two 32-bit arguments onto the expression stack</td></tr>
 <tr><td>mcopy</td><td>Copy the contents of a structure or union referenced by the pointer at the SOS into the structure or union referenced by the pointer at the TOS</td></tr>
 <tr><td>sclsos2n</td><td>Scale a 16-bit pointer offset at the SOS of the expression stack by a power of 2</td></tr>
 <tr><td>scltos2n</td><td>Scale a 16-bit pointer offset at the TOS of the expression stack by a power of 2</td></tr>
@@ -407,6 +410,72 @@ ElfC File Descriptor
 * *The total Size of ElfC File Descriptor is 534 bytes.*
 * *The DTA begins 22 bytes offset from the start of the FD.*
 * *This FD format is valid for Mini/DOS and Elf/OS v5*
+
+32-bit Floating Point
+----------------------
+
+The ElfC Float32 library implements 32-bit single precision floating point format following the IEEE 745-1985 standard. Float32 uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does Float32 use a signed zero value internally.  Following the IEEE 745-1985 standard, Float32 ignores the sign bit when testing for zero or `NaN`.  Therefore, signed zero values, if they occur, are treated as zero.
+
+**Floating Point Format**
+
+The Float32 library uses 1 bit for the sign bit, 8 bits for the exponent bits and 23 bits for the fractional part of the mantissa.  The exponent is biased by `127` so that values from 1 to 254 are valid for normal numbers.  The exponent values `255` and `0` are reserved for special values. The value `255` is used for `NaN`, `+Inf` and `-Inf` while `0` is reserved for Zero.
+
+For normal numbers, the number is equal to power of two raised to the unbiased exponent value times the mantissa. It is then assigned negative if the sign bit is `1` or positive if the sign bit is `0`. There is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent - 127} \times 1.{fraction}$
+
+<table>
+<tr><th colspan="32">32-bit floating point format</th></tr>
+<tr><th colspan="16">High Word</th><th colspan="16">Low Word</th></tr>
+<tr rowspan="2"><th>Sign</th><th colspan="8">8 Exp bits</th><th colspan="23">23 Fraction bits</th></tr>
+<tr><td>S0</td><td colspan="8">E7 ... E0</td><td colspan="7">F22 ... F16</td><td colspan="16">F15 ... F0</td></tr>
+</table>
+
+Notes:
+* High Word consists of 1 sign bit, 8 exponent bits and 7 fraction bits (F22 to F16)
+* Low Word consists of the remaining 16 fraction bits (F15 to F0)
+* The exponent value is biased by `+127` with `0` and `255`reserved for special values
+* The range for normal exponents is from `-126` to `127` stored as biased expoenent values `1` to `254`.
+* The mantissa is 1 + the value of the fractional part.
+* Float32 does not use sub-normal (denormal) values.
+* Normal numbers are given by $n = \pm2^{exponent - 127} \times 1.{fraction}$ where $\pm$ is determined by the sign bit.
+
+**Floating Point Special Values**
+
+IEEE 754-1985 specifies that the biased exponent value of `0xFF` indicates `NaN`, `+Inf` or `-Inf`. For `+Inf` and `-Inf` the fractional bits are all zero, and for `NaN` the fractional bits are a non-zero specified by the implementation. Float32 sets all of the fractional bits to `1` for `Nan`.  Since 7 of the fractional bits are available in the high word, Float32 only checks the high word to determine if the number represents a special value, and the bits in the low word are implied to be all 0 or all 1 by the fractional bits in the high word when the high word denotes a special value.
+
+IEEE 754-1985 spcifies the biased exponent value of `0x00` indicates `0`.  The specification allows for signed zero values and sub-normal values which Float32 does not use.  For zero, Float32 sets all the bits in the sign, exponent and fraction parts to `0` and Float32 ignores the sign bit when testing for zero.  When underflow occurs the value is set to `0` regardless of the sign bit.  This is often referred to as the _store zero_ or _flush to zero_ method.
+
+<table>
+<tr><th colspan="4">Special Values</th></tr>
+<tr><th>Value</th><th>High Word</th><th>Low Word</th><th>Description</th></tr>
+<tr><td>NaN</td><td>0xFFFF</td><td>0xFFFF</td><td>Not a Number</td></tr>
+<tr><td>+Inf</td><td>0x7F80</td><td>0x0000</td><td>Positive Infinity</td></tr>
+<tr><td>+Inf</td><td>0xFF80</td><td>0x0000</td><td>Negative Infinity</td></tr>
+<tr><td>0</td><td>0x0000</td><td>0x0000</td><td>Zero</td></tr>
+</table>
+
+Notes:
+
+* When a special value is returned both the high word and low word values are set by Float32.
+* The special values for `+Inf` and `-Inf` differ only in the sign bit.
+* Float32 sets all bits to `1`for `NaN` and sets all bits to `0` for Zero.
+* Only the high word is checked to test for a special value, and the bits of the low word are considered implied by the fractional bits in the high word.
+* The sign bit is ignored when testing for `0` or `NaN`.
+* Zero is considered as unsigned by Float32. The value `-0` is treated the same as `0` by Float32.
+* The `isNaN`, `isInf`, `isNeg` and `isZero` macros handle special values correctly.
+
+**Floating Point References**
+
+The following references were used to implement the Float32 library.
+
+* [Wikipedia Article: Single-precision floating-point format](https://en.wikipedia.org/wiki/Single-precision_floating-point_format)
+
+* [Wikipedia Article: IEEE 754-1985](https://en.wikipedia.org/wiki/IEEE_754-1985)
+
+* [IEEE 754 Floating Point Converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html)
+
+* [Sun Microsystems Numerical Computation Guide, Chapter 2. IEEE Arithmetic](https://docs.oracle.com/cd/E19422-01/819-3693/ncg_math.html)
+
+* [Musl Libc Math Library v1.2.6](https://elixir.bootlin.com/musl/v1.2.6/source/src/math)
 
 Translation Limits
 -------------------
