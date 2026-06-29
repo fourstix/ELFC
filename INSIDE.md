@@ -424,7 +424,7 @@ For normal numbers, the number is equal to power of two raised to the unbiased e
 <tr><th colspan="16">32-bit floating point format</th></tr>
 <tr><th colspan="8">High Word</th><th colspan="8">Low Word</th></tr>
 <tr><th>Sign</th><th colspan="8>8 Exponent bits</th><th colspan="7">23 Fraction bits</th></tr>
-<tr><td>S0</td><td colspan="4">E7 ... E0</td><td colspan="11">F22 ... F16</td><td colspan="8">F15 ... F0</td></tr>
+<tr><td>S0</td><td colspan="4">E7 ... E0</td><td colspan="3">F22 ... F16</td><td colspan="8">F15 ... F0</td></tr>
 </table>
 
 Notes:
