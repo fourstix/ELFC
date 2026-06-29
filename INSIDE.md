@@ -423,7 +423,7 @@ For normal numbers, the number is equal to power of two raised to the unbiased e
 <table>
 <tr><th colspan="32">32-bit floating point format</th></tr>
 <tr><th colspan="16">High Word</th><th colspan="16">Low Word</th></tr>
-<tr rowspan="2"><th>Sign</th><th colspan="8">8 Exponent bits</th><th colspan="23">23 Fraction bits</th></tr>
+<tr rowspan="2"><th>Sign</th><th colspan="8">8 Exp bits</th><th colspan="23">23 Fraction bits</th></tr>
 <tr><td>S0</td><td colspan="8">E7 ... E0</td><td colspan="7">F22 ... F16</td><td colspan="16">F15 ... F0</td></tr>
 </table>
 
