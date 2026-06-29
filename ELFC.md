@@ -802,9 +802,6 @@ typedef struct uint32 uint32_t;
 * _i32_from_u32(v)_ - Convert unsigned 32-bit to signed 32-bit
 
 
-
-
-
 Float32 Library
 ----------------
 **The float32 library functions use the following structures and types.**

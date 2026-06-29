@@ -316,13 +316,29 @@ Compiler Option Changes
 
 Release 3.7
 -----------
-Release 3.7 adds a 32-bit single precision floating point math library.
+Release 3.7 adds a 32-bit single precision floating point math library Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for `getenv` and `setenv` functions and additonal support in the Time library to support timezones and additional time functions.
 
 New features
 ------------
+* Support for 32-bit single precision floating point numbers.
+* Math library with functions for floating point numbers.
+* Added `trigdemo` example program.
+* Support for `getenv`, `setenv` and `unsetenv` functions. (Thanks to Tony Hefner)
+* Add support for single- and double-quoted argument strings with escapes (Thanks to Tony Hefner)
+* Added new example programs `rename`, `export`, `printenv` and `unset`. (Thanks to Tony Hefner)
+* Added support for multiple `-D` options (Thanks to Tony Hefner)
+* Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
+
 
 Issues Fixed
 ------------
+* Fixed small issues with some string library functions not including proper header files.
+
+Compiler Option Changes
+-----------------------
+* The `-D` option can now be used multiple times.
+
+*Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 Stdlib Library
 --------------

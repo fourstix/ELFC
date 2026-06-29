@@ -414,13 +414,13 @@ ElfC File Descriptor
 32-bit Floating Point
 ----------------------
 
-ElfC implements 32-bit single precision floating point format following the IEEE 745-1985 standard. ElfC uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does ELFC use a signed zero value internally.  Following the IEEE 745-1985 standard, ElfC ignores the sign bit when testing for zero or `NaN`.  Therefore, signed zero values, if they occur, are treated as zero.
+The ElfC Float32 library implements 32-bit single precision floating point format following the IEEE 745-1985 standard. Float32 uses the _store zero_ or _flush to zero_ method and does not support sub-normal (denormal) values nor does Float32 use a signed zero value internally.  Following the IEEE 745-1985 standard, Float32 ignores the sign bit when testing for zero or `NaN`.  Therefore, signed zero values, if they occur, are treated as zero.
 
 **Floating Point Format**
 
-ElfC uses 1 bit for the sign bit, 8 bits for the Exponent bits and 23 bits for the fractional part of the mantissa.  The Exponent is biased by `127` so that values from 1 to 254 are valid for numbers.  The exponent values `255` and `0` are reserved for special values. The value `255` is used for `NaN`, `+Inf` and `-Inf` while `0` is reserved for Zero.
+The Float32 library uses 1 bit for the sign bit, 8 bits for the exponent bits and 23 bits for the fractional part of the mantissa.  The exponent is biased by `127` so that values from 1 to 254 are valid for normal numbers.  The exponent values `255` and `0` are reserved for special values. The value `255` is used for `NaN`, `+Inf` and `-Inf` while `0` is reserved for Zero.
 
-For normal numbers, the number is equal to power of two raised to the unbiased exponent times the mantissa and then assigned negative if the sign bit is `1` or positive if the sign bit is `0`. There is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent - 127} \times 1.{fraction}$
+For normal numbers, the number is equal to power of two raised to the unbiased exponent value times the mantissa. It is then assigned negative if the sign bit is `1` or positive if the sign bit is `0`. There is an implied one before the fractional value, so that the mantissa = $1 + fraction$, such that $n = \pm2^{exponent - 127} \times 1.{fraction}$
 
 <table>
 <tr><th colspan="32">32-bit floating point format</th></tr>
@@ -432,18 +432,21 @@ For normal numbers, the number is equal to power of two raised to the unbiased e
 Notes:
 * High Word consists of 1 sign bit, 8 exponent bits and 7 fraction bits (F22 to F16)
 * Low Word consists of the remaining 16 fraction bits (F15 to F0)
-* The exponent value is biased by `+127` with `0` and `255`used for special values
-* The range for normal exponents is from `-126` to `127` stored as expoenent values `1` to `254`.
+* The exponent value is biased by `+127` with `0` and `255`reserved for special values
+* The range for normal exponents is from `-126` to `127` stored as biased expoenent values `1` to `254`.
+* The mantissa is 1 + the value of the fractional part.
+* Float32 does not use sub-normal (denormal) values.
+* Normal numbers are given by $n = \pm2^{exponent - 127} \times 1.{fraction}$ where $\pm$ is determined by the sign bit.
 
 **Floating Point Special Values**
 
-IEEE 754-1985 specifies that the biased exponent value of 0xFF indicates `NaN`, `+Inf` or `-Inf`. For `+Inf` and `-Inf` the fractional bits are zero, and for `NaN` the fractional bits are non-zero. ElfC sets all of the fractional bits to `1` for `Nan`.  Since 7 of the fractional bits are in the high word, ElfC only checks the high word to determine the special value, and the bits in the low word are implied to be all 0 or all 1.
+IEEE 754-1985 specifies that the biased exponent value of `0xFF` indicates `NaN`, `+Inf` or `-Inf`. For `+Inf` and `-Inf` the fractional bits are all zero, and for `NaN` the fractional bits are a non-zero specified by the implementation. Float32 sets all of the fractional bits to `1` for `Nan`.  Since 7 of the fractional bits are available in the high word, Float32 only checks the high word to determine if the number represents a special value, and the bits in the low word are implied to be all 0 or all 1 by the fractional bits in the high word when the high word denotes a special value.
 
-IEEE 754-1985 spcifies the biased exponent value of 0x00 indicates `0`.  The specification allows for signed zero values and sub-normal values which ElfC does not use.  For zero, ElfC sets all the bits in the sign, exponent and fraction parts to `0` and ignores the sign bit when testing for zero.
+IEEE 754-1985 spcifies the biased exponent value of `0x00` indicates `0`.  The specification allows for signed zero values and sub-normal values which Float32 does not use.  For zero, Float32 sets all the bits in the sign, exponent and fraction parts to `0` and Float32 ignores the sign bit when testing for zero.  This is often referred to as the _store zero_ or _flush to zero_ method.
 
 <table>
 <tr><th colspan="4">Special Values</th></tr>
-<tr><th>Value</th><th>High Word</th><th>Low Word (Implied)</th><th>Description</th></tr>
+<tr><th>Value</th><th>High Word</th><th>Low Word</th><th>Description</th></tr>
 <tr><td>NaN</td><td>0xFFFF</td><td>0XFFFF</td><td>Not a Number</td></tr>
 <tr><td>+Inf</td><td>0x7F80</td><td>0X0000</td><td>Positive Infinity</td></tr>
 <tr><td>+Inf</td><td>0xFF80</td><td>0X0000</td><td>Negative Infinity</td></tr>
@@ -452,12 +455,13 @@ IEEE 754-1985 spcifies the biased exponent value of 0x00 indicates `0`.  The spe
 
 Notes:
 
-* When a special value is returned both the high word and low word values are set.
-* The values for `+Inf` and `-Inf` differ only in their sign bit.
-* ElfC sets all bits to `1`for `NaN` and sets all bits to `0` for Zero.
-* Only the high word is checked to test for a special value.
-* The bits of the low word are considered implied by the fractional bits in the high word, when testing for a special value.
-* The sign bit is ignored when testing for `0` or `NaN`, although `-0` is not used and is considered as `0` by ELfC.
+* When a special value is returned both the high word and low word values are set by Float32.
+* The special values for `+Inf` and `-Inf` differ only in the sign bit.
+* Float32 sets all bits to `1`for `NaN` and sets all bits to `0` for Zero.
+* Only the high word is checked to test for a special value, and the bits of the low word are considered implied by the fractional bits in the high word.
+* The sign bit is ignored when testing for `0` or `NaN`.
+* Zero is considered as unsigned by Float32. The value `-0` is considered the same as `0` by Float32.
+* The `isNaN`, `isInf`, `isNeg` and `isZero` macros handle special values correctly.
 
 **Floating Point References**
 
