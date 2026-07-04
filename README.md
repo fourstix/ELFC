@@ -714,6 +714,8 @@ typedef struct float32 float32_t;
 * int ltf(float32_t a, float32_t b)
 * int ltef(float32_t a, float32_t b)
 * int nef(float32_t a, float32_t b)
+* int samef(float32_t a, float32_t b)
+
 
 **Conversion functions**
 * void ftoa(float32_t fp1, char \*s)

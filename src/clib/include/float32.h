@@ -107,12 +107,16 @@ float32_t invf(float32_t a);
 float32_t fmodf(float32_t a, float32_t b);
 
 /* comparison functions */
-int eqf(float32_t a, float32_t b);
 int gtf(float32_t a, float32_t b);
 int gtef(float32_t a, float32_t b);
 int ltf(float32_t a, float32_t b);
 int ltef(float32_t a, float32_t b);
+/* strictly equal */
+int eqf(float32_t a, float32_t b);
+/* not equal */
 int nef(float32_t a, float32_t b);
+/* approximately equal */
+int samef(float32_t a, float32_t b);
 
 /* Conversion functions */
 void ftoa(float32_t fp1, char *s);

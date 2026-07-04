@@ -92,6 +92,7 @@
 ..\elfc -L i32tof.c
 ..\elfc -L itof.c
 ..\elfc -L ftoi.c
+..\elfc -L samef.c
 
 
 type _addfp.prg _addtows.prg _atof.prg _atoi32.prg _divfp.prg _eqfp.prg > float32.lib
@@ -105,7 +106,7 @@ type addf.prg areducef.prg asinf.prg atanf.prg atan2f.prg atof.prg cosf.prg cosh
 type ceilf.prg deg2radf.prg divf.prg eqf.prg expf.prg floorf.prg fmodf.prg fracf.prg >> float32.lib
 type frexpf.prg ftoa.prg ftoi32.prg ftoi.prg gtf.prg gtef.prg hypotf.prg itof.prg i32tof.prg >> float32.lib
 type invf.prg ldexpf.prg logf.prg log2f.prg log10f.prg ltf.prg ltef.prg modf.prg mulf.prg >> float32.lib
-type nef.prg negf.prg powf.prg rad2degf.prg roundf.prg sgnf.prg sinf.prg >> float32.lib
+type nef.prg negf.prg powf.prg rad2degf.prg roundf.prg samef.prg sgnf.prg sinf.prg >> float32.lib
 type sinhf.prg sqrtf.prg subf.prg tanf.prg tanhf.prg truncf.prg zflushf.prg >> float32.lib
 
 copy float32.lib ..\lib\float32.lib
