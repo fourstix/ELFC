@@ -832,7 +832,7 @@ Not a number or `NaN` is returned as a result under the following conditions.
 * `sqrt(x)` when $x \lt 0$
 * `logf(x)`, `log2f(x)` or `log10f(x)` when $x \lt 0$
 * `powf(b,p)` when $b \lt 0$ or $b = 0$ and $p \leq 0$
-* Any function, except the comparison functions `eqf`, `neqf`, `gtf`, `gtef`, `ltf` or `ltef`, when an argument is `NaN`
+* Any function, except the comparison functions `eqf`, `nef`, `gtf`, `gtef`, `ltf`, `ltef` or `samef`, when an argument is `NaN`
 
 When `NaN` is returned `errno` is set to `EDOM` (domain error).
 
@@ -870,20 +870,23 @@ Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set 
 * int _ltf(float32_t a, float32_t b)_ - return true if $a \lt b$
 * int _ltef(float32_t a, float32_t b)_ - return true if $a \leq b$
 * int _nef(float32_t a, float32_t b)_ - return true if $a \neq b$
+* int _samef(float32_t a, float32_t b)_ - return true if $a \approx b$
 
 Note:
-* If either `a` or `b` is 'NaN', then _eqf_, _gtf_, _gte_, _ltf_ and _ltef_ all return `false`.
+* If either `a` or `b` is 'NaN', then _eqf_, _gtf_, _gte_, _ltf_, _ltef_ and _samef_ all return `false`.
 * If either `a` or `b` is `NaN` then the _nef_ function returns `true`.
 * In particular, note that _nef(NaN, NaN)_ will return *false*.
 * `+Inf` is considered equal to `+Inf`
 * `+Inf` is greater than any other number.
 * `-Inf` is considered equal to `-Inf`
 * `-Inf` is less than any other number.
+* _samef_ tests whether `a` is approximately equal to `b` using Knuth's algorithm.
+
 
 The following table shows the results of comparison functions with special values. The value `x` represents any other number.
 
 <table>
-<tr><th>a<th>b<th>eqf</th><th>neqf</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th></tr>
+<tr><th>a<th>b<th>eqf or samef</th><th>nef</th><th>gtef</th><th>gtf</th><th>ltef</th><th>ltf</th></tr>
 <tr><td>NaN</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
 <tr><td>NaN</td><td>x</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
 <tr><td>x</td><td>NaN</td><td>false</td><td>true</td><td>false</td><td>false</td><td>false</td><td>false</td></tr>
