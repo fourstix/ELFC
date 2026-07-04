@@ -468,9 +468,9 @@ Comparing floating point numbers for equality can be difficult.  There are two f
 
 The _samef()_ comparison function uses Knuth's algorithm to determine if a number is approximately the same as another number. ElfC uses an algorithm taken from The Art of Computer Programming, Vol. 1, page 218:
 
-$\lvert a - b \rvert$ <= (($\lvert a $\rvert < $\lvert b \rvert$) ? $\lvert b \rvert$ : $\lvert a \rvert$ * epsilon)  with a `epsilon = 0.00001`
+$\lvert a - b \rvert$ <= (($\lvert a \rvert$ < $\lvert b \rvert$) ? $\lvert b \rvert$ : $\lvert a \rvert$ * epsilon)  with an `epsilon = 0.000001`.
 
-The _samef()_ function should be used when comparing calculated floating point values.  The following example illustrates the problem:
+The _samef()_ function should be used instead of _eqf()_ when comparing calculated floating point values, especially if trig, logarithmic or power functions are used.  The following example illustrates the issue:
 
 ```C
 #include <stdio.h>
@@ -501,7 +501,7 @@ int main() {
 }
 ```
 
-This program prints `sqrt(3.0^4.0) same as 9.0` because the calculated value of `8.999981` is not strictly equal to `9.0`.  It is however with the approximate range given by epsilon = `0.0000`.
+This program prints `sqrt(3.0^4.0) same as 9.0` because the calculated value of `8.999981` is not *strictly* equal to `9.0`.  It is however within the *approximate* range given by epsilon = `0.000001` for the relative error.
 
 **Floating Point References**
 
