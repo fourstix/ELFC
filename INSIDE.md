@@ -464,6 +464,7 @@ Notes:
 * The `isNaN`, `isInf`, `isNeg` and `isZero` macros handle special values correctly.
 
 **Equal Comparisons**
+
 Comparing floating point numbers for equality can be difficult.  There are two functions provided. The _eqf()_ comparison function compares two floating point values as strictly equal.  Since floating point values can be imprecise, the _eqf()_ comparison function may not consider two calculated values equal, even when mathematically they should be equal.
 
 The _samef()_ comparison function uses Knuth's algorithm to determine if a number is approximately the same as another number. ElfC uses an algorithm taken from The Art of Computer Programming, Vol. 1, page 218:
@@ -479,8 +480,8 @@ The _samef()_ function should be used instead of _eqf()_ when comparing calculat
  * Show difference between eqf() and samef().
  */
 float32_t Three = {0x0000, 0x4040};
-float32_t Four = {0x0000, 0x4080};
-float32_t Nine =  {0x0000, 0x4110};
+float32_t Four  = {0x0000, 0x4080};
+float32_t Nine  = {0x0000, 0x4110};
 
 float32_t Y, Z;
 char buf[20];

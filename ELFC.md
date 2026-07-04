@@ -870,7 +870,8 @@ Note: If either `a` or `b` is `NaN` then the result is `NaN` and `errno` is set 
 * int _ltf(float32_t a, float32_t b)_ - return true if $a \lt b$
 * int _ltef(float32_t a, float32_t b)_ - return true if $a \leq b$
 * int _nef(float32_t a, float32_t b)_ - return true if $a \neq b$
-* int _samf(float32_t a, float32_t b)_ - return true if $a \approx b$
+* int _samef(float32_t a, float32_t b)_ - return true if $a \approx b$
+
 Note:
 * If either `a` or `b` is 'NaN', then _eqf_, _gtf_, _gte_, _ltf_, _ltef_ and _samef_ all return `false`.
 * If either `a` or `b` is `NaN` then the _nef_ function returns `true`.
