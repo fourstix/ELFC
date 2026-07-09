@@ -32,6 +32,13 @@ float32_t _fp_exp_min = {FP_E_MAX_LO, FP_E_MAX_HI | FP_SIGN};
 float32_t _fp_ln2 = {FP_LN_2_LO, FP_LN_2_HI};
 float32_t _fp_ln10 = {FP_LN_10_LO, FP_LN_10_HI};
 
+/* Conversion constants */
+float32_t _fp_ten   = {FP_TEN_LO, FP_TEN_HI};
+float32_t _fp_two   = {FP_TWO_LO, FP_TWO_HI};
+float32_t _fp_10p5  = {FP_10P5_LO, FP_10P5_HI};
+float32_t _fp_10n5  = {FP_10N5_LO, FP_10N5_HI};
+float32_t _fp_round = {FP_RND45_LO, FP_RND45_HI};
+
 void _fp_const() {
  /* required entry point */
 }

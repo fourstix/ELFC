@@ -17,7 +17,7 @@
 
 #define FLT_RADIX      2
 #define FLT_ROUNDS    -1
-#define FLT_DIG        7
+#define FLT_DIG        6
 #define FLT_EPSILON    1.19E-7
 #define FLT_MANT_DIG   24
 #define FLT_MAX        3.40E+38
@@ -26,6 +26,7 @@
 #define FLT_MIN        1.18E-38
 #define FLT_MIN_EXP    -126
 #define FLT_MIN_10_EXP -38
+#define FLT_HAS_SUBNORM 0
 
 #define isNaN(n)  (0xFFFF == n.high)
 #define isInf(n)  (0xFF80 == (n.high | 0x8000))
@@ -41,6 +42,8 @@
 /* mask for exponent bits */
 #define FP_EXP     0x7F80
 
+/* buffer size for float32 number string with null */
+#define FP_BUF_SZ  15
 
 /* Float values used with trig functions */
 #define FP_ONE_HI    0x3F80
@@ -85,8 +88,20 @@
 #define FP_RAD_DEG_LO 0x2EE1
 
 /* Precision Constants */
-#define FP_DOT5_HI   0x3f00
-#define FP_DOT5_LO   0x0000
+#define FP_DOT5_HI    0x3f00
+#define FP_DOT5_LO    0x0000
+
+/* Float to string conversion */
+#define FP_TWO_HI     0x4000
+#define FP_TWO_LO     0x0000
+#define FP_TEN_HI     0x4120
+#define FP_TEN_LO     0x0000
+#define FP_10P5_HI    0x47c3
+#define FP_10P5_LO    0x5000
+#define FP_10N5_HI    0x3727
+#define FP_10N5_LO    0xc5ac
+#define FP_RND45_HI   0x3851
+#define FP_RND45_LO   0xb717
 
 /* 32-bit signed number represented as two 16-bit values */
 struct float32 {
@@ -120,11 +135,13 @@ int samef(float32_t a, float32_t b);
 
 /* Conversion functions */
 void ftoa(float32_t fp1, char *s);
+void ftos(float32_t fp1, char *s);
 int32_t ftoi32(float32_t a);
 int ftoi(float32_t a);
 float32_t atof(char *s);
 float32_t itof(int i);
 float32_t i32tof(int32_t i);
+int fstrf (char* buf, float32_t val, int prec, char fmt);
 
 
 /* Trig functions */
