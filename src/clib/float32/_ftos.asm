@@ -31,7 +31,7 @@
 ; *****       RA:RB - fractional              *****
 ; *****       RC.0  - digit count             *****
 ; *************************************************
-              proc     _ftoa
+              proc     _ftos
 
 .link .requires _fpdata
 

@@ -1,46 +1,138 @@
 #define _ELFCLIB_
 #include <float32.h>
 
-#pragma             extrn _ftoa
+extern  float32_t _fp_round;
 
-/*
- * Convert a floating point number into an ASCII string
- */
-void ftoa(float32_t fp1, char *s) {
-  if (NULL == s)
+#pragma             extrn Cftos
+#pragma             extrn Cnegf
+#pragma             extrn Caddf
+#pragma             extrn Cshri32
+#pragma             extrn Cshli32
+#pragma             extrn Ci32_from_int
+#pragma             extrn Ci32toa
+#pragma             extrn Cmuli32
+
+
+
+/* constant value used in routine */
+#pragma .link .requires C_fp_const
+#pragma             extrn C_fp_round
+
+void ftoa(float32_t f, char *p) {
+  //static float32_t round = {0xb717, 0x3851};
+  static int32_t digit = {10, 0};
+  int32_t mantissa;
+  int32_t int_part = {0,0};
+  int32_t frac_part = {0,0};
+  int exp;
+  int m;
+  int bcd;
+
+  /* if null buffer just return */
+  if (!p)
     return;
 
-  /* Process NaN */
-  if (isNaN(fp1)) {
-    /* write "NaN" to buffer */
-    s[0] = 'N';
-    s[1] = 'a';
-    s[2] = 'N';
-    s[3] = '\0';
+  /* handle special cases first */
+  if (isNaN(f)) {
+    p[0] = 'N';
+    p[1] = 'a';
+    p[2] = 'N';
+    p[3] = 0;
+    return;
+  } else if (isZero(f))  {
+    p[0] = '0';
+    p[1] = '.';
+    p[2] = '0';
+    p[3] = 0;
+    return ;
+  } else if (isInf(f)) {
+    /* set sign of infinity */
+    if (isNeg(f)) {
+      p[0] = '-';
+    } else {
+      p[0] = '+';
+    }
+    p[1] = 'I';
+    p[2] = 'n';
+    p[3] = 'f';
+    p[4] = 0;
     return;
   }
+  /* get exponent from floating point numbr */
+  exp = (f.high & FP_EXP) >> 7;
 
-  asm("            copy    rb, rf       ; first argument is float value");
-  asm("            inc     rf           ; set rf to point to float value");
-  asm("            copy    rf, r8       ; second argument is buffer pointer");
-  asm("            inc     r8           ; buffer argument +4 bytes into stack frame");
-  asm("            inc     r8");
-  asm("            inc     r8");
-  asm("            inc     r8           ; copy buffer pointer into rd");
-  asm("            lda     r8           ; get low byte of char pointer ");
-  asm("            plo     rd           ; set rd to point to output buffer");
-  asm("            ldn     r8           ; get high byte of char pointer ");
-  asm("            phi     rd           ; rd now points to output buffer");
+  /*
+   * Check biased exponent for values greater than one millon
+   * or less than 0.00001 and use scientific notation
+   * instead for these values.
+   */
+  if ((exp < 110) || (exp >= 147)) {
+      ftos(f, p);
+      return;
+  }
+/*
+ * this case won't happen because of above logic
+ * else if (exp >= 23)
+ *    int_part = mantissa << (exp - 23);
+ */
 
-  /* Save Registers Used by ElfC */
-  asm("            sex     r2           ; make sure x = SP");
-  asm("            push    r9           ; save c registers");
-  asm("            push    rb           ; save c registers");
 
-  /* call function in library */
-  asm("            call    _ftoa        ; call function in library");
-  /* restore ElfC registers */
-  asm("            pop     rb           ; restore C registers");
-  asm("            pop     r9           ; restore C registers");
-  return;
+  if (isNeg(f)) {
+    f = negf(f);
+    *p++ = '-';
+  }
+  /* round to 4 decimal places */
+  f = addf(f, _fp_round);
+
+  /* get exponent from floating point numbr */
+  exp = (f.high & FP_EXP) >> 7;
+  /* remove bias from exponent */
+  exp -= 127;
+
+  mantissa.low = f.low;
+  /* set implied 1 bit in mantissa */
+  mantissa.high = (f.high & 0x007f) | 0x0080;
+
+  if (exp >= 0) {
+    int_part = shri32(mantissa, (23 - exp));
+    frac_part = shli32(mantissa, (exp + 1));
+
+    /* clip fraction to 24 bits */
+    frac_part.high &= 0x00FF;
+  } else {
+    /* if (exp < 0) */
+    int_part  = i32_from_int(0);
+    frac_part = shri32(mantissa, -(exp + 1));
+    /* clip fraction to 24 bits */
+    frac_part.high &= 0x00FF;
+  }
+
+  if (int_part.high == 0 && int_part.low == 0) {
+    *p++ = '0';
+  } else {
+    i32toa(int_part, p);
+    /* skip over number and place decimal point */
+    while (*p) {
+      p++;
+    }
+  }
+  *p++ = '.';
+
+  if (frac_part.high == 0 && frac_part.low == 0) {
+    *p++ = '0';
+  } else {
+    /* precision is four */
+    for (m = 0; m < 4; m++) {
+      /* print BCD */
+      frac_part = muli32(frac_part, digit);
+      bcd = (frac_part.high & 0xFF00) >> 8;
+      *p++ = bcd + '0';
+      frac_part.high &= 0x00FF;
+    }
+    /* delete ending zeroes */
+    for (--p; p[0] == '0' && p[-1] != '.'; --p)
+        ;
+    ++p;
+  }
+  *p = 0;
 }

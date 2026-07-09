@@ -813,7 +813,9 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
           gendata(rsize);
         }
       }  else if (!autosize && isize > *psize) {
-          error("initialization list size larger than size of array %s", name);
+          /* char types are aligned, so recheck with aligned size */
+          if (chartype(*pprim) && isize > ALIGNED(*psize))
+            error("initialization list size larger than size of array %s", name);
       }
     }  else if (CEXTERN != scls && autosize && !pmtr) {
     error("automatically-sized array"
@@ -1762,14 +1764,13 @@ static int initstruct(char *name, int prim, int *pinit) {
 }
 
 /*
- * Initialization for local (auto) arrays
+ * Initialization for local (auto) structures
  *
  * Local init list
- * linitlist :=
+ * linitstruct :=
  *    { const_list }
- *  | STRLIT
  *
- * const_list :=
+ * const_struct :=
  *    constexpr
  *  | constexpr , const_list
  */
@@ -2075,7 +2076,10 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
         //grw - created macro for alignment size
         rsize = ALIGNED(v+1);
     }
-    if (v < rsize) {
+    /* check for string too long for original size */
+    if (size != 0 && v >= size) {
+      error("string initializer is larger than size of array", NULL);
+    } else if (v < rsize) {
       /* subtract one for null written with string */
       k = rsize - v - 1;
       /* pad unitialized elements with nulls */

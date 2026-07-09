@@ -8,7 +8,7 @@
 ..\asm02 -L _fpreta.asm
 ..\asm02 -L _fpretb.asm
 ..\asm02 -L _fpretinf.asm
-..\asm02 -L _ftoa.asm
+..\asm02 -L _ftos.asm
 ..\asm02 -L _itoa32.asm
 ..\asm02 -L _mulfp.asm
 ..\asm02 -L _subfp.asm
@@ -52,6 +52,7 @@
 ..\elfc -L ltf.c
 ..\elfc -L ltef.c
 ..\elfc -L ftoa.c
+..\elfc -L ftos.c
 ..\elfc -L atof.c
 ..\elfc -L absf.c
 ..\elfc -L sgnf.c
@@ -93,20 +94,22 @@
 ..\elfc -L itof.c
 ..\elfc -L ftoi.c
 ..\elfc -L samef.c
+..\elfc -L fstrf.c
 
 
 type _addfp.prg _addtows.prg _atof.prg _atoi32.prg _divfp.prg _eqfp.prg > float32.lib
 type _false32.prg _fp_const.prg _fpacos.prg _fpargs.prg _fpasin.prg _fpatan.prg >> float32.lib
 type _fpcomp2.prg _fpcopy.prg _fpcos.prg _fpdata.prg _fpexp.prg _fpln.prg  >> float32.lib
 type _fpnorm.prg _fppow.prg _fpret0.prg _fpreta.prg _fpretb.prg _fpretinf.prg >> float32.lib
-type _fpsin.prg _fpsqrt.prg _fptan.prg _ftoa.prg _ftoi32.prg _ftrunc.prg >> float32.lib
-type _getargs.prg _gtfp.prg _gtefp.prg _i32tof.prg _itoa32.prg _ltfp.prg _ltefp.prg _mulfp.prg >> float32.lib
-type _nefp.prg _subfp.prg _tobcd32.prg _trigdata.prg _true32.prg absf.prg acosf.prg >> float32.lib
-type addf.prg areducef.prg asinf.prg atanf.prg atan2f.prg atof.prg cosf.prg coshf.prg >> float32.lib
-type ceilf.prg deg2radf.prg divf.prg eqf.prg expf.prg floorf.prg fmodf.prg fracf.prg >> float32.lib
-type frexpf.prg ftoa.prg ftoi32.prg ftoi.prg gtf.prg gtef.prg hypotf.prg itof.prg i32tof.prg >> float32.lib
-type invf.prg ldexpf.prg logf.prg log2f.prg log10f.prg ltf.prg ltef.prg modf.prg mulf.prg >> float32.lib
-type nef.prg negf.prg powf.prg rad2degf.prg roundf.prg samef.prg sgnf.prg sinf.prg >> float32.lib
-type sinhf.prg sqrtf.prg subf.prg tanf.prg tanhf.prg truncf.prg zflushf.prg >> float32.lib
+type _fpsin.prg _fpsqrt.prg _fptan.prg _ftos.prg _ftoi32.prg _ftrunc.prg >> float32.lib
+type _getargs.prg _gtfp.prg _gtefp.prg _i32tof.prg _itoa32.prg _ltfp.prg _ltefp.prg >> float32.lib
+type _mulfp.prg _nefp.prg _subfp.prg _tobcd32.prg _trigdata.prg _true32.prg absf.prg >> float32.lib
+type acosf.prg addf.prg areducef.prg asinf.prg atanf.prg atan2f.prg atof.prg >> float32.lib
+type cosf.prg coshf.prg ceilf.prg deg2radf.prg divf.prg eqf.prg expf.prg floorf.prg >> float32.lib
+type fmodf.prg fracf.prg frexpf.prg fstrf.prg ftoa.prg ftoi32.prg ftoi.prg ftos.prg >> float32.lib
+type gtf.prg gtef.prg hypotf.prg itof.prg i32tof.prg invf.prg ldexpf.prg logf.prg >> float32.lib
+type log2f.prg log10f.prg ltf.prg ltef.prg modf.prg mulf.prg nef.prg negf.prg >> float32.lib
+type powf.prg rad2degf.prg roundf.prg samef.prg sgnf.prg sinf.prg sinhf.prg >> float32.lib
+type sqrtf.prg subf.prg tanf.prg tanhf.prg truncf.prg zflushf.prg >> float32.lib
 
 copy float32.lib ..\lib\float32.lib
