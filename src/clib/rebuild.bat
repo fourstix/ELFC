@@ -28,4 +28,7 @@ call build
 cd ..\elfio
 call clean
 call build
+cd ..\float32
+call clean
+call build
 cd ..
