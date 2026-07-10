@@ -912,7 +912,7 @@ The following table shows the results of comparison functions with special value
 * float32_t _atof(char \*s)_ - convert an ASCII string into floating point number
 * float32_t _itof(int i)_ - convert an int value into floating point number
 * float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
-* void _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
+* int _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
 
 String Conversions
 -------------------
@@ -925,7 +925,7 @@ The `ftos` function converts a floating point number into the format -x.ppppppE+
 The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, for negative numbers, followed by a decimal and 4 digits.  If the absolute value of the floating point number is out of the range, from 0.0001 to one million, then the `ftoa` produces a string in scientific notation using `ftos`.
 
 **fstrf**
-The `fstr` function converts a floating point number to an number with a given decimal precision `p` using the C print format `fmt` of _'f'_, _'g'_, _'G'_, _'e'_  _'E'_.
+The `fstrf` function converts a floating point number to an number with a given decimal precision `p` using the C print format `fmt` of _'f'_, _'g'_, _'G'_, _'e'_  _'E'_. The `fstrf` returns the number of characters written into the buffer, not counting the terminating null.
 
 Formats 'e' and 'E'
 -------------------
