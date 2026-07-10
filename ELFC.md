@@ -918,27 +918,26 @@ String Conversions
 -------------------
 The `ftoa`, `ftos` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`.
 
-**ftos**
-The `ftos` function converts a floating point number into the format -x.ppppppE+nn, consiting of an optional minus sign, leading digit followed by the decimal point and 6 digits, and 'E' followed by the signed exponent.
+ftos Function
+--------------
+The `ftos` function converts a floating point number into the format -x.ppppppE+nn, consiting of a minus sign, if negative, followed by leading digit with the decimal point and six digits, and then 'E' followed by the signed exponent.
 
-**ftoa**
-The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, for negative numbers, followed by a decimal and 4 digits.  If the absolute value of the floating point number is out of the range, from 0.0001 to one million, then the `ftoa` produces a string in scientific notation using `ftos`.
+ftoa Function
+--------------
+The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, if negative, followed by a decimal and four decimal digits.  If the absolute value of the floating point number is out of the range from 0.0001 to one million, then `ftoa` produces a string in scientific notation using `ftos`.
 
-**fstrf**
+fstrf Function
+--------------
 The `fstrf` function converts a floating point number to an number with a given decimal precision `p` using the C print format `fmt` of _'f'_, _'g'_, _'G'_, _'e'_  _'E'_. The `fstrf` returns the number of characters written into the buffer, not counting the terminating null.
 
-Formats 'e' and 'E'
--------------------
-The _'e'_ and _'E'_ values format a floating point number into the format -x.ppppppE+nn, consisting of an optional minus sign, leading digit followed by the decimal point and p digits, and 'E' or 'e' followed by the signed exponent as two digits.  If the precision value is less than 0, then the sign is always given, even and the positive value of p is used for precision.  If the size of the string, including the null, exceeds `FP_BUF_SZ`
-then the precision is adjusted down so the string fits.
+**Formats 'e' and 'E'**
+The _'e'_ and _'E'_ values format a floating point number into the format -x.ppppppE+nn, consisting of an optional minus sign, leading digit followed by the decimal point and p digits, and 'E' or 'e' followed by the signed power of ten exponent as two digits.  If the precision value is less than 0, then the sign is always given, even and the positive value of p is used for precision.  If the size of the string, including the null, exceeds `FP_BUF_SZ` then the precision value is adjusted down so the string fits.
 
-Format 'f'
-----------
+**Format 'f'**
 The _'f'_ format will format a number as a number rounded to `p` decimal digits.  If p is less than 0, then the sign of the number is always printed, and the positive value of p is used.  If the size of the string, including the null, exceeds `FP_BUF_SZ` then the number is printed in the _'E'_ format.
 
-Formats 'g' and 'G'
--------------------
-The _'g'_ and _'G'_ values format a floating point number with an exponent between -4 (0.0001) and `p` as a number followed by `p` decimal places, similar to the _'f'_ format, except trailing decimal zeros are removed from the number after it is formatted.  If the exponent of the number is outside the range of -4 to `p`, then the  number is formated as the _'e'_ or _'E'_ format, and trailing zeros are removed from the decimal part of the mantissa of the number in scientific form.
+**Formats 'g' and 'G'**
+The _'g'_ and _'G'_ values format a floating point number with a power of ten exponent between -4 (0.0001) and `p` as a number followed by `p` decimal places, similar to the _'f'_ format, except that trailing decimal zeros are removed from the number after it is formatted.  If the power of ten exponent of the number is outside the range of -4 to `p`, then the  number is formatted as the _'e'_ or _'E'_ format, and trailing zeros are removed from the decimal part of the mantissa of the number in scientific form.
 
 
 **Trig functions**
