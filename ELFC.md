@@ -906,11 +906,40 @@ The following table shows the results of comparison functions with special value
 
 **Conversion functions**
 * void _ftoa(float32_t fp1, char \*s)_ - convert a floating point number into an ASCII string
+* void _ftos(float32_t fp1, char \*s)_ - convert a floating point number into scientific format as an ASCII string
 * int32_t _ftoi32(float32_t a)_ - convert a floating point number into a 32-bit integer
 * int _ftoi(float32_t a)_ - convert a floating point number into an integer
 * float32_t _atof(char \*s)_ - convert an ASCII string into floating point number
 * float32_t _itof(int i)_ - convert an int value into floating point number
 * float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
+* void _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
+
+String Conversions
+-------------------
+The `ftoa`, `ftos` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`.
+
+**ftos**
+The `ftos` function converts a floating point number into the format -x.ppppppE+nn, consiting of an optional minus sign, leading digit followed by the decimal point and 6 digits, and 'E' followed by the signed exponent.
+
+**ftoa**
+The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, for negative numbers, followed by a decimal and 4 digits.  If the absolute value of the floating point number is out of the range, from 0.0001 to one million, then the `ftoa` produces a string in scientific notation using `ftos`.
+
+**fstrf**
+The `fstr` function converts a floating point number to an number with a given decimal precision `p` using the C print format `fmt` of _'f'_, _'g'_, _'G'_, _'e'_  _'E'_.
+
+Formats 'e' and 'E'
+-------------------
+The _'e'_ and _'E'_ values format a floating point number into the format -x.ppppppE+nn, consisting of an optional minus sign, leading digit followed by the decimal point and p digits, and 'E' or 'e' followed by the signed exponent as two digits.  If the precision value is less than 0, then the sign is always given, even and the positive value of p is used for precision.  If the size of the string, including the null, exceeds `FP_BUF_SZ`
+then the precision is adjusted down so the string fits.
+
+Format 'f'
+----------
+The _'f'_ format will format a number as a number rounded to `p` decimal digits.  If p is less than 0, then the sign of the number is always printed, and the positive value of p is used.  If the size of the string, including the null, exceeds `FP_BUF_SZ` then the number is printed in the _'E'_ format.
+
+Formats 'g' and 'G'
+-------------------
+The _'g'_ and _'G'_ values format a floating point number with an exponent between -4 (0.0001) and `p` as a number followed by `p` decimal places, similar to the _'f'_ format, except trailing decimal zeros are removed from the number after it is formatted.  If the exponent of the number is outside the range of -4 to `p`, then the  number is formated as the _'e'_ or _'E'_ format, and trailing zeros are removed from the decimal part of the mantissa of the number in scientific form.
+
 
 **Trig functions**
 * float32_t _sinf(float32_t a)_ - return the $\sin(a)$ in radians
