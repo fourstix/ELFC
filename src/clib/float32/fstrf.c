@@ -113,129 +113,144 @@ int fstrf (char* buf, float32_t val, int prec, char fmt) {
 	int x = 0;
 	char* start = buf;
 
-	if (isNaN(val)) {			/* Not a number? */
+	/* Handle special values first (Zero handled by format)*/
+	if (isNaN(val)) {
+		/* Not a number */
 		er = "NaN";
-	} else {
-		strip = 0;
-		if (prec < 0 || prec > 9)
-		  prec = 6;	/* Default precision (6 fractional digits) */
-		if (isNeg(val)) {			/* Nagative value? */
-			val = negf(val);
+		/* No sign for not a number */
+		sign = 0;
+	} else if (isInf(val)) {
+		/* Infinite */
+		er = "Inf";
+		/* show sign for infinity */
+		if (isNeg(val)) {
 			sign = '-';
 		} else {
 			sign = '+';
 		}
-		if (isInf(val)) {		/* Infinite? */
-				er = "Inf";
-		} else {
-			/* check exponent size for g and f formats */
-			e = ilog10(val);
+	} else {
+		strip = 0;
+		/* negative precision means always show sign */
+		if (prec < 0) {
+			prec = -prec;
+			sign = '+';
+		}
+		/* Handle negative value */
+		if (isNeg(val)) {
+			val = negf(val);
+			sign = '-';
+		}
+		/* check exponent size for g and f formats */
+		e = ilog10(val);
 
-			if (fmt == 'g' || fmt == 'G') {
-				if (isZero(val)) {
-					/* print 0 as a single '0' */
-					*buf++ = '0';
-					*buf = 0;
-					return 1;
-					/* check for e between -4 and precision, treating 0 as 1 */
-				}
-				/* g format strips zeros from end */
-				if (prec > 0)
-				  strip = 1;
+		if (fmt == 'g' || fmt == 'G') {
+			if (isZero(val)) {
+				/* print 0 as a single '0' */
+				*buf++ = '0';
+				*buf = 0;
+				return 1;
+				/* check for e between -4 and precision, treating 0 as 1 */
+			}
+			/* g format strips zeros from end */
+			if (prec > 0)
+			  strip = 1;
 
-        if ((e >= -4) && (e < (prec ? prec : 1))) {
-					fmt = 'f';
+      if ((e >= -4) && (e < (prec ? prec : 1))) {
+				fmt = 'f';
+		  } else {
+			  /* Otherwise g format prints exponent */
+			  if (fmt == 'g') {
+					fmt = 'e';
 			  } else {
-				  /* Otherwise g format prints exponent */
-				  if (fmt == 'g') {
-						fmt = 'e';
-				  } else {
-						fmt = 'E';
-				  }
+					fmt = 'E';
 			  }
 		  }
+	  }
 
-			if (fmt == 'f') {
-				if (e < 0) {
-					e = 0;
-				}
-			  /* if precision out of range of buffer, use E format */
-			  if (e + prec + 3 >= FP_BUF_SZ) {
-					fmt = 'E';
-				}	/* Buffer overflow? */
+		if (fmt == 'f') {
+			if (e < 0) {
+				e = 0;
 			}
+		  /* if precision out of range of buffer, use E format */
+		  if (e + prec + 3 >= FP_BUF_SZ) {
+				fmt = 'E';
+			}	/* Buffer overflow? */
+		}
 
-			if (fmt == 'f') {	/* Decimal notation? */
-				//val += f10x(-prec) / 2;
+		if (fmt == 'f') {	/* Decimal notation? */
+			//val += f10x(-prec) / 2;
+			/* Round (nearest) */
+			tmp = f10x(-prec);
+			tmp = divf(tmp, _fp_two);
+			val = addf(val, tmp);
+			m = ilog10(val);
+			if (m < 0) m = 0;
+			/* If overflow buffer, switch to E format */
+		} else {
+			/* E notation */
+			if (!isZero(val)) {		/* Not a true zero? */
+				/*if precision too high set to max */
+				if (prec > 7) {
+					/*
+					* format size is 8 chars for 1 sign, 1 digit, one decimal,
+					*    four exponent chars and one null
+					* FP_BUF_SZ - format size = 15 - 8 = 7 precision digits max
+					*/
+					prec = 7;
+				}
 				/* Round (nearest) */
-				tmp = f10x(-prec);
+				tmp = f10x(ilog10(val) - prec);
 				tmp = divf(tmp, _fp_two);
 				val = addf(val, tmp);
-				m = ilog10(val);
-				if (m < 0) m = 0;
-				/* If overflow buffer, switch to E format */
-			} else {
-				/* E notation */
-				if (!isZero(val)) {		/* Not a true zero? */
-					/*if precision too high set to max */
-					if (prec > 6) {
-						/* (FP_BUF_SZ - largest size of E format) = 6 precision digits */
-						prec = 6;
-					}
-					/* Round (nearest) */
-	        //val += f10x(ilog10(val) - prec) / 2
-					tmp = f10x(ilog10(val) - prec);
-					tmp = divf(tmp, _fp_two);
-					val = addf(val, tmp);
-					e = ilog10(val);
-					/* Normalize */
-					tmp = f10x(e);
-					val = divf(val, tmp);
-				}
-		  }
+				e = ilog10(val);
+				/* Normalize */
+				tmp = f10x(e);
+				val = divf(val, tmp);
+			}
 	  }
-		if (!er) {	/* Not error condition */
-			if (sign == '-') *buf++ = sign;	/* Add a - if negative value */
-			do {
-				/* Put decimal number */
-				w = f10x(m);				/* Snip the highest digit d */
-				/* debugging, print m and w */
-				tmp = divf(val, w);
-				/*	d = val / w truncates float to int */
-				tmp = truncf(tmp);
-				d = ftoi(tmp);
+  }
+	if (!er) {
+		/* Not error condition */
+		if (sign) *buf++ = sign;	/* Add a - if negative value */
+		do {
+			/* Put decimal number */
+			w = f10x(m);				/* Snip the highest digit d */
+			/* debugging, print m and w */
+			tmp = divf(val, w);
+			/*	d = val / w truncates float to int */
+			tmp = truncf(tmp);
+			d = ftoi(tmp);
 
-				//val -= d * w;
-				tmp = mulf(tmp, w);
-				val = subf(val, tmp);
+			//val -= d * w;
+			tmp = mulf(tmp, w);
+			val = subf(val, tmp);
 
-				if (m == -1) *buf++ = '.';	/* Insert a decimal separarot if get into fractional part */
-				*buf++ = '0' + d;			/* Put the digit */
-			} while (--m >= -prec);			/* Output all digits specified by prec */
-			/* if this was 'g' or 'G' strip out zeros */
-			if (strip) {
+			if (m == -1) *buf++ = '.';	/* Insert a decimal separarot if get into fractional part */
+			*buf++ = '0' + d;			/* Put the digit */
+		} while (--m >= -prec);			/* Output all digits specified by prec */
+
+		/* if this was 'g' or 'G' strip off zeros */
+		if (strip) {
+			buf--;
+			while (*buf == '0')
 				buf--;
-				while (*buf == '0')
-					buf--;
-				// If all decimals were zeros, remove "." as well .
-				if (*buf != '.') {
-					buf++;
-				 }
-			}
-
-			if (fmt != 'f') {	/* Put exponent if needed */
-				*buf++ = fmt;
-				if (e < 0) {
-					e = -e; *buf++ = '-';
-				} else {
-					*buf++ = '+';
-				}
-				*buf++ = '0' + e / 10;
-				*buf++ = '0' + e % 10;
-			}
+			// If all decimals were zeros, remove "." as well .
+			if (*buf != '.') {
+				buf++;
+			 }
 		}
-	}
-	if (er) {
+
+		if (fmt != 'f') {	/* Put exponent if needed */
+			*buf++ = fmt;
+			if (e < 0) {
+				e = -e; *buf++ = '-';
+			} else {
+				*buf++ = '+';
+			}
+			*buf++ = '0' + e / 10;
+			*buf++ = '0' + e % 10;
+		}
+	} else {
 		/* Error condition: NaN, +Inf or -Inf */
 		if (sign) *buf++ = sign;		/* Add sign if needed */
 		do *buf++ = *er++; while (*er);	/* Put error symbol */
