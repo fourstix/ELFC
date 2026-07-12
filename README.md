@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r364.zip into the desired directory
+* Unzip the file elfc_r371.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -818,7 +818,7 @@ Differences Between ElfC and Full C89
 *  Struct/union definition declarations must be global (struct and union
    objects may be declared locally, though).
 
-*  Struct/union definition declarations cannot be nested, but struct/union object declarations can be nested.
+*  Struct/union definitions cannot be nested, but struct/union object declarations can be nested.
 
 *  No more than two levels of indirection are supported for pointers
    to structures and unions, i.e. only pointers to a struct/union and pointers
@@ -895,18 +895,19 @@ Repository Contents
 * **/src/clib/stdarg**  -- Source files for ElfC stdarg C library
 * **/src/clib/assert**  -- Source files for ElfC assert C library
 * **/src/clib/math32**  -- Source files for ElfC 32-bit signed and unsigned integer Math library contributed by Tony Hefner
-* **/src/clib/float32** -- Sources files for the ELFC 32-bit single precision floating point math libary
+* **/src/clib/float32** -- Sources files for the ELFC 32-bit single precision floating point math library
 * **/src/tests**  -- Functional test files for ElfC
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest5.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
+  * fpest1.c to fptest5.c  -- Functional tests for float32 library functions
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r364.zip** -- A zip file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r364.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r364.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.5.6 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r371.zip** -- A zip file with the Windows version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r371.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r371.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
