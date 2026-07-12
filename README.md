@@ -333,10 +333,11 @@ New features
 Issues Fixed
 ------------
 * Fixed small issues with some string library functions not including proper header files.
+* Fixed a bug where the incorrect size was used for a local array initialized by a string.
 
 Compiler Option Changes
 -----------------------
-* The `-D` option can now be used multiple times.
+* The `-D` option can now be used multiple times.  (Thanks to Tony Hefner for this improvement.)
 
 *Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
