@@ -42,15 +42,15 @@ Types Supported
 </table>
 
 *Notes:*
-* *Arrays of the above types are supported, such as `int[][]`, `char\*[]`, etc.*
-* *Function pointers are limited to one single type, `int(\*)()`, and they have no argument types.*
-* *Structures and unions composed of the above types are supported.*
-* *Pointers to structures and pointers to unions are supported.*
-* *Typedef is supported.*
+* Arrays of the above types are supported, such as `int[][]`, `char*[]`, etc.
+* Function pointers are limited to one single type, `int(*)()`, and they have no argument types.
+* Structures and unions composed of the above types are supported.
+* Pointers to structures and pointers to unions are supported.
+* _Typedef_ is supported.
 
 Type Conversions
 -----------------
-ElfC follows the C "usual arithmetic conversions" The C Programming Language, 2nd Edition describes these rules in Section 2.7, Type Conversions, on page 42, and in Appendix A, Section A6.5 Arithmetic Conversions, on page 198. Since long, float and double types are not supported, these can be simplified as the two rules below.
+ElfC follows the C "usual arithmetic conversions". _The C Programming Language, 2nd Edition_ describes these rules in Section 2.7, Type Conversions, on page 42, and in Appendix A, Section A6.5 Arithmetic Conversions, on page 198. Since long, float and double types are not supported, these can be simplified as the two rules below.
 
 * Signed and unsigned character types are promoted to int.
 * If either of the operands are unsigned int, then (signed) int operator is promoted to unsigned.
@@ -201,7 +201,6 @@ User defined types may include `volatile` in their typedef definition, and `vola
 
 Neither `const` pointers to (varying) variables, nor `const` pointers to `const` variables are supported by ElfC, i.e. the syntaxes `int * const p;` and `const int * const p;` are *not* supported, and will emit an error.
 
-The `const` keyword is *not* supported for local (auto) arrays, because ElfC does not support initializing local arrays.
 
 Multi-dimensional Arrays
 -------------------------
@@ -847,7 +846,7 @@ Underflow occurs when the absolute value of the result is less than the smallest
 * Zero `0` is returned when underflow occurs.
 * Float32 does not use a negative zero value or sub-normal values.
 * Instead, Zero is always considered unsigned and underflow is not considered an error.
-* This is called _store zero_ or _flush to zero_ method.
+* This is called the _store zero_ or _flush to zero_ method.
 
 **The float32 library provides the following math functions**
 
@@ -907,16 +906,16 @@ The following table shows the results of comparison functions with special value
 **Conversion functions**
 * void _ftoa(float32_t fp1, char \*s)_ - convert a floating point number into an ASCII string
 * void _ftos(float32_t fp1, char \*s)_ - convert a floating point number into scientific format as an ASCII string
+* int _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
 * int32_t _ftoi32(float32_t a)_ - convert a floating point number into a 32-bit integer
 * int _ftoi(float32_t a)_ - convert a floating point number into an integer
 * float32_t _atof(char \*s)_ - convert an ASCII string into floating point number
 * float32_t _itof(int i)_ - convert an int value into floating point number
 * float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
-* int _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
 
 String Conversions
 -------------------
-The `ftoa`, `ftos` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`.
+The `ftoa`, `ftos` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`, where `FP_BUF_SZ` is defined as `15` in the `float32.h` header file.
 
 The ftos Function
 ------------------
