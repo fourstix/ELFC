@@ -882,6 +882,13 @@ Repository Contents
   * mandel.c -- Demo program to plot a Mandelbrot set using the 32-bit integer library.
   * pi.c -- Demo program to compute pi to 400 digits using the 32-bit integer math library.
   * figlet.c -- Demo program to print a text string as a banner.
+  * export.c -- Demo program to set an environment variable
+  * rename.c -- Demo program for rename function
+  * printenv.c -- Demo program to print environment variables
+  * unset.c -- Demo program to unset an environment variable
+  * trigdemo -- Demo program to print several trigonometric values
+  * moonphase -- Demo program to calculate the phase of the moon.
+
 * **/src/clib**  -- Source files for compiling ElfC C libraries
 * **/src/clib/include**  -- Common include files for compiling ElfC C libraries
 * **/src/clib/lib**  -- Compiled ElfC C Library files
