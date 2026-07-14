@@ -328,6 +328,7 @@ New features
 * Added new example programs `rename`, `export`, `printenv` and `unset`. (Thanks to Tony Hefner)
 * Added support for multiple `-D` options (Thanks to Tony Hefner)
 * Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
+* Added `moonphase` example program.
 
 
 Issues Fixed
