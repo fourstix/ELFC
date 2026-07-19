@@ -35,16 +35,18 @@
 ; ******************************************************
               proc     _fpexp
 
-.link .requires _fpdata
+; .link .requires _fpdata
+.link .requires C_fp_const
 
               extrn    _addfpi
               extrn    _addtows
               extrn    _divfpi
-              extrn    fp_0
-              extrn    fp_1
-              extrn    fp_2
               extrn    _getargs
               extrn    _mulfpi
+
+              extrn    C_fp_zero
+              extrn    C_fp_one
+              extrn    C_fp_two
 
               ghi      r7           ; save expr stack
               stxd
@@ -69,19 +71,19 @@
               glo      rf
               plo      rd
               call     _addtows
-              ldi      fp_2.1       ; fctCount = 2.0
+              ldi      C_fp_two.1   ; fctCount = 2.0
               phi      rd
-              ldi      fp_2.0
+              ldi      C_fp_two.0
               plo      rd
               call     _addtows
-              ldi      fp_1.1       ; fct = 1.0
+              ldi      C_fp_one.1   ; fct = 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addtows
-              ldi      fp_0.1       ; last = 0
+              ldi      C_fp_zero.1  ; last = 0
               phi      rd
-              ldi      fp_0.0
+              ldi      C_fp_zero.0
               plo      rd
               call     _addtows
               ghi      rf           ; sum = argument
@@ -94,9 +96,9 @@
               glo      r2
               plo      rf
               inc      rf
-              ldi      fp_1.1
+              ldi      C_fp_one.1
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addfpi
 fpexp_l:      call     _getargs     ; need to see if sum == last
@@ -134,9 +136,9 @@ fpexp_1:      ldn      rd           ; get byte from sum
               ghi      r2
               adci     0
               phi      rf
-              ldi      fp_1.1
+              ldi      C_fp_one.1
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addfpi
               call     _getargs     ; tmp = pwr

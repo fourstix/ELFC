@@ -30,15 +30,16 @@
 ; ******************************************************
               proc     _fpsqrt
 
-.link .requires _fpdata
+.link .requires C_fp_const
 
               extrn    _addfpi
               extrn    _addtows
               extrn    _divfpi
-              extrn    fp_dot5
               extrn    _fpcopy
               extrn    _getargs
               extrn    _mulfpi
+
+              extrn    C_fp_half
 
               ghi      r7           ; argument is on expr stack
               phi      rf
@@ -84,9 +85,9 @@ fpsqrtlp:     call     _getargs     ; x = arg
               ghi      r2
               adci     0
               phi      rf
-              ldi      fp_dot5.1
+              ldi      C_fp_half.1
               phi      rd
-              ldi      fp_dot5.0
+              ldi      C_fp_half.0
               plo      rd
               call     _mulfpi
               irx                   ; recover iteration count

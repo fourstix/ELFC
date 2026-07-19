@@ -36,13 +36,14 @@
 ; ******************************************************
               proc     _fpcos
 
-.link .requires _fpdata
+.link .requires C_fp_const
 .link .requires _trigdata
 
               extrn    _addtows
               extrn    _fact
-              extrn    fp_1
               extrn    _sincos
+
+              extrn    C_fp_one
 
               ghi      r7           ; save expr stack
               stxd
@@ -82,14 +83,14 @@
               stxd
               stxd
               stxd
-              ldi      fp_1.1       ; pwr = 1.0
+              ldi      C_fp_one.1   ; pwr = 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addtows     ; add to workspace
-              ldi      fp_1.1       ; pwr = 1.0
+              ldi      C_fp_one.1   ; pwr = 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addtows     ; add to workspace
               lbr      _sincos      ; now compute

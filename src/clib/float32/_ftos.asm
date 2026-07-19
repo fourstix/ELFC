@@ -33,12 +33,12 @@
 ; *************************************************
               proc     _ftos
 
-.link .requires _fpdata
+.link .requires C_fp_const
 
               extrn    _divfpi
-              extrn    fp_10
               extrn    _itoa32
               extrn    _mulfpi
+              extrn    C_fp_ten
 
               ghi      r7           ; save expr stack
               stxd
@@ -114,9 +114,9 @@ ftoa_3a:      glo      r9           ; get exponent
               inc      rf
               ghi      r9           ; get E
               stxd                  ; and save on stack
-              ldi      fp_10.1      ; need to divide by 10
+              ldi      C_fp_ten.1   ; need to divide by 10
               phi      rd
-              ldi      fp_10.0
+              ldi      C_fp_ten.0
               plo      rd
               call     _divfpi      ; perform the division
               irx                   ; recover E
@@ -165,9 +165,9 @@ ftoa_4a:      glo      r9           ; get exponent
               inc      rf
               ghi      r9           ; get E
               stxd                  ; and save on stack
-              ldi      fp_10.1      ; need to multiply by 10
+              ldi      C_fp_ten.1   ; need to multiply by 10
               phi      rd
-              ldi      fp_10.0
+              ldi      C_fp_ten.0
               plo      rd
               call     _mulfpi      ; perform the multiplication
               irx                   ; recover E

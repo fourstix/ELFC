@@ -2,7 +2,6 @@
 ..\asm02 -L _divfp.asm
 ..\asm02 -L _fpargs.asm
 ..\asm02 -L _fpcomp2.asm
-..\asm02 -L _fpdata.asm
 ..\asm02 -L _fpnorm.asm
 ..\asm02 -L _fpret0.asm
 ..\asm02 -L _fpreta.asm
@@ -99,7 +98,7 @@
 
 type _addfp.prg _addtows.prg _atof.prg _atoi32.prg _divfp.prg _eqfp.prg > float32.lib
 type _false32.prg _fp_const.prg _fpacos.prg _fpargs.prg _fpasin.prg _fpatan.prg >> float32.lib
-type _fpcomp2.prg _fpcopy.prg _fpcos.prg _fpdata.prg _fpexp.prg _fpln.prg  >> float32.lib
+type _fpcomp2.prg _fpcopy.prg _fpcos.prg _fpexp.prg _fpln.prg  >> float32.lib
 type _fpnorm.prg _fppow.prg _fpret0.prg _fpreta.prg _fpretb.prg _fpretinf.prg >> float32.lib
 type _fpsin.prg _fpsqrt.prg _fptan.prg _ftos.prg _ftoi32.prg _ftrunc.prg >> float32.lib
 type _getargs.prg _gtfp.prg _gtefp.prg _i32tof.prg _itoa32.prg _ltfp.prg _ltefp.prg >> float32.lib
