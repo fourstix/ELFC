@@ -26,6 +26,6 @@ clean:
 	rm -f expf.asm floorf.asm fmodf.asm fracf.asm frexpf.asm fstrf.asm ftoa.asm
 	rm -f ftoi.asmftoi32.asm ftos.asm gtef.asm gtf.asm hypotf.asm i32tof.asm
 	rm -f invf.asm itof.asm ldexpf.asm log2f.asm log10f.asm logf.asm ltef.asm
-	rm -f ltf.asm modf.asm mulf.asm nef.asm negf.asm powf.asm rad2degf.asm
-	rm -f roundf.asm samef.asm sgnf.asm sinf.asm sinhf.asm sqrtf.asm subf.asm
-	rm -f tanf.asm tanhf.asm truncf.asm zflushf.asm _fp_const.asm
+	rm -f ltf.asm makef.asm modf.asm mulf.asm nef.asm negf.asm powf.asm
+	rm -f rad2degf.asm roundf.asm samef.asm sgnf.asm sinf.asm sinhf.asm sqrtf.asm
+	rm -f subf.asm tanf.asm tanhf.asm truncf.asm zflushf.asm _fp_const.asm

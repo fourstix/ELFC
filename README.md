@@ -721,13 +721,14 @@ typedef struct float32 float32_t;
 
 **Conversion functions**
 * void ftoa(float32_t fp1, char \*s)
-* void ftos(float32_t fp1, char \*s)
+* void ftosci(float32_t fp1, char \*s)
 * int32_t ftoi32(float32_t a)
 * int ftoi(float32_t a)
 * float32_t atof(char \*s)
 * float32_t itof(int i)
 * float32_t i32tof(int32_t i)
 * int fstrf(float32_t fp1, char \*s, int p, char fmt)
+* float32_t makef(unsigned int hi, unsigned int lo)
 
 **Trig functions**
 * float32_t sinf(float32_t a)

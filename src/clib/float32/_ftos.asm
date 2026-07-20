@@ -451,3 +451,177 @@ ftoa_dn:      ldi      0            ; terminate string
               rtn                   ; and return to caller
 
               endp
+
+; ***************************************************
+; ***** Convert 32-bit binary to ASCII          *****
+; ***** RF - Pointer to 32-bit integer          *****
+; ***** RD - destination buffer                 *****
+; ***************************************************
+              proc    _itoa32
+
+              extrn   _tobcd32
+
+              lda     rf           ; retrieve number into R7:R8
+              plo     rb
+              lda     rf
+              phi     rb
+              lda     rf
+              plo     ra
+              lda     rf
+              phi     ra
+              glo     r2           ; make room on stack for buffer
+              smi     11
+              plo     r2
+              ghi     r2
+              smbi    0
+              phi     r2
+              glo     r2           ; RF is output buffer
+              plo     rf
+              ghi     r2
+              phi     rf
+              inc     rf
+              ghi     ra           ; get high byte
+              shl                  ; shift bit to DF
+              lbdf    itoa32n      ; negative number
+itoa321:      call    _tobcd32     ; convert to bcd
+              glo     r2
+              plo     rf
+              ghi     r2
+              phi     rf
+              inc     rf
+              ldi     10
+              plo     rb
+              ldi     9            ; max 9 leading zeros
+              phi     rb
+loop1:        lda     rf
+              lbz     itoa32z      ; check leading zeros
+              str     r2           ; save for a moment
+              ldi     0            ; signal no more leading zeros
+              phi     rb
+              ldn     r2           ; recover character
+itoa322:      adi     030h
+              str     rd           ; store into output buffer
+              inc     rd
+itoa323:      dec     rb
+              glo     rb
+              lbnz    loop1
+              glo     r2           ; pop work buffer off stack
+              adi     11
+              plo     r2
+              ghi     r2
+              adci    0
+              phi     r2
+              ldi     0            ; place terminator in destination
+              str     rd
+              rtn                  ; return to caller
+itoa32z:      ghi     rb           ; see if leading have been used up
+              lbz     itoa322      ; jump if so
+              smi     1            ; decrement count
+              phi     rb
+              lbr     itoa323      ; and loop for next character
+itoa32n:      ldi     '-'          ; show negative
+              str     rd           ; write to destination buffer
+              inc     rd
+              glo     rb           ; 2s compliment
+              xri     0ffh
+              adi     1
+              plo     rb
+              ghi     rb
+              xri     0ffh
+              adci    0
+              phi     rb
+              glo     ra
+              xri     0ffh
+              adci    0
+              plo     ra
+              ghi     ra
+              xri     0ffh
+              adci    0
+              phi     ra
+              lbr     itoa321        ; now convert/show number
+
+              endp
+
+; *****************************************
+; ***** Convert RA:RB to bcd in M[RF] *****
+; *****************************************
+              proc    _tobcd32
+
+              glo     rf           ; transfer address to rc
+              plo     rc
+              ghi     rf
+              phi     rc
+              ldi     10           ; 10 bytes to clear
+              plo     re
+tobcd32lp1:   ldi     0
+              str     rc           ; store into answer
+              inc     rc
+              dec     re           ; decrement count
+              glo     re           ; get count
+              lbnz    tobcd32lp1   ; loop until done
+              glo     rf           ; recover address
+              plo     rc
+              ghi     rf
+              phi     rc
+              ldi     32           ; 32 bits to process
+              plo     r9
+tobcd32lp2:   ldi     10           ; need to process 5 cells
+              plo     re           ; put into count
+tobcd32lp3:   ldn     rc           ; get byte
+              smi     5            ; need to see if 5 or greater
+              lbnf    tobcd32l3a   ; jump if not
+              adi     8            ; add 3 to original number
+              str     rc           ; and put it back
+tobcd32l3a:   inc     rc           ; point to next cell
+              dec     re           ; decrement cell count
+              glo     re           ; retrieve count
+              lbnz    tobcd32lp3   ; loop back if not done
+              glo     rb           ; start by shifting number to convert
+              shl
+              plo     rb
+              ghi     rb
+              shlc
+              phi     rb
+              glo     ra
+              shlc
+              plo     ra
+              ghi     ra
+              shlc
+              phi     ra
+              shlc                 ; now shift result to bit 3
+              shl
+              shl
+              shl
+              str     rc
+              glo     rf           ; recover address
+              plo     rc
+              ghi     rf
+              phi     rc
+              ldi     10           ; 10 cells to process
+              plo     re
+tobcd32lp4:   lda     rc           ; get current cell
+              str     r2           ; save it
+              ldn     rc           ; get next cell
+              shr                  ; shift bit 3 into df
+              shr
+              shr
+              shr
+              ldn     r2           ; recover value for current cell
+              shlc                 ; shift with new bit
+              ani     0fh          ; keep only bottom 4 bits
+              dec     rc           ; point back
+              str     rc           ; store value
+              inc     rc           ; and move to next cell
+              dec     re           ; decrement count
+              glo     re           ; see if done
+              lbnz    tobcd32lp4   ; jump if not
+              glo     rf           ; recover address
+              plo     rc
+              ghi     rf
+              phi     rc
+              dec     r9           ; decrement bit count
+              glo     r9           ; see if done
+              lbnz    tobcd32lp2   ; loop until done
+              rtn                  ; return to caller
+
+              endp

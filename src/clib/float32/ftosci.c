@@ -6,7 +6,7 @@
 /*
  * Convert a floating point number into an ASCII string
  */
-void ftos(float32_t fp1, char *s) {
+void ftosci(float32_t fp1, char *s) {
   if (NULL == s)
     return;
 

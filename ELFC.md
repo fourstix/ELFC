@@ -905,25 +905,26 @@ The following table shows the results of comparison functions with special value
 
 **Conversion functions**
 * void _ftoa(float32_t fp1, char \*s)_ - convert a floating point number into an ASCII string
-* void _ftos(float32_t fp1, char \*s)_ - convert a floating point number into scientific format as an ASCII string
+* void _ftosci(float32_t fp1, char \*s)_ - convert a floating point number into scientific format as an ASCII string
 * int _fstrf(float32_t fp1, char \*s, int p, char fmt)_ - convert a floating point number into a formatted string
 * int32_t _ftoi32(float32_t a)_ - convert a floating point number into a 32-bit integer
 * int _ftoi(float32_t a)_ - convert a floating point number into an integer
 * float32_t _atof(char \*s)_ - convert an ASCII string into floating point number
 * float32_t _itof(int i)_ - convert an int value into floating point number
 * float32_t _i32tof(int32_t i)_ - convert a 32-bit integer into floating point number
+* float32_t _makef(unsgined int hi, unsigned int lo)_ - make a 32-bit floating point number from two unsigned integers represeinting the high word and low word values
 
 String Conversions
 -------------------
-The `ftoa`, `ftos` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`, where `FP_BUF_SZ` is defined as `15` in the `float32.h` header file.
+The `ftoa`, `ftosci` and `fstrf` functions all convert a floating point number into a string that fits into a character buffer of `FP_BUF_SZ`, where `FP_BUF_SZ` is defined as `15` in the `float32.h` header file.
 
-The ftos Function
+The ftosci Function
 ------------------
-The `ftos` function converts a floating point number into the format -x.ppppppE+nn, consiting of a minus sign, if negative, followed by the leading digit with a decimal point and six decimal digits, and then 'E' followed by the signed power of ten exponent.
+The `ftosci` function converts a floating point number into the format -x.ppppppE+nn, consiting of a minus sign, if negative, followed by the leading digit with a decimal point and six decimal digits, and then 'E' followed by the signed power of ten exponent.
 
 The ftoa Function
 ------------------
-The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, if negative, followed by the leading digit, a decimal point and four decimal digits.  If the absolute value of the floating point number is out of the range from 0.0001 to one million, then `ftoa` produces a string in scientific notation using `ftos`.
+The `ftoa` function converts a floating point number from 0.0001 to one million as number rounded to a precision of four decimals.  The number consists of a minus sign, if negative, followed by the leading digit, a decimal point and four decimal digits.  If the absolute value of the floating point number is out of the range from 0.0001 to one million, then `ftoa` produces a string in scientific notation using `ftosci`.
 
 The fstrf Function
 -------------------
