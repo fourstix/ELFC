@@ -329,6 +329,9 @@ New features
 * Added support for multiple `-D` options (Thanks to Tony Hefner)
 * Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
 * Added `moonphase` example program.
+* Updated logic to support `const` and `volatile` keywords on struct/union
+* Removed lazy initialization logic, now that initializations are supported.
+* Added warning for non-initialized `const` variables.
 
 
 Issues Fixed
@@ -811,9 +814,6 @@ Differences Between ElfC and Full C89
 *  Pointers to `const` variables are supported, but neither `const` pointers to
    (varying) variables, nor `const` pointers to `const` variables are supported,
    i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;` are *not* supported.
-
-*  The `const` and `volatile` keywords are ignored for structures and unions, but
-   may be used for their members.
 
 *  Struct/union definition declarations must be separate from the declarations of
    struct/union objects, i.e. `struct p { int x, y; } q;` will not work.

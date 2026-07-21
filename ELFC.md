@@ -119,7 +119,7 @@ If an identifier is declared by declaration with *global* scope, then it is avai
 
 Storage Class Specifiers
 --------------------------
-ElfC supports the C standard type declaration syntax as specified in ANSI C C89/C90 specification. The declaration type may be prefixed by a storage class specifier, a type qualifier or both. If both are used, the storage class specifier must come before the type qualifier.
+ElfC supports the C standard type declaration syntax as specified in ANSI C89/C90 specification. The declaration type may be prefixed by a storage class specifier, a type qualifier or both. If both are used, the storage class specifier must come before the type qualifier.
 
 <table>
 <tr><th>Storage Class Specifiers</th></tr>
@@ -133,7 +133,7 @@ ElfC supports the C standard type declaration syntax as specified in ANSI C C89/
 *Notes:*
 The `auto` and `register` storage class specifiers may only be used in local scope. ElfC will emit an error if they are used in global scope.
 
-The `register` storage class specifier is treated the same as `auto`, except if the `const` type qualifier is used, then ElfC will emit an error because that combination is forbidden by the ANSI C C89/C90 specification.
+The `register` storage class specifier is treated the same as `auto`, except if the `const` type qualifier is used, then ElfC will emit an error because that combination is forbidden by the ANSI C89/C90 specification.
 
 The `auto` storage class specifier is the default for *local* scope declarations and `static` is the default for *global* scope declarations.
 
@@ -158,9 +158,9 @@ Either `volatile const` or `const volatile` are accepted as valid syntax, and ar
 
 If a storage class specifier is used in a declaration, the type qualifier must come after it.
 
-Per the ANSI C C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a local declaration, but ignores it unless the variable is also declared `const`, in that case ElfC will emit an error.
+Per the ANSI C89/C90 specification, `register` variables cannot be made constant. ElfC accepts the `register` keyword in a local declaration, but ignores it unless the variable is also declared `const`, in that case ElfC will emit an error.
 
-Functions may be declared to return a `const` value. Per the ANSI C C89/C90 specification, `const` is ignored since a function may never be an lvalue.
+Functions may be declared to return a `const` value. Per the ANSI C89/C90 specification, `const` is ignored since a function may never be an lvalue.
 
 Arguments to a function may be declared as `const` and ElfC will treat these arguments as initialized inside the function.  An attempt to assign a value to a `const` argument inside the function is considered an error.
 
@@ -168,32 +168,29 @@ A pointer to an unqualified variable can be assigned to a pointer to a `const` o
 
 Type qualifiers are ignored when considering if two types are compatible.
 
-**Implementation Defined Behavior**
 
-*Note:* This behavior is not specified by the ANSI C89/C90 specification, but may contradict behavior specified in C99 and later versions.
+The ANSI C89/C90 specification does not require `const` variables to be initialized in the declaration of a `const` variable. However, since this is almost always an error, ElfC will issue a warning for when a `const` variable is declared without initialization.
 
-ElfC does not require immediate initialization in the declaration of a `const` variable, since ElfC does not fully support all the possible declaration type initializations.
+The `const` keyword is supported for arrays, structures and unions. These should be initialized when declared.
 
-ElfC allows variables to be declared as `const` and initialized later by an assignment in the code.  However, a second attempt at assignment will be treated as an error.
-
-The `const` keyword is supported for static (and global) arrays, and `const` arrays must be initialized when declared.
+The `const` keyword is supported for members inside structures and unions.
 
 User defined types may include `const` in their typedef definition, and `const` may be
 applied to an existing user defined type.
 
-The `const` keyword is ignored for structures and unions. ElfC will emit a warning message when `const` is ignored in these cases.
+Functions may be declared to return a `volatile` value and arguments may be qualified as `volatile` but ElfC will ignore the `volatile` keyword, per the ANSI C89/C90 specification.
 
-The `const` keyword is supported for members inside structures and unions.
-
-ElfC does not prevent the assignment of a pointer to a `const` or `volatile` variable to an unqualified pointer.
-
-Functions may be declared to return a `volatile` value and arguments may be qualified as `volatile` but ElfC will ignore the `volatile` keyword, per the ANSI C C89/C90 specification.
-
-The `volatile` keyword is ignored for structures and unions. ElfC will emit a warning message when `volatile` is ignored in these cases.
+The `volatile` keyword is supported for arrays, structures and unions.
 
 The `volatile` keyword is supported for the members inside structures and unions.
 
 User defined types may include `volatile` in their typedef definition, and `volatile` may be applied to an existing user defined type.
+
+**Implementation Defined Behavior**
+
+*Note:* This behavior is not specified by the ANSI C89/C90 specification, but may contradict behavior specified in C99 and later versions.
+
+ElfC does not prevent the assignment of a pointer to a `const` or `volatile` variable to an unqualified pointer.
 
 **Differences from ANSI C89/C90**
 
@@ -529,7 +526,7 @@ Posix String Functions
 
 Stdarg Macros
 -----------------
-* ElfC supports the variable argument macros as specified by the ANSI C C89/C90 specification.
+* ElfC supports the variable argument macros as specified by the ANSI C89/C90 specification.
 * The variable argument macros use an argument pointer of type `va_list`, eg. `va_list ap;`
 * The `va_start` should be called before `va_arg` is used to initialize the argument pointer.
 * The `va_arg` macro can then be used to get the next argument.
@@ -574,7 +571,7 @@ The setenv(), getenv(), and unsetenv() functions are supported on Elf/OS and Min
 
 Assert Macro
 --------------
-* ElfC supports the `assert` macro as specified by the ANSI C C89/C90 specification.
+* ElfC supports the `assert` macro as specified by the ANSI C89/C90 specification.
 * If the macro `NDEBUG` is defined the `assert` macro is ignored.
 * The `__FILE__`, `__LINE__` and `__FUNCTION__` macros can be used as the file, line and function arguments, so the correct values are printed if the assertion is false.
 
