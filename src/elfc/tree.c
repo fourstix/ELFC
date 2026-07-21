@@ -486,8 +486,8 @@ void emittree(node *a) {
     y = a->args[0];
     /* get primative type */
     prim = Prims[y];
-    //grw - if not struct/union, check volatile bit
-    vltl = !(prim & STCMASK) && (prim & VLTL);
+    //grw - check volatile bit
+    vltl = prim & VLTL;
   }
   /* don't optimize volatile nodes */
   if (!vltl)

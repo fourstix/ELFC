@@ -405,7 +405,7 @@ int objsize(int prim, int type, int size) {
   else if (UNIPTR == sp || UNIPP == sp)
     k = PTRSIZE;
   else if (PSTRUCT == sp || PUNION == sp)
-    k = Sizes[prim & ~STCMASK];
+    k = Sizes[prim & STCINDX];
   /* ptrlevel covers function pointer case */
   else if (ptrlevel(prim) > 0)
     k = PTRSIZE;

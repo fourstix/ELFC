@@ -10,20 +10,12 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION    "3.7.1"
-
-#ifndef SCCDIR
- #define SCCDIR    "."
-#endif
-
-#ifndef AOUTNAME
- #define AOUTNAME  "a.out"
-#endif
+#define VERSION    "3.7.2"
 
 //arh - Allow multiple -D options
 #define MAX_DEFS  8
 
-#define SCCLIBC    ""
+//grw - removed unused defines AOUTNAME, SCCDIR and SCCLIBC
 
 #define PREFIX    'C'
 #define LPREFIX   'L'
@@ -81,7 +73,7 @@
 /* Maximum signed literal (INTMAX + 1)) */
 #define MAX_SIGNED  32768
 
-/* assert(NSYMBOLS < PSTRUCT) */
+/* assert(NSYMBOLS < VLTL) */
 #define NSYMBOLS    1024
 #define POOLSIZE   16384
 #define NODEPOOLSZ  4096  /* ints */
@@ -125,16 +117,16 @@ enum {
   //grw - bits 4-7 are for the pointer level for primitive types
   PTRMASK  = 0x00F0,
 
-  //grw - flag to mark primative types as constant
-  CNST     = 0x0100,
-  //grw - flag to mark constant as initialized
-  CINIT    = 0x0200,
-  //grw - mask for constant bits
-  CNSTMASK = 0x0300,
+  //grw moved CNST and VLTL to upper bits
+
+  //grw - mask for struct/union index bits
+  STCINDX  = 0x07FF,
   //grw - volatile bit
-  VLTL     = 0x0400,
-  //grw - mask for type qualifiers
-  TQMASK   = 0x0700,
+  VLTL     = 0x0800,
+  //grw - flag to mark primative types as constant
+  CNST     = 0x1000,
+  //grw - mask for type qualifier bits
+  TQMASK   = 0x1800,
   //grw - special types for structures and unions and their pointer types
   PSTRUCT  = 0x2000,
   PUNION   = 0x4000,

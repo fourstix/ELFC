@@ -161,8 +161,7 @@ static void include(void) {
 
 	if ((c = skip()) == '<')
 		c = '>';
-	//grw - change SCCDIR to Fpath to use path from command string
-	//k = getln(file, TEXTLEN-strlen(SCCDIR)-9);
+	//grw - changed SCCDIR to Fpath to use path from command string
 	k = getln(file, (int)(TEXTLEN-strlen(Fpath)-9));
 	Line++;
 	if (!k || file[k-1] != c)
@@ -171,7 +170,7 @@ static void include(void) {
 	if (c == '"')
 		strcpy(path, file);
 	else {
-		//grw - change SCCDIR to Fpath to use path from command string
+		//grw - changed SCCDIR to Fpath to use path from command string
 		strcpy(path, Fpath);
 		strcat(path, "include/");
 		strcat(path, file);

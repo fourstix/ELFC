@@ -300,7 +300,7 @@ void genderefc(int y) {
   commit();
   gen(";----- struct/union argument returned from function call");
   /* get the struct/union definition symbol index from function return primitive */
-  yt = Prims[y] & ~STCMASK;
+  yt = Prims[y] & STCINDX;
   size = Sizes[yt];
   size = ALIGNED(size);
   cgvalue(size);
@@ -315,7 +315,7 @@ void genderefp(int y) {
   commit();
   gen(";----- struct/union argument from pointer deref");
   /* get the struct/union definition symbol index */
-  yt = y & ~STCMASK;
+  yt = y & STCINDX;
   size = Sizes[yt];
   size = ALIGNED(size);
   cgvalue(size);
@@ -1049,7 +1049,8 @@ void genstore(int *lv) {
 void gencopy(int *lv) {
   int size;
   if (NULL == lv) return;
-  size = Sizes[lv[LVPRIM] & ~STCMASK];
+
+  size = Sizes[lv[LVPRIM] & STCINDX];
   //grw - add cgcopy method to memcopy struct/union
   cgcopy(size);
   return;

@@ -119,18 +119,8 @@ static node *primary(int *lv) {
 
 int typematch(int p1, int p2) {
   //grw - added support for const keyword
-  int stc;
-
-  /* check for struct/union types */
-  stc = ((p1 & STCMASK) || (p2 & STCMASK));
-  if (!stc) {
-    /*
-     * type qualifiers do not affect type matching
-     * so remove any type qualifier bits from primitive type before comparing
-     */
-    p1 &= ~TQMASK;
-    p2 &= ~TQMASK;
-  }
+  p1 &= ~TQMASK;
+  p2 &= ~TQMASK;
 
   //grw - added support for multiple pointer indirection
   if (p1 == p2) return 1;
@@ -252,7 +242,7 @@ int deref(int p) {
   int lvl;
 
   if (p & STCMASK) {
-    y = p & ~STCMASK;
+    y = p & STCINDX;
     switch (p & STCMASK) {
     case STCPP:  return STCPTR | y;
     case STCPTR:  return PSTRUCT | y;
@@ -317,7 +307,7 @@ static node *stc_access(node *n, int *lv, int ptr) {
       ptr? "->": ".");
     return NULL;
   }
-  y = findmem(lv[LVPRIM] & ~STCMASK, Text);
+  y = findmem(lv[LVPRIM] & STCINDX, Text);
   if (0 == y)
     error("struct/union has no such member: %s", Text);
   if ((PSTRUCT == p || STCPTR == p) && Vals[y]) {
@@ -327,16 +317,6 @@ static node *stc_access(node *n, int *lv, int ptr) {
   Token = scan();
   p = Prims[y];
   //grw - updated to add support for const and volatile
-
-  /*
-   * check bits on plain types for uninitialized const
-   * since a struct/union can be a member of another struct/union
-   * we have to make sure it's a plain type member as well
-   */
-  if (((p & STCMASK) == 0) && (p & CNSTMASK) == CNST) {
-    /* mark current member's primitive as initialized */
-    Prims[y] |= CINIT;
-  }
 
   if (isArray(Types[y])) {
     p = pointerto(p, NULL);
@@ -1114,28 +1094,16 @@ int constexpr(void) {
  */
 int allowasgmnt(int *lv) {
   int prim = lv[LVPRIM];
-  int y    = lv[LVSYM];
+  //int y    = lv[LVSYM];
   int cnst;
 
-  /* struct/union ignore constant */
-  if (prim & STCMASK)
-    return 1;
-
   /* check type qualifier bits for const */
-  cnst = prim & CNSTMASK;
+  cnst = prim & CNST;
 
   /* if not constant, assignment okay */
   if (!cnst)
     return 1;
 
-
-  /* if constant, but not initialized */
-  if (cnst == CNST) {
-    /* mark current lvalue and primitive as initialized */
-    Prims[y] |= CINIT;
-    lv[LVPRIM] |= CINIT;
-    return 1;
-  }
 
   /* we can assign values to const pointers themselves */
   if (ptrlevel(prim) > 0)
@@ -1144,6 +1112,7 @@ int allowasgmnt(int *lv) {
   /* consant already initialized, return no assignment allowed */
   return 0;
 }
+
 /*
  * Generate a string expression in the string table or
  * inilne string if table is full.
@@ -1249,8 +1218,8 @@ int ptrwarning(int p1, int p2) {
 
   /* for stuctures and unions, verify matching base definiitions */
   if (stc_1 && stc_2 && (base_1 == base_2)) {
-    y1 = p1 & ~STCMASK;
-    y2 = p2 & ~STCMASK;
+    y1 = p1 & STCINDX;
+    y2 = p2 & STCINDX;
     if (y1 == y2) {
       warn(lvlmsg, NULL);
       return 1;
