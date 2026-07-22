@@ -316,7 +316,7 @@ Compiler Option Changes
 
 Release 3.7
 -----------
-Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.
+Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.  Release 3.7 upgrades Asm/02 and Link/02 to their latest version and adds support for Link/02 branch optimization.
 
 New features
 ------------
@@ -332,6 +332,8 @@ New features
 * Updated logic to support `const` and `volatile` keywords on struct/union
 * Removed lazy initialization logic, now that initializations are supported.
 * Added warning for non-initialized `const` variables.
+* Upgraded Asm/02 and Link/02 to the latest versions.
+* Added support for Link/02 branch optimization as the default.
 
 
 Issues Fixed
@@ -342,6 +344,7 @@ Issues Fixed
 Compiler Option Changes
 -----------------------
 * The `-D` option can now be used multiple times.  (Thanks to Tony Hefner for this improvement.)
+* The `-O` option turns off Link/02 branch optimization.
 
 *Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
