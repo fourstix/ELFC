@@ -1,5 +1,5 @@
 ASM = asm02
-ASMFLAGS = -q -L
+ASMFLAGS = -q -r -L
 CC = elfc
 CFLAGS = -L
 

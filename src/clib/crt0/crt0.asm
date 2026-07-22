@@ -271,7 +271,7 @@ whitespace:
           lbr    loop
 
           org 2100h           ; align subroutine table to page boundary
-
+.norelax
 s_return: sep    r3           ; return from subroutine
 dispatch: lda    r3           ; jump in page to inline byte address
           plo    r9
@@ -355,6 +355,8 @@ s_derefm:   lbr derefm
 s_fp2args:  lbr fp2args
 s_dpop32:   lbr dpop32
 s_fp1arg:   lbr fp1arg
+
+.relax
 
 ; --------------------- Variables and Stack--------------------------
 ostack:   dw     0            ; original SP

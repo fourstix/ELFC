@@ -144,9 +144,17 @@ static void link(char *fname, char *path) {
   char	*binfile;
   int   i;
   char  *vb;
+  char  *opt;
+  char  *rt;
 
   //grw - add support for quiet flag
   vb = (O_verbose > 0) ? "" : "-q ";
+
+  //grw - add support for turning linker optimization off
+  opt = (O_optoff > 0) ? "-r " : "";
+
+  //grw - link smaller runtime if not using C libraries
+  rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
 
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");
@@ -165,11 +173,11 @@ static void link(char *fname, char *path) {
 
   //grw - check length of command
   if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) +
-      strlen(binfile) + strlen(path) + strlen(vb) >= CMDLEN)
+      strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) >= CMDLEN)
 	 	cmderror("linker command too long", NULL);
 
   //grw - snprintf is safer
-  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, path, path, mods);
+  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, path, path, rt, mods);
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -196,7 +204,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvILMNPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvILMNOPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -219,6 +227,8 @@ static void longusage(void) {
 		//grw - added no c libs option
     "-N       do not link stdlib and stdio by default\n");
   printf(
+    //grw - added option to turn off linker branch optimization
+    "-O       turn off linker branch optimization\n"
     //grw - added play macro option
     "-P       print expanded macro text\n"
 		"-S       compile to assembly language\n"
@@ -288,6 +298,8 @@ int main(int argc, char *argv[]) {
   O_playmac = 0;
   //grw - added option to ignore warnings
   O_ignore = 0;
+  //grw - add option to turn off linker branch optimization
+  O_optoff = 0;
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -344,6 +356,10 @@ int main(int argc, char *argv[]) {
 				O_clibs = 0;
         O_elflibs = 0;
 				break;
+      case 'O':
+        //grw - turn off liker optimization
+        O_optoff = 1;
+        break;
       case 'P':
         //grw - don't link stdlib and stdio
         O_playmac = 1;

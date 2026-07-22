@@ -1,5 +1,5 @@
 ASM = asm02
-ASMFLAGS = -q -L
+ASMFLAGS = -q -r -L
 
 SRCS = $(wildcard *.asm)
 OBJS = $(SRCS:.asm=.prg)
@@ -15,4 +15,3 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f *.lst *.build $(OBJS) $(TARGET)
-

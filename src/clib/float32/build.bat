@@ -1,34 +1,34 @@
-..\asm02 -L _addfp.asm
-..\asm02 -L _divfp.asm
-..\asm02 -L _fpargs.asm
-..\asm02 -L _fpcomp2.asm
-..\asm02 -L _fpnorm.asm
-..\asm02 -L _fpret0.asm
-..\asm02 -L _fpreta.asm
-..\asm02 -L _fpretb.asm
-..\asm02 -L _fpretinf.asm
-..\asm02 -L _ftos.asm
-..\asm02 -L _mulfp.asm
-..\asm02 -L _subfp.asm
-..\asm02 -L _atof.asm
-..\asm02 -L _atoi32.asm
-..\asm02 -L _ftoi32.asm
-..\asm02 -L _trigdata.asm
-..\asm02 -L _addtows.asm
-..\asm02 -L _getargs.asm
-..\asm02 -L _fpcopy.asm
-..\asm02 -L _fpsqrt.asm
-..\asm02 -L _fpsin.asm
-..\asm02 -L _fpcos.asm
-..\asm02 -L _fptan.asm
-..\asm02 -L _fpasin.asm
-..\asm02 -L _fpacos.asm
-..\asm02 -L _fpatan.asm
-..\asm02 -L _ftrunc.asm
-..\asm02 -L _fpln.asm
-..\asm02 -L _fpexp.asm
-..\asm02 -L _fppow.asm
-..\asm02 -L _i32tof.asm
+..\asm02 -r -r -L _addfp.asm
+..\asm02 -r -L _divfp.asm
+..\asm02 -r -L _fpargs.asm
+..\asm02 -r -L _fpcomp2.asm
+..\asm02 -r -L _fpnorm.asm
+..\asm02 -r -L _fpret0.asm
+..\asm02 -r -L _fpreta.asm
+..\asm02 -r -L _fpretb.asm
+..\asm02 -r -L _fpretinf.asm
+..\asm02 -r -L _ftos.asm
+..\asm02 -r -L _mulfp.asm
+..\asm02 -r -L _subfp.asm
+..\asm02 -r -L _atof.asm
+..\asm02 -r -L _atoi32.asm
+..\asm02 -r -L _ftoi32.asm
+..\asm02 -r -L _trigdata.asm
+..\asm02 -r -L _addtows.asm
+..\asm02 -r -L _getargs.asm
+..\asm02 -r -L _fpcopy.asm
+..\asm02 -r -L _fpsqrt.asm
+..\asm02 -r -L _fpsin.asm
+..\asm02 -r -L _fpcos.asm
+..\asm02 -r -L _fptan.asm
+..\asm02 -r -L _fpasin.asm
+..\asm02 -r -L _fpacos.asm
+..\asm02 -r -L _fpatan.asm
+..\asm02 -r -L _ftrunc.asm
+..\asm02 -r -L _fpln.asm
+..\asm02 -r -L _fpexp.asm
+..\asm02 -r -L _fppow.asm
+..\asm02 -r -L _i32tof.asm
 
 ..\elfc -L addf.c
 ..\elfc -L divf.c
