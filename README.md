@@ -344,7 +344,7 @@ Issues Fixed
 Compiler Option Changes
 -----------------------
 * The `-D` option can now be used multiple times.  (Thanks to Tony Hefner for this improvement.)
-* The `-O` option turns off Link/02 branch optimization.
+* The `-O` option turns on Link/02 branch optimization.
 
 *Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
 

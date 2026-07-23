@@ -1027,7 +1027,7 @@ Compiler Options
 <tr><td>-L </td><td>compile and assemble a library object file</td></tr>
 <tr><td>-M </td><td>use smaller elfstd and elfio libraries</td></tr>
 <tr><td>-N </td><td>do not link stdlib and stdio by default</td></tr>
-<tr><td>-O </td><td>turn off linker branch optimization</td></tr>
+<tr><td>-O </td><td>turn on linker branch optimization</td></tr>
 <tr><td>-P </td><td>print expanded macro text</td></tr>
 <tr><td>-S </td><td>compile to assembly language</td></tr>
 <tr><td>-V </td><td>print version and exit</td></tr>

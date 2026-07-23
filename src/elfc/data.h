@@ -112,8 +112,8 @@ extern_ int	O_library;
 extern_ int	O_playmac;
 //grw - added option to ignore warnings
 extern_ int	O_ignore;
-//grw - added option to turn off linker branch optimization
-extern_ int O_optoff;
+//grw - added option to turn on linker branch optimization
+extern_ int O_optlink;
 
 
 //grw - create string table

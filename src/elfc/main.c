@@ -151,7 +151,7 @@ static void link(char *fname, char *path) {
   vb = (O_verbose > 0) ? "" : "-q ";
 
   //grw - add support for turning linker optimization off
-  opt = (O_optoff > 0) ? "-r " : "";
+  opt = (O_optlink > 0) ? "-r " : "";
 
   //grw - link smaller runtime if not using C libraries
   rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
@@ -228,7 +228,7 @@ static void longusage(void) {
     "-N       do not link stdlib and stdio by default\n");
   printf(
     //grw - added option to turn off linker branch optimization
-    "-O       turn off linker branch optimization\n"
+    "-O       turn on linker branch optimization\n"
     //grw - added play macro option
     "-P       print expanded macro text\n"
 		"-S       compile to assembly language\n"
@@ -299,7 +299,7 @@ int main(int argc, char *argv[]) {
   //grw - added option to ignore warnings
   O_ignore = 0;
   //grw - add option to turn off linker branch optimization
-  O_optoff = 0;
+  O_optlink = 0;
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -358,7 +358,7 @@ int main(int argc, char *argv[]) {
 				break;
       case 'O':
         //grw - turn off liker optimization
-        O_optoff = 1;
+        O_optlink = 1;
         break;
       case 'P':
         //grw - don't link stdlib and stdio
