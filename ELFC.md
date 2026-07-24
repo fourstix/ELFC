@@ -168,9 +168,6 @@ A pointer to an unqualified variable can be assigned to a pointer to a `const` o
 
 Type qualifiers are ignored when considering if two types are compatible.
 
-
-The ANSI C89/C90 specification does not require `const` variables to be initialized in the declaration of a `const` variable. However, since this is almost always an error, ElfC will issue a warning for when a `const` variable is declared without initialization.
-
 The `const` keyword is supported for arrays, structures and unions. These should be initialized when declared.
 
 The `const` keyword is supported for members inside structures and unions.
@@ -191,6 +188,8 @@ User defined types may include `volatile` in their typedef definition, and `vola
 *Note:* This behavior is not specified by the ANSI C89/C90 specification, but may contradict behavior specified in C99 and later versions.
 
 ElfC does not prevent the assignment of a pointer to a `const` or `volatile` variable to an unqualified pointer.
+
+ElfC will issue a warning when a `const` variable is declared without initialization.  This is not required by the ANSI C89/C90 specification, but it is almost always an error
 
 **Differences from ANSI C89/C90**
 
