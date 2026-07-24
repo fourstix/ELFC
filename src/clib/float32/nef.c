@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <stdbool.h>
 
-#pragma             extrn _nefp
+#pragma             extrn _subfp
 #pragma             extrn Cerrno
 
 /*
@@ -37,7 +37,25 @@ int nef(float32_t a, float32_t b) {
     asm("            push    rb           ; save c registers");
 
     /* call function in library */
-    asm("            call    _nefp       ; call floating point library routine");
+    //asm("            call    _nefp       ; call floating point library routine");
+    asm("            call    _subfp       ; call floating point library routine");
+    asm("            sex     r7           ; set x = ESP");
+    asm("            irx                  ; check stack for zero");
+    asm("            ldxa                 ; get the first byte from stack");
+    asm("            or                   ; OR all 4 bytes together");
+    asm("            ldxa                 ");
+    asm("            or                 ");
+    asm("            ldxa                 ");
+    asm("            or                 ");
+    asm("            ldx                 ; OR last byte");
+    asm("            or                  ; if all bytes are zero");
+    asm("            lbz     nefalse     ; then load zero as false value");
+    asm("            ldi 0FFh            ; load true value");
+    asm("nefalse:    stxd                ; push value onto ESP ");
+    asm("            stxd                ; 32-bit value ");
+    asm("            stxd                 ");
+    asm("            stxd                 ");
+    asm("            sex     r2          ; set x back to SP");
 
     /* restore C registers */
     asm("            pop     rb           ; restore C registers");

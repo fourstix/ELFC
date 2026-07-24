@@ -1,8 +1,8 @@
 #include <assert.h>
 
 /* auto and register declarations are invalid in global scope */
-/* auto int bad1; */
-/* register int bad2; */
+ //auto int bad1;
+ //register int bad2;
 
 
 
@@ -20,10 +20,17 @@ const int a3[] = {1,2,3};
 /* not allowed, arrays must be initialized */
 /* const int a4[5]; */
 
-struct s_struct {
+/* structure with const and volatile members */
+struct test_stc {
   int a;
   volatile int b;
   const int c;
+};
+
+/* const structure */
+const struct fixed_stc {
+  int hi;
+  int lo;
 };
 
 /* global constant variable */
@@ -38,10 +45,20 @@ const ktype k2 = 2;
 /* volatile keyword supported before user defined types */
 volatile ktype k3 = 3; /*  warning: ignored */
 
-/* volatile and const keywords ignored before struct/union */
-const struct s_struct s1; /*  warning: ignored */
+/* const keywords before struct/union */
+const struct test_stc s1 = {4, 5, 6};
 
-volatile struct s_struct s2; /*  warning: ignored */
+/* volatile keyword before struct/union */
+volatile struct test_stc s2;
+
+/* structure definition is const */
+struct fixed_stc s3 = {10, 20};
+
+/* gives warning since not initialized */
+//struct fixed_stc s4;
+
+/* gives warning since not initialized */
+//const struct test_stc s5;
 
 /* allowed */
 /*
@@ -53,9 +70,8 @@ volatile struct s_struct s2; /*  warning: ignored */
  */
 const int sumstr(const char *s) {
   int i = 0;
-  /* not allowed */
-  /* cannot modify a const parameter */
-  /* *s = 'c'; */
+  /* not allowed, cannot modify a const parameter */
+  //*s = 'c';
 
   while(*s) {
     i += *s++;
@@ -81,43 +97,53 @@ int main() {
   volatile const int x = 5;  /* volatile constant is same as const volatile */
   const int *p;     /* pointer to constant variable */
   volatile v = 1;  /* volatile variable */
+  /* generates warning, allowed under C89/C90 spec */
+  //const int x1;
 
   /* const keyword is not allowed with register storage class */
-  /* register const r; */
+  //register const r;
 
-  /* const keyword not supported before user defined types */
-  /* const ktype k4 = 4; */
+  /* const keyword before user defined types */
+  const ktype k4 = 4;
 
-  /* volatile keyword ignored before user defined types */
-  volatile ktype k5 = 5; /*  warning: ignored */
+  /* volatile keyword before user defined types */
+  volatile ktype k5 = 5;
 
   int y  = 3;  /* (plain) int */
   int *q;      /* (plain) pointer */
 
-  /* local const arrays must be static and initialized */
-  static const int la1[] = {2,4,6,8};
+  /* local const arrays must be initialized */
+  const int la1[] = {2,4,6,8};
   static const int la2[3] = {1, 4, 9};
 
-  /* not allowed */
-  /* const int la3[]; */
+  /* not allowed, auto sized array lacks initialization */
+  //const int la3[];
 
-  /* not allowed */
-  /* const int la4[2]; */
+  /* generates warning, but allowed under C89/C90 spec */
+  //const int la4[2];
 
-  /* not allowed */
-  /* const int la5[] = {0,0}; */
+  /* allowed */
+  volatile const int la5[] = {0,0};
 
-  /* constant pointers to (varying) variables is not supported by ElfC */
-  /* int * const p1; */
+  /* syntax error, constant pointers to (varying) variables is not supported by ElfC */
+  //int * const p1;
 
-  /* allowed, const struct member initialized */
-  s1.c = 3;
+  /* assignments */
 
-  /* not allowed, cannot assign value to initialized const member */
-  /* s1.c = 6; */
+  /* not allowed, user defined type is const */
+  //k4 = 5;
+
+  /* not allowed, constant member of struct */
+  //s1.c = 3;
+
+  /* not allowed, cannot assign value to member of const stuct */
+  //s3.hi = 6;
 
   /* not allowed, cannot assign value to initialized array element */
-  /* a1[0] = 1; */
+  //a1[0] = 1;
+
+  /* not allowed, structure defined const */
+  //s4.hi = 7;
 
   /* volatile array elements, no optimizations are done */
   a2[0] = 5+1;
@@ -128,16 +154,16 @@ int main() {
   /* cannot update const variables after initialization */
 
   /* not allowed */
-  /*  k1 = 6; */
+  //k1 = 6;
 
   /* not allowed */
-  /*  k2 = 7; */
+  //k2 = 7;
 
   /* not allowed */
-  /*  g1 = 3; */
+  //g1 = 3;
 
   /* not allowed */
-  /* x = 4; */
+  //x = 4;
 
   p = &x; /* allowed, assigning pointer to constant */
   assert(*p == 5);
@@ -155,7 +181,7 @@ int main() {
   assert(*q == 3);
 
   /* not allowed, update through pointer to constant */
-  /* *p = 9; */
+  //*p = 9;
 
   /* allowed, update through (plain) pointer */
   *q = 9;
@@ -166,10 +192,11 @@ int main() {
 
   p = q;  /* allowed, assigning pointer to constant  */
 
-  /* not allowed */
-  /* *p = 9; */
+  /* not allowed, update through pointer to constant */
+  //*p = 9;
 
-  *q = 9; /* allowed, plain pointer over-rides const behavior */
+  /* allowed, plain pointer over-rides const behavior */
+  *q = 9;
   assert(g1 == 9);
 
   /* allowed */
@@ -185,7 +212,7 @@ int main() {
   assert(v == 30);
 
   /* allowed, but no optimizations are done */
-  y = v + 2 + 1;
+  y = 2 + v + 1;
   assert(y == 33);
 
   return 1;

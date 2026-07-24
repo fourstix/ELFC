@@ -316,7 +316,7 @@ Compiler Option Changes
 
 Release 3.7
 -----------
-Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.
+Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.  Release 3.7 upgrades Asm/02 and Link/02 to their latest version and adds support for Link/02 branch optimization.
 
 New features
 ------------
@@ -329,6 +329,11 @@ New features
 * Added support for multiple `-D` options (Thanks to Tony Hefner)
 * Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
 * Added `moonphase` example program.
+* Updated logic to support `const` and `volatile` keywords on struct/union
+* Removed lazy initialization logic, now that initializations are supported.
+* Added warning for non-initialized `const` variables.
+* Upgraded Asm/02 and Link/02 to the latest versions.
+* Added support for Link/02 branch optimization as the default.
 
 
 Issues Fixed
@@ -339,6 +344,7 @@ Issues Fixed
 Compiler Option Changes
 -----------------------
 * The `-D` option can now be used multiple times.  (Thanks to Tony Hefner for this improvement.)
+* The `-O` option turns on Link/02 branch optimization.
 
 *Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
@@ -721,13 +727,14 @@ typedef struct float32 float32_t;
 
 **Conversion functions**
 * void ftoa(float32_t fp1, char \*s)
-* void ftos(float32_t fp1, char \*s)
+* void ftosci(float32_t fp1, char \*s)
 * int32_t ftoi32(float32_t a)
 * int ftoi(float32_t a)
 * float32_t atof(char \*s)
 * float32_t itof(int i)
 * float32_t i32tof(int32_t i)
 * int fstrf(float32_t fp1, char \*s, int p, char fmt)
+* float32_t makef(unsigned int hi, unsigned int lo)
 
 **Trig functions**
 * float32_t sinf(float32_t a)
@@ -810,9 +817,6 @@ Differences Between ElfC and Full C89
 *  Pointers to `const` variables are supported, but neither `const` pointers to
    (varying) variables, nor `const` pointers to `const` variables are supported,
    i.e. `const int * p;` is supported, but `int * const p;` and `const int * const p;` are *not* supported.
-
-*  The `const` and `volatile` keywords are ignored for structures and unions, but
-   may be used for their members.
 
 *  Struct/union definition declarations must be separate from the declarations of
    struct/union objects, i.e. `struct p { int x, y; } q;` will not work.

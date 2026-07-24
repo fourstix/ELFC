@@ -270,14 +270,14 @@ int setptrlevel(int ptype, int lvl) {
 int compatible(int p1, int p2) {
 	int lvl_1;
 	int lvl_2;
-	int stc;
 
 	/* get the level for the pointers */
 	lvl_1 = ptrlevel(p1);
 	lvl_2 = ptrlevel(p2);
 
-	/* if either value is not a pointer,
+	/*
 	 *  then indicate compatible for pointer arithmetic
+	 * if either value is not a pointer,
 	 */
 	if (!lvl_1 || !lvl_2)
 	  return 1;
@@ -288,17 +288,11 @@ int compatible(int p1, int p2) {
 	if (lvl_1 != lvl_2)
 	  return 0;
 
-	/* check to see if comparing struct/union pointers */
-	stc = p1 & STCMASK;
 
-	/* const keyword is ignored for pointers to struct/union */
-	if (!stc) {
-		/* constant pointers compatible with non-constant pointers */
-   	/* so remove any constant bits before comparing */
-    p1 &= ~TQMASK;
-	  p2 &= ~TQMASK;
-  }
- return (p1 == p2);
+	/* remove any constant or volatile bits before comparing */
+  p1 &= ~TQMASK;
+  p2 &= ~TQMASK;
+  return (p1 == p2);
 }
 
 /* Test to see if string is all whitespace or empty */

@@ -34,16 +34,17 @@
 ; ******************************************************
               proc     _fpln
 
-.link .requires _fpdata
+.link .requires C_fp_const
 
               extrn    _addfpi
               extrn    _addtows
               extrn    _divfpi
-              extrn    fp_1
-              extrn    fp_2
               extrn    _getargs
               extrn    _mulfpi
               extrn    _subfpi
+
+              extrn    C_fp_one
+              extrn    C_fp_two
 
               ghi      r7           ; save expr stack
               stxd
@@ -68,14 +69,14 @@
               stxd
               stxd
               stxd
-              ldi      fp_1.1       ; k = 1.0
+              ldi      C_fp_one.1   ; k = 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addtows     ; add to workspace
-              ldi      fp_1.1       ; last = 1.0
+              ldi      C_fp_one.1   ; last = 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addtows     ; add to workspace
               ldi      0            ; sum = 0
@@ -89,9 +90,9 @@
               ghi      r2
               adci     0
               phi      rf
-              ldi      fp_1.1       ; point to 1.0
+              ldi      C_fp_one.1   ; point to 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _addfpi      ; compute n+1
               glo      r2           ; point to n
@@ -100,9 +101,9 @@
               ghi      r2
               adci     0
               phi      rf
-              ldi      fp_1.1       ; point to 1.0
+              ldi      C_fp_one.1   ; point to 1.0
               phi      rd
-              ldi      fp_1.0
+              ldi      C_fp_one.0
               plo      rd
               call     _subfpi      ; compute n-1
               call     _getargs     ; compute (n-1)/(n+1)
@@ -175,9 +176,9 @@ fplog_1:      ldn      rd           ; get byte from sum
               ghi      r2
               adci     0
               phi      rf
-              ldi      fp_2.1       ; point to 2.0
+              ldi      C_fp_two.1       ; point to 2.0
               phi      rd
-              ldi      fp_2.0
+              ldi      C_fp_two.0
               plo      rd
               call     _addfpi
               lbr      fplog_ln     ; loop until done

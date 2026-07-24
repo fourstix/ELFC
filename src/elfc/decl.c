@@ -349,6 +349,7 @@ static int sinitlist(int size, int prim, int *pinit) {
 
 int primtype(int t, char *s) {
   int  p, y;
+
   char  sname[NAMELEN+1];
   //grw - added signed and unsigned types
   p = t == CHAR? PCHAR:
@@ -368,8 +369,12 @@ int primtype(int t, char *s) {
         return p;
       }
     }
-    if ((y = findstruct(s)) == 0 || Prims[y] != p)
+    /* compare with out type qualifiers */
+    if ((y = findstruct(s)) == 0 || (Prims[y] & ~TQMASK) != p)
       error("no such struct/union: %s", s);
+    /* set p to primitive type with type qualifies */
+    p = Prims[y];
+    /* set index on primitive type */
     p |= y;
   }
   return p;
@@ -433,14 +438,13 @@ static int pmtrdecls(void) {
       continue;
     }
     else if (IDENT == Token &&
-       (utype = usertype(Text)) == 0)
-    {
+        (utype = usertype(Text)) == 0) {
       prim = PINT;
-      /* function parameters are already initialized, so set both const bits */
-      if (cnst)
-        prim |= CNSTMASK;
-    }
-    else {
+      /* function parameters are already initialized, so set const bit */
+      if (cnst) {
+        prim |= CNST;
+      }
+    } else {
       //grw - added signed and unsigned types
       if (  CHAR == Token || INT == Token ||
         SCHAR == Token || UINT == Token || VOID == Token ||
@@ -453,17 +457,12 @@ static int pmtrdecls(void) {
         //grw - added support for const keyword
         //grw - in a function, the const value is considered initialized
         if (cnst) {
-          if (prim & STCMASK)
-            warn("const keyword ignored for struct/union types", NULL);
-          else
-             /* function parameters are already initialized, so set both const bits */
-            prim |= CNSTMASK;
+          prim |= CNST;
         }
         Token = scan();
         if (RPAREN == Token && prim == PVOID && !na)
           return 0;
-      }
-      else {
+      } else {
         error("type specifier expected at: %s", Text);
         Token = synch(RPAREN);
         return na;
@@ -532,7 +531,8 @@ int pointerto(int prim, char *name) {
     name = "pointer";
 
   if (stc) {
-    y = prim & ~STCMASK;
+    /* get index for structure */
+    y = prim & STCINDX;
     switch (stc) {
       case PSTRUCT:  return STCPTR | y;
       case STCPTR:  return STCPP | y;
@@ -577,8 +577,7 @@ int pointerto(int prim, char *name) {
   */
 
 static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
-      int *pval, int *pinit)
-{
+      int *pval, int *pinit) {
   int  type = TVARIABLE;
   int  ptrptr = 0;
   char *unsupp;
@@ -590,6 +589,8 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
   //grw - added support for mutlidimensional arrays
   int dim[15];
   int autosize = 0;
+  //grw - updated const logic
+  int cnst = (*pprim & CNST);
 
   unsupp = "unsupported typedef syntax";
 
@@ -700,11 +701,7 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
     if (*pinit == 0 && CLSTATC != scls) {
       *pinit = 1;
     }
-
-      //grw - added support for const keyword
-    if (!stc && CNST == (*pprim & CNSTMASK))
-      *pprim |= CINIT;
-  }  else if (!pmtr && LPAREN == Token) {
+  } else if (!pmtr && LPAREN == Token) {
     if (CTYPE == scls)
       error(unsupp, NULL);
     Token = scan();
@@ -786,8 +783,6 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
       *pval  = 1;
 
       //grw - added support for const keyword
-      if (!stc && CNST == (*pprim & CNSTMASK))
-        *pprim |= CINIT;
 
       //grw - update this logic for multidimensional arrays
       if (autosize) {
@@ -821,9 +816,21 @@ static int declarator(int pmtr, int scls, char *name, int *pprim, int *psize,
     error("automatically-sized array"
       " lacking initialization: %s",
       name);
-    }  else if (!stc && (*pprim & CNSTMASK)) {
-      //grw - changed this to error instead of clearing bits
-      error("const keyword not supported for non-initialized array %s", name);
+}  else if (cnst) {
+      //grw - changed this to warning (per ANSI C89/C90 spec)
+      warn("const array %s not initialized ", name);
+    }
+  } else {
+    if (stc && !cnst) {
+      //grw - if not cnst, check if structure declaration is const
+      cnst = (Prims[*pprim & STCINDX]) & CNST;
+    }
+
+    //grw - warning since uninitialized const variables are allowed by ANSI C89/C90 spec
+    if (!pmtr && cnst) {
+    //grw - don't warn for typedefs, externals and pointers
+    if ((CTYPE != scls) && (CEXTERN != scls) && !ptrlevel(*pprim))
+      warn("const variable %s not initialized", name);
     }
   }
 
@@ -964,34 +971,22 @@ static int localdecls(void) {
       prim = primtype(Token, NULL);
       //grw - added support for const keyword
       if (cnst) {
-        if (prim & STCMASK)
-          warn(ignored,"const");
-        else
-          prim |= CNST;
+        prim |= CNST;
       }
       //grw - added support for volatile keyword
       if (vltl) {
-        if (prim & STCMASK)
-          warn(ignored, "volatile");
-        else
-          prim |= VLTL;
+        prim |= VLTL;
       }
       Token = scan();
     }  else if (utype) {
         prim = Prims[utype];
         //grw - added support for const keyword
         if (cnst) {
-          if (prim & STCMASK)
-            warn(ignored,"const");
-          else
-            prim |= CNST;
+          prim |= CNST;
         }
         //grw - added support for volatile keyword
         if (vltl) {
-          if (prim & STCMASK)
-            warn(ignored, "volatile");
-          else
-            prim |= VLTL;
+          prim |= VLTL;
         }
     }  else {
       prim = PINT;
@@ -1001,21 +996,15 @@ static int localdecls(void) {
       if (vltl)
         prim |= VLTL;
     }
-  }  else if (utype) {
+  } else if (utype) {
     prim = Prims[utype];
     //grw - added support for const keyword
     if (cnst) {
-      if (prim & STCMASK)
-        warn(ignored,"const");
-      else
-        prim |= CNST;
+      prim |= CNST;
     }
     //grw - added support for volatile keyword
     if (vltl) {
-      if (prim & STCMASK)
-        warn(ignored, "volatile");
-      else
-        prim |= VLTL;
+      prim |= VLTL;
     }
     Token = scan();
   }  else {
@@ -1231,7 +1220,7 @@ void decl(int clss, int prim, int utype) {
  *  | declatator , mdecl_list
  */
 
-void structdecl(int clss, int uniondecl) {
+void structdecl(int clss, int uniondecl, int cnst0, int vltl0) {
   int  utype, base, prim, size, dummy, type, addr = 0;
   char  name[NAMELEN+1], sname[NAMELEN+1];
   int  y, usize = 0;
@@ -1245,19 +1234,34 @@ void structdecl(int clss, int uniondecl) {
   else {
     sname[0] = 0;
   }
+  //grw - added support for const and volatile keywords
+  cnst = cnst0;
+  vltl = vltl0;
+
+
   if (Token != LBRACE) {
     prim = primtype(uniondecl? UNION: STRUCT, sname);
+    if (cnst)
+      prim |= CNST;
+    if (vltl)
+      prim |= VLTL;
+
     decl(clss, prim, 0);
     return;
   }
-  y = addglob(sname, uniondecl? PUNION: PSTRUCT, TSTRUCT,
+  //grw - updated to support constant/volatile struct/union
+  prim = uniondecl? PUNION: PSTRUCT;
+
+  if (cnst)
+    prim |= CNST;
+  if (vltl)
+    prim |= VLTL;
+
+  y = addglob(sname, prim, TSTRUCT,
       CMEMBER, 0, 0, NULL, 0);
   Token = scan();
   utype = 0;
   //grw - added signed and unsigned types
-  //grw - added support for const and volatile keywords
-  cnst = 0;
-  vltl = 0;
 
   while (  INT == Token || CHAR == Token || VOID == Token ||
     UINT == Token || SCHAR == Token || CONST == Token ||
@@ -1265,14 +1269,10 @@ void structdecl(int clss, int uniondecl) {
     (IDENT == Token && (utype = usertype(Text)) != 0)
   ) {
     if (CONST == Token) {
-      if (cnst)
-        error(invalid, "const");
       cnst = 1;
       Token = scan();
       continue;
     } else if (VOLATILE == Token) {
-      if (vltl)
-        error(invalid, "volatile");
       vltl = 1;
       Token = scan();
       continue;
@@ -1283,25 +1283,13 @@ void structdecl(int clss, int uniondecl) {
     if (utype) {
       //grw - added support for const keyword
       if (cnst) {
-        if (base & STCMASK)
-          warn(ignored,"const");
-        else
-          base |= CNST;
+        base |= CNST;
       }
       //grw - added support for volatile keyword
       if (vltl) {
-        if (base & STCMASK)
-          warn(ignored, "volatile");
-        else
-          base |= VLTL;
+        base |= VLTL;
       }
-    } else if ((base & STCMASK) != 0) {
-      if (cnst)
-        warn(ignored, "const");
-      if (vltl)
-        warn(ignored, "volatile");
     } else {
-      /* allowed, if not a struct/union */
       if (cnst) {
         base |= CNST;
       }
@@ -1339,8 +1327,9 @@ void structdecl(int clss, int uniondecl) {
     }
     semi();
     utype = 0;
-    cnst = 0;
-    vltl = 0;
+    /* set flags back to original values */
+    cnst = cnst0;
+    vltl = vltl0;
   }
   rbrace();
   Sizes[y] = uniondecl? usize: addr;
@@ -1382,34 +1371,22 @@ void typedecl(void) {
    }
   }
   if (STRUCT == Token || UNION == Token) {
-    structdecl(CTYPE, UNION == Token);
-    if (cnst)
-      warn("ignored", "const");
-    if (vltl)
-      warn("ignored", "volatile");
+    structdecl(CTYPE, UNION == Token, cnst, vltl);
   }
   else if ((utype = usertype(Text)) != 0) {
     //grw - added support for const keyword
     prim =  Prims[utype];
     if (cnst) {
-      if (prim & STCMASK)
-        warn(ignored,"const");
-      else
-        prim |= CNST;
+      prim |= CNST;
     }
     //grw - added support for volatile keyword
     if (vltl) {
-      if (prim & STCMASK)
-        warn(ignored, "volatile");
-      else
-        prim |= VLTL;
+      prim |= VLTL;
     }
     Token = scan();
-    /* decl(CTYPE, Prims[utype], utype); */
     //grw - can declare new type as const or volatile user type
     decl(CTYPE, prim, utype);
-  }
-  else {
+  } else {
     prim = primtype(Token, NULL);
     if (cnst)
       prim |= CNST;
@@ -1461,29 +1438,17 @@ void top(void) {
   }
   /* const/volatile may also follow the extern/static keywords */
   if (CONST == Token) {
-    if (cnst)
-      error(invalid, "const");
-    else
-      cnst = 1;
+    cnst = 1;
     Token = scan();
     if (VOLATILE == Token) {
-      if (vltl)
-        error(invalid, "volatile");
-      else
-        vltl = 1;
+      vltl = 1;
       Token = scan();
     }
   } else if (VOLATILE == Token) {
-    if (vltl)
-      error(invalid, "volatile");
-    else
-      vltl = 1;
+    vltl = 1;
     Token = scan();
     if (CONST == Token) {
-      if (cnst)
-        error(invalid, "volatile");
-      else
-        cnst = 1;
+      cnst = 1;
       Token = scan();
     }
   }
@@ -1496,11 +1461,7 @@ void top(void) {
     break;
   case STRUCT:
   case UNION:
-    structdecl(clss, UNION == Token);
-    if (cnst)
-      warn(ignored, "const");
-    if (vltl)
-      warn(ignored, "volatile");
+    structdecl(clss, UNION == Token, cnst, vltl);
     break;
 
   case CHAR:
@@ -1526,29 +1487,23 @@ void top(void) {
       //grw - added support for const keyword
       prim =  Prims[utype];
       if (cnst) {
-        if (prim & STCMASK)
-          warn(ignored,"const");
-        else
-          prim |= CNST;
+        prim |= CNST;
       }
       //grw - added support for volatile keyword
       if (vltl) {
-        if (prim & STCMASK)
-          warn(ignored, "volatile");
-        else
-          prim |= VLTL;
+        prim |= VLTL;
       }
       decl(clss, prim, utype);
       /* decl(clss, Prims[utype], utype); */
-    }
-    else {
+    } else {
       //grw - added support for const and volatile keywords
-      /* decl(clss, PINT, 0); */
       prim = PINT;
       if (cnst)
         prim |= CNST;
+
       if (vltl)
         prim |= VLTL;
+
       decl(clss, prim, 0);
     }
     break;
@@ -1683,7 +1638,8 @@ static int initstruct(char *name, int prim, int *pinit) {
   int isize = 0;
   int rsize = 0;
 
-  y = prim & ~STCMASK;
+  /* get index for structure */
+  y = prim & STCINDX;
 
   if (!y) {
     error("Structure %s not found", name);
@@ -1788,7 +1744,8 @@ static int linitstruct(int prim, int *pinit, int nstart, int outer) {
   int nsize = 0;
   int bprim;
 
-  y = prim & ~STCMASK;
+  /* get index for structure */
+  y = prim & STCINDX;
 
   rsize = objsize(prim, TSTRUCT, 1);
 
@@ -1922,7 +1879,8 @@ static int sinitstruct(int prim, int *pval, int *pinit) {
   int msize = 0;
   int nsize = 0;
 
-  y = prim & ~STCMASK;
+  /* get index for structure */
+  y = prim & STCINDX;
 
   rsize = objsize(prim, TSTRUCT, 1);
   *pinit = label();

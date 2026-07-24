@@ -3,7 +3,7 @@
 
 extern  float32_t _fp_round;
 
-#pragma             extrn Cftos
+#pragma             extrn Cftosci
 #pragma             extrn Cnegf
 #pragma             extrn Caddf
 #pragma             extrn Cshri32
@@ -67,7 +67,7 @@ void ftoa(float32_t f, char *p) {
    * instead for these values.
    */
   if ((exp < 110) || (exp >= 147)) {
-      ftos(f, p);
+      ftosci(f, p);
       return;
   }
 /*

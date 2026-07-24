@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <stdbool.h>
 
-#pragma             extrn _eqfp
+#pragma             extrn _subfp
 #pragma             extrn Cerrno
 
 /*
@@ -35,7 +35,30 @@ int eqf(float32_t a, float32_t b) {
     asm("            push    rb           ; save c registers");
 
     /* call function in library */
-    asm("            call    _eqfp       ; call floating point library routine");
+    //asm("            call    _eqfp       ; call floating point library routine");
+    asm("            call    _subfp       ; call floating point library routine");
+    asm("            sex     r7           ; set x = ESP");
+    asm("            irx                  ; check stack for zero");
+    asm("            ldxa                 ; get the first byte from stack");
+    asm("            or                   ; OR all 4 bytes together");
+    asm("            ldxa                 ");
+    asm("            or                 ");
+    asm("            ldxa                 ");
+    asm("            or                 ");
+    asm("            ldx                 ; OR last byte");
+    asm("            or                  ; if all bytes are zero");
+    asm("            lbz     eqtrue      ; then it's equal, so load true value");
+    asm("            ldi     000h        ; load false value");
+    asm("            lskp                ; jump over next two bytes");
+    asm("eqtrue:     ldi 0FFh            ; load true value");
+    asm("            stxd                ; push value onto ESP ");
+    asm("            stxd                ; 32-bit value ");
+    asm("            stxd                 ");
+    asm("            stxd                 ");
+    asm("            sex     r2          ; set x back to SP");
+
+    //lbz     _true32
+    //lbr     _false32
 
     /* restore C registers */
     asm("            pop     rb           ; restore C registers");

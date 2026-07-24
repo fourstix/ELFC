@@ -3,28 +3,28 @@
 /Cisalpha 000e 00
 \Cisalpha 000f
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 00 00
-?auto_err 0015
+!auto_err 0015
 :0010 d9 03 00 02 c3 00 00 d9 0c d9 0f 9a 52 8a f1 ca
 /Cisdigit 0029 00
 \Cisdigit 002a
 :0020 00 34 d9 09 d9 42 00 00 d4 00 00 d9 03 00 02 c3
-?auto_err 0030
-?stk_err 003c
+!auto_err 0030
+!stk_err 003c
 :0030 00 00 d9 0c d9 99 d9 09 e2 d9 06 c3 00 00 60 72
 :0040 ab f0 bb d5
-+0020
+#0020
 }
 .big
 {Cisalpha
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 20 d9 42 00
 :0010 00 d9 a5 d9 12 00 61 d9 87 d9 12 00 1a d9 cf d9
-?stk_err 0025
+!stk_err 0025
 :0020 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
 }
 .big
 {Cisascii
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 ff 80 d9 42 00
-?stk_err 001b
+!stk_err 001b
 :0010 00 d9 a2 d9 ab d9 09 e2 d9 06 c3 00 00 60 72 ab
 :0020 f0 bb d5
 }
@@ -33,44 +33,44 @@
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 20 d9 42 00
 :0010 00 d9 b7 d9 0f 9a 52 8a f1 ca 00 28 d9 09 d9 12
 :0020 00 09 d9 42 00 00 d9 b7 d9 99 d9 09 e2 d9 06 c3
-?stk_err 0030
+!stk_err 0030
 :0030 00 00 60 72 ab f0 bb d5
-+001a
+#001a
 }
 .big
 {Ciscntrl
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
 :0010 20 d9 cf d9 0f 9a 52 8a f1 ca 00 28 d9 09 d9 12
 :0020 00 7f d9 42 00 00 d9 b7 d9 99 d9 09 e2 d9 06 c3
-?stk_err 0030
+!stk_err 0030
 :0030 00 00 60 72 ab f0 bb d5
-+001a
+#001a
 }
 .big
 {Cisdigit
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
-?stk_err 001f
+!stk_err 001f
 :0010 30 d9 87 d9 12 00 0a d9 cf d9 09 e2 d9 06 c3 00
 :0020 00 60 72 ab f0 bb d5
 }
 .big
 {Cisgraph
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
-?stk_err 001f
+!stk_err 001f
 :0010 21 d9 87 d9 12 00 5e d9 cf d9 09 e2 d9 06 c3 00
 :0020 00 60 72 ab f0 bb d5
 }
 .big
 {Cislower
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
-?stk_err 001f
+!stk_err 001f
 :0010 61 d9 87 d9 12 00 1a d9 cf d9 09 e2 d9 06 c3 00
 :0020 00 60 72 ab f0 bb d5
 }
 .big
 {Cisprint
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
-?stk_err 001f
+!stk_err 001f
 :0010 20 d9 87 d9 12 00 5f d9 cf d9 09 e2 d9 06 c3 00
 :0020 00 60 72 ab f0 bb d5
 }
@@ -79,30 +79,30 @@
 /Cisgraph 000e 00
 \Cisgraph 000f
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 00 00
-?auto_err 0015
+!auto_err 0015
 :0010 d9 03 00 02 c3 00 00 d9 0c d9 0f 9a 52 8a f1 c2
 /Cisalnum 0029 00
 \Cisalnum 002a
 :0020 00 36 d9 09 d9 42 00 00 d4 00 00 d9 03 00 02 c3
-?auto_err 0030
-?stk_err 003e
+!auto_err 0030
+!stk_err 003e
 :0030 00 00 d9 0c d9 ab d9 99 d9 09 e2 d9 06 c3 00 00
 :0040 60 72 ab f0 bb d5
-+0020
+#0020
 }
 .big
 {Cisspace
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 12 00 20 d9 42 00
 :0010 00 d9 b7 d9 0f 9a 52 8a f1 ca 00 2e d9 09 d9 42
 :0020 00 00 d9 12 00 09 d9 87 d9 12 00 05 d9 cf d9 99
-?stk_err 0036
+!stk_err 0036
 :0030 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb d5
-+001a
+#001a
 }
 .big
 {Cisupper
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d9 12 00
-?stk_err 001f
+!stk_err 001f
 :0010 41 d9 87 d9 12 00 1a d9 cf d9 09 e2 d9 06 c3 00
 :0020 00 60 72 ab f0 bb d5
 }
@@ -111,39 +111,39 @@
 /Cisdigit 000e 00
 \Cisdigit 000f
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 00 00
-?auto_err 0015
+!auto_err 0015
 :0010 d9 03 00 02 c3 00 00 d9 0c d9 0f 9a 52 8a f1 ca
 :0020 00 3a d9 09 d9 12 00 20 d9 42 00 00 d9 a5 d9 12
 :0030 00 61 d9 87 d9 12 00 06 d9 cf d9 99 d9 09 e2 d9
-?stk_err 0042
+!stk_err 0042
 :0040 06 c3 00 00 60 72 ab f0 bb d5
-+0020
+#0020
 }
 .big
 {Ctolower
 /Cisupper 000e 00
 \Cisupper 000f
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 00 00
-?auto_err 0015
+!auto_err 0015
 :0010 d9 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a f1 c2
 :0020 00 2f d9 12 00 20 d9 42 00 00 d9 a5 c0 00 33 d9
-?stk_err 0039
+!stk_err 0039
 :0030 42 00 00 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb
 :0040 d5
-+0020
-+002d
+#0020
+#002d
 }
 .big
 {Ctoupper
 /Cislower 000e 00
 \Cislower 000f
 :0000 e2 9b 73 8b 73 87 ab 97 bb d9 42 00 00 d4 00 00
-?auto_err 0015
+!auto_err 0015
 :0010 d9 03 00 02 c3 00 00 d9 0c d9 09 9a 52 8a f1 c2
 :0020 00 2f d9 12 00 5f d9 42 00 00 d9 a2 c0 00 33 d9
-?stk_err 0039
+!stk_err 0039
 :0030 42 00 00 d9 09 e2 d9 06 c3 00 00 60 72 ab f0 bb
 :0040 d5
-+0020
-+002d
+#0020
+#002d
 }

@@ -1,5 +1,5 @@
 ASM = asm02
-ASMFLAGS = -q -L
+ASMFLAGS = -q -r -L
 
 SRCS = crt0.asm
 TARGET = crt0.prg
@@ -11,4 +11,3 @@ $(TARGET): $(SRCS)
 
 clean:
 	rm -f *.lst *.build $(TARGET)
-

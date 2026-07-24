@@ -4,6 +4,7 @@
 /*
  * floating point values used in C library functions
  */
+float32_t _fp_zero = {0, 0};
 float32_t _fp_half = {FP_DOT5_LO, FP_DOT5_HI};
 float32_t _fp_one = {FP_ONE_LO, FP_ONE_HI};
 float32_t _fp_negone = {FP_ONE_LO, FP_ONE_HI | FP_SIGN};

@@ -33,13 +33,14 @@
 ; ********************************************
               proc     _atof
 
-.link .requires _fpdata
+.link .requires C_fp_const
 
               extrn    _atoi32
               extrn    _divfpi
-              extrn    fp_10
               extrn    _fpnorm
               extrn    _mulfpi
+
+              extrn    C_fp_ten
 
 ; +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ; +++++ First convert integer portion to floating point +++++
@@ -348,9 +349,9 @@ atof_ex4:     glo      rc           ; see if done
               ghi      r2
               phi      rf
               inc      rf
-              ldi      fp_10.1      ; point to 10.0
+              ldi      C_fp_ten.1   ; point to 10.0
               phi      rd
-              ldi      fp_10.0
+              ldi      C_fp_ten.0
               plo      rd
               glo      rc           ; save count
               stxd
@@ -367,9 +368,9 @@ atof_exn:     glo      rc           ; see if done
               ghi      r2
               phi      rf
               inc      rf
-              ldi      fp_10.1      ; point to 10.0
+              ldi      C_fp_ten.1   ; point to 10.0
               phi      rd
-              ldi      fp_10.0
+              ldi      C_fp_ten.0
               plo      rd
               glo      rc           ; save count
               stxd
