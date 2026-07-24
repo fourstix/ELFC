@@ -189,7 +189,7 @@ User defined types may include `volatile` in their typedef definition, and `vola
 
 ElfC does not prevent the assignment of a pointer to a `const` or `volatile` variable to an unqualified pointer.
 
-ElfC will issue a warning when a `const` variable is declared without initialization.  This is not required by the ANSI C89/C90 specification, but it is almost always an error
+ElfC will issue a warning when a `const` variable is declared without initialization.
 
 **Differences from ANSI C89/C90**
 
