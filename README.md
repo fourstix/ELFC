@@ -340,6 +340,7 @@ Issues Fixed
 ------------
 * Fixed small issues with some string library functions not including proper header files.
 * Fixed a bug where the incorrect size was used for a local array initialized by a string.
+* The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
 
 Compiler Option Changes
 -----------------------
