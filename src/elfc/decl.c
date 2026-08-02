@@ -20,7 +20,6 @@ static void writeldata(int n);
 
 /* define static type qualifier messages used in warnings and errors */
 static char invalid[] = "type qualifier \'%s\' not valid";
-static char ignored[] = "type qualifier \'%s\' ignored";
 static char bad_cls[] = "storage class \'%s\' not valid for global scope";
 static char max_lvl[] = "too many levels of indirection in %s";
 

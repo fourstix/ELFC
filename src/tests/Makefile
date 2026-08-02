@@ -1,10 +1,11 @@
 CC := elfc
+CFLAGS := -O
 FILES := $(wildcard *.c)
 
 all:
 	@for file in $(FILES); do \
 		echo "Building: $$file"; \
-		$(CC) $$file; \
+		$(CC) $(CFLAGS) $$file; \
 	done
 
 # A clean target to remove generated files
