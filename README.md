@@ -333,7 +333,7 @@ New features
 * Removed lazy initialization logic, now that initializations are supported.
 * Added warning for non-initialized `const` variables.
 * Upgraded Asm/02 and Link/02 to the latest versions.
-* Added support for Link/02 branch optimization as the default.
+* Added support for Link/02 branch optimization with the `-O` option.
 
 
 Issues Fixed
