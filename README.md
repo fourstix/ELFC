@@ -342,7 +342,7 @@ Issues Fixed
 * Fixed a bug where the incorrect size was used for a local array initialized by a string.
 * The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
 * Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
-* Added _All Tests Passed_ message all to functional tests.
+* Added an _All Tests Passed_ message to all functional tests.
 
 Compiler Option Changes
 -----------------------
