@@ -4,10 +4,10 @@
  * In the public domain
  *
  * Test the file position functions
- * Test 2 of 
+ * Test 2 of
  */
 #define _STGROM_
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -42,10 +42,10 @@ void test_sio4(void) {
   int	i;
 
 	err = lno = 0;
-  
-  
+
+
   pr("fprintf");
-  
+
   if ((f = fopen("fprintf.out", "w")) == NULL) {
     fail("fopen-1");
 		return;
@@ -62,7 +62,7 @@ void test_sio4(void) {
 	for (i=0; i<5; i++)
 		fprintf(f, "%c%c%c%c%c%c%c%c%c%c",
 		'1', '2', '3', '4', '5', '6', '7', '8', '9', '0' );
-  fputs("\n", f);  
+  fputs("\n", f);
 	fprintf(f, "%50d\n", -12345);
 	fprintf(f, "%-49d|\n", -12345);
 	fprintf(f, "%050d\n", 12345);
@@ -72,7 +72,7 @@ void test_sio4(void) {
 	fputs(str1, f);
 
   fclose(f);
-  
+
 	if ((f = fopen("stdio.ok", "r")) == NULL) {
 		fputs("missing file: stdio.ok\n", stdout);
 		Errors++;
@@ -93,7 +93,7 @@ void test_sio4(void) {
         printf("%2d Error\n", lno);
       } else {
         printf("%2d: %s", lno, s1);
-      }     
+      }
 			fgets(s1, 80, t);
 		}
     /* stdio.ok may have padding characters from xmodem */
@@ -112,7 +112,7 @@ void test_sio4(void) {
 void test_printf(void) {
 	int	i;
   pr("printf");
-  
+
 	puts(str1);
 	for (i=0; i<50; i++) putc('A', stdout);
 	puts("");
@@ -137,6 +137,9 @@ void test_printf(void) {
 int main(int argc, char **argv) {
   test_printf();
   test_sio4();
-  if (!Errors) pr("okay");
+
+  if (!Errors)
+    printf("All tests passed.\n");
+
   return result;
 }

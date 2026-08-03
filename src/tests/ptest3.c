@@ -18,30 +18,52 @@ int	*p;
 int	**pp;
 int	*A, _A[3], **P, *_P[3];
 int	Ea[3], *Ep[3];
+/* track test errors */
+int Errors = 0;
+int result = EXIT_SUCCESS;
+
 
 int test(char *what, int val, int ea, int ep, int epp) {
 	int	i;
-	
+
 	printf("Testing: %s\n", what);
-	if (r != val)
+	if (r != val) {
 		printf("%s: expected value %d (%p), got %d (%p)\n",
-			what, val, val, r, r);
-	if (a != ea)
+		  what, val, val, r, r);
+		Errors++;
+		result = EXIT_FAILURE;
+	}
+	if (a != ea) {
 		printf("%s: expected a=%d (%p), got %d (%p)\n",
-			what, ea, ea, a, a);
-	if ((int) p != ep)
+		  what, ea, ea, a, a);
+		Errors++;
+		result = EXIT_FAILURE;
+	}
+	if ((int) p != ep) {
 		printf("%s: expected p=%d (%p), got %d (%p)\n",
-			what, ep, ep, p, p);
-	if ((int) pp != epp)
+		  what, ep, ep, p, p);
+		Errors++;
+		result = EXIT_FAILURE;
+	}
+	if ((int) pp != epp) {
 		printf("%s: expected pp=%d (%p), got %d (%p)\n",
-			what, epp, epp, pp, pp);
+		  what, epp, epp, pp, pp);
+  	Errors++;
+		result = EXIT_FAILURE;
+	}
 	for (i=-1; i<2; i++) {
-		if (Ea[i+1] != A[i])
+		if (Ea[i+1] != A[i]) {
 			printf("%s: expected A[%d]=%d (%p), got %d (%p)\n",
-				what, i, Ea[i+1], Ea[i+1], A[i], A[i]);
-		if (Ep[i+1] != P[i])
+			  what, i, Ea[i+1], Ea[i+1], A[i], A[i]);
+			Errors++;
+			result = EXIT_FAILURE;
+		}
+		if (Ep[i+1] != P[i]) {
 			printf("%s: expected P[%d]=%d (%p), got %d (%p)\n",
-				what, i, Ep[i+1], Ep[i+1], P[i], P[i]);
+			  what, i, Ep[i+1], Ep[i+1], P[i], P[i]);
+			Errors++;
+			result = EXIT_FAILURE;
+		}
 	}
 }
 
@@ -475,5 +497,8 @@ int main(void) {
   Ep[2] = (void *) ((int) A+N);
   test("++*pp[0]", (int) 3, (int) 1, (int) A, (int) P);
 
-  return EXIT_SUCCESS;
+	if (!Errors)
+    printf("All tests passed.\n");
+
+	return result;
 }

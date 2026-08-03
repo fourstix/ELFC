@@ -1,3 +1,5 @@
+#define _ELFCLIB_
+#include <string.h>
 
 char *strcpy(char *d, const char *s) {
   if (d && s) {

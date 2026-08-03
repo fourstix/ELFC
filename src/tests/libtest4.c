@@ -195,5 +195,7 @@ void test_sprintf(void) {
 int main(int argc, char **argv) {
   test_math();
   test_sprintf();
+	if (!Errors)
+		printf("All tests passed.\n");
   return result;
 }

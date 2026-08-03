@@ -52,3 +52,21 @@ elfc math32test.c
 
 call clean arrtest
 elfc arrtest.c
+
+call clean fptest1
+elfc fptest1.c
+
+call clean fptest2
+elfc fptest2.c
+
+call clean fptest3
+elfc fptest3.c
+
+call clean fptest4
+elfc fptest4.c
+
+call clean fptest5
+elfc fptest5.c
+
+call clean posixtest
+elfc posixtest.c

@@ -118,5 +118,7 @@ void test_chrfn(void) {
 
 int main(int argc, char **argv) {
   test_chrfn();
+	if (!Errors)
+		printf("All tests passed.\n");
   return result;
 }

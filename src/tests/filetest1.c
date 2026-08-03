@@ -4,7 +4,7 @@
  * In the public domain
  *
  * Test the open, close and temp file functions
- * Test 1 of 
+ * Test 1 of
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -37,7 +37,7 @@ void test_file(void) {
 
   pr("remove");
   f = fopen(TSTFILE, "w");
-  if (f == NULL) { 
+  if (f == NULL) {
     fail("fopen-1");
     perror("remove");
   }
@@ -70,7 +70,7 @@ void test_file(void) {
     sprintf(tn1, TMP_FMT, f->tmpid);
     //grw - fclose should delete temp file without error
     if (fclose(f) == -1) fail("tmpfile-4");
-    //grw - verify temp file is gone 
+    //grw - verify temp file is gone
     if (fopen(tn1, "r") != NULL) fail("tmpfile-5");
   }
 
@@ -152,5 +152,9 @@ void test_stdio(void) {
 int main(int argc, char **argv) {
   test_file();
   test_stdio();
+
+	if (!Errors)
+		printf("All tests passed.\n");
+
   return result;
 }

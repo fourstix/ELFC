@@ -124,5 +124,7 @@ void test_str(void) {
 
 int main(int argc, char **argv) {
   test_str();
+	if (!Errors)
+		printf("All tests passed.\n");
   return result;
 }

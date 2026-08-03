@@ -1,3 +1,6 @@
+#define _ELFCLIB_
+#include <string.h>
+
 char *strcat(char *d, const char *a) {
   if (d && a) {
     asm("         gosub s_lget16  ; set the destination pointer");

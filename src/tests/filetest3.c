@@ -4,10 +4,10 @@
  * In the public domain
  *
  * Test the file position functions
- * Test 2 of 
+ * Test 2 of
  */
 #define _STGROM_
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -35,7 +35,7 @@ void test_sio3(void) {
 	static char	buf[256];
 	int	i, j;
 
- 
+
 	if ((f = fopen(TSTFILE, "w+")) == NULL) {
 		fail("fopen-1");
 		return;
@@ -64,17 +64,17 @@ void test_sio3(void) {
 
   pr("fclose");
 	if (fclose(f)) fail("fclose-1");
-  
+
   pr("fopen");
   if ((f = fopen(TSTFILE, "w+")) == NULL) {
 		fail("fopen-2");
 		return;
 	}
-  
+
 	for (i=0; i<256; i++)
 		buf[i] = '5';
-    
-  pr("fwrite");  
+
+  pr("fwrite");
 	for (i=0; i<16; i++) {
 		if (fwrite(buf, 1, 256, f) != 256) {
 			fail("fwrite-2");
@@ -96,25 +96,25 @@ void test_sio3(void) {
 	clearerr(f);
   pr("fclose");
   if (fclose(f)) fail("fclose-2");
-  
+
   pr("fopen");
   if ((f = fopen(TSTFILE, "r")) == NULL) {
 		fail("fopen-3");
 		return;
 	}
-  
+
 	pr("ftell");
   if (ftell(f) != 0) fail("ftell-1");
 
   pr("fseek");
-  if (fseek(f, 0, SEEK_END) != 0) fail("fseek-1");  
+  if (fseek(f, 0, SEEK_END) != 0) fail("fseek-1");
 	if (ftell(f) != 4096) fail("ftell-2");
-  
+
   pr("fseek");
 	if (fseek(f, 2025, SEEK_SET) != 0) fail("fseek-2");
 	if (ftell(f) != 2025) fail("fseek-3");
 
-  pr("fseek");  
+  pr("fseek");
 	if (fseek(f, 475, SEEK_CUR) != 0) fail("fseek-4");
 	if (ftell(f) != 2500) fail("fseek-5");
 
@@ -126,5 +126,9 @@ void test_sio3(void) {
 
 int main(int argc, char **argv) {
   test_sio3();
+
+  if (!Errors)
+    printf("All tests passed.\n");
+
   return result;
 }

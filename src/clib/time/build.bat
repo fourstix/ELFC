@@ -17,10 +17,10 @@
 ..\elfc -L _time_t_to_tm.c
 ..\elfc -L timezone.c
 ..\elfc -L _tm_to_time_t.c
-..\elfc -L _tz_is_dst_active.prg
-..\elfc -L _tz_parse.prg
-..\elfc -L tzset_all.prg
-..\elfc -L tzset_us.prg
+..\elfc -L _tz_is_dst_active.c
+..\elfc -L _tz_parse.c
+..\elfc -L tzset_all.c
+..\elfc -L tzset_us.c
 ..\elfc -L utctime.c
 
 type _asctime2.prg _asctime.prg _cstime2.prg _cstime.prg > time.lib

@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r372.zip into the desired directory
+* Unzip the file elfc_r373.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -341,6 +341,8 @@ Issues Fixed
 * Fixed small issues with some string library functions not including proper header files.
 * Fixed a bug where the incorrect size was used for a local array initialized by a string.
 * The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
+* Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
+* Added _All Tests Passed_ message all to functional tests.
 
 Compiler Option Changes
 -----------------------
@@ -918,10 +920,11 @@ Repository Contents
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
+  * posixtest.c -- Functional tests for POSIX string functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r372.zip** -- A zip file with the Windows version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r372.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r372.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r373.zip** -- A zip file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r373.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r373.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
