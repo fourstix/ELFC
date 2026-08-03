@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 CC = elfc
 CFLAGS = -L
 

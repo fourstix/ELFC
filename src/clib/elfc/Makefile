@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 ASM = asm02
 ASMFLAGS = -q -r -L
 

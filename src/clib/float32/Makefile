@@ -1,5 +1,6 @@
+SHELL := /bin/bash
 ASM = asm02
-ASMFLAGS = -q -r -L
+ASMFLAGS = -q -r -L -I ..
 CC = elfc
 CFLAGS = -L
 
