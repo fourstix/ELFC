@@ -4,8 +4,10 @@
 #pragma           extrn Cstrcspn
 
 char *strsep(char **str, const char *sep) {
-  char *s = *str, *end;
+  char *s, *end;
 
+  if (!str) return NULL;
+  s = *str;
   if (!s) return NULL;
 
 	end = s + strcspn(s, sep);
