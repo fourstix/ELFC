@@ -316,7 +316,7 @@ Compiler Option Changes
 
 Release 3.7
 -----------
-Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.  Release 3.7 upgrades Asm/02 and Link/02 to their latest version and adds support for Link/02 branch optimization.
+Release 3.7 adds a 32-bit single precision floating point math library named Float32.  This Library provides support for floating point arithmetic and all the standard functions in the C math library using the IEEE 754-1985 standard.  This release also includes new features added by Tony Hefner, such as support for the C `getenv` and `setenv` functions and several new functions in Time library to support timezones and additional time functions.  Release 3.7 upgrades Asm/02 and Link/02 to their latest versions and adds support for Link/02 branch optimization.
 
 New features
 ------------
@@ -916,7 +916,7 @@ Repository Contents
   * ptest1.c to ptest5.c  -- Functional tests for pointer and array arithmetic
   * libtest1.c to libtest5.c  -- Functional tests for various library functions
   * filetest1.c to filetest5.c  -- Functional tests for buffered file functions
-  * fpest1.c to fptest5.c  -- Functional tests for float32 library functions
+  * fptest1.c to fptest5.c  -- Functional tests for float32 library functions
   * math32test.c -- Functional tests for the math32 library functions
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
