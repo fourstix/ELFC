@@ -111,7 +111,16 @@ extern FILE *stdin, *stdout, *stderr;
 #define SEEK_END 2
 #endif
 
-typedef struct int32 pos_t;
+/* define 32-bit double word */
+#ifndef _DWORD_
+#define _DWORD_
+struct _dword {
+    unsigned int low;   /* Lower 16 bits */
+    unsigned int high;  /* Upper 16 bits */
+};
+#endif
+
+typedef struct _dword pos_t;
 
 /* unbuffered system IO functions */
 char *gets(char *buf);

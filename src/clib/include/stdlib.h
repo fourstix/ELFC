@@ -17,9 +17,10 @@
 #define BRKPT
 #endif
 
-
-#ifndef int32
-struct int32 {
+/* define 32-bit double word */
+#ifndef _DWORD_
+#define _DWORD_
+struct _dword {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
 };
@@ -180,7 +181,7 @@ int setenv(const char *name, const char *value, int overwrite);
 char *getenv(const char *name);
 int unsetenv(const char *name);
 
-typedef struct int32 off_t;
+typedef struct _dword off_t;
 
 /* unistd file functions */
 int creat(char *path, int mode);
