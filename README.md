@@ -330,11 +330,13 @@ New features
 * Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
 * Added `moonphase` example program.
 * Updated logic to support `const` and `volatile` keywords on struct/union
-* Removed lazy initialization logic, now that initializations are supported.
+* Removed lazy initialization logic, now that all variable initializations are supported.
 * Added warning for non-initialized `const` variables.
 * Upgraded Asm/02 and Link/02 to the latest versions.
 * Added support for Link/02 branch optimization with the `-O` option.
-
+* Implemented a common 32-bit structure `_dword` for the double word data type in stdlib.
+* Updated 32-bit types to be typedefs of the common double word data type `_dword`.
+* Moved OS-dependent functions out of stdio and time libraries and into stdlib.
 
 Issues Fixed
 ------------
@@ -343,9 +345,7 @@ Issues Fixed
 * The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
 * Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
 * Added an _All Tests Passed_ message to all functional tests.
-* Implemented a common structure type for the double word data type `_dword` in stdlib.
-* Updated 32-bit types to be typedefs of a common double word structure type.
-* All OS-dependent functions were moved into stdlib.
+* Added check for invalid arguments to `fwrite` and `fread`.
 
 Compiler Option Changes
 -----------------------
