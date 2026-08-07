@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r373.zip into the desired directory
+* Unzip the file elfc_r374.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -935,9 +935,9 @@ Repository Contents
   * arrtest.c -- Functional tests for multi-dimensional arrays
   * posixtest.c -- Functional tests for POSIX string functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r373.zip** -- A zip file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r373.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r373.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r374.zip** -- A zip file with the Windows version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r374.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r374.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
