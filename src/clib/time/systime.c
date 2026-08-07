@@ -4,6 +4,7 @@
 #include <time.h>
 
 /* define only extern procedures required */
+#pragma        extrn C_systime
 #pragma        extrn C_dow
 #pragma        extrn C_doy
 #pragma        extrn C_tz_dst
@@ -17,37 +18,8 @@ static   char _ts[8];
 int systime(struct tm *tp) {
   int  rtc;
 
-  asm("clkrtc:     call  O_GETDEV              ; read rtc if one is present\n");
-  asm("            glo   rf                    ; test if rtc is present\n");
-  asm("            ani   10h\n");
-  asm("            lbz   nortc\n\n");
-  asm("            ldi   low C_ts              ; pointer to date buffer\n");
-  asm("            plo   rf\n");
-  asm("            ldi   high C_ts\n");
-  asm("            phi   rf\n\n");
-  asm("            call  O_GETTOD              ; read the RTC\n");
-  asm("            load  ra, $0001             ; set RA to true\n");
-  asm("            lbnf  clkdone               ; if successful we're done\n\n");
-
-  asm("nortc:      ldi   low C_ts              ; pointer to date buffer\n");
-  asm("            plo   rd\n");
-  asm("            ldi   high C_ts\n");
-  asm("            phi   rd\n\n");
-  asm("            ldi   low K_MONTH           ; date variable but start from end\n");
-  asm("            plo   rf\n");
-  asm("            ldi   high K_MONTH\n");
-  asm("            phi   rf\n\n");
-
-  asm("            ldi   6			               ; 6 bytes to copy\n");
-  asm("            plo   rc\n");
-  asm("cpylp:      lda   rf\n");
-  asm("            str   rd\n");
-  asm("            inc   rd\n");
-  asm("            dec   rc\n");
-  asm("            lbnz  cpylp\n");
-  asm("            load  ra, $0000             ; set RA to false\n");
-  asm("clkdone:    gosub s_lset16              ; store RA in rtc flag\n");
-  asm("              dw   -2\n");
+  /* get the time from the system OS */
+  rtc = _systime(_ts);
 
   /* Set tm fields from buffer */
   tp->tm_mon   = _ts[0] - 1;   /* C month offset is from 0 to 11, RTC is 1 to 12 */

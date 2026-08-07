@@ -29,12 +29,19 @@
 ..\elfc -L getenv.c
 ..\elfc -L setenv.c
 ..\elfc -L unsetenv.c
+..\elfc -L _getstr.c
+..\elfc -L _putstr.c
+..\elfc -L _getch.c
+..\elfc -L _putch.c
+..\elfc -L _rename.c
+..\elfc -L _systime.c
 
 type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > stdlib.lib
 type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> stdlib.lib
-type exit.prg _fdinit.prg _fildes.prg free.prg getenv.prg _init.prg >> stdlib.lib
-type itoa.prg itou.prg itox.prg lseek32.prg lseek.prg malloc.prg >> stdlib.lib
-type open.prg qsort.prg rand.prg read.prg realloc.prg setenv.prg >> stdlib.lib
-type unlink.prg unsetenv.prg write.prg >> stdlib.lib
+type exit.prg _fdinit.prg _fildes.prg free.prg _getch.prg >> stdlib.lib
+type getenv.prg _getstr.prg _putch.prg _putstr.prg _init.prg >> stdlib.lib
+type open.prg itoa.prg itou.prg itox.prg lseek32.prg lseek.prg >> stdlib.lib
+type malloc.prg qsort.prg rand.prg read.prg realloc.prg _rename.prg >> stdlib.lib
+type setenv.prg _systime.prg unlink.prg unsetenv.prg write.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib

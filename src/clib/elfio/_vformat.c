@@ -16,7 +16,7 @@
 #pragma             extrn Citox
 #pragma             extrn C_fwrite
 #pragma             extrn Cwrite
-#pragma             extrn Cputstr
+#pragma             extrn C_putstr
 #pragma             extrn Cstrlen
 #pragma             extrn Cerrno
 #pragma .link .requires Cfwrite
@@ -150,8 +150,8 @@ int _vformat(int mode, void *dest, char *fmt, void **varg) {
 		    outf->last = _FWRITE;
 			  /* short-circuit to speed up printf output */
 			  if (_IOSYS == outf->mode) {
-				/* print direct to stdout */
-				putstr(p);
+					/* print direct to stdout */
+				  _putstr(p);
 		  	} else if (_fwrite(p, olen, outf) != olen) {
 					errno = EIO;
 					outf->iom |= _FERROR;

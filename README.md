@@ -407,8 +407,19 @@ Stdlib Library
 * off_t lseek32(int fd, off_t *offset, int whence);
 
 *Notes:*
-* The header file <unistd.h> is empty except for `#include <stdlib.h>` *
-* The type `off_t` is an int32 structure used by the Math32 library *
+* _The header file <unistd.h> is empty except for `#include <stdlib.h>`_
+* _The type `off_t` is an int32 structure used by the Math32 library_
+
+**OS-Dependent Functions**
+
+* char \*_getstr(char \*buf);
+* int	 _putstr(const char \*s);
+* int _getch(void);
+* int	_putch(int ch);
+* int _rename(const char \*old, const char \*new);
+* int  _systime(char \*ts);
+
+*Note: `_putstr` is similar to `puts`, but it does not add a newline after the string.*
 
 Stdio Library
 -------------
@@ -418,11 +429,10 @@ Stdio Library
 
 * char \*gets(char \*buf);
 * int	 puts(const char \*s);
-* int	 putstr(const char \*s);
 * int getch(void);
 * int	putch(int ch);
 
-*Note: putstr is similar to puts(), but it does not add a newline after the string.*
+*Note: `gets`, `getch` and `putch` are implemented as macros for the OS-Dependent stdlib functions `_getstr`, `_getch` and `_putch`.*
 
 **Buffered Character I/O**
 

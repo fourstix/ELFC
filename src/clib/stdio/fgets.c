@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#pragma             extrn Cgetch
+#pragma             extrn C_getch
 #pragma             extrn Cread
 #pragma             extrn Cerrno
 
@@ -33,14 +33,14 @@ char *fgets(char *s, int len, FILE *f) {
 				s = NULL;
 				break;
 			}
-			if ('\n' == *p++) 
+			if ('\n' == *p++)
 			  break;
 		}
 		*p = 0;
 	} else if (f->mode == _IOSYS) {
 		while (len-- > 1) {
 			//grw - get raw input character
-			cn = getch();
+			cn = _getch();
 			//grw - Elf/OS can terminate input with newline or carriage return
 			if ('\n' == cn || '\r' == cn) {
 				//grw - C always uses newline
@@ -51,7 +51,7 @@ char *fgets(char *s, int len, FILE *f) {
 				break;
 			} else {
 				*p++ = cn;
-			} 		
+			}
 		}
 		*p = 0;
 	} else {

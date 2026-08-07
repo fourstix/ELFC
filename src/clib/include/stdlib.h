@@ -192,4 +192,13 @@ int write(int fd, void *buf, size_t len);
 int unlink(char *path);
 int lseek(int fd, int offset, int whence);
 off_t lseek32(int fd, off_t offset, int whence);
+
+/* OS-dependent functions */
+char *_getstr(char *buf);
+int _putstr(const char *s);
+int _getch(void);
+int _putch(int ch);
+int _rename(const char *old, const char *new);
+int _systime(char *ts);
+
 #endif

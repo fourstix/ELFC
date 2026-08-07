@@ -99,6 +99,18 @@ extern FILE *stdin, *stdout, *stderr;
 #define putchar(x) fputc(x, stdout)
 #endif
 
+#ifndef gets
+#define gets(x) _getstr(x)
+#endif
+
+#ifndef getch
+#define getch _getch
+#endif
+
+#ifndef putch
+#define putch _putch
+#endif
+
 #ifndef SEEK_SET
 #define SEEK_SET 0
 #endif
@@ -122,12 +134,9 @@ struct _dword {
 
 typedef struct _dword pos_t;
 
-/* unbuffered system IO functions */
-char *gets(char *buf);
+/* unbuffered system IO function */
 int puts(const char *s);
-int putstr(const char *s);
-int getch(void);
-int putch(int ch);
+
 
 /* buffered IO functions */
 int fgetc(FILE *f);
@@ -160,7 +169,6 @@ int sscanf(char *src, const char *fmt, ...);
 
 /* file functions */
 int remove(const char *path);
-int _rename(const char *old, const char *new);
 int rename(const char *old, const char *new);
 int fileno(FILE *f);
 char* tmpnam(char *buf);
