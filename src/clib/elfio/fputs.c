@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-#pragma             extrn Cputs
+#pragma             extrn C_putstr
 #pragma             extrn C_fwrite
 #pragma             extrn Cstrlen
 #pragma .link .requires Cfwrite
