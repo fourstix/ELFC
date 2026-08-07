@@ -413,11 +413,11 @@ Stdlib Library
 **OS-Dependent Functions**
 
 * char \*_getstr(char \*buf);
-* int	 _putstr(const char \*s);
+* int	_putstr(const char \*s);
 * int _getch(void);
 * int	_putch(int ch);
 * int _rename(const char \*old, const char \*new);
-* int  _systime(char \*ts);
+* int _systime(char \*ts);
 
 *Note: `_putstr` is similar to `puts`, but it does not add a newline after the string.*
 
