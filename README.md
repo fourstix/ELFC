@@ -343,6 +343,9 @@ Issues Fixed
 * The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
 * Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
 * Added an _All Tests Passed_ message to all functional tests.
+* Implemented a common structure type for the double word data type `_dword` in stdlib.
+* Updated 32-bit types to be typedefs of a common double word structure type.
+* All OS-dependent functions were moved into stdlib.
 
 Compiler Option Changes
 -----------------------
@@ -796,7 +799,7 @@ More information about these library functions, floating point values, header fi
 
 Next Release
 -------------
-* Initialization for structure objects
+* Nested initialization lists for multi-dimensional arrays
 * Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
