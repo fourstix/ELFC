@@ -6,7 +6,7 @@ int result = EXIT_SUCCESS;
 
 int a1[2][3] = {1, 2, 3, 4, 5, 6};
 char c1[6] = {'a','b', 'c', 'd', 'e', 'f'};
-char c2[3][2] = {'g', 'h','i','j','k', 'l'};
+char c2[3][2] = {{'g','h','i'}, {'j','k','l'}};
 int  a3[4][2][3];
 
 

@@ -108,6 +108,9 @@ static int initlist(char *name, int prim, int *pinit) {
   int  n = 0;
   int v = 0;
   char  buf[30];
+  //grw - added support for nested braces
+  int nested = 0;
+
 
   if (NULL != name) {
     genname(name);
@@ -132,9 +135,15 @@ static int initlist(char *name, int prim, int *pinit) {
     return v-1;
   }
   lbrace();
-  while (Token != RBRACE) {
+  /* ignore nested braces in list */
+  while (Token != RBRACE || nested) {
     if (prim & STCMASK) {
       initstruct(NULL, prim, &v);
+    } else if (LBRACE == Token) {
+      /* if not structure, then open brace is nested */
+      nested++;
+      Token = scan();
+      continue;
     } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
@@ -166,10 +175,18 @@ static int initlist(char *name, int prim, int *pinit) {
       gendefw(v);
     }
     n++;
-    if (COMMA == Token)
+
+    /* consume any closing braces at end */
+    while (nested && RBRACE == Token) {
+      nested--;
       Token = scan();
-    else
+    }
+
+    if (COMMA == Token) {
+      Token = scan();
+    } else {
       break;
+    }
     if (eofcheck()) return 0;
   }
   Token = scan();
@@ -199,6 +216,8 @@ static int sinitlist(int size, int prim, int *pinit) {
   char *sbuf;
   void *buf;
   char *str_err = "Local static string initializer is too long";
+  //grw - added support for nested braces
+  int nested = 0;
 
   /* allocate buffer for initialization values */
   buf = malloc(MAXLOCSTR);
@@ -257,7 +276,7 @@ static int sinitlist(int size, int prim, int *pinit) {
   lbrace();
   /* mark init to be assigned */
   *pinit = 0;
-  while (Token != RBRACE) {
+  while (Token != RBRACE || nested) {
     if (prim & STCMASK) {
       sinitstruct(prim, &v, &i);
       /* count structures since loop count is number of braces */
@@ -266,6 +285,11 @@ static int sinitlist(int size, int prim, int *pinit) {
       if (1 == len) {
         *pinit = i;
       }
+    } else if (LBRACE == Token) {
+      /* if not structure, then open brace is nested */
+      nested++;
+      Token = scan();
+      continue;
     } else if (CHARPTR == (prim & ~TQMASK)) {
       v = strexpr();
     } else {
@@ -301,10 +325,19 @@ static int sinitlist(int size, int prim, int *pinit) {
       ibuf[n] = v;
     }
     n++;
-    if (COMMA == Token)
+
+    /* consume any closing braces at end */
+    while (nested && RBRACE == Token) {
+      nested--;
       Token = scan();
-    else
+    }
+
+    if (COMMA == Token) {
+      Token = scan();
+    } else {
       break;
+    }
+
     if (eofcheck()) return 0;
   }
   Token = scan();
@@ -1994,6 +2027,9 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
   int  rsize;
   int  k = 0;
   int  bprim;
+  //grw - added support for nested braces
+  int nested = 0;
+
 
   //grw - need to stack align character arrays
   if(chartype(mprim)) {
@@ -2069,9 +2105,14 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
   lbrace();
   //grw - use k as counter
   k = 0;
-  while (Token != RBRACE) {
+  while (Token != RBRACE || nested) {
     if (mprim & STCMASK) {
       n = linitstruct(mprim, &v, n, 0);
+    } else if (LBRACE == Token) {
+      /* if not structure, then open brace is nested */
+      nested++;
+      Token = scan();
+      continue;
     } else if (CHARPTR == bprim) {
       v = strexpr();
     } else {
@@ -2102,10 +2143,19 @@ static int linitlist(int size, int mprim, int *pinit, int nstart, int outer) {
       vbuf[n++] = v;
     }
     k++;
-    if (COMMA == Token)
+
+    /* consume any closing braces at end */
+    while (nested && RBRACE == Token) {
+      nested--;
       Token = scan();
-    else
+    }
+
+    if (COMMA == Token) {
+      Token = scan();
+    } else {
       break;
+    }
+
     if (eofcheck()) return 0;
   }
   /* mark init to not move stack */

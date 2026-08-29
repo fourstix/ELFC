@@ -346,6 +346,7 @@ Issues Fixed
 * Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
 * Added an _All Tests Passed_ message to all functional tests.
 * Added check for invalid arguments to `fwrite` and `fread`.
+* ElfC now allows nested braces in array initializations.
 
 Compiler Option Changes
 -----------------------
@@ -849,6 +850,8 @@ Differences Between ElfC and Full C89
 *  Character arrays must be large enough to accept the entire initialization string plus
    its terminating NULL. ElfC will not silently remove the NULL at the end of an
    initialization string, when the string is one character too long for an array.
+
+*  Nested braces in array initializations are simply ignored. ElfC does not recursively initialize and pad inner arrays. I.E. `int a[2][3] = {{1,2}, {3,4}}` is equivalent to `{1,2,3,4, 0,0}` and _not_ `{1,2,0,3,4,0}`.
 
 *  There is no support for bit fields.
 
