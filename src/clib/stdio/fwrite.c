@@ -3,13 +3,18 @@
 #include <stdio.h>
 #include <errno.h>
 
-#pragma             extrn Cputch
+#pragma             extrn C_putch
 #pragma             extrn Cwrite
 #pragma             extrn Cerrno
 
 int _fwrite(void *p, size_t size, FILE *f) {
 	int  k, total;
 	char *s;
+
+	if (NULL == p || size <= 0 || NULL == f) {
+		errno = EINVAL;
+		return -1;
+	}
 
 	if ((f->iom & _FWRITE) == 0) return 0;
 	if (f->iom & _FERROR) return 0;
@@ -26,7 +31,7 @@ int _fwrite(void *p, size_t size, FILE *f) {
 		s = p;
 		/* output up to size characters from string */
 		while(*s && (total < size)) {
-			putch(*s);
+			_putch(*s);
 			s++;
 			total++;
 		}//while

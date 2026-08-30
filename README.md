@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r373.zip into the desired directory
+* Unzip the file elfc_r374.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -330,11 +330,13 @@ New features
 * Added support for `tzset`, `tz_offset`, `ctime`, `time`, `timegm`, `mktime`, `gmtime`  functions to Time library. (Again, many thanks to Tony Hefner for this contribution)
 * Added `moonphase` example program.
 * Updated logic to support `const` and `volatile` keywords on struct/union
-* Removed lazy initialization logic, now that initializations are supported.
+* Removed lazy initialization logic, now that all variable initializations are supported.
 * Added warning for non-initialized `const` variables.
 * Upgraded Asm/02 and Link/02 to the latest versions.
 * Added support for Link/02 branch optimization with the `-O` option.
-
+* Implemented a common 32-bit structure `_dword` for the double word data type in stdlib.
+* Updated 32-bit types to be typedefs of the common double word data type `_dword`.
+* Moved OS-dependent functions out of stdio and time libraries and into stdlib.
 
 Issues Fixed
 ------------
@@ -343,6 +345,8 @@ Issues Fixed
 * The `-M` option now links the runtime module `elfrt0.prg` with a small system stack and a smaller expression stack.
 * Fixed a bug in the `strsep` function. (Thanks to Tony Hefner)
 * Added an _All Tests Passed_ message to all functional tests.
+* Added check for invalid arguments to `fwrite` and `fread`.
+* ElfC now allows nested braces in array initializations.
 
 Compiler Option Changes
 -----------------------
@@ -407,8 +411,19 @@ Stdlib Library
 * off_t lseek32(int fd, off_t *offset, int whence);
 
 *Notes:*
-* The header file <unistd.h> is empty except for `#include <stdlib.h>` *
-* The type `off_t` is an int32 structure used by the Math32 library *
+* _The header file <unistd.h> is empty except for `#include <stdlib.h>`_
+* _The type `off_t` is an int32 structure used by the Math32 library_
+
+**OS-Dependent Functions**
+
+* char \*_getstr(char \*buf);
+* int	_putstr(const char \*s);
+* int _getch(void);
+* int	_putch(int ch);
+* int _rename(const char \*old, const char \*new);
+* int _systime(char \*ts);
+
+*Note: `_putstr` is similar to `puts`, but it does not add a newline after the string.*
 
 Stdio Library
 -------------
@@ -418,11 +433,10 @@ Stdio Library
 
 * char \*gets(char \*buf);
 * int	 puts(const char \*s);
-* int	 putstr(const char \*s);
 * int getch(void);
 * int	putch(int ch);
 
-*Note: putstr is similar to puts(), but it does not add a newline after the string.*
+*Note: `gets`, `getch` and `putch` are implemented as macros for the OS-Dependent stdlib functions `_getstr`, `_getch` and `_putch`.*
 
 **Buffered Character I/O**
 
@@ -786,7 +800,7 @@ More information about these library functions, floating point values, header fi
 
 Next Release
 -------------
-* Initialization for structure objects
+* Nested initialization lists for multi-dimensional arrays
 * Convert the rand function in stdlib to use inline assembly code.
 
 Future Goals
@@ -836,6 +850,8 @@ Differences Between ElfC and Full C89
 *  Character arrays must be large enough to accept the entire initialization string plus
    its terminating NULL. ElfC will not silently remove the NULL at the end of an
    initialization string, when the string is one character too long for an array.
+
+*  ElfC does not recursively initialize and pad inner arrays based on nested braces, i.e. `int a[2][3] = {{1,2}, {3,4}}` is initialized as `{1,2,3,4,0,0}` and _not_ `{1,2,0,3,4,0}`.
 
 *  There is no support for bit fields.
 
@@ -922,9 +938,9 @@ Repository Contents
   * arrtest.c -- Functional tests for multi-dimensional arrays
   * posixtest.c -- Functional tests for POSIX string functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r373.zip** -- A zip file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r373.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r373.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r374.zip** -- A zip file with the Windows version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r374.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r374.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.7.4 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------

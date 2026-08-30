@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#pragma             extrn Cputch
+#pragma             extrn C_putch
 #pragma             extrn Cwrite
 #pragma             extrn Cerrno
 
@@ -33,14 +33,7 @@ int fputc(int c, FILE *f) {
       return EOF;
     }
   } else if (f->mode == _IOSYS) {
-    /* elfos system io */
-		asm("         gosub s_lget16    ; get character to send");
-		asm("           dw  0           ; from first arg ");
-		asm("         glo  ra           ; ra holds character to send");
-		asm("         call  O_TYPE      ; send character to the terminal");
-		return c;
-		/* inline putch code */
-    /* return putch(c); */
+    return _putch(c);
   } else {
     /* set error for Unknown io type*/
     f->iom |= _FERROR;

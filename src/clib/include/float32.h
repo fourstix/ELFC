@@ -103,13 +103,18 @@
 #define FP_RND45_HI   0x3851
 #define FP_RND45_LO   0xb717
 
-/* 32-bit signed number represented as two 16-bit values */
-struct float32 {
+
+/* define 32-bit double word */
+#ifndef _DWORD_
+#define _DWORD_
+struct _dword {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
 };
+#endif
 
-typedef struct float32 float32_t;
+/* 32-bit signed number represented as two 16-bit values */
+typedef struct _dword float32_t;
 
 /* arthimetic functions */
 float32_t absf(float32_t a);

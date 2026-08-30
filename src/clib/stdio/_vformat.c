@@ -12,7 +12,6 @@
 
 #pragma             extrn C_lbuf
 #pragma             extrn Cputs
-#pragma             extrn Cputch
 #pragma             extrn Citoa
 #pragma             extrn Citou
 #pragma             extrn Cabs
@@ -20,7 +19,7 @@
 #pragma             extrn Citox
 #pragma             extrn C_fwrite
 #pragma             extrn Cwrite
-#pragma             extrn Cputstr
+#pragma             extrn C_putstr
 #pragma             extrn Cstrchr
 #pragma             extrn Cstrlen
 #pragma             extrn Cmalloc
@@ -333,7 +332,7 @@ int _vformat(int mode, int maxc, void *dest, char *fmt, void **varg) {
 			/* short-circuit to speed up printf output */
 			if (_IOSYS == outf->mode) {
 				/* print direct to stdout */
-				putstr(vbuf);
+				_putstr(vbuf);
 			} else if (_fwrite(vbuf, olen, outf) != olen) {
 					errno = EIO;
 					outf->iom |= _FERROR;

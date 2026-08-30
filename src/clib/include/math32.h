@@ -12,21 +12,20 @@
 #pragma .link .library math32.lib
 #endif
 
-/* 32-bit signed number represented as two 16-bit values */
-struct int32 {
+/* define 32-bit double word */
+#ifndef _DWORD_
+#define _DWORD_
+struct _dword {
     unsigned int low;   /* Lower 16 bits */
     unsigned int high;  /* Upper 16 bits */
 };
+#endif
 
-typedef struct int32 int32_t;
+/* 32-bit signed number represented as two 16-bit values */
+typedef struct _dword int32_t;
 
 /* 32-bit unsigned number represented as two 16-bit values */
-struct uint32 {
-    unsigned int low;   /* Lower 16 bits */
-    unsigned int high;  /* Upper 16 bits */
-};
-
-typedef struct uint32 uint32_t;
+typedef struct _dword uint32_t;
 
 /* Cast int to 32-bit number */
 int32_t i32_from_int(int v);

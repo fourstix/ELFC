@@ -1,7 +1,7 @@
 #define _ELFCLIB_
-#include <stdio.h>
+#include <stdlib.h>
 
-char* gets(char *s) {
+char* _getstr(char *s) {
   char* p;
   p = s;
   if (p != NULL) {

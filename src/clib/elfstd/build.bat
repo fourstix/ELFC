@@ -29,12 +29,18 @@
 ..\elfc -L getenv.c
 ..\elfc -L setenv.c
 ..\elfc -L unsetenv.c
+..\elfc -L _getstr.c
+..\elfc -L _putstr.c
+..\elfc -L _getch.c
+..\elfc -L _putch.c
+..\elfc -L _rename.c
+..\elfc -L _systime.c
 
 type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > elfstd.lib
-type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> elfstd.lib
-type exit.prg _fdinit.prg _fildes.prg free.prg getenv.prg _init.prg >> elfstd.lib
-type itoa.prg itou.prg itox.prg lseek32.prg lseek.prg malloc.prg >> elfstd.lib
-type open.prg qsort.prg rand.prg read.prg realloc.prg setenv.prg >> elfstd.lib
-type unlink.prg unsetenv.prg write.prg >> elfstd.lib
+type creat.prg div.prg _env_read_line.prg _env_split_line.prg exit.prg >> elfstd.lib
+type _fdinit.prg _fildes.prg free.prg _getch.prg getenv.prg _getstr.prg >> elfstd.lib
+type _init.prg itoa.prg itou.prg itox.prg lseek32.prg lseek.prg malloc.prg >> elfstd.lib
+type open.prg _putch.prg _putstr.prg qsort.prg rand.prg read.prg realloc.prg >> elfstd.lib
+type _rename.prg setenv.prg _systime.prg unlink.prg unsetenv.prg write.prg >> elfstd.lib
 
 copy elfstd.lib ..\lib\elfstd.lib

@@ -1,7 +1,7 @@
 #define _ELFCLIB_
-#include <stdio.h>
+#include <stdlib.h>
 
-int putstr(const char* s) {
+int _putstr(const char* s) {
   if (s == NULL) return EOF;
 
   asm("         gosub s_lget16    ; put buffer pointer variable");

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#pragma             extrn Cgetch
+#pragma             extrn C_getch
 #pragma             extrn Cread
 #pragma             extrn Cerrno
 
@@ -11,6 +11,11 @@ int _fread(void *p, size_t size, FILE *f) {
 	int	total;
 	int nc;
 	char ch;
+
+	if (NULL == p || size <= 0 || NULL == f) {
+		errno = EINVAL;
+		return -1;
+	}
 
 	if ((f->iom & _FREAD) == 0) return 0;
 	if (f->iom & _FERROR) return 0;
@@ -22,7 +27,7 @@ int _fread(void *p, size_t size, FILE *f) {
 		size--;
 	}
 	f->last = _FREAD;
-	
+
 	if (f->mode == _IONBF || f->mode == _IOTMP) {
 		if ((total = read(f->fd, p, size)) != size) {
 			f->iom |= _FEOF;
@@ -32,12 +37,12 @@ int _fread(void *p, size_t size, FILE *f) {
   } else if (f->mode == _IOSYS) {
 		//grw - ANSI spec says to read from stdin repeatedly, until size characters
 		//grw - are read into the buffer. This will block IO in Elf/OS, until
-		//grw - enough characters are entered.  
+		//grw - enough characters are entered.
 		for(total = 0; total < size; total++) {
-			ch = getch();
+			ch = _getch();
 			/* check for Ctrl-C (aka ETX  or break) */
 			if (ch == '\003') break;
-			
+
 			*(char *)p++ = ch;
 		}//for
 		return total;
@@ -47,7 +52,7 @@ int _fread(void *p, size_t size, FILE *f) {
 		errno = EINVAL;
 		return -1;
 	}
-}	
+}
 
 size_t fread(void *p, size_t size, size_t count, FILE *f) {
 	int	k;

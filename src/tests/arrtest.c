@@ -4,9 +4,9 @@ int  Errors = 0;
 int result = EXIT_SUCCESS;
 
 
-int a1[2][3] = {1, 2, 3, 4, 5, 6};
+int a1[2][3] = {{1, 2, 3}, {4, 5, 6}};
 char c1[6] = {'a','b', 'c', 'd', 'e', 'f'};
-char c2[3][2] = {'g', 'h','i','j','k', 'l'};
+char c2[3][2] = {{'g','h'}, {'i','j'}, {'k','l'}};
 int  a3[4][2][3];
 
 
@@ -85,7 +85,7 @@ int main() {
   //grw - change element in array
   c1[4] = 'x';
 
-  for (i = 0; i < 2; i++) {
+  for (i = 0; i < 6; i++) {
     printf("testing c1[%d] = \'%c\'\n", i, c1[i]);
     if (i == 4) {
       /* verified element was changed */

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#pragma             extrn Cgetch
+#pragma             extrn C_getch
 #pragma             extrn Cread
 #pragma             extrn Cerrno
 
@@ -41,15 +41,8 @@ int fgetc(FILE *f) {
 			return EOF;
 		}
   } else if (f->mode == _IOSYS) {
-			/* inline getch() code */
-			/* return getch(); */
-			asm("         call  O_READKEY     ; read a character from input");
-			asm("         plo ra              ; save in return register");
-			asm("         ldi 0               ; pad register with zero");
-			asm("         phi ra              ");
-			asm("         gosub s_lset16      ; set the local variable");
-			asm("           dw -2             ; with the return value");
-			return c;
+		  /* elfos system io */
+			return _getch();
   } else {
     /* set error for unknown io type*/
     f->iom |= _FERROR;
