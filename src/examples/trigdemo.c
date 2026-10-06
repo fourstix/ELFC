@@ -1,4 +1,3 @@
-#define _STGROM_
 #include <stdio.h>
 #include <float32.h>
 

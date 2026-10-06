@@ -1,11 +1,11 @@
 @echo off
-rem Build all of the test programs, like the Makefile does.
+rem Build all of the example programs, like the Makefile does.
 rem The options can be given in any order:
-rem   regress                 build for Elf/OS
-rem   regress elfdos          build for ELF-DOS
-rem   regress stgrom          the BRKPT macro breaks into the STG ROM
-rem   regress maxmon          the BRKPT macro breaks into the MAXMON ROM
-rem   regress elfdos maxmon   build for ELF-DOS with MAXMON breakpoints
+rem   build                 build for Elf/OS
+rem   build elfdos          build for ELF-DOS
+rem   build stgrom          the BRKPT macro breaks into the STG ROM
+rem   build maxmon          the BRKPT macro breaks into the MAXMON ROM
+rem   build elfdos maxmon   build for ELF-DOS with MAXMON breakpoints
 rem Without stgrom or maxmon the BRKPT macro does nothing.
 setlocal
 set TARGET=
@@ -21,6 +21,6 @@ if defined BAD (
 for %%f in (*.c) do (
   echo Building: %%f
   call clean %%~nf
-  elfc -O %TARGET% %BRKPT% %%f
+  elfc %TARGET% %BRKPT% %%f
 )
 endlocal

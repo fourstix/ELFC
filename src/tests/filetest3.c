@@ -6,7 +6,6 @@
  * Test the file position functions
  * Test 2 of
  */
-#define _STGROM_
 
 #include <stdlib.h>
 #include <stdio.h>
