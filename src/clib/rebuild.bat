@@ -25,6 +25,9 @@ call build
 cd ..\elfstd
 call clean
 call build
+cd ..\edosstd
+call clean
+call build
 cd ..\elfio
 call clean
 call build

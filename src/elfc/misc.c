@@ -47,6 +47,10 @@ void init(void) {
 	if (O_elflibs)
 	  addglob("__ELFIO__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 
+	//edos - add flag for an ELF-DOS program (-E option)
+	if (O_edos)
+	  addglob("__ELFDOS__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+
 	//grw - add predefined macros for line number and file name
 	addglob("__LINE__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	addglob("__FILE__", 0, TMACRO, 0, 0, 0, globname(""), 0);

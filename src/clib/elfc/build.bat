@@ -93,3 +93,12 @@ type vdec16.prg vdec8.prg vinc16.prg vinc8.prg vpdec16.prg vpinc16.prg >> elfc.l
 type vpop16.prg vpush16.prg vpush8.prg vstor16.prg vstor8.prg xor16.prg >> elfc.lib
 
 copy elfc.lib ..\lib\elfc.lib
+
+rem the same routines built for ELF-DOS, see RSUB in ..\include\ops_c.inc
+if not exist edos mkdir edos
+copy *.asm edos
+cd edos
+for %%f in (*.asm) do ..\..\asm02 -r -L -D _EDOS_ -I .. %%f
+copy /b *.prg edosc.lib
+copy edosc.lib ..\..\lib\edosc.lib
+cd ..
