@@ -21,7 +21,11 @@ void cgprelude()	{
 	genraw("; SubC Copyright 2012-2025 by Nils Holm\n");
 	genraw("; -------------------------------------------------------------------\n");
 	genraw("#include include/ops_c.inc\n");
-	genraw("#include include/os_api.inc\n");
+	//edos - an ELF-DOS program calls the ELF-DOS kernel instead
+	if (O_edos)
+		genraw("#include include/kernel_api.inc\n");
+	else
+		genraw("#include include/os_api.inc\n");
 	genraw("#include include/elfc.inc\n\n");
 	sgen("           %s %s", "proc", pname);
   if (O_library) {
@@ -611,7 +615,9 @@ void cgdefs(char *s, int len) {
 
 	for (i=1; i<len-1; i++) {
 		c = s[i];
-		if (isprint(c) && c != '\'') {
+		// a double quote inside a string makes older versions of Asm/02
+		// take a later semicolon as a comment, so emit it as a number too
+		if (isprint(c) && c != '\'' && c != '"') {
 			if(!in_str) {
 				in_str = 1;
 				if (start)
@@ -652,7 +658,9 @@ void cgchars(char *s, int len) {
 
 	for (i=0; i<len; i++) {
 		c = s[i];
-		if (isprint(c) && c != '\'') {
+		// a double quote inside a string makes older versions of Asm/02
+		// take a later semicolon as a comment, so emit it as a number too
+		if (isprint(c) && c != '\'' && c != '"') {
 			if(!in_str) {
 				in_str = 1;
 				if (start)

@@ -994,6 +994,7 @@ Pre-Defined Macros
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
 * The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
 * The `__ELFIO__` macro is defined when the `-M` option is used to compile code.
+* The `__ELFDOS__` macro is defined when the `-E` option is used to compile code.
 
 *Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__ELFIO__` macros begin and end with **two** underscores.*
 
@@ -1023,6 +1024,7 @@ Compiler Options
 <tr><td>-t </td><td>test only, generate no code</td></tr>
 <tr><td>-v </td><td>verbose output</td></tr>
 <tr><td>-D m=v</td><td>define macro M with optional value V</td></tr>
+<tr><td>-E </td><td>compile and link a program for ELF-DOS</td></tr>
 <tr><td>-L </td><td>compile and assemble a library object file</td></tr>
 <tr><td>-M </td><td>use smaller elfstd and elfio libraries</td></tr>
 <tr><td>-N </td><td>do not link stdlib and stdio by default</td></tr>

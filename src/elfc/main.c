@@ -146,6 +146,9 @@ static void link(char *fname, char *path) {
   char  *vb;
   char  *opt;
   char  *rt;
+  //edos - output format option for linker
+  char  *fmt;
+  char  *p;
 
   //grw - add support for quiet flag
   vb = (O_verbose > 0) ? "" : "-q ";
@@ -156,9 +159,19 @@ static void link(char *fname, char *path) {
   //grw - link smaller runtime if not using C libraries
   rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
 
+  //edos - an ELF-DOS program has its own runtime and is a plain binary
+  if (O_edos) rt = "edoscrt0.prg";
+  fmt = O_edos ? "-b" : "-e";
+
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");
   binfile = newfilename(fname, "elfos");
+
+  //edos - ELF-DOS programs have no extension
+  if (O_edos) {
+    p = strrchr(binfile, '.');
+    if (p != NULL) *p = 0;
+  }
 
   //grw - set up initial mods list
   strcpy(mods, ofile);
@@ -172,12 +185,12 @@ static void link(char *fname, char *path) {
   }
 
   //grw - check length of command
-  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) +
+  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(EDOSLIBC) +
       strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) >= CMDLEN)
 	 	cmderror("linker command too long", NULL);
 
   //grw - snprintf is safer
-  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, path, path, rt, mods);
+  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, fmt, path, path, rt, mods);
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -188,8 +201,11 @@ static void link(char *fname, char *path) {
     strcat(cmd, binfile);
   }
 
+  //edos - added ELF-DOS libraries
+  if (O_edos)
+    strcat(cmd, EDOSLIBC);
   //grw - added no c libs option
-  if (O_clibs)
+  else if (O_clibs)
     strcat(cmd, SYSLIBC);
     //grw - added smaller elf libraries
   else if (O_elflibs)
@@ -204,7 +220,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvILMNOPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvEILMNOPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -218,6 +234,8 @@ static void longusage(void) {
     "-t       test only, generate no code\n"
 		"-v       verbose output\n"
 		"-D m=v   define macro M with optional value V\n"
+    //edos - added ELF-DOS program option
+    "-E       compile and link a program for ELF-DOS\n"
     //grw - added option to ignore warnings
     "-I       ignore warnings\n");
   printf(
@@ -291,6 +309,8 @@ int main(int argc, char *argv[]) {
   //grw - added no c libs option
 	O_clibs = 1;
   O_elflibs = 0;
+  //edos - added ELF-DOS program option
+  O_edos = 0;
 	O_outfile = "";
   //grw - added library option
   O_library = 0;
@@ -338,6 +358,10 @@ int main(int argc, char *argv[]) {
         if (ndef == MAX_DEFS) cmderror("too many -D's", NULL);
 				def[ndef++] = nextarg(argc, argv, &i, &j);
 				break;
+      //edos - added ELF-DOS program option
+      case 'E':
+        O_edos = 1;
+        break;
       //grw - added option to ignore warnings
       case 'I':
         O_ignore = 1;
@@ -380,6 +404,9 @@ int main(int argc, char *argv[]) {
 		usage();
 		exit(EXIT_FAILURE);
 	}
+	//edos - there is one runtime and one set of libraries for ELF-DOS
+	if (O_edos && !O_clibs)
+		cmderror("-E cannot be used with -M or -N", NULL);
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {

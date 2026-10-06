@@ -104,6 +104,8 @@ extern_ int	O_testonly;
 //grw - added no c libs option
 extern_ int	O_clibs;
 extern_ int	O_elflibs;
+//edos - added ELF-DOS program option
+extern_ int	O_edos;
 extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action

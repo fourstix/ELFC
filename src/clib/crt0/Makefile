@@ -1,13 +1,13 @@
 ASM = asm02
 ASMFLAGS = -q -r -L
 
-SRCS = crt0.asm
-TARGET = crt0.prg
+SRCS = crt0.asm edoscrt0.asm
+OBJS = $(SRCS:.asm=.prg)
 
-all: $(TARGET)
+all: $(OBJS)
 
-$(TARGET): $(SRCS)
-	$(ASM) $(ASMFLAGS) $^ && mv $(TARGET) ../lib
+%.prg: %.asm
+	$(ASM) $(ASMFLAGS) $< && mv $@ ../lib
 
 clean:
-	rm -f *.lst *.build $(TARGET)
+	rm -f *.lst *.build $(OBJS)
