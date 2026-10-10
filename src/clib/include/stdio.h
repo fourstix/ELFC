@@ -33,7 +33,7 @@
 #endif
 
 #ifndef TMP_FMT
-#define TMP_FMT "temp.%02d"
+#define TMP_FMT "temp.%d"
 #endif
 
 #ifndef L_tmpnam
