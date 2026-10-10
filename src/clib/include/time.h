@@ -16,7 +16,7 @@
 
 typedef int32_t time_t;
 
-#ifndef __ELFIO__
+#ifndef __MINIO__
 #define asctime  _asctime
 #define cstime   _cstime
 #define strftime _strftime

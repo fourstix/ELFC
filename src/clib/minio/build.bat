@@ -38,12 +38,12 @@
 ..\elfc -L tmpfile.c
 ..\elfc -L fileno.c
 
-type clearerr.prg fclose.prg fdopen.prg feof.prg ferror.prg fflush.prg > elfio.lib
-type fgetc.prg fgetpos.prg fgets.prg fileno.prg fopen.prg fprintf.prg >> elfio.lib
-type fputc.prg fputs.prg fread.prg fscanf.prg fseek32.prg fseek.prg >> elfio.lib
-type fsetpos.prg ftell.prg fwrite.prg kprintf.prg perror.prg printf.prg >> elfio.lib
-type puts.prg remove.prg rename.prg rewind.prg scanf.prg sprintf.prg >> elfio.lib
-type sscanf.prg tmpfile.prg tmpnam.prg ungetc.prg _vformat.prg >> elfio.lib
-type vfprintf.prg vprintf.prg _vscan.prg vsprintf.prg >> elfio.lib
+type clearerr.prg fclose.prg fdopen.prg feof.prg ferror.prg fflush.prg > minio.lib
+type fgetc.prg fgetpos.prg fgets.prg fileno.prg fopen.prg fprintf.prg >> minio.lib
+type fputc.prg fputs.prg fread.prg fscanf.prg fseek32.prg fseek.prg >> minio.lib
+type fsetpos.prg ftell.prg fwrite.prg kprintf.prg perror.prg printf.prg >> minio.lib
+type puts.prg remove.prg rename.prg rewind.prg scanf.prg sprintf.prg >> minio.lib
+type sscanf.prg tmpfile.prg tmpnam.prg ungetc.prg _vformat.prg >> minio.lib
+type vfprintf.prg vprintf.prg _vscan.prg vsprintf.prg >> minio.lib
 
-copy elfio.lib ..\lib\elfio.lib
+copy minio.lib ..\lib\minio.lib
