@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #pragma             extrn Cfgetc
 #pragma             extrn Cungetc
@@ -14,6 +15,8 @@
 #pragma             extrn Cisspace
 #pragma             extrn Cisdigit
 #pragma             extrn Ctolower
+#pragma             extrn Cmalloc
+#pragma             extrn Cerrno
 
 #pragma .link .library string.lib
 #pragma .link .library ctype.lib
@@ -252,6 +255,16 @@ int _vscan(int mode, void *src, char *fmt, void **varg) {
 			case '[':
 				//grw - vargs go up not down
 				//if (!noasg) p = *varg--;
+
+				/* lazy load buffer */
+				if (!_lbuf) {
+					_lbuf = (char *) malloc(_BUFLEN);
+					/* check for out of memory */
+					if (!_lbuf) {
+						errno = ENOMEM;
+						return -1;
+					}
+				}
 				if (!noasg) p = *varg++;
 				if (scanclass(p, mkclass(fmt), len))
 					na++;

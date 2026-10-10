@@ -103,7 +103,8 @@ extern_ int	O_asmonly;
 extern_ int	O_testonly;
 //grw - added no c libs option
 extern_ int	O_clibs;
-extern_ int	O_elflibs;
+//grw - added minimum io option
+extern_ int	O_minio;
 //edos - added ELF-DOS program option
 extern_ int	O_edos;
 extern_ char	*O_outfile;

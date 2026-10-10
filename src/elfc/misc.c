@@ -43,9 +43,9 @@ void init(void) {
 	addglob("__ELFC__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 	//grw - removed OS macros since only Elf/OS is valid for ElfC
 
-	//grw - add flag for Elfio and Elfstd libraries (-M option)
-	if (O_elflibs)
-	  addglob("__ELFIO__", 0, TMACRO, 0, 0, 0, globname(""), 0);
+	//grw - add flag for minimum io libraries (-M option)
+	if (O_minio)
+	  addglob("__MINIO__", 0, TMACRO, 0, 0, 0, globname(""), 0);
 
 	//edos - add flag for an ELF-DOS program (-E option)
 	if (O_edos)

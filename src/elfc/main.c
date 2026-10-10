@@ -157,10 +157,13 @@ static void link(char *fname, char *path) {
   opt = (O_optlink > 0) ? "-r " : "";
 
   //grw - link smaller runtime if not using C libraries
-  rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
+  //rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
 
   //edos - an ELF-DOS program has its own runtime and is a plain binary
   if (O_edos) rt = "edoscrt0.prg";
+  else if (O_clibs) rt = "crt0.prg";
+  else rt = "";
+
   fmt = O_edos ? "-b" : "-e";
 
   //grw - initialize of file to output file name
@@ -204,17 +207,21 @@ static void link(char *fname, char *path) {
   //edos - added ELF-DOS libraries
   if (O_edos)
     strcat(cmd, EDOSLIBC);
-  //grw - added no c libs option
+  //grw - added smaller elf libraries
   else if (O_clibs)
     strcat(cmd, SYSLIBC);
-    //grw - added smaller elf libraries
-  else if (O_elflibs)
-    strcat(cmd, ELFLIBC);
   else
     strcat(cmd, NOLIBC);
 
+  //grw - set up io library (std or min)
+  if (O_minio)
+      strcat(cmd, MINLIBC);
+  else if (O_clibs)
+      strcat(cmd, IOLIBC);
+
   //grw - simplified logic to not remove files
   if (O_verbose > 0) printf("%s\n", cmd);
+
   if (system(cmd))
     cmderror("linker invocation failed", NULL);
 }
@@ -308,7 +315,7 @@ int main(int argc, char *argv[]) {
 	O_testonly = 0;
   //grw - added no c libs option
 	O_clibs = 1;
-  O_elflibs = 0;
+  O_minio = 0;
   //edos - added ELF-DOS program option
   O_edos = 0;
 	O_outfile = "";
@@ -369,16 +376,16 @@ int main(int argc, char *argv[]) {
       case 'L':
 				O_library = 1;
 				break;
-      //grw - added smaller memory library option
+      //grw - added smaller memory io library option
       case 'M':
-				O_clibs = 0;
-        O_elflibs = 1;
+				//O_clibs = 0;
+        O_minio = 1;
   			break;
 				//grw - added no c lib option
       case 'N':
 				//grw - don't link stdlib and stdio
 				O_clibs = 0;
-        O_elflibs = 0;
+        O_minio = 0;
 				break;
       case 'O':
         //grw - turn off liker optimization
@@ -406,7 +413,7 @@ int main(int argc, char *argv[]) {
 	}
 	//edos - there is one runtime and one set of libraries for ELF-DOS
 	if (O_edos && !O_clibs)
-		cmderror("-E cannot be used with -M or -N", NULL);
+		cmderror("-E cannot be used with -N", NULL);
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
