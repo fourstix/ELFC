@@ -229,6 +229,8 @@ Release 3.5
 
 Release 3.5 adds support for passing structures and unions by value to a function and adds support for several POSIX functions to the string library.  A new compiler option `-M` supports smaller memory size versions of stdlib and stdio, named elfstd and elfio. In addition to these features, several issues found during self-compiling ElfC were fixed in this release.
 
+*Note: The smaller memory size libraries were refactored in Version 3.8.*
+
 New Features
 -------------
 * Structures and unions may be passed by value as an argument to the function.
@@ -246,6 +248,13 @@ New Features
 * Upgraded Asm/02 to the latest version.
 * ElfC can now self-compile, but the object code files created are too large for the linker Link/02 to link and resolve.
 * Added macro `__ELFIO__` that is defined when `-M` is used.
+
+*Notes:*
+* *The smaller memory size libraries were refactored in Version 3.8.*
+* *The `elfstd.lib` library was removed.*
+* *The `elfio.lib` library was renamed `minio.lib`.*
+* *The `elfrt0.prg` runtime module was removed.*
+* *The macro `__ELFIO__` was renamed `__MINIO__`.*
 
 Issues Fixed
 -------------
@@ -269,7 +278,9 @@ Compiler Option Changes
 * The `-d tree` option will cause ElfC to output information about the AST tree as it compiles.
 * The `-M` option will cause ElfC to use smaller memory versions of the stdlib and stdio libraries, named elflib and elfio.
 
-*Note: Information about supported print and scanning conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
+*Notes:*
+* *The smaller memory size option `-M` and its libraries were refactored in Version 3.8.*
+* *Information about supported print and scanning conversions can be found on the [ELFC Detailed Information](ELFC.md) page.*
 
 
 Release 3.6
@@ -284,7 +295,7 @@ New features
 * ElfC supports typedefs with array types.
 * ElfC supports passing multi-dimensional array to functions and supports pointer decay.
 * ElfC allows references to arrays to be assigned to pointers that match the base type through pointer decay.
-* ElfC now allows any pointers that point to the same base type to be assigned, even if the levels of indirection are different.s
+* ElfC now allows any pointers that point to the same base type to be assigned, even if the levels of indirection are different.
 * ElfC will issue a warning if the pointer levels of indirection are different, but will still allow the assignment.
 * An array of character pointers can now be initialized by a list of strings, e.g. `char *birds[] = {"crow", "hawk", "owl", "robin"};`
 * Arrays of other pointer types can be initialized with a list of integer constants.
@@ -354,6 +365,31 @@ Compiler Option Changes
 * The `-O` option turns on Link/02 branch optimization.
 
 *Note: Information about floating point functions, the new time functions and other details can be found on the [ELFC Detailed Information](ELFC.md) page.*
+
+Release 3.8
+-----------
+Release 3.8 adds support to compile binaries for the [ELF-DOS](https://github.com/arhefner/ELF-DOS) 1802 operating system.  The `-E` option will cause ELFC to compile and link a program for ELF-DOS that uses runtime and standard library modules for ELF-DOS.  The ELFIO library was renamed to the MinIO library and the `-M` option was updated to support ELF-DOS as well as the Elf/OS.
+
+New features
+------------
+* The `-E` option will cause ELFC to compile and link programs for ELF-DOS that are compatible with the [ELF-DOS](https://github.com/arhefner/ELF-DOS) 1802 operating system.
+* The Elf-DOS binaries use an `edoscrt0` runtime module for start-up code and the `edosc.lib` library with a jump table for the C routines referenced from the runtime origin.
+* The ELF-DOS binaries use a standard library module `edosstd.lib` that access the Elf-DOS kernel API.
+* All other libraries used by the Elf-DOS binaries are the same
+
+Changes
+------------
+* The ElfIO library was renamed to the MinIO library
+* The `elfstd.lib` library was removed.
+* The `elfio.lib` library was renamed `minio.lib`.
+* The `elfrt0.prg` runtime module was removed.
+* The macro `__ELFIO__` was renamed `__MINIO__`.
+
+Compiler Option Changes
+-----------------------
+* The `-E` option will cause ElfC to compile and link a program for ELF-DOS.
+* The `-M` option will cause ElfC to use a smaller memory version of the stdio library, named minio.
+* The `-E` and `-M` options can be used together.
 
 Stdlib Library
 --------------
