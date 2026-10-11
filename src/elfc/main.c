@@ -134,7 +134,8 @@ static void assemble(char *file, char *path) {
 
 //arh - removed unused function concat
 //grw need to pass filename to Link/02
-static void link(char *fname, char *path) {
+//arh - added list of library search directories
+static void link(char *fname, char *path, char *libdir[], int nlibdir) {
   //grw - larger command size for linker
 	char	cmd[CMDLEN+1];
   //grw - modules to be linked
@@ -149,6 +150,8 @@ static void link(char *fname, char *path) {
   //edos - output format option for linker
   char  *fmt;
   char  *p;
+  //arh - length of library search directory options
+  size_t liblen = 0;
 
   //grw - add support for quiet flag
   vb = (O_verbose > 0) ? "" : "-q ";
@@ -184,13 +187,24 @@ static void link(char *fname, char *path) {
     }
   }
 
+  //arh - each library search directory adds " -L dir" to the command
+  for (i=0; i < nlibdir; i++)
+    liblen += strlen(libdir[i]) + 4;
+
   //grw - check length of command
   if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(EDOSLIBC) +
-      strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) >= CMDLEN)
+      strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) +
+      liblen >= CMDLEN)
 	 	cmderror("linker command too long", NULL);
 
   //grw - snprintf is safer
   snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, fmt, path, path, rt, mods);
+
+  //arh - add library search directories from -l options
+  for (i=0; i < nlibdir; i++) {
+    strcat(cmd, " -L ");
+    strcat(cmd, libdir[i]);
+  }
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -220,7 +234,7 @@ static void link(char *fname, char *path) {
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvEILMNOPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvEILMNOPSV] [-d opt] [-i dir] [-l dir] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -229,6 +243,10 @@ static void longusage(void) {
 	printf(	"\n"
 		"-c       compile and assemble only, do not link\n"
 		"-d opt   activate debug option OPT, ? = list\n"
+    //arh - added include search directory option
+    "-i dir   add DIR to the directories searched for include files\n"
+    //arh - added library search directory option
+    "-l dir   add DIR to the directories searched for library files\n"
 		"-o file  write linker output to FILE\n");
   printf(
     "-t       test only, generate no code\n"
@@ -298,6 +316,9 @@ int main(int argc, char *argv[]) {
   //arh allow multiple command line definitions
 	char	*def[MAX_DEFS];
   int ndef = 0;
+  //arh allow multiple library search directories
+	char	*libdir[MAX_LIBDIRS];
+  int nlibdir = 0;
   //grw need to pase first file name to Asm/02 and Link/02
   char  *fname = NULL;
 
@@ -320,6 +341,8 @@ int main(int argc, char *argv[]) {
   O_ignore = 0;
   //grw - add option to turn off linker branch optimization
   O_optlink = 0;
+  //arh - added include search directory option
+  Nincdir = 0;
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -343,6 +366,16 @@ int main(int argc, char *argv[]) {
 			case 'h':
 				longusage();
 				exit(EXIT_SUCCESS);
+      //arh - added include search directory option
+			case 'i':
+        if (Nincdir == MAX_INCDIRS) cmderror("too many -i's", NULL);
+				Incdirs[Nincdir++] = nextarg(argc, argv, &i, &j);
+				break;
+      //arh - added library search directory option
+			case 'l':
+        if (nlibdir == MAX_LIBDIRS) cmderror("too many -l's", NULL);
+				libdir[nlibdir++] = nextarg(argc, argv, &i, &j);
+				break;
 			case 'o':
 				//grw need to add -o O_outfile to linker command
 				O_outfile = nextarg(argc, argv, &i, &j);
@@ -443,6 +476,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	//grw - pass name to linker
-	if (!O_componly && !O_testonly && !O_library) link(fname, Fpath);
+	if (!O_componly && !O_testonly && !O_library)
+		link(fname, Fpath, libdir, nlibdir);
 	return EXIT_SUCCESS;
 }

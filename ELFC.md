@@ -1020,6 +1020,8 @@ Compiler Options
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>-c </td><td>compile and assemble only, do not link</td></tr>
 <tr><td>-d opt</td><td>activate debug option OPT, ? = list</td></tr>
+<tr><td>-i dir</td><td>add DIR to the directories searched for include files</td></tr>
+<tr><td>-l dir</td><td>add DIR to the directories searched for library files</td></tr>
 <tr><td>-o file</td><td>write linker output to FILE</td></tr>
 <tr><td>-t </td><td>test only, generate no code</td></tr>
 <tr><td>-v </td><td>verbose output</td></tr>

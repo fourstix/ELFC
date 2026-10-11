@@ -96,6 +96,10 @@ extern_ char	*Files[MAXFILES];
 extern_ char	Temp[MAXFILES];
 extern_ int	Nf;
 
+//arh - include search directories from -i options
+extern_ char	*Incdirs[MAX_INCDIRS];
+extern_ int	Nincdir;
+
 /* options */
 extern_ int	O_verbose;
 extern_ int	O_componly;

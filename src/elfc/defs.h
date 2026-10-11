@@ -14,6 +14,10 @@
 
 //arh - Allow multiple -D options
 #define MAX_DEFS  8
+//arh maximum number of include search directories
+#define MAX_INCDIRS  8
+//arh maximum number of library search directories
+#define MAX_LIBDIRS  8
 
 //grw - removed unused defines AOUTNAME, SCCDIR and SCCLIBC
 
