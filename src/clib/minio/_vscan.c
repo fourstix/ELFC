@@ -131,8 +131,9 @@ static int scannum(int *pi, int base, int len) {
 	k--;
 	if ('-' == c) sign = -1, k--, c = next();
 	else if ('+' == c) c = next(), k--;
-		if ((c = next()) == 'x' || 'X' == c) {
-			if ((0 == base || 16 == base) && '0' == c) {
+
+	if ((0 == base || 16 == base) && '0' == c) {
+	  if ((c = next()) == 'x' || 'X' == c) {
 			base = 16;
 			c = next();
 			k--;
