@@ -839,16 +839,6 @@ typedef struct float32 float32_t;
 
 More information about these library functions, floating point values, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
 
-Next Release
--------------
-* Nested initialization lists for multi-dimensional arrays
-* Convert the rand function in stdlib to use inline assembly code.
-
-Future Goals
--------------
-* Create a native OS (Elf/OS or Mini/DOS) versions of the Asm/02 and Link/02 programs using ELFC.
-* Create a native OS (Elf/OS or Mini/DOS) version of ElfC that uses the native Asm/02 and Link/02 programs.
-
 
 Differences Between ElfC and Full C89
 -------------------------------------
