@@ -158,6 +158,8 @@ static void include(void) {
 	FILE	*inc, *oinfile;
 	char	*ofile;
 	int	oc, oline;
+	//arh - index into include search directories
+	int	i;
 
 	if ((c = skip()) == '<')
 		c = '>';
@@ -175,8 +177,17 @@ static void include(void) {
 		strcat(path, "include/");
 		strcat(path, file);
 	}
-	if ((inc = fopen(path, "r")) == NULL)
-		error("cannot open include file: %s", path);
+	inc = fopen(path, "r");
+	//arh - search directories from -i options, but not for absolute paths
+	for (i=0; NULL == inc && i < Nincdir && k && file[0] != '/'; i++) {
+		if (strlen(Incdirs[i]) + strlen(file) + 1 > TEXTLEN) continue;
+		strcpy(path, Incdirs[i]);
+		strcat(path, "/");
+		strcat(path, file);
+		inc = fopen(path, "r");
+	}
+	if (inc == NULL)
+		error("cannot open include file: %s", file);
 	else {
 		Inclev++;
 		oc = next();
