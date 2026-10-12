@@ -96,6 +96,10 @@ extern_ char	*Files[MAXFILES];
 extern_ char	Temp[MAXFILES];
 extern_ int	Nf;
 
+//arh - include search directories from -i options
+extern_ char	*Incdirs[MAX_INCDIRS];
+extern_ int	Nincdir;
+
 /* options */
 extern_ int	O_verbose;
 extern_ int	O_componly;
@@ -103,7 +107,10 @@ extern_ int	O_asmonly;
 extern_ int	O_testonly;
 //grw - added no c libs option
 extern_ int	O_clibs;
-extern_ int	O_elflibs;
+//grw - added minimum io option
+extern_ int	O_minio;
+//edos - added ELF-DOS program option
+extern_ int	O_edos;
 extern_ char	*O_outfile;
 extern_ int	O_debug;
 //grw - added library object action

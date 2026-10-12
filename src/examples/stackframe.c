@@ -1,4 +1,3 @@
-#define _STGROM_
 #include <stdio.h>
 
 /* Stack Frame Example 1 */

@@ -430,9 +430,9 @@ Stdio Scan Conversions
 * The %f, %e, and %g conversions are *not* supported.
 
 When the `-M` option is specified, only the following conversions are supported. Using the
-Elfio and Elfstd libraries, reduces the binary code size by about 2K bytes.
+minio library, reduces the binary code size by about 2K bytes.
 
-Elfio Print Conversions  (-M option)
+Minio Print Conversions  (-M option)
 ------------------------------------
 * Only the `%d, %u,  %x,  %c, %s, %p, %n and %%` conversions are supported.
 * The suppression operator `*` is supported.
@@ -443,7 +443,7 @@ Elfio Print Conversions  (-M option)
 * The length modifiers h, l (el) and L are *not* supported.
 * The %f, %e, %E, %g and %G conversions are *not* supported.
 
-Elfio Scan Conversions (-M option)
+Minio Scan Conversions (-M option)
 -----------------------------------
 * The width specification is supported.
 * The suppression operator `*` is supported.
@@ -452,7 +452,7 @@ Elfio Scan Conversions (-M option)
 * The charset operators `%[...]` and `%[^...]` are *not* supported.
 * The %f, %e, and %g conversions are *not* supported.
 
-*Note:* The `__ELFIO__` macro is defined when the `-M` option is used to compile code.
+*Note:* The `__MINIO__` macro is defined when the `-M` option is used to compile code.
 
 
 Unsupported Stdlib Functions
@@ -993,9 +993,10 @@ Pre-Defined Macros
 * The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
 * The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
-* The `__ELFIO__` macro is defined when the `-M` option is used to compile code.
+* The `__MINIO__` macro is defined when the `-M` option is used to compile code.
+* The `__ELFDOS__` macro is defined when the `-E` option is used to compile code.
 
-*Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__ELFIO__` macros begin and end with **two** underscores.*
+*Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__MINIO__` macros begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
@@ -1019,12 +1020,15 @@ Compiler Options
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>-c </td><td>compile and assemble only, do not link</td></tr>
 <tr><td>-d opt</td><td>activate debug option OPT, ? = list</td></tr>
+<tr><td>-i dir</td><td>add DIR to the directories searched for include files</td></tr>
+<tr><td>-l dir</td><td>add DIR to the directories searched for library files</td></tr>
 <tr><td>-o file</td><td>write linker output to FILE</td></tr>
 <tr><td>-t </td><td>test only, generate no code</td></tr>
 <tr><td>-v </td><td>verbose output</td></tr>
 <tr><td>-D m=v</td><td>define macro M with optional value V</td></tr>
+<tr><td>-E </td><td>compile and link a program for ELF-DOS</td></tr>
 <tr><td>-L </td><td>compile and assemble a library object file</td></tr>
-<tr><td>-M </td><td>use smaller elfstd and elfio libraries</td></tr>
+<tr><td>-M </td><td>use the smaller minio library instead of stdio</td></tr>
 <tr><td>-N </td><td>do not link stdlib and stdio by default</td></tr>
 <tr><td>-O </td><td>turn on linker branch optimization</td></tr>
 <tr><td>-P </td><td>print expanded macro text</td></tr>

@@ -47,11 +47,19 @@ void test_fscan(void) {
     fail("fopen-1");
 		return;
 	}
-  fprintf(f, "%d %x %o %u", -35, 0x0400, 0135, 60000u);
+#ifndef __MINIO__
+  fprintf(f, "%d %x %o %u", -35, 0x0400,  0135, 60000u);
+#else
+	fprintf(f, "%d %x %u", -35, 0x0400, 60000u);
+#endif
 	fprintf(f, "%s", "a\t100%  pass\n");
   rewind(f);
   /* read back test data we just wrote*/
+#ifndef __MINIO__
   fscanf(f, "%d %x %o %u", &i, &j, &k, &u);
+#else
+  fscanf(f, "%d %x %u", &i, &j, &u);
+#endif
   /* read single character */
   fscanf(f, "%c", &c);
   /* whitespace seperates data string into two strings */
@@ -60,7 +68,9 @@ void test_fscan(void) {
 
   if (i != -35) fail("fcanf-1 (int)");
   if (j != 1024) fail("fcanf-2 (hex)");
+#ifndef __MINIO__
   if (k != 93) fail("fcanf-3 (octal)");
+#endif
   if (u != 60000u) fail("fcanf-4 (unsigned int)");
   if (c != 'a') fail("fcanf-5 (char)");
   if (strcmp(s1, "100%")) fail("fcanf-6 (%%)");

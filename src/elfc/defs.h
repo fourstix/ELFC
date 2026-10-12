@@ -10,10 +10,14 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION    "3.7.4"
+#define VERSION    "3.8.1"
 
 //arh - Allow multiple -D options
 #define MAX_DEFS  8
+//arh maximum number of include search directories
+#define MAX_INCDIRS  8
+//arh maximum number of library search directories
+#define MAX_LIBDIRS  8
 
 //grw - removed unused defines AOUTNAME, SCCDIR and SCCLIBC
 

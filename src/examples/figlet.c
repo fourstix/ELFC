@@ -90,10 +90,10 @@ static void render(char *text) {
     char *p;
     for (row = 0; row < FONT_HEIGHT; row++) {
         for (p = text; *p; p++) {
-            putstr(get_char(*p)[row]);
-            putstr(" ");
+            _putstr(get_char(*p)[row]);
+            _putstr(" ");
         }
-        putstr("\n");
+        _putstr("\n");
     }
 }
 
@@ -108,27 +108,27 @@ static void get_input(char *buf, int size) {
 
 int main(int argc, char *argv[]) {
     if (argc > 1) {
-        putstr("\n");
+        _putstr("\n");
         render(argv[1]);
         return 0;
     }
         
-    putstr("FIGLET - ASCII ART TEXT\n");
-    putstr("=======================\n\n");
+    _putstr("FIGLET - ASCII ART TEXT\n");
+    _putstr("=======================\n\n");
 
     while (1) {
-        putstr("ENTER TEXT (OR Q TO QUIT): ");
+        _putstr("ENTER TEXT (OR Q TO QUIT): ");
         get_input(text, sizeof(text));
 
         if ((text[0] == 'Q' || text[0] == 'q') && text[1] == '\0') {
-            putstr("\nGOODBYE!\n");
+            _putstr("\nGOODBYE!\n");
             break;
         }
 
         if (text[0]) {
-            putstr("\n\n");
+            _putstr("\n\n");
             render(text);
-            putstr("\n");
+            _putstr("\n");
         }
     }
 

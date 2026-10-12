@@ -134,7 +134,8 @@ static void assemble(char *file, char *path) {
 
 //arh - removed unused function concat
 //grw need to pass filename to Link/02
-static void link(char *fname, char *path) {
+//arh - added list of library search directories
+static void link(char *fname, char *path, char *libdir[], int nlibdir) {
   //grw - larger command size for linker
 	char	cmd[CMDLEN+1];
   //grw - modules to be linked
@@ -146,6 +147,11 @@ static void link(char *fname, char *path) {
   char  *vb;
   char  *opt;
   char  *rt;
+  //edos - output format option for linker
+  char  *fmt;
+  char  *p;
+  //arh - length of library search directory options
+  size_t liblen = 0;
 
   //grw - add support for quiet flag
   vb = (O_verbose > 0) ? "" : "-q ";
@@ -154,11 +160,24 @@ static void link(char *fname, char *path) {
   opt = (O_optlink > 0) ? "-r " : "";
 
   //grw - link smaller runtime if not using C libraries
-  rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
+  //rt = (O_clibs > 0) ? "crt0.prg" : "elfrt0.prg";
+
+  //edos - an ELF-DOS program has its own runtime and is a plain binary
+  if (O_edos) rt = "edoscrt0.prg";
+  else if (O_clibs) rt = "crt0.prg";
+  else rt = "";
+
+  fmt = O_edos ? "-b" : "-e";
 
   //grw - initialize of file to output file name
   ofile = newfilename(fname, "prg");
   binfile = newfilename(fname, "elfos");
+
+  //edos - ELF-DOS programs have no extension
+  if (O_edos) {
+    p = strrchr(binfile, '.');
+    if (p != NULL) *p = 0;
+  }
 
   //grw - set up initial mods list
   strcpy(mods, ofile);
@@ -171,13 +190,24 @@ static void link(char *fname, char *path) {
     }
   }
 
+  //arh - each library search directory adds " -L dir" to the command
+  for (i=0; i < nlibdir; i++)
+    liblen += strlen(libdir[i]) + 4;
+
   //grw - check length of command
-  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(SYSLIBC) +
-      strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) >= CMDLEN)
+  if (strlen(O_outfile) + 6 + strlen(mods) + strlen(LDCMD) + strlen(EDOSLIBC) +
+      strlen(binfile) + strlen(path) + strlen(vb) + strlen(opt) + strlen(rt) +
+      liblen >= CMDLEN)
 	 	cmderror("linker command too long", NULL);
 
   //grw - snprintf is safer
-  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, path, path, rt, mods);
+  snprintf(cmd, sizeof(cmd), LDCMD, path, vb, opt, fmt, path, path, rt, mods);
+
+  //arh - add library search directories from -l options
+  for (i=0; i < nlibdir; i++) {
+    strcat(cmd, " -L ");
+    strcat(cmd, libdir[i]);
+  }
 
   /* add outfile name option to linker command */
   if (strlen(O_outfile)) {
@@ -188,23 +218,30 @@ static void link(char *fname, char *path) {
     strcat(cmd, binfile);
   }
 
-  //grw - added no c libs option
-  if (O_clibs)
+  //edos - added ELF-DOS libraries
+  if (O_edos)
+    strcat(cmd, EDOSLIBC);
+  //grw - added smaller elf libraries
+  else if (O_clibs)
     strcat(cmd, SYSLIBC);
-    //grw - added smaller elf libraries
-  else if (O_elflibs)
-    strcat(cmd, ELFLIBC);
   else
     strcat(cmd, NOLIBC);
 
+  //grw - set up io library (std or min)
+  if (O_minio)
+      strcat(cmd, MINLIBC);
+  else if (O_clibs)
+      strcat(cmd, IOLIBC);
+
   //grw - simplified logic to not remove files
   if (O_verbose > 0) printf("%s\n", cmd);
+
   if (system(cmd))
     cmderror("linker invocation failed", NULL);
 }
 
 static void usage(void) {
-  printf("Usage: elfc [-h] [-ctvILMNOPSV] [-d opt] [-o file] [-D macro[=text]] file [...]\n");
+  printf("Usage: elfc [-h] [-ctvEILMNOPSV] [-d opt] [-i dir] [-l dir] [-o file] [-D macro[=text]] file [...]\n");
 }
 
 static void longusage(void) {
@@ -213,11 +250,17 @@ static void longusage(void) {
 	printf(	"\n"
 		"-c       compile and assemble only, do not link\n"
 		"-d opt   activate debug option OPT, ? = list\n"
+    //arh - added include search directory option
+    "-i dir   add DIR to the directories searched for include files\n"
+    //arh - added library search directory option
+    "-l dir   add DIR to the directories searched for library files\n"
 		"-o file  write linker output to FILE\n");
   printf(
     "-t       test only, generate no code\n"
 		"-v       verbose output\n"
 		"-D m=v   define macro M with optional value V\n"
+    //edos - added ELF-DOS program option
+    "-E       compile and link a program for ELF-DOS\n"
     //grw - added option to ignore warnings
     "-I       ignore warnings\n");
   printf(
@@ -280,6 +323,9 @@ int main(int argc, char *argv[]) {
   //arh allow multiple command line definitions
 	char	*def[MAX_DEFS];
   int ndef = 0;
+  //arh allow multiple library search directories
+	char	*libdir[MAX_LIBDIRS];
+  int nlibdir = 0;
   //grw need to pase first file name to Asm/02 and Link/02
   char  *fname = NULL;
 
@@ -290,7 +336,9 @@ int main(int argc, char *argv[]) {
 	O_testonly = 0;
   //grw - added no c libs option
 	O_clibs = 1;
-  O_elflibs = 0;
+  O_minio = 0;
+  //edos - added ELF-DOS program option
+  O_edos = 0;
 	O_outfile = "";
   //grw - added library option
   O_library = 0;
@@ -300,6 +348,8 @@ int main(int argc, char *argv[]) {
   O_ignore = 0;
   //grw - add option to turn off linker branch optimization
   O_optlink = 0;
+  //arh - added include search directory option
+  Nincdir = 0;
 
 	//arh - Get absolute path of executable to locate files and tools
 	get_module_path(exe_path, MAXPATH);
@@ -323,6 +373,16 @@ int main(int argc, char *argv[]) {
 			case 'h':
 				longusage();
 				exit(EXIT_SUCCESS);
+      //arh - added include search directory option
+			case 'i':
+        if (Nincdir == MAX_INCDIRS) cmderror("too many -i's", NULL);
+				Incdirs[Nincdir++] = nextarg(argc, argv, &i, &j);
+				break;
+      //arh - added library search directory option
+			case 'l':
+        if (nlibdir == MAX_LIBDIRS) cmderror("too many -l's", NULL);
+				libdir[nlibdir++] = nextarg(argc, argv, &i, &j);
+				break;
 			case 'o':
 				//grw need to add -o O_outfile to linker command
 				O_outfile = nextarg(argc, argv, &i, &j);
@@ -338,6 +398,10 @@ int main(int argc, char *argv[]) {
         if (ndef == MAX_DEFS) cmderror("too many -D's", NULL);
 				def[ndef++] = nextarg(argc, argv, &i, &j);
 				break;
+      //edos - added ELF-DOS program option
+      case 'E':
+        O_edos = 1;
+        break;
       //grw - added option to ignore warnings
       case 'I':
         O_ignore = 1;
@@ -345,16 +409,16 @@ int main(int argc, char *argv[]) {
       case 'L':
 				O_library = 1;
 				break;
-      //grw - added smaller memory library option
+      //grw - added smaller memory io library option
       case 'M':
-				O_clibs = 0;
-        O_elflibs = 1;
+				//O_clibs = 0;
+        O_minio = 1;
   			break;
 				//grw - added no c lib option
       case 'N':
 				//grw - don't link stdlib and stdio
 				O_clibs = 0;
-        O_elflibs = 0;
+        O_minio = 0;
 				break;
       case 'O':
         //grw - turn off liker optimization
@@ -380,6 +444,9 @@ int main(int argc, char *argv[]) {
 		usage();
 		exit(EXIT_FAILURE);
 	}
+	//edos - there is one runtime and one set of libraries for ELF-DOS
+	if (O_edos && !O_clibs)
+		cmderror("-E cannot be used with -N", NULL);
 	Nf = 0;
 	while (i < argc) {
 		if (filetype(argv[i]) == 'c') {
@@ -416,6 +483,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	//grw - pass name to linker
-	if (!O_componly && !O_testonly && !O_library) link(fname, Fpath);
+	if (!O_componly && !O_testonly && !O_library)
+		link(fname, Fpath, libdir, nlibdir);
 	return EXIT_SUCCESS;
 }

@@ -1,0 +1,33 @@
+ELF-DOS SDK snapshot
+Packaged:       2026-10-04T22:19:05Z
+ELF-DOS commit: de9293b9478466262ee5a42e6cf61f83f24af0ef
+Kernel version: 1.2
+PROG_BASE:      $0D00
+
+Headers:
+  include/kernel_api.inc
+  include/opcodes.def
+  include/bios.inc
+  include/file_glob.inc
+  include/lineedit.inc
+  include/modformat.inc
+  include/vollabel.inc
+  include/ymodem.inc
+Library modules (lib/):
+  drives.asm
+  env.asm
+  file_glob.asm
+  fmt32.asm
+  heap_bump.asm
+  heap_malloc.asm
+  icall.asm
+  lineedit.asm
+  modload.asm
+  move.asm
+  pathstr.asm
+  term.asm
+  vollabel.asm
+  ymodem.asm
+
+DEVELOPER_GUIDE.md included -- see it for the full API reference.
+Toolchain (asm02/link02) is NOT included -- see DEVELOPER_GUIDE.md's own Build section for install instructions.

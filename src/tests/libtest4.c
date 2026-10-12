@@ -67,14 +67,24 @@ void test_math(void) {
 	}
 
   //grw - print the numbers to validate randomness
+#ifndef __MINIO__
   for (i=0; i<SAMPLES; i++) {
     if ((i % 5) == 0)
       printf("\n% 5d", rns[i]);
     else
       printf(", % 5d", rns[i]);
   }
-  puts("");
+#else
+	for (i=0; i<SAMPLES; i++) {
+		if ((i % 5) == 0)
+			printf("\n%d", rns[i]);
+		else
+			printf(", %d", rns[i]);
+	}
+#endif
+puts("");
 }
+
 void spfn_test(char *id, char *fmt, int v, char *res) {
   printf("sprintf test %s\n", id);
 	sprintf(buf, fmt, v);
@@ -106,6 +116,7 @@ void test_sprintf(void) {
 
 	spfn_test("1", "%d", 12345, "12345");
 	spfn_test("2", "%d", -12345, "-12345");
+#ifndef __MINIO__
 	spfn_test("3", "%+d", 12345, "+12345");
 	spfn_test("4", "%+d", -12345, "-12345");
 	spfn_test("5", "%10d", 12345, "     12345");
@@ -123,7 +134,7 @@ void test_sprintf(void) {
 	spfn_test("17", "%010d", 12345, "0000012345");
 	spfn_test("18", "%010d", -12345, "-000012345");
 	spfn_test("19", "%x", 0x2def, "2def");
-	spfn_test("20", "%X", 0x2def, "2DEF");
+  spfn_test("20", "%X", 0x2def, "2DEF");
 	spfn_test("21", "%#x", 0x2def, "0x2def");
 	spfn_test("22", "%#X", 0x2def, "0X2DEF");
   //grw - %x and %o are printed as unsigned values
@@ -158,13 +169,24 @@ void test_sprintf(void) {
 	spfn_test("49", "%#10o", -0417, "   0177361");
 	spfn_test("50", "%#-10o", -0417, "0177361   ");
 	spfn_test("51", "%#010o", -0417, "0000177361");
+#else
+	spfn_test("3", "%x", 0x2def, "2DEF");
+	spfn_test("4", "%x", -0x2def, "D211");
+	spfn_test("5", "%x", 0, "0000");
+#endif
+
 	spfn_test("52", "%d", 0, "0");
+#ifndef __MINIO__
 	spfn_test("53", "%o", 0, "0");
 	spfn_test("54", "%x", 0, "0");
+	#endif
 	spfn_test("55", "%c", 'a', "a");
+#ifndef __MINIO__
 	spfn_test("56", "%10c", 'a', "         a");
 	spfn_test("57", "%-10c", 'a', "a         ");
+#endif
 	spfs_test("58", "%s", "foo", "foo");
+#ifndef __MINIO__
 	spfs_test("59", "%10s", "foo", "       foo");
 	spfs_test("60", "%-10s", "foo", "foo       ");
 	spfn_test("61", "%1d", 12345, "12345");
@@ -173,9 +195,11 @@ void test_sprintf(void) {
 	spfn_test("64", "%#-1x", -0xabc, "0xf544");
 	spfs_test("65", "%1s", "foo", "foo");
 	spfs_test("66", "%-1s", "foo", "foo");
+#endif
   //grw - tests for unsigned integer format
   spfn_test("67", "%u", 54321u, "54321");
   //grw - plus is ignored for unsigned types
+#ifndef __MINIO__
 	spfn_test("68", "%+u", 54321u, "54321");
 	spfn_test("69", "%10u", 54321u, "     54321");
   //grw - plus is ignored for unsigned types
@@ -186,8 +210,8 @@ void test_sprintf(void) {
 	spfn_test("73", "%+-10u", 54321u, "54321     ");
 	spfn_test("74", "% 10u", 54321u, "     54321");
 	spfn_test("75", "%010u", 54321u, "0000054321");
+#endif
   spfn_test("76", "%u", -1, "65535");
-
 }
 
 

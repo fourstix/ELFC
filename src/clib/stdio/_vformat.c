@@ -133,10 +133,14 @@ int _vformat(int mode, int maxc, void *dest, char *fmt, void **varg) {
   if (mode != 0) {
 	  //lbuf = (char *) malloc(_BUFLEN);
 
-		/* check for out of memory */
-		if (_lbuf == NULL) {
-			errno = ENOMEM;
-			return -1;
+		/* lazy load buffer */
+		if (!_lbuf) {
+			_lbuf = (char *) malloc(_BUFLEN);
+			/* check for out of memory */
+			if (!_lbuf) {
+			  errno = ENOMEM;
+			  return -1;
+		  }
 		}
   }
 	//grw - implement a smaller buffer

@@ -15,7 +15,14 @@
 .op "ADDR16","NR","8$2 52 8$1 F4 A$1 9$2 52 9$1 74 B$1"
 .op "SUBR16","NR","8$2 52 8$1 F7 A$1 9$2 52 9$1 77 B$1"
 .op "GOSUB","W","D9 L1"
+; RSUB returns through the first byte of the subroutine table, so it
+; holds the page the C runtime module puts that table on: $2100 for
+; Elf/OS, or $0E00 for ELF-DOS, which is the page after PROG_BASE.
+#ifdef _EDOS_
+.op "RSUB","","C0 0E 00"
+#else
 .op "RSUB","","C0 21 00"
+#endif
 .op "SHL16","N","8$1 FE A$1 9$1 7E B$1"
 .op "SHLC16","N","8$1 7E A$1 9$1 7E B$1"
 .op "SHR16","N","9$1 F6 B$1 8$1 76 A$1"

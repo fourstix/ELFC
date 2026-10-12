@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         /* restore the '=' so the printed argument matches exactly
          * what the user typed */
         *p = '=';
-        putstr(assignment);
+        _putstr(assignment);
         puts(": not a valid identifier");
         return 1;
     }

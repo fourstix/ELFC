@@ -50,5 +50,8 @@ void _init(void) {
 
 
 	/* set up line buffer for stdio */
-	_lbuf = (char *) malloc(_BUFLEN);
+	//_lbuf = (char *) malloc(_BUFLEN);
+
+	/* lazy load buffer in stdio before use */
+	_lbuf = NULL;
 }

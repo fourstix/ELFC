@@ -22,10 +22,10 @@ call build
 cd ..\math32
 call clean
 call build
-cd ..\elfstd
+cd ..\edosstd
 call clean
 call build
-cd ..\elfio
+cd ..\minio
 call clean
 call build
 cd ..\float32
