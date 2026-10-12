@@ -376,6 +376,7 @@ New features
 * The Elf-DOS binaries use an `edoscrt0` runtime module for start-up code and the `edosc.lib` library with a jump table for the C routines referenced from the runtime origin.
 * The ELF-DOS binaries use a standard library module `edosstd.lib` that access the Elf-DOS kernel API.
 * All other libraries used by the Elf-DOS binaries are the same
+* The compiler options `-i` and `l` were added to add directories to the list for include files and libraries. (Thanks to Tony Hefner for adding these options.)
 
 Changes
 ------------
@@ -384,12 +385,16 @@ Changes
 * The `elfio.lib` library was renamed `minio.lib`.
 * The `elfrt0.prg` runtime module was removed.
 * The macro `__ELFIO__` was renamed `__MINIO__`.
+* The regression test cases were updated to support the `minio` library and ELF-DOS.
 
 Compiler Option Changes
 -----------------------
 * The `-E` option will cause ElfC to compile and link a program for ELF-DOS.
 * The `-M` option will cause ElfC to use a smaller memory version of the stdio library, named minio.
 * The `-E` and `-M` options can be used together.
+* The `-i` option will add a directory to the directories searched for include files.
+* The `-l` option will add a directory to the directories searched for library files.
+
 
 Stdlib Library
 --------------
