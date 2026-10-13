@@ -368,7 +368,7 @@ Compiler Option Changes
 
 Release 3.8
 -----------
-Release 3.8 adds support to compile binaries for the [ELF-DOS](https://github.com/arhefner/ELF-DOS) 1802 operating system.  The `-E` option will cause ELFC to compile and link a program for ELF-DOS that uses runtime and standard library modules for ELF-DOS.  The ELFIO library was renamed to the MinIO library and the `-M` option was updated to support ELF-DOS as well as the Elf/OS.
+Release 3.8 adds support to compile binaries for the [ELF-DOS](https://github.com/arhefner/ELF-DOS) 1802 operating system.  The `-E` option will cause ELFC to compile and link a program for ELF-DOS that uses runtime and standard library modules for ELF-DOS.  The ELFIO library was renamed to the MinIO library and the `-M` option was updated to support ELF-DOS as well as the Elf/OS.  Many thanks to Tony Hefner for providing the compiler support for ELF-DOS.
 
 New features
 ------------
