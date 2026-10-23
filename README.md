@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r381.zip into the desired directory
+* Unzip the file elfc_r382.zip into the desired directory
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -386,6 +386,7 @@ Changes
 * The `elfrt0.prg` runtime module was removed.
 * The macro `__ELFIO__` was renamed `__MINIO__`.
 * The regression test cases were updated to support the `minio` library and ELF-DOS.
+* Upgraded Asm/02 and Link/02 to the latest versions.
 
 Compiler Option Changes
 -----------------------
@@ -969,9 +970,9 @@ Repository Contents
   * arrtest.c -- Functional tests for multi-dimensional arrays
   * posixtest.c -- Functional tests for POSIX string functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r381.zip** -- A zip file with the Windows version of the Release 3.8.1 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r381.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.8.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r381.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.8.1 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r382.zip** -- A zip file with the Windows version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r382.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r382.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------
