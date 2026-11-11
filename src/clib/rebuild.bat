@@ -31,4 +31,10 @@ call build
 cd ..\float32
 call clean
 call build
+cd ..\dirent
+call clean
+call build
+cd ..\edosdir
+call clean
+call build
 cd ..

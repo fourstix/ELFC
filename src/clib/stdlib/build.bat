@@ -36,12 +36,12 @@
 ..\elfc -L _rename.c
 ..\elfc -L _systime.c
 
-type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > stdlib.lib
-type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> stdlib.lib
-type exit.prg _fdinit.prg _fildes.prg free.prg _getch.prg >> stdlib.lib
-type getenv.prg _getstr.prg _putch.prg _putstr.prg _init.prg >> stdlib.lib
-type open.prg itoa.prg itou.prg itox.prg lseek32.prg lseek.prg >> stdlib.lib
-type malloc.prg qsort.prg rand.prg read.prg realloc.prg _rename.prg >> stdlib.lib
-type setenv.prg _systime.prg unlink.prg unsetenv.prg write.prg >> stdlib.lib
+type _env_read_line.prg _env_split_line.prg _fdinit.prg _fildes.prg _getch.prg _getstr.prg > stdlib.lib
+type _init.prg _putch.prg _putstr.prg _rename.prg _systime.prg abort.prg >> stdlib.lib
+type atexit.prg atoi.prg bsearch.prg calloc.prg close.prg creat.prg >> stdlib.lib
+type div.prg exit.prg free.prg getenv.prg itoa.prg itou.prg >> stdlib.lib
+type itox.prg lseek.prg lseek32.prg malloc.prg open.prg qsort.prg >> stdlib.lib
+type rand.prg read.prg realloc.prg setenv.prg unlink.prg unsetenv.prg >> stdlib.lib
+type write.prg >> stdlib.lib
 
 copy stdlib.lib ..\lib\stdlib.lib

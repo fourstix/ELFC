@@ -23,11 +23,9 @@
 ..\elfc -L tzset_us.c
 ..\elfc -L utctime.c
 
-type _asctime2.prg _asctime.prg _cstime2.prg _cstime.prg > time.lib
-type _ctime2.prg _ctime.prg _dow.prg _doy.prg gmtime.prg >> time.lib
-type localtime.prg mktime.prg _strftime2.prg _strftime.prg >> time.lib
-type systime.prg time.prg timegm.prg _time_t_to_tm.prg timezone.prg >> time.lib
-type _tm_to_time_t.prg _tz_is_dst_active.prg _tz_parse.prg >> time.lib
-type tzset_all.prg tzset_us.prg utctime.prg >> time.lib
+type _asctime.prg _asctime2.prg _cstime.prg _cstime2.prg _ctime.prg _ctime2.prg > time.lib
+type _dow.prg _doy.prg _strftime.prg _strftime2.prg _time_t_to_tm.prg _tm_to_time_t.prg >> time.lib
+type _tz_is_dst_active.prg _tz_parse.prg gmtime.prg localtime.prg mktime.prg systime.prg >> time.lib
+type time.prg timegm.prg timezone.prg tzset_all.prg tzset_us.prg utctime.prg >> time.lib
 
 copy time.lib ..\lib\time.lib

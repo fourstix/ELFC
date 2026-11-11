@@ -7,6 +7,9 @@ char *strerror(int err) {
 	case ENOENT:	return "no such file";
 	case EIO:	    return "input/output error";
 	case EBADF:  	return "bad file number";
+#ifdef ENOTDIR
+	case ENOTDIR:	return "not a directory";
+#endif
 	case ENOMEM:	return "out of memory";
 	case EACCES:	return "file access error";
 	case EINVAL:	return "invalid argument";
