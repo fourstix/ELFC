@@ -18,12 +18,15 @@
 *.lkb
 *.elfos
 src/clib/ctype/*.asm
+src/clib/dirent/*.asm
+src/clib/edosdir/*.asm
 src/clib/edosstd/*.asm
 src/clib/elfc/edos/
 src/clib/elfio/*.asm
 src/clib/elfstd/*.asm
 src/clib/float32/*.asm
 src/clib/math32/*.asm
+src/clib/minio/*.asm
 src/clib/stdio/*.asm
 src/clib/stdlib/*.asm
 src/clib/string/*.asm
