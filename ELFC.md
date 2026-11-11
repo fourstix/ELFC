@@ -726,6 +726,56 @@ Strftime Conversions
 </table>
 
 
+Dirent Library
+--------------
+**The dirent library lists directories in ELF-DOS programs (`-E` option). Including _dirent.h_ links _dirent.lib_.**
+
+* DIR \*opendir(const char \*path)
+* struct dirent \*readdir(DIR \*dirp)
+* void rewinddir(DIR \*dirp)
+* int closedir(DIR \*dirp)
+
+```c
+struct dirent {
+  char          d_name[NAME_MAX + 1]; /* file name, NAME_MAX is 127 */
+  unsigned char d_attr;               /* FAT attributes: _A_RDONLY, _A_HIDDEN, _A_SYSTEM, _A_SUBDIR, _A_ARCH */
+  unsigned int  d_ino;                /* first cluster */
+  struct _dword d_size;               /* file size, same as the math32 uint32_t */
+  unsigned int  d_time;               /* last-write time, packed FAT format */
+  unsigned int  d_date;               /* last-write date, packed FAT format */
+};
+```
+
+The macros `DE_ISDIR(e)`, `DE_YEAR(e)`, `DE_MONTH(e)`, `DE_DAY(e)`, `DE_HOUR(e)`, `DE_MIN(e)` and `DE_SEC(e)` take a `struct dirent` pointer.
+
+```c
+#include <stdio.h>
+#include <dirent.h>
+
+int main(int argc, char **argv) {
+  DIR *d;
+  struct dirent *e;
+
+  d = opendir(argc > 1 ? argv[1] : ".");
+  if (d == NULL) {
+    perror("opendir");
+    return 1;
+  }
+  while ((e = readdir(d)) != NULL)
+    printf("%s%s\n", e->d_name, DE_ISDIR(e) ? "/" : "");
+  closedir(d);
+  return 0;
+}
+```
+
+*Notes:*
+* A path may begin with a drive letter, and may be relative to that drive's current directory. `"C:"`, `"."` and `""` name a current directory, `"/"` and `"C:/"` name a root directory.
+* opendir sets errno to ENOENT when the path is not found, ENOTDIR when it names a file, and ENOMEM when there is no memory for the DIR.
+* readdir returns hidden files and the `.` and `..` entries of a subdirectory. The root directory has no `.` or `..` entries, and volume labels are never returned.
+* The entry returned by readdir is overwritten by the next call to readdir on the same DIR.
+* Any number of directories may be open at once, and other file operations may be done between calls to readdir.
+
+
 math32 Library
 --------------
 **The math32 library functions use the following structure and type.**

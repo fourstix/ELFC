@@ -12,6 +12,7 @@ extern int errno;
 #define ENOENT  2
 #define EIO     5
 #define EBADF   9
+#define ENOTDIR 20
 #define ENOMEM  12
 #define EACCES  13
 #define EINVAL  22
