@@ -1,5 +1,5 @@
 /*
- * Test the dirent library on ELF-DOS
+ * Test the dirent library on Elf/OS or ELF-DOS
  *
  *   dirtest [path]
  *
@@ -7,7 +7,8 @@
  * checks the error cases, reading two directories at the same time
  * with other directory operations in between, and rewinddir.
  *
- * Build with: elfc -E dirtest.c
+ * Build with: elfc dirtest.c     for Elf/OS
+ *             elfc -E dirtest.c  for ELF-DOS
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,11 +50,12 @@ void list(char *path) {
       printf("  %-20s      <DIR> ", e->d_name);
     else
       printf("  %-20s %10s ", e->d_name, u32toa(e->d_size, sizebuf));
-    printf("%04d-%02d-%02d %02d:%02d %c%c%c\n",
+    printf("%04d-%02d-%02d %02d:%02d %c%c%c%c\n",
       DE_YEAR(e), DE_MONTH(e), DE_DAY(e), DE_HOUR(e), DE_MIN(e),
       (e->d_attr & _A_RDONLY) ? 'R' : '-',
       (e->d_attr & _A_HIDDEN) ? 'H' : '-',
-      (e->d_attr & _A_SYSTEM) ? 'S' : '-');
+      (e->d_attr & _A_SYSTEM) ? 'S' : '-',
+      (e->d_attr & _A_EXEC) ? 'X' : '-');
     n++;
   }
   printf("  %d entries\n", n);
@@ -194,6 +196,15 @@ void test_paths(void) {
   if (d == NULL) fail("opendir /");
   else closedir(d);
 
+  d = opendir("");
+  if (d == NULL) fail("opendir \"\"");
+  else closedir(d);
+
+  d = opendir("/bin");
+  if (d == NULL) fail("opendir /bin");
+  else closedir(d);
+
+#ifdef __ELFDOS__
   d = opendir("C:/");
   if (d == NULL) fail("opendir C:/");
   else closedir(d);
@@ -211,13 +222,10 @@ void test_paths(void) {
   if (d == NULL) fail("opendir ..");
   else closedir(d);
 
-  d = opendir("/bin");
-  if (d == NULL) fail("opendir /bin");
-  else closedir(d);
-
   d = opendir("/bin/");
   if (d == NULL) fail("opendir /bin/");
   else closedir(d);
+#endif
 }
 
 int main(int argc, char **argv) {

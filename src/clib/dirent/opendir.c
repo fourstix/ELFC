@@ -1,37 +1,42 @@
 #define _ELFCLIB_
 #include <stdlib.h>
 #include <errno.h>
-#include <dirent.h>
-#include "kdir.h"
+#include "odir.h"
 
 #pragma             extrn Cerrno
 #pragma             extrn Cmalloc
 #pragma             extrn Cfree
-#pragma             extrn C_kpathres
-#pragma             extrn C_kstat
+#pragma             extrn C_fdinit
+#pragma             extrn C_fdtable
+#pragma             extrn Copen
+#pragma             extrn Cclose
+#pragma             extrn C_oopendir
 
 /*
  * Open a directory for reading.  Returns NULL and sets errno to
  * ENOENT when the path is not found, ENOTDIR when it names a file,
- * ENOMEM when there is no memory for the DIR, or EINVAL for NULL.
+ * ENOMEM when there is no memory, EMFILE when there is no free file
+ * descriptor, or EINVAL for NULL.
  *
- * K_PATH_RESOLVE finds the parent directory and the final path
- * component, which is looked up with K_STAT unless it already names
- * a directory: empty (a path ending in a separator, or a bare drive),
- * "." or the ".." of a root directory, which has no "." or ".."
- * entries of its own.
+ * The directory is opened as a file with O_OPENDIR, in a file
+ * descriptor from the C library's table, and read with read().  The
+ * path is kept so readdir can open each file to find its size.
  */
 DIR *opendir(const char *path) {
   DIR *dirp;
-  unsigned char *ent;
-  char *name;
-  unsigned int clust;
-  int drive;
+  char *p;
+  int len;
+  int fd;
+  int fildes;
+  int i;
 
   if (path == NULL) {
     errno = EINVAL;
     return NULL;
   }
+
+  for (len = 0; path[len]; len++)
+    ;
 
   dirp = malloc(sizeof(DIR));
   if (dirp == NULL) {
@@ -39,37 +44,48 @@ DIR *opendir(const char *path) {
     return NULL;
   }
 
-  if (_kpathres(path, &clust, &name, &drive) == EOF) {
+  /* room for the path, a separator, a name and the null */
+  p = malloc(len + NAME_MAX + 2);
+  if (p == NULL) {
     free(dirp);
-    errno = ENOENT;
+    errno = ENOMEM;
     return NULL;
   }
 
-  /* anything but "", "." or a root's ".." must be a directory entry */
-  if (!(name[0] == 0
-        || (name[0] == '.' && name[1] == 0)
-        || (name[0] == '.' && name[1] == '.' && name[2] == 0 && clust == 0))) {
-    ent = (unsigned char *) &dirp->dd_ent;
-    if (_kstat(path, ent) == EOF) {
-      free(dirp);
-      errno = ENOENT;
-      return NULL;
-    }
-    if (!(ent[_KD_ATTR] & _A_SUBDIR)) {
-      free(dirp);
+  fd = _fdinit();
+  if (fd == EOF) {
+    free(p);
+    free(dirp);
+    return NULL;
+  }
+  fildes = _fdtable[fd];
+
+  if (_oopendir(path, (unsigned char *) fildes) == EOF) {
+    free((void *) fildes);
+    _fdtable[fd] = EOF;
+    free(p);
+    free(dirp);
+    /* O_OPENDIR fails for a file too, but O_OPEN opens a file */
+    fd = open(path, O_RDONLY);
+    if (fd != EOF) {
+      close(fd);
       errno = ENOTDIR;
-      return NULL;
+    } else {
+      errno = ENOENT;
     }
-    clust = (ent[_KD_CLUST] << 8) | ent[_KD_CLUST + 1];
+    return NULL;
   }
 
-  dirp->dd_clust = clust;
-  dirp->dd_loc = 0;
+  for (i = 0; i < len; i++)
+    p[i] = path[i];
+  if (len > 0 && p[len - 1] != '/')
+    p[len++] = '/';
+  p[len] = 0;
+
+  dirp->dd_fd = fd;
   dirp->dd_eof = 0;
-  dirp->dd_root[0] = 'C' + drive;
-  dirp->dd_root[1] = ':';
-  dirp->dd_root[2] = '/';
-  dirp->dd_root[3] = 0;
+  dirp->dd_path = p;
+  dirp->dd_plen = len;
 
   return dirp;
 }

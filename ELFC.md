@@ -728,7 +728,7 @@ Strftime Conversions
 
 Dirent Library
 --------------
-**The dirent library lists directories in ELF-DOS programs (`-E` option). Including _dirent.h_ links _dirent.lib_.**
+**The dirent library lists directories. Including _dirent.h_ links _dirent.lib_ in an Elf/OS program, or _edosdir.lib_ in an ELF-DOS program (`-E` option).**
 
 * DIR \*opendir(const char \*path)
 * struct dirent \*readdir(DIR \*dirp)
@@ -737,16 +737,16 @@ Dirent Library
 
 ```c
 struct dirent {
-  char          d_name[NAME_MAX + 1]; /* file name, NAME_MAX is 127 */
-  unsigned char d_attr;               /* FAT attributes: _A_RDONLY, _A_HIDDEN, _A_SYSTEM, _A_SUBDIR, _A_ARCH */
-  unsigned int  d_ino;                /* first cluster */
+  char          d_name[NAME_MAX + 1]; /* file name, NAME_MAX is 19 on Elf/OS and 127 on ELF-DOS */
+  unsigned char d_attr;               /* _A_RDONLY, _A_HIDDEN, _A_SYSTEM, _A_SUBDIR, _A_ARCH, _A_EXEC */
+  unsigned int  d_ino;                /* first allocation unit or cluster */
   struct _dword d_size;               /* file size, same as the math32 uint32_t */
-  unsigned int  d_time;               /* last-write time, packed FAT format */
-  unsigned int  d_date;               /* last-write date, packed FAT format */
+  unsigned int  d_time;               /* last-write time, packed */
+  unsigned int  d_date;               /* last-write date, packed */
 };
 ```
 
-The macros `DE_ISDIR(e)`, `DE_YEAR(e)`, `DE_MONTH(e)`, `DE_DAY(e)`, `DE_HOUR(e)`, `DE_MIN(e)` and `DE_SEC(e)` take a `struct dirent` pointer.
+The macros `DE_ISDIR(e)`, `DE_YEAR(e)`, `DE_MONTH(e)`, `DE_DAY(e)`, `DE_HOUR(e)`, `DE_MIN(e)` and `DE_SEC(e)` take a `struct dirent` pointer, and work the same on both systems.
 
 ```c
 #include <stdio.h>
@@ -756,7 +756,7 @@ int main(int argc, char **argv) {
   DIR *d;
   struct dirent *e;
 
-  d = opendir(argc > 1 ? argv[1] : ".");
+  d = opendir(argc > 1 ? argv[1] : "");
   if (d == NULL) {
     perror("opendir");
     return 1;
@@ -769,11 +769,12 @@ int main(int argc, char **argv) {
 ```
 
 *Notes:*
-* A path may begin with a drive letter, and may be relative to that drive's current directory. `"C:"`, `"."` and `""` name a current directory, `"/"` and `"C:/"` name a root directory.
+* `""` names the current directory and `"/"` the root directory.
 * opendir sets errno to ENOENT when the path is not found, ENOTDIR when it names a file, and ENOMEM when there is no memory for the DIR.
-* readdir returns hidden files and the `.` and `..` entries of a subdirectory. The root directory has no `.` or `..` entries, and volume labels are never returned.
-* The entry returned by readdir is overwritten by the next call to readdir on the same DIR.
+* readdir returns hidden files. The entry it returns is overwritten by the next call to readdir on the same DIR.
 * Any number of directories may be open at once, and other file operations may be done between calls to readdir.
+* Elf/OS: an open directory uses one of the C library's file descriptors. The size of a file is not kept in an Elf/OS directory entry, so readdir opens each file to find it, which needs one more free file descriptor; `d_size` is 0 for a directory. The Elf/OS executable flag is returned as `_A_EXEC`. Elf/OS directories have no `.` or `..` entries.
+* ELF-DOS: a path may begin with a drive letter, and may be relative to that drive's current directory. `"C:"` and `"."` also name a current directory and `"C:/"` a root directory. A subdirectory has `.` and `..` entries, the root directory has none, and volume labels are never returned.
 
 
 math32 Library

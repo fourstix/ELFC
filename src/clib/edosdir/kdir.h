@@ -2,10 +2,14 @@
 #define _KDIR_
 
 /*
- * Private kernel interface for the dirent library.  The register
+ * Private kernel interface for the ELF-DOS dirent library.  The register
  * save and result macros are shared with the edosstd library.
  */
 #include "../edosstd/edos.h"
+
+/* select the ELF-DOS DIR in dirent.h, the library is built without -E */
+#define _DIRENT_EDOS_
+#include <dirent.h>
 
 /* offsets of the big-endian fields in the kernel's directory entry */
 #define _KD_ATTR    128

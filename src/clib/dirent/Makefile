@@ -12,7 +12,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	cat $^ > ../lib/$@
 
-%.prg: %.c kdir.h ../include/dirent.h ../edosstd/edos.h
+%.prg: %.c odir.h ../include/dirent.h
 	$(CC) $(CFLAGS) $<
 
 clean:
