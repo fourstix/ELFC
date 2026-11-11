@@ -22,7 +22,6 @@ src/clib/dirent/*.asm
 src/clib/edosdir/*.asm
 src/clib/edosstd/*.asm
 src/clib/elfc/edos/
-src/clib/elfstd/*.asm
 src/clib/float32/*.asm
 src/clib/math32/*.asm
 src/clib/minio/*.asm
