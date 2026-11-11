@@ -39,14 +39,13 @@
 ..\elfc -L _conin.c
 ..\elfc -L _conecho.c
 
-type abort.prg atexit.prg atoi.prg bsearch.prg calloc.prg close.prg > edosstd.lib
-type creat.prg div.prg _env_read_line.prg _env_split_line.prg >> edosstd.lib
-type exit.prg _fdinit.prg _fildes.prg free.prg _getch.prg >> edosstd.lib
-type getenv.prg _getstr.prg _putch.prg _putstr.prg _init.prg >> edosstd.lib
-type open.prg itoa.prg itou.prg itox.prg lseek32.prg lseek.prg >> edosstd.lib
-type malloc.prg qsort.prg rand.prg read.prg realloc.prg _rename.prg >> edosstd.lib
-type setenv.prg _systime.prg unlink.prg unsetenv.prg write.prg >> edosstd.lib
-type _heapinit.prg _conin.prg _conecho.prg >> edosstd.lib
+type _conecho.prg _conin.prg _env_read_line.prg _env_split_line.prg _fdinit.prg _fildes.prg > edosstd.lib
+type _getch.prg _getstr.prg _heapinit.prg _init.prg _putch.prg _putstr.prg >> edosstd.lib
+type _rename.prg _systime.prg abort.prg atexit.prg atoi.prg bsearch.prg >> edosstd.lib
+type calloc.prg close.prg creat.prg div.prg exit.prg free.prg >> edosstd.lib
+type getenv.prg itoa.prg itou.prg itox.prg lseek.prg lseek32.prg >> edosstd.lib
+type malloc.prg open.prg qsort.prg rand.prg read.prg realloc.prg >> edosstd.lib
+type setenv.prg unlink.prg unsetenv.prg write.prg >> edosstd.lib
 
 rem modules from the ELF-DOS SDK that are part of this library
 cd ..\elfdos-sdk\lib
