@@ -19,7 +19,9 @@ int closedir(DIR *dirp) {
     return EOF;
   }
 
-  result = close(dirp->dd_fd);
+  result = 0;
+  if (dirp->dd_fd != EOF)
+    result = close(dirp->dd_fd);
   free(dirp->dd_path);
   free(dirp);
 

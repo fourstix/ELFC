@@ -6,11 +6,9 @@
 #pragma             extrn Cerrno
 #pragma             extrn Cmalloc
 #pragma             extrn Cfree
-#pragma             extrn C_fdinit
-#pragma             extrn C_fdtable
 #pragma             extrn Copen
 #pragma             extrn Cclose
-#pragma             extrn C_oopendir
+#pragma             extrn C_odiropen
 
 /*
  * Open a directory for reading.  Returns NULL and sets errno to
@@ -27,7 +25,6 @@ DIR *opendir(const char *path) {
   char *p;
   int len;
   int fd;
-  int fildes;
   int i;
 
   if (path == NULL) {
@@ -52,19 +49,14 @@ DIR *opendir(const char *path) {
     return NULL;
   }
 
-  fd = _fdinit();
+  errno = EOK;
+  fd = _odiropen(path);
   if (fd == EOF) {
     free(p);
     free(dirp);
-    return NULL;
-  }
-  fildes = _fdtable[fd];
-
-  if (_oopendir(path, (unsigned char *) fildes) == EOF) {
-    free((void *) fildes);
-    _fdtable[fd] = EOF;
-    free(p);
-    free(dirp);
+    /* errno is set when there was no free file descriptor */
+    if (errno != EOK)
+      return NULL;
     /* O_OPENDIR fails for a file too, but O_OPEN opens a file */
     fd = open(path, O_RDONLY);
     if (fd != EOF) {
@@ -85,6 +77,7 @@ DIR *opendir(const char *path) {
   dirp->dd_fd = fd;
   dirp->dd_eof = 0;
   dirp->dd_path = p;
+  dirp->dd_olen = i;
   dirp->dd_plen = len;
 
   return dirp;

@@ -31,5 +31,6 @@
 #define _FD_DTALEN  512
 
 int _oopendir(char *path, unsigned char *fildes);
+int _odiropen(char *path);
 
 #endif

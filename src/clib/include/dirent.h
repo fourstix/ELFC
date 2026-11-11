@@ -150,7 +150,8 @@ typedef struct {
  *   dd_fd      file descriptor of the directory, opened with O_OPENDIR
  *   dd_eof     set once the end of the directory is reached
  *   dd_path    the path with a separator, with room to add a name
- *   dd_plen    length of the path in dd_path
+ *   dd_olen    length of the path as it was given to opendir
+ *   dd_plen    length of the path in dd_path, with the separator
  *   dd_raw     the directory entry as it was read
  */
 typedef struct {
@@ -158,6 +159,7 @@ typedef struct {
   int           dd_fd;
   int           dd_eof;
   char         *dd_path;
+  int           dd_olen;
   int           dd_plen;
   unsigned char dd_raw[_DIRENT_LEN];
 } DIR;
