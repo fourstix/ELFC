@@ -7,9 +7,13 @@
  */
 #include "../edosstd/edos.h"
 
-/* select the ELF-DOS DIR in dirent.h, the library is built without -E */
+/*
+ * Select the ELF-DOS DIR in dirent.h, since the library is built
+ * without -E, and use the header in this source tree, which may be
+ * newer than the installed one.
+ */
 #define _DIRENT_EDOS_
-#include <dirent.h>
+#include "../include/dirent.h"
 
 /* offsets of the big-endian fields in the kernel's directory entry */
 #define _KD_ATTR    128
@@ -20,9 +24,6 @@
 
 int  _kpathres(char *path, unsigned int *clust, char **name, int *drive);
 int  _kstat(char *path, char *buf);
-void _kdiropen(unsigned int clust);
-int  _kdirread(char *buf);
-void _kdirsave(char *state);
-int  _kdirrestore(char *state);
+int  _kfill(DIR *dirp);
 
 #endif

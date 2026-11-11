@@ -16,19 +16,13 @@
  * directory cannot be opened again, readdir returns NULL.
  */
 void rewinddir(DIR *dirp) {
-  char c;
-
   if (dirp == NULL)
     return;
 
   if (dirp->dd_fd != EOF)
     close(dirp->dd_fd);
 
-  /* open the path as it was given, without the added separator */
-  c = dirp->dd_path[dirp->dd_olen];
-  dirp->dd_path[dirp->dd_olen] = 0;
   dirp->dd_fd = _odiropen(dirp->dd_path);
-  dirp->dd_path[dirp->dd_olen] = c;
 
   dirp->dd_eof = (dirp->dd_fd == EOF);
 }

@@ -4,10 +4,9 @@
 #include "odir.h"
 
 #pragma             extrn Cerrno
+#pragma             extrn C_fdtable
 #pragma             extrn Cread
-#pragma             extrn Copen
-#pragma             extrn Cclose
-#pragma             extrn Clseek32
+#pragma             extrn C_olumps
 
 /*
  * Return the next entry of an open directory, or NULL at the end of
@@ -17,17 +16,19 @@
  * the same DIR.
  *
  * An Elf/OS directory is a file of 32 byte entries, and an entry with
- * no starting allocation unit is unused.  The entry holds only the
- * number of bytes in the file's last allocation unit, so the size of
- * a file is found by opening it and seeking to its end.
+ * no starting allocation unit is unused.  The entry holds the number
+ * of bytes in the file's last allocation unit, so the size is that
+ * plus 4096 for each allocation unit before it in the chain, which
+ * is what the Mini/DOS dir command does.
  */
 struct dirent *readdir(DIR *dirp) {
   struct dirent *de;
   unsigned char *raw;
+  unsigned char *fildes;
   unsigned char flags;
-  struct _dword zero;
-  char *name;
-  int fd;
+  unsigned int hops;
+  unsigned int eof;
+  unsigned int lo;
   int i;
 
   if (dirp == NULL) {
@@ -70,25 +71,15 @@ struct dirent *readdir(DIR *dirp) {
   de->d_size.high = 0;
 
   if (!(flags & _OF_DIR)) {
-    /* add the name to the path, open the file and seek to its end */
-    name = dirp->dd_path + dirp->dd_plen;
-    for (i = 0; de->d_name[i]; i++)
-      name[i] = de->d_name[i];
-    name[i] = 0;
+    /* the drive bits are in the top byte of the directory's sector */
+    fildes = (unsigned char *) _fdtable[dirp->dd_fd];
+    hops = _olumps(de->d_ino, fildes[_FD_DIRSEC]);
+    eof = (raw[_OD_EOF] << 8) | raw[_OD_EOF + 1];
 
-    fd = open(dirp->dd_path, O_RDONLY);
-    if (fd != EOF) {
-      zero.low = 0;
-      zero.high = 0;
-      de->d_size = lseek32(fd, zero, SEEK_END);
-      if (de->d_size.low == 0xFFFF && de->d_size.high == 0xFFFF) {
-        de->d_size.low = 0;
-        de->d_size.high = 0;
-      }
-      close(fd);
-    }
-
-    name[0] = 0;
+    /* size = hops * 4096 + eof, as 32 bits */
+    lo = (hops << 12) + eof;
+    de->d_size.low = lo;
+    de->d_size.high = (hops >> 4) + (lo < eof);
   }
 
   return de;

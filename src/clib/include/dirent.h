@@ -15,13 +15,14 @@
  *
  * readdir returns every entry, including hidden files.  Any number of
  * directories may be open at the same time, and other file operations
- * may be done between calls to readdir.
+ * may be done between calls to readdir.  Entries may be read ahead, so
+ * a file added or removed after opendir or rewinddir may or may not
+ * be returned, as POSIX allows.
  *
  * Elf/OS
  *   "" names the current directory and "/" the root directory.
- *   Elf/OS directories have no "." or ".." entries.  The file size
- *   is not kept in an Elf/OS directory entry, so readdir opens each
- *   file to find it, which needs a free file descriptor.
+ *   Elf/OS directories have no "." or ".." entries.  An open
+ *   directory uses one of the C library's file descriptors.
  *
  * ELF-DOS
  *   The path may start with a drive letter ("D:/games") and may be
@@ -118,24 +119,39 @@ struct dirent {
 #define _DIRENT_LEN     139
 #define _DIRSTATE_LEN   9
 
+/* most entries read ahead at a time, fewer if memory is short */
+#define _DIRSLOTS       8
+
 /*
  * An open ELF-DOS directory.  The fields are private to the library.
- * The kernel's 139 byte entry is read into dd_ent and converted in place.
  *
- *   dd_ent     the entry readdir returns, also the kernel's buffer
+ * The kernel has one directory scan, so each DIR keeps a snapshot of
+ * its position and restores it before reading, which reads the
+ * directory sector again.  To restore less often, readdir reads up to
+ * dd_nslots entries at a time into dd_slot and returns them in turn.
+ * The kernel's 139 byte entry is read into a slot and converted in
+ * place to a struct dirent.
+ *
  *   dd_clust   first cluster of the directory, 0 for a root directory
- *   dd_loc     entries read so far, 0 means the scan is not started
- *   dd_eof     set once the end of the directory is reached
+ *   dd_loc     nonzero once the scan is started
+ *   dd_eof     set once the kernel reaches the end of the directory
+ *   dd_n       number of entries in dd_slot
+ *   dd_i       next entry in dd_slot to return
+ *   dd_nslots  number of entries dd_slot has room for
  *   dd_root    "X:/" for the directory's drive, used to select it
- *   dd_state   the kernel's scan position after the last readdir
+ *   dd_state   the kernel's scan position after the last entry read
+ *   dd_slot    entries read ahead, dd_nslots are allocated
  */
 typedef struct {
-  struct dirent dd_ent;
   unsigned int  dd_clust;
   unsigned int  dd_loc;
   int           dd_eof;
+  int           dd_n;
+  int           dd_i;
+  int           dd_nslots;
   char          dd_root[4];
   char          dd_state[_DIRSTATE_LEN + 1];
+  struct dirent dd_slot[1];
 } DIR;
 
 #else
@@ -149,9 +165,7 @@ typedef struct {
  *   dd_ent     the entry readdir returns
  *   dd_fd      file descriptor of the directory, opened with O_OPENDIR
  *   dd_eof     set once the end of the directory is reached
- *   dd_path    the path with a separator, with room to add a name
- *   dd_olen    length of the path as it was given to opendir
- *   dd_plen    length of the path in dd_path, with the separator
+ *   dd_path    copy of the path, to open the directory again
  *   dd_raw     the directory entry as it was read
  */
 typedef struct {
@@ -159,8 +173,6 @@ typedef struct {
   int           dd_fd;
   int           dd_eof;
   char         *dd_path;
-  int           dd_olen;
-  int           dd_plen;
   unsigned char dd_raw[_DIRENT_LEN];
 } DIR;
 

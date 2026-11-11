@@ -17,8 +17,7 @@
  * descriptor, or EINVAL for NULL.
  *
  * The directory is opened as a file with O_OPENDIR, in a file
- * descriptor from the C library's table, and read with read().  The
- * path is kept so readdir can open each file to find its size.
+ * descriptor from the C library's table, and read with read().
  */
 DIR *opendir(const char *path) {
   DIR *dirp;
@@ -41,8 +40,8 @@ DIR *opendir(const char *path) {
     return NULL;
   }
 
-  /* room for the path, a separator, a name and the null */
-  p = malloc(len + NAME_MAX + 2);
+  /* a copy of the path, to open the directory again in rewinddir */
+  p = malloc(len + 1);
   if (p == NULL) {
     free(dirp);
     errno = ENOMEM;
@@ -68,17 +67,12 @@ DIR *opendir(const char *path) {
     return NULL;
   }
 
-  for (i = 0; i < len; i++)
+  for (i = 0; i <= len; i++)
     p[i] = path[i];
-  if (len > 0 && p[len - 1] != '/')
-    p[len++] = '/';
-  p[len] = 0;
 
   dirp->dd_fd = fd;
   dirp->dd_eof = 0;
   dirp->dd_path = p;
-  dirp->dd_olen = i;
-  dirp->dd_plen = len;
 
   return dirp;
 }

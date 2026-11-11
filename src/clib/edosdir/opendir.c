@@ -23,6 +23,7 @@
 DIR *opendir(const char *path) {
   DIR *dirp;
   unsigned char *ent;
+  int slots;
   char *name;
   unsigned int clust;
   int drive;
@@ -32,7 +33,12 @@ DIR *opendir(const char *path) {
     return NULL;
   }
 
-  dirp = malloc(sizeof(DIR));
+  /* room for _DIRSLOTS entries, or as many as memory allows */
+  for (slots = _DIRSLOTS; slots > 0; slots >>= 1) {
+    dirp = malloc(sizeof(DIR) + (slots - 1) * sizeof(struct dirent));
+    if (dirp != NULL)
+      break;
+  }
   if (dirp == NULL) {
     errno = ENOMEM;
     return NULL;
@@ -48,7 +54,7 @@ DIR *opendir(const char *path) {
   if (!(name[0] == 0
         || (name[0] == '.' && name[1] == 0)
         || (name[0] == '.' && name[1] == '.' && name[2] == 0 && clust == 0))) {
-    ent = (unsigned char *) &dirp->dd_ent;
+    ent = (unsigned char *) dirp->dd_slot;
     if (_kstat(path, ent) == EOF) {
       free(dirp);
       errno = ENOENT;
@@ -65,6 +71,9 @@ DIR *opendir(const char *path) {
   dirp->dd_clust = clust;
   dirp->dd_loc = 0;
   dirp->dd_eof = 0;
+  dirp->dd_n = 0;
+  dirp->dd_i = 0;
+  dirp->dd_nslots = slots;
   dirp->dd_root[0] = 'C' + drive;
   dirp->dd_root[1] = ':';
   dirp->dd_root[2] = '/';

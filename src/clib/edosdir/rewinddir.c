@@ -7,5 +7,7 @@ void rewinddir(DIR *dirp) {
   if (dirp != NULL) {
     dirp->dd_loc = 0;
     dirp->dd_eof = 0;
+    dirp->dd_n = 0;
+    dirp->dd_i = 0;
   }
 }

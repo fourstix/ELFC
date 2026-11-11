@@ -773,7 +773,8 @@ int main(int argc, char **argv) {
 * opendir sets errno to ENOENT when the path is not found, ENOTDIR when it names a file, and ENOMEM when there is no memory for the DIR.
 * readdir returns hidden files. The entry it returns is overwritten by the next call to readdir on the same DIR.
 * Any number of directories may be open at once, and other file operations may be done between calls to readdir.
-* Elf/OS: an open directory uses one of the C library's file descriptors. The size of a file is not kept in an Elf/OS directory entry, so readdir opens each file to find it, which needs one more free file descriptor; `d_size` is 0 for a directory. The Elf/OS executable flag is returned as `_A_EXEC`. Elf/OS directories have no `.` or `..` entries.
+* Entries may be read ahead, so a file added or removed after opendir or rewinddir may or may not be returned, as POSIX allows.
+* Elf/OS: an open directory uses one of the C library's file descriptors. The size of a file is found from its allocation unit chain; `d_size` is 0 for a directory. The Elf/OS executable flag is returned as `_A_EXEC`. Elf/OS directories have no `.` or `..` entries.
 * ELF-DOS: a path may begin with a drive letter, and may be relative to that drive's current directory. `"C:"` and `"."` also name a current directory and `"C:/"` a root directory. A subdirectory has `.` and `..` entries, the root directory has none, and volume labels are never returned.
 
 
