@@ -9,7 +9,7 @@ Documentation
 
 Installation
 -------------
-* Unzip the file elfc_r382.zip into the desired directory
+* Unzip the file elfc_r383.zip into the desired directory.
 * Copy the file `hello.c` into the directory.
 * Use the command *elfc hello.c* to compile the `hello.c` to `hello.elfos`
 * Transfer the `hello.elfos` file to a microcomputer running Elf/OS or Mini/DOS.
@@ -377,6 +377,7 @@ New features
 * The ELF-DOS binaries use a standard library module `edosstd.lib` that access the Elf-DOS kernel API.
 * All other libraries used by the Elf-DOS binaries are the same
 * The compiler options `-i` and `l` were added to add directories to the list for include files and libraries. (Thanks to Tony Hefner for adding these options.)
+* The `dirent` library was added to list directory entries. Kudos to Tony Hefner for contributing this library.
 
 Changes
 ------------
@@ -863,7 +864,8 @@ struct dirent {
 };
 ```
 
-More information about the dirent library, functions, macros, attributes, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
+
+More information about the dirent library, functions, macros, attributes, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page. Thank you to Tony Hefner for contributing this library to ELFC.
 
 Differences Between ElfC and Full C89
 -------------------------------------
@@ -994,9 +996,9 @@ Repository Contents
   * arrtest.c -- Functional tests for multi-dimensional arrays
   * posixtest.c -- Functional tests for POSIX string functions
 * **/bin**  -- Binary files for ElfC
-  * **elfc_r382.zip** -- A zip file with the Windows version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
-  * **elfc_r382.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
-  * **elfc_r382.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.8.2 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r383.zip** -- A zip file with the Windows version of the Release 3.8.3 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
+  * **elfc_r383.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.8.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
+  * **elfc_r383.linux_x64.tar.gz** -- A tar file with the Windows version of the Release 3.8.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
 
 Acknowledgements
 -----------------

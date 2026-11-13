@@ -747,20 +747,21 @@ struct dirent {
 ```
 
 The following macros listed below all take a `struct dirent` pointer, and work the same on both systems.
-* `DE_ISDIR(e)`
-* `DE_YEAR(e)`
-* `DE_MONTH(e)`
-* `DE_DAY(e)`
-* `DE_HOUR(e)`
-* `DE_MIN(e)`
-* `DE_SEC(e)`
-* `DE_ISRDONLY(e)`
-* `DE_ISHIDDEN(e)`
-* `DE_ISSYSTEM(e)`
-* `DE_ISARCH(e)`
-* `DE_ISEXEC(e)`
-* `DE_ISNORMAL(e)`
+* DE_ISDIR(e)
+* DE_YEAR(e)
+* DE_MONTH(e)
+* DE_DAY(e)
+* DE_HOUR(e)
+* DE_MIN(e)
+* DE_SEC(e)
+* DE_ISRDONLY(e)
+* DE_ISHIDDEN(e)
+* DE_ISSYSTEM(e)
+* DE_ISARCH(e)
+* DE_ISEXEC(e)
+* DE_ISNORMAL(e)
 
+*Example:*
 ```c
 #include <stdio.h>
 #include <dirent.h>
@@ -1067,7 +1068,7 @@ Unsupported Libraries
 ---------------------
 * The `setjmp` library is not supported.
 * The `signal` library is not supported.
-* The `math` library is not supported, because there are no real types (float or double) in this release.
+* The `math` library is not supported, but similar functions are provided by the `float32` library.
 
 
 Header files
