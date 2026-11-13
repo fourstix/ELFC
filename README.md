@@ -995,6 +995,7 @@ Repository Contents
   * stctest.c -- Functional tests for structures/union functions
   * arrtest.c -- Functional tests for multi-dimensional arrays
   * posixtest.c -- Functional tests for POSIX string functions
+  * dirtest.c -- Functional tests for the dirent library functions.
 * **/bin**  -- Binary files for ElfC
   * **elfc_r383.zip** -- A zip file with the Windows version of the Release 3.8.3 ElfC binary files, include files and library files. To install ElfC, unzip this file into the desired directory.
   * **elfc_r383.arm64.tar.gz** -- A tar file with the Arm64 Linux version of the Release 3.8.3 ElfC binary files, include files and library files. To install ElfC, unpack this file into the desired directory.
