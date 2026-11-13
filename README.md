@@ -840,6 +840,30 @@ typedef struct float32 float32_t;
 
 More information about these library functions, floating point values, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
 
+Dirent Library
+--------------
+**The dirent library lists directories.**
+
+Including _dirent.h_ links _dirent.lib_ in an Elf/OS program, or _edosdir.lib_ in an ELF-DOS program (`-E` option).**
+
+The *dirent* library provides the following functions and defines the _dirent_ structure.
+* DIR \*opendir(const char \*path)
+* struct dirent \*readdir(DIR \*dirp)
+* void rewinddir(DIR \*dirp)
+* int closedir(DIR \*dirp)
+
+```c
+struct dirent {
+  char          d_name[NAME_MAX + 1]; /* file name, NAME_MAX is 19 on Elf/OS and 127 on ELF-DOS */
+  unsigned char d_attr;               /* _A_RDONLY, _A_HIDDEN, _A_SYSTEM, _A_SUBDIR, _A_ARCH, _A_EXEC */
+  unsigned int  d_ino;                /* first allocation unit or cluster */
+  struct _dword d_size;               /* file size, same as the math32 uint32_t */
+  unsigned int  d_time;               /* last-write time, packed */
+  unsigned int  d_date;               /* last-write date, packed */
+};
+```
+
+More information about the dirent library, functions, macros, attributes, header files and ElfC internals can be found on the [ELFC Detailed  Information](ELFC.md) page.
 
 Differences Between ElfC and Full C89
 -------------------------------------

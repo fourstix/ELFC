@@ -113,6 +113,16 @@ struct dirent {
 #define DE_MIN(e)     (((e)->d_time >> 5) & 0x3F)
 #define DE_SEC(e)     (((e)->d_time & 0x1F) << 1)
 
+//grw - added tests for directory entry file types
+#define DE_ISRDONLY(e)   ((e)->d_attr & _A_RDONLY)
+#define DE_ISHIDDEN(e)   ((e)->d_attr & _A_HIDDEN)
+#define DE_ISSYSTEM(e)   ((e)->d_attr & _A_SYSTEM)
+#define DE_ISARCH(e)     ((e)->d_attr & _A_ARCH)
+#define DE_ISEXEC(e)     ((e)->d_attr & _A_EXEC)
+/* normal file type has no bits set so test equal to zero */
+#define DE_ISNORMAL(e)   ((e)->d_attr == _A_NORMAL)
+
+
 #ifdef _DIRENT_EDOS_
 
 /* sizes of the kernel's directory entry and scan snapshot buffers */

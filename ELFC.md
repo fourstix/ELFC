@@ -746,7 +746,20 @@ struct dirent {
 };
 ```
 
-The macros `DE_ISDIR(e)`, `DE_YEAR(e)`, `DE_MONTH(e)`, `DE_DAY(e)`, `DE_HOUR(e)`, `DE_MIN(e)` and `DE_SEC(e)` take a `struct dirent` pointer, and work the same on both systems.
+The following macros listed below all take a `struct dirent` pointer, and work the same on both systems.
+* `DE_ISDIR(e)`
+* `DE_YEAR(e)`
+* `DE_MONTH(e)`
+* `DE_DAY(e)`
+* `DE_HOUR(e)`
+* `DE_MIN(e)`
+* `DE_SEC(e)`
+* `DE_ISRDONLY(e)`
+* `DE_ISHIDDEN(e)`
+* `DE_ISSYSTEM(e)`
+* `DE_ISARCH(e)`
+* `DE_ISEXEC(e)`
+* `DE_ISNORMAL(e)`
 
 ```c
 #include <stdio.h>
