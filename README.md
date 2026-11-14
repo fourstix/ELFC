@@ -1023,8 +1023,7 @@ License Information
 This code is public domain under the MIT License, but please buy me a beverage
 if you use this and we meet someday (Beerware).
 
-References to any products, programs or services do not imply
-that they will be available in all countries in which their respective owner operates.
+References to any products, programs or services do not imply that they will be available in all countries in which their respective owner operates.
 
 Any company, product, or services names may be trademarks or services marks of others.
 
@@ -1036,26 +1035,29 @@ The C code is based on the SubC compiler written by Nils M Holms and compiled wi
 
 Practical Compiler Construction, A No-nonsense Tour through a C Compiler was written by Nils M Holms and published by Lulu Press, 2022 (2nd Ed.)
 
-Source code for the SubC Compiler
-Copyright (c) 2011-2016 by Nils M Holm
+Source code for the SubC Compiler<br/>
+Copyright (c) 2011-2016 by Nils M Holm<br/>
 Placed in the public domain by the author.
 
-Elf/OS
+Elf/OS<br/>
 Copyright (c) 2004-2026 by Mike Riley
 
-Mini/DOS
+Mini/DOS<br/>
 Copyright (c) 2025-2026 by David Madole
 
-Asm/02 1802 Assembler
+Elf-DOS Operating System<br/>
+Copyright (c) 2026 by Tony Hefner.
+
+Asm/02 1802 Assembler<br/>
 Copyright (c) 2004-2026 by Mike Riley
 
-Link/02 1802 Linker
+Link/02 1802 Linker<br/>
 Copyright (c) 2004-2026 by Mike Riley
 
-Library/02 Elf/OS standard library
+Library/02 Elf/OS standard library<br/>
 Copyright (c) 2022-2026 by Mike Riley
 
-Microsoft Visual Studio 2022
+Microsoft Visual Studio 2022<br/>
 Copyright (c) 2022-2026 by Microsoft Corp.
 
 Many thanks to the original authors for making their designs and code available as open source.
