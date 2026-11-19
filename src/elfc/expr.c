@@ -320,7 +320,7 @@ static node *stc_access(node *n, int *lv, int ptr) {
 
   if (isArray(Types[y])) {
     p = pointerto(p, NULL);
-    //grw - arrays are not assignable, but are addressable
+    //grw - array members are not assignable (but are addressable in & operator logic)
     lv[LVADDR] = 0;
   }
   lv[LVPRIM] = p;
@@ -650,7 +650,7 @@ static node *prefix(int *lv) {
 
     //grw - updated logic for array pointers  if a[][], then &a[] is valid
     //grw - updated logic for arrays in structures
-    /* An array type, structure type or a pointer type from array decay can hae & */
+    /* An array type, structure type or a pointer type (array decay) can have & */
     if (lv[LVADDR]) {
       if (lv[LVSYM]) n = mkunop1(OP_ADDR, lv[LVSYM], n);
     }  else if ((0 == lv[LVSYM] || !isArray(Types[lv[LVSYM]])) &&
