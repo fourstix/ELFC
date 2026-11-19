@@ -10,7 +10,7 @@
 #include "cg.h"
 #include "sys.h"
 
-#define VERSION    "3.8.3"
+#define VERSION    "3.8.4"
 
 //arh - Allow multiple -D options
 #define MAX_DEFS  8

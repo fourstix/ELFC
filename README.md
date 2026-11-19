@@ -378,6 +378,7 @@ New features
 * All other libraries used by the Elf-DOS binaries are the same
 * The compiler options `-i` and `l` were added to add directories to the list for include files and libraries. (Thanks to Tony Hefner for adding these options.)
 * The `dirent` library was added to list directory entries. Kudos to Tony Hefner for contributing this library.
+* Added the `offsetof` macro to the standard library.
 
 Changes
 ------------
@@ -388,6 +389,7 @@ Changes
 * The macro `__ELFIO__` was renamed `__MINIO__`.
 * The regression test cases were updated to support the `minio` library and ELF-DOS.
 * Upgraded Asm/02 and Link/02 to the latest versions.
+* The compiler will emit a warning if unary `&` is used on a function name.
 
 Compiler Option Changes
 -----------------------
@@ -396,6 +398,11 @@ Compiler Option Changes
 * The `-E` and `-M` options can be used together.
 * The `-i` option will add a directory to the directories searched for include files.
 * The `-l` option will add a directory to the directories searched for library files.
+
+Issues Fixed
+------------
+* Fixed issue where the unary `&` (address of) operator gave an error when used on an array member of a structure or union.
+* Fixed issue where the unary `&` (address of) operator gave an error when used before a function name. (It should be ignored by spec.)
 
 
 Stdlib Library

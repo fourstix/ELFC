@@ -320,6 +320,7 @@ static node *stc_access(node *n, int *lv, int ptr) {
 
   if (isArray(Types[y])) {
     p = pointerto(p, NULL);
+    //grw - arrays are not assignable, but are addressable
     lv[LVADDR] = 0;
   }
   lv[LVPRIM] = p;
@@ -646,15 +647,24 @@ static node *prefix(int *lv) {
   case AMPER:
     Token = scan();
     n = cast(lv);
+
     //grw - updated logic for array pointers  if a[][], then &a[] is valid
-    /* Any array type can have '&' */
+    //grw - updated logic for arrays in structures
+    /* An array type, structure type or a pointer type from array decay can hae & */
     if (lv[LVADDR]) {
       if (lv[LVSYM]) n = mkunop1(OP_ADDR, lv[LVSYM], n);
     }  else if ((0 == lv[LVSYM] || !isArray(Types[lv[LVSYM]])) &&
-       !comptype(lv[LVPRIM])) {
+       !comptype(lv[LVPRIM]) && !ptrlevel(lv[LVPRIM])) {
       error("lvalue expected after unary '&'", NULL);
     }
-    lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
+
+    //grw - updated logic ignore & before function name and warn
+    if (isfunptr(lv[LVPRIM])) {
+      warn("unary '&' ignored before function name '%s'.", Names[lv[LVSYM]]);
+    } else {
+      lv[LVPRIM] = pointerto(lv[LVPRIM], NULL);
+    }
+
     lv[LVADDR] = 0;
     return n;
   case SIZEOF:

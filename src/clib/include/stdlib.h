@@ -158,6 +158,11 @@ typedef struct {
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #endif
 
+/* offset for memeber in structure type */
+#ifndef offsetof
+#define offsetof(type, member)  ((size_t)&((type *)0)->member)
+#endif
+
 void _init(void);
 int _fdinit(void);
 int _fildes(int fd);

@@ -1050,7 +1050,7 @@ Pre-Defined Macros
 * If `_ELFCLIB_` is defined, C code is compiled for an Elf/OS library procedure.
 * If `_STGROM_`  is defined, assembly code to support STG ROM breakpoints is created.
 * If `_MAXMON_` is defined, assembly code to support MAXMON ROM breakpoints is created.
-* `BRKPT` inserts assembly code in the code file to invoke the break point handler, when `_STGROM_` or `_MAXMON_` is defined.
+* The `BRKPT` macro inserts assembly code in the code file to invoke the break point handler, when `_STGROM_` or `_MAXMON_` is defined.
 * `__LINE__` inserts the current line number in the code file.
 * `__FILE__` insert the current file name in the code file.
 * `__FUNCTION__` insert the current function name in the code file.
@@ -1058,17 +1058,17 @@ Pre-Defined Macros
 * The <assert.h> header file defines the `assert` macro.
 * The <stdarg.h> header file defines the `va_list` type and the `va_start`, `va_arg` and `va_end` macros.
 * The <stdio.h> header file defines the `getchar` and `putchar` macros.
-* The <stdlib.h> header file defines the `abs`, `MIN` and `MAX` macros.
+* The <stdlib.h> header file defines the `abs`, `MIN`, `MAX`and `offsetof` macros.
 * The `__MINIO__` macro is defined when the `-M` option is used to compile code.
 * The `__ELFDOS__` macro is defined when the `-E` option is used to compile code.
 
-*Note: The `__LINE__`, `__FILE__`, `__FUNCTION__`  and `__MINIO__` macros begin and end with **two** underscores.*
+*Note: The `__ELFC__`, `__LINE__`, `__FILE__`, `__FUNCTION__`, `__ELFDOS__`  and `__MINIO__` macros all begin and end with **two** underscores.*
 
 Unsupported Libraries
 ---------------------
 * The `setjmp` library is not supported.
 * The `signal` library is not supported.
-* The `math` library is not supported, but similar functions are provided by the `float32` library.
+* The `math` library is not supported, but similar math functions are provided by the `float32` library.
 
 
 Header files
